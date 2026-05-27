@@ -1,0 +1,14 @@
+$primary: #0f6bff;
+$secondary: #0b1220;
+$success: #11a06a;
+$border-radius: 0.9rem;
+$border-radius-sm: 0.65rem;
+$border-radius-lg: 1.15rem;
+$font-family-sans-serif:
+  "Manrope", "Inter", "Segoe UI", "Roboto", "Helvetica Neue", Arial,
+  sans-serif;
+$headings-font-weight: 700;
+$body-color: #1a2233;
+$body-bg: #f4f7fb;
+
+@import 'bootstrap/scss/bootstrap';
