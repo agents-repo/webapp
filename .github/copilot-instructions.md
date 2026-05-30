@@ -57,9 +57,8 @@ concrete about:
 - how it was validated
 - any follow-up work that remains
 
-For issue-linked work, `## Related Issues` MUST include
-`Closes #<issue-number>`. If no tracking issue exists, the PR body MUST include
-a short rationale in `## Related Issues`.
+`## Related Issues` MUST include `Closes #<issue-number>`.
+Every PR targeting `main` MUST close a tracking issue.
 
 ## GitHub Communication Method (gh CLI Preferred)
 

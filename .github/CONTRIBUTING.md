@@ -14,7 +14,7 @@ docs in the same pull request.
 ## Before You Start
 
 1. Confirm the task scope and expected outcome.
-2. For issue-linked work, open an issue using the matching form in
+2. Open an issue using the matching form in
    `.github/ISSUE_TEMPLATE/` before starting implementation.
 3. Create a non-`main` branch from the latest `main` and keep it focused on one change set.
 4. Identify the commands needed to validate the work.
@@ -34,7 +34,6 @@ Recommended flow:
    `gh issue view <number> --repo agents-repo/webapp`
 2. Create and switch to a non-`main` branch from the latest `main` using the
    naming rules in this guide.
-   rules in this guide.
 3. Open a draft pull request to `main` with the required template sections:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
 
@@ -80,11 +79,11 @@ This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
 
 1. Keep PRs reviewable and scoped.
 2. Use `.github/pull_request_template.md`.
-3. In `## Related Issues`, include `Closes #<issue-number>` for issue-linked
-   work; if no issue exists, include a short rationale.
-4. List the validation commands you ran.
-5. Call out any documentation or workflow impact.
-6. If the PR template cannot be applied, include the same required sections manually.
+3. In `## Related Issues`, include `Closes #<issue-number>`.
+4. Every PR targeting `main` must close a tracking issue.
+5. List the validation commands you ran.
+6. Call out any documentation or workflow impact.
+7. If the PR template cannot be applied, include the same required sections manually.
 
 ## AI Collaboration
 
