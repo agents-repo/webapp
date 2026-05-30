@@ -22,6 +22,8 @@ npm run typecheck
 npm run build
 ```
 
+Pre-commit hooks run `npm run lint:all` automatically through Husky.
+
 ## Project Layout
 
 - `src/` contains the React application

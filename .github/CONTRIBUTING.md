@@ -62,6 +62,8 @@ npm run typecheck
 npm run build
 ```
 
+This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
+
 ## Pull Requests
 
 1. Keep PRs reviewable and scoped.

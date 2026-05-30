@@ -15,7 +15,8 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
     "lint:all": "npm run lint:md && npm run lint",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
@@ -37,6 +38,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "markdownlint-cli2": "^0.22.1",
     "sass": "^1.94.0",
     "typescript": "~6.0.2",
