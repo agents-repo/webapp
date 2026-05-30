@@ -41,6 +41,30 @@ npm run typecheck
 npm run build
 ```
 
+## GitHub CLI
+
+This repository prefers GitHub communication through `gh` CLI for issue and
+pull request workflows.
+
+Verify availability and authentication:
+
+```bash
+gh --version
+gh auth status
+```
+
+If `gh auth status` reports no login, run `gh auth login`.
+
+Common commands used in this workflow:
+
+```bash
+# inspect issue scope
+gh issue view <number> --repo agents-repo/webapp
+
+# open a draft PR with template-aligned content
+gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>
+```
+
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)

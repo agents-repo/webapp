@@ -18,6 +18,22 @@ docs in the same pull request.
 3. Keep the branch focused on one change set.
 4. Identify the commands needed to validate the work.
 
+## GitHub Communication Method (Preferred)
+
+Contributors and agents SHOULD use `gh` CLI as the preferred method to
+communicate with GitHub for issues and pull requests.
+
+Recommended flow:
+
+1. Inspect and confirm issue scope:
+   `gh issue view <number> --repo agents-repo/webapp`
+2. Create a branch using the naming rules in this guide.
+3. Open a draft pull request with the required template sections:
+   `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
+
+For long issue/PR descriptions, use `--body-file` to avoid shell escaping and
+truncation issues.
+
 ## Branch Naming
 
 Use a descriptive lowercase branch name with a clear prefix, such as:

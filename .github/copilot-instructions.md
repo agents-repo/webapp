@@ -56,3 +56,26 @@ concrete about:
 - why it changed
 - how it was validated
 - any follow-up work that remains
+
+## GitHub Communication Method (gh CLI Preferred)
+
+For GitHub communication in this repository, agents and contributors SHOULD use
+`gh` CLI as the preferred interface for issue and pull request operations.
+
+Preferred command patterns:
+
+- view issue context: `gh issue view <number> --repo agents-repo/webapp`
+- update issue title/body:
+  `gh issue edit <number> --repo agents-repo/webapp --title "..." --body-file <file>`
+- create issue:
+  `gh issue create --repo agents-repo/webapp --title "..." --body-file <file>`
+- create draft PR:
+  `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
+- inspect PR status:
+  `gh pr view <number> --repo agents-repo/webapp --json state,url,title`
+
+For long issue or PR bodies, agents MUST prefer `--body-file` over inline
+quoted text to avoid shell escaping and truncation issues.
+
+If `gh` is unavailable in a task environment, agents MAY use the available
+tooling path, but MUST explicitly note that limitation in the handoff summary.
