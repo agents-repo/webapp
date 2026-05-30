@@ -28,8 +28,8 @@ function App() {
                     height="179"
                     alt=""
                   />
-                  <img src={reactLogo} className="framework" alt="React logo" />
-                  <img src={viteLogo} className="vite" alt="Vite logo" />
+                  <img src={reactLogo} className="framework" alt="" />
+                  <img src={viteLogo} className="vite" alt="" />
                 </div>
 
                 <h1 className="display-5 fw-bold mb-3">Bootstrap setup complete</h1>
