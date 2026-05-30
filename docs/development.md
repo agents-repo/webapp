@@ -37,5 +37,11 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 Use the pull request template in `.github/pull_request_template.md`.
 Keep changes scoped and document any UI or workflow impact clearly.
 
-Before opening a PR, create an issue from `.github/ISSUE_TEMPLATE/` and link it
-in the PR body.
+Before opening a PR:
+
+1. Create an issue from the matching form in `.github/ISSUE_TEMPLATE/`.
+2. Create a non-`main` branch from the latest `main`.
+3. In `## Related Issues`, include `Closes #<issue-number>` for issue-linked
+   work.
+4. If no tracking issue exists, include a short rationale in
+   `## Related Issues`.

@@ -14,9 +14,14 @@ docs in the same pull request.
 ## Before You Start
 
 1. Confirm the task scope and expected outcome.
-2. Open an issue using `.github/ISSUE_TEMPLATE/` before starting implementation.
+2. Open an issue using the matching form in `.github/ISSUE_TEMPLATE/` before
+   starting implementation.
 3. Create a non-`main` branch from the latest `main` and keep it focused on one change set.
 4. Identify the commands needed to validate the work.
+
+Issue form selection should match the task type (`bug-report`,
+`feature-request`, or `task`). If template application is not possible,
+manually include equivalent sections in the issue body.
 
 ## GitHub Communication Method (Preferred)
 
@@ -36,12 +41,17 @@ truncation issues.
 
 ## Branch Naming
 
-Use a descriptive lowercase branch name with a clear prefix, such as:
+Branch names should follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
+short lowercase kebab-case.
 
-- `feat/<short-description>`
-- `fix/<short-description>`
-- `docs/<short-description>`
-- `chore/<short-description>`
+| Issue type | Prefix | Example |
+| --- | --- | --- |
+| Bug report | `fix/` | `fix/42-related-issues-checklist` |
+| Feature request | `feat/` | `feat/57-pr-policy-clarity` |
+| Task or chore | `chore/` | `chore/31-sync-workflow-docs` |
+| Documentation-only work | `docs/` | `docs/88-update-pr-guidance` |
+
+Create the issue first to obtain the issue number, then open the branch.
 
 ## Commit Message Convention
 
