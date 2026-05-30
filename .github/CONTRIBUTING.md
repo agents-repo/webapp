@@ -32,7 +32,8 @@ Recommended flow:
 
 1. Inspect and confirm issue scope:
    `gh issue view <number> --repo agents-repo/webapp`
-2. Create and switch to a non-`main` branch from the latest `main` using the naming rules in this guide.
+2. Create and switch to a non-`main` branch from the latest `main` using the naming
+   rules in this guide.
 3. Open a draft pull request to `main` with the required template sections:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
 
@@ -44,7 +45,7 @@ truncation issues.
 Branch names should follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
 short lowercase kebab-case.
 
-| Issue type | Prefix | Example |
+| Work type | Prefix | Example |
 | --- | --- | --- |
 | Bug report | `fix/` | `fix/42-related-issues-checklist` |
 | Feature request | `feat/` | `feat/57-pr-policy-clarity` |
