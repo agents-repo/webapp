@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a new capability or UX improvement.
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or product problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the desired behavior or UX.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Include technical, design, or workflow constraints.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation plan
+      description: Which checks should pass for this feature (`env:check`, `lint:all`, `typecheck`, `build`)?

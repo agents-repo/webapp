@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a defect in the webapp.
+title: "fix: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the bug clearly.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: List the exact steps to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation context
+      description: Include affected environment, screenshots, or logs if relevant.
+  - type: textarea
+    id: related
+    attributes:
+      label: Related paths
+      description: List relevant webapp files or folders (for example `src/`, `docs/`, `.github/`).

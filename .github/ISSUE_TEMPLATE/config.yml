@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributor guide
+    url: https://github.com/agents-repo/webapp/blob/main/.github/CONTRIBUTING.md
+    about: Review the project workflow before opening an issue.
+  - name: Webapp usage question
+    url: https://github.com/agents-repo/webapp/discussions
+    about: Ask usage questions and open-ended discussions here.
+  - name: Security vulnerability report
+    url: https://github.com/agents-repo/webapp/security/advisories/new
+    about: Report security vulnerabilities privately.
