@@ -23,3 +23,8 @@ body:
     attributes:
       label: Constraints
       description: Include technical, design, or workflow constraints.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation plan
+      description: Which checks should pass for this feature (`env:check`, `lint:all`, `typecheck`, `build`)?

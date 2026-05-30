@@ -34,3 +34,6 @@ npm run build
 
 Use the pull request template in `.github/pull_request_template.md`.
 Keep changes scoped and document any UI or workflow impact clearly.
+
+Before opening a PR, create an issue from `.github/ISSUE_TEMPLATE/` and link it
+in the PR body.

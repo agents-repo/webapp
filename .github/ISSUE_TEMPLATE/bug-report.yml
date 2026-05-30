@@ -1,6 +1,6 @@
 name: Bug report
 description: Report a defect in the webapp.
-title: "bug: "
+title: "fix: "
 labels:
   - bug
 body:
@@ -29,3 +29,8 @@ body:
     attributes:
       label: Validation context
       description: Include affected environment, screenshots, or logs if relevant.
+  - type: textarea
+    id: related
+    attributes:
+      label: Related paths
+      description: List relevant webapp files or folders (for example `src/`, `docs/`, `.github/`).

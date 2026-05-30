@@ -4,6 +4,10 @@
 
 Describe the change and why it is needed.
 
+## Linked Issue
+
+Include the issue created from `.github/ISSUE_TEMPLATE/` (for example: `Closes #123`).
+
 ## Change Type
 
 - [ ] Initial structure
@@ -30,6 +34,7 @@ List affected paths or areas:
 - [ ] `npm run lint:all`
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
+- [ ] Matching issue template was used, or equivalent required context is included.
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
 

@@ -14,8 +14,9 @@ docs in the same pull request.
 ## Before You Start
 
 1. Confirm the task scope and expected outcome.
-2. Keep the branch focused on one change set.
-3. Identify the commands needed to validate the work.
+2. Open an issue using `.github/ISSUE_TEMPLATE/` before starting implementation.
+3. Keep the branch focused on one change set.
+4. Identify the commands needed to validate the work.
 
 ## Branch Naming
 
@@ -49,8 +50,10 @@ npm run build
 
 1. Keep PRs reviewable and scoped.
 2. Use `.github/pull_request_template.md`.
-3. List the validation commands you ran.
-4. Call out any documentation or workflow impact.
+3. Link the matching issue in the PR body.
+4. List the validation commands you ran.
+5. Call out any documentation or workflow impact.
+6. If the PR template cannot be applied, include the same required sections manually.
 
 ## AI Collaboration
 

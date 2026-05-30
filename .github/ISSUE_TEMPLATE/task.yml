@@ -1,8 +1,8 @@
-name: Task
+name: Task or chore
 description: Track a scoped engineering or documentation task.
-title: "task: "
+title: "chore: "
 labels:
-  - task
+  - chore
 body:
   - type: textarea
     id: goal
