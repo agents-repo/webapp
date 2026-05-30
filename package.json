@@ -1,12 +1,20 @@
 {
-  "name": "agents-repo-weapp",
+  "name": "agents-repo-webapp",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "24.15.0"
+  },
+  "packageManager": "npm@11.12.1",
   "scripts": {
     "dev": "vite",
+    "env:check": "node scripts/validate-env.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
+    "lint:all": "npm run lint:md && npm run lint",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -29,6 +37,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "markdownlint-cli2": "^0.22.1",
     "sass": "^1.94.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",

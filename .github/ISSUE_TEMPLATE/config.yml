@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributor guide
+    url: https://github.com/agents-repo/webapp/blob/main/.github/CONTRIBUTING.md
+    about: Review the project workflow before opening an issue.

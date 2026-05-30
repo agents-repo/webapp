@@ -34,8 +34,7 @@ function App() {
 
                 <h1 className="display-5 fw-bold mb-3">Bootstrap setup complete</h1>
                 <p className="lead mb-4">
-                  Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-                  .
+                  Edit <code>src/App.tsx</code> and save to test <code>HMR</code>.
                 </p>
 
                 <Button
