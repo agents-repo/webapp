@@ -27,7 +27,7 @@ Recommended flow:
 
 1. Inspect and confirm issue scope:
    `gh issue view <number> --repo agents-repo/webapp`
-2. Create and switch to a feature branch from `main`.
+2. Create and switch to a non-`main` branch from the latest `main` using the naming rules in this guide.
 3. Open a draft pull request to `main` with the required template sections:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
 
