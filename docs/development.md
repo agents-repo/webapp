@@ -39,7 +39,7 @@ Keep changes scoped and document any UI or workflow impact clearly.
 
 Before opening a PR:
 
-1. Create an issue from the matching form in `.github/ISSUE_TEMPLATE/`.
+1. For issue-linked work, create an issue from the matching form in `.github/ISSUE_TEMPLATE/`.
 2. Create a non-`main` branch from the latest `main`.
 3. In `## Related Issues`, include `Closes #<issue-number>` for issue-linked
    work.

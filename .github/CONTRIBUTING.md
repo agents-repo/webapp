@@ -14,8 +14,8 @@ docs in the same pull request.
 ## Before You Start
 
 1. Confirm the task scope and expected outcome.
-2. Open an issue using the matching form in `.github/ISSUE_TEMPLATE/` before
-   starting implementation.
+2. For issue-linked work, open an issue using the matching form in
+   `.github/ISSUE_TEMPLATE/` before starting implementation.
 3. Create a non-`main` branch from the latest `main` and keep it focused on one change set.
 4. Identify the commands needed to validate the work.
 
@@ -32,7 +32,8 @@ Recommended flow:
 
 1. Inspect and confirm issue scope:
    `gh issue view <number> --repo agents-repo/webapp`
-2. Create and switch to a non-`main` branch from the latest `main` using the naming
+2. Create and switch to a non-`main` branch from the latest `main` using the
+   naming rules in this guide.
    rules in this guide.
 3. Open a draft pull request to `main` with the required template sections:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
