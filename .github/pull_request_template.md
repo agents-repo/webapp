@@ -4,9 +4,10 @@
 
 Describe the change and why it is needed.
 
-## Linked Issue
+## Related Issues
 
-Include the issue created from `.github/ISSUE_TEMPLATE/` (for example: `Closes #123`).
+If this PR is linked to a tracking issue, include `Closes #<issue-number>`.
+If this PR is not tied to a tracking issue, provide a short rationale.
 
 ## Change Type
 
@@ -35,6 +36,7 @@ List affected paths or areas:
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
 - [ ] Matching issue template was used, or equivalent required context is included.
+- [ ] `Related Issues` includes `Closes #<issue-number>`, or explains why no tracking issue exists.
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
 
