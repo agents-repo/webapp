@@ -4,8 +4,9 @@
 
 The webapp is a Vite + React + TypeScript frontend. It uses Bootstrap and
 React Bootstrap for UI primitives, React Router for page navigation, Sass for
-authored styles, ESLint for code linting, and markdownlint for documentation
-checks.
+authored styles, ESLint (including SonarJS rules, selected security checks,
+and type-aware TypeScript analysis) for code linting, and markdownlint for
+documentation checks.
 
 ## Styling Policy
 
