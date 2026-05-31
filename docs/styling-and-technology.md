@@ -41,6 +41,6 @@ change.
 
 ## Related Docs
 
-- [Development workflow](../development.md)
-- [AI collaboration guidance](../ai-collaboration.md)
+- [Development workflow](development.md)
+- [AI collaboration guidance](ai-collaboration.md)
 - [Architecture and DDD decision](architecture/ddd-decision.md)
