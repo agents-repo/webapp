@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import {
@@ -41,6 +44,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       <Form role="search" aria-label="Search packages" className="w-100">
         <InputGroup size="sm" className="search-control">
           <InputGroup.Text className="bg-primary border-primary text-white">
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
             Search
           </InputGroup.Text>
           <Form.Control
@@ -129,19 +133,23 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                             <Dropdown.Toggle
                               as="button"
                               id={`owner-actions-${pkg.id}`}
-                              className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline"
+                              className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline d-inline-flex align-items-center"
                             >
                               {pkg.owner}
+                              <FontAwesomeIcon icon={faChevronDown} size="xs" className="ms-1" aria-hidden="true" />
                             </Dropdown.Toggle>
                             <Dropdown.Menu variant="dark">
                               <Dropdown.Item
                                 href={`https://github.com/${pkg.owner}`}
                                 target="_blank"
                                 rel="noreferrer"
+                                aria-label={`View GitHub profile for ${pkg.owner} (opens in a new tab)`}
                               >
+                                <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
                                 View GitHub profile
                               </Dropdown.Item>
                               <Dropdown.Item onClick={() => setQuery(`@${pkg.owner}`)}>
+                                <FontAwesomeIcon icon={faFilter} className="me-2" aria-hidden="true" />
                                 Filter packages by this owner
                               </Dropdown.Item>
                             </Dropdown.Menu>
@@ -149,6 +157,11 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                         </Card.Subtitle>
                       </div>
                       <Badge bg={pkg.status === 'active' ? 'success' : 'secondary'}>
+                        <FontAwesomeIcon
+                          icon={pkg.status === 'active' ? faCircleCheck : faClock}
+                          className="me-1"
+                          aria-hidden="true"
+                        />
                         {pkg.status}
                       </Badge>
                     </Stack>
@@ -182,6 +195,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           {filteredPackages.length === 0 ? (
             <Card bg="dark" text="light" className="mt-4 border-secondary-subtle">
               <Card.Body className="text-center py-4">
+                <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
                 No packages match your current search.
               </Card.Body>
             </Card>

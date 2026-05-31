@@ -4,6 +4,7 @@ import {
   faEnvelope,
   faHandsHelping,
   faHeart,
+  faHouse,
   faScaleBalanced,
 } from '@fortawesome/free-solid-svg-icons'
 import { Col, Container, Row } from 'react-bootstrap'
@@ -18,8 +19,14 @@ function Footer() {
           <Col sm={6} lg={3}>
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Product</h2>
             <div className="d-flex flex-column gap-2">
-              <NavLink to={siteRoutes.home} className="footer-link">Home</NavLink>
-              <NavLink to={siteRoutes.about} className="footer-link">About</NavLink>
+              <NavLink to={siteRoutes.home} className="footer-link">
+                <FontAwesomeIcon icon={faHouse} className="me-2" aria-hidden="true" />
+                Home
+              </NavLink>
+              <NavLink to={siteRoutes.about} className="footer-link">
+                <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
+                About
+              </NavLink>
             </div>
           </Col>
 
