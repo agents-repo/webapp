@@ -56,3 +56,15 @@ $dropdown-dark-link-active-color: $body-color-dark;
 $dropdown-dark-link-active-bg: rgba($primary, 0.28);
 
 @import 'bootstrap/scss/bootstrap';
+
+// Bootstrap 5.3 does not auto-generate dark mode overrides for component-level
+// CSS variables (e.g. --bs-card-bg) when $card-bg is a static Sass value.
+// These rules apply our custom dark tokens explicitly.
+[data-bs-theme="dark"] {
+  .card {
+    --bs-card-bg: #{$card-bg-dark};
+    --bs-card-color: #{$card-color-dark};
+    --bs-card-border-color: #{$border-color-dark};
+    --bs-card-cap-bg: rgba(255, 255, 255, 0.04);
+  }
+}

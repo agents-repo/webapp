@@ -115,15 +115,18 @@
 }
 
 .theme-mode-dropdown .dropdown-toggle {
-  padding: 0;
+  padding: 0.25rem;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.88);
+  transition: color 0.16s ease;
+}
+
+.theme-mode-dropdown .dropdown-toggle:hover,
+.theme-mode-dropdown .dropdown-toggle:focus-visible {
+  color: #fff;
+  text-decoration: none;
 }
 
 .theme-mode-dropdown .dropdown-item.active {
   font-weight: 600;
-}
-
-.app-theme-toggle {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 999px;
 }
