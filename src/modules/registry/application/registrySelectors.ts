@@ -1,7 +1,15 @@
 import type { RegistryCatalog, RegistryPackage } from '../domain/package'
 
 const createSearchIndex = (pkg: RegistryPackage): string => {
-  return [pkg.name, pkg.description, pkg.tags.join(' ')].join(' ').toLowerCase()
+  return [
+    pkg.name,
+    pkg.description,
+    pkg.owner,
+    `@${pkg.owner}`,
+    pkg.tags.join(' '),
+  ]
+    .join(' ')
+    .toLowerCase()
 }
 
 export const filterRegistryPackages = (
@@ -9,14 +17,23 @@ export const filterRegistryPackages = (
   query: string,
 ): RegistryPackage[] => {
   const normalizedQuery = query.trim().toLowerCase()
+  const normalizedOwnerQuery = normalizedQuery.startsWith('@')
+    ? normalizedQuery.slice(1)
+    : normalizedQuery
 
   if (!normalizedQuery) {
     return catalog.packages
   }
 
-  return catalog.packages.filter((pkg) =>
-    createSearchIndex(pkg).includes(normalizedQuery),
-  )
+  return catalog.packages.filter((pkg) => {
+    const searchIndex = createSearchIndex(pkg)
+
+    if (searchIndex.includes(normalizedQuery)) {
+      return true
+    }
+
+    return normalizedOwnerQuery !== normalizedQuery && searchIndex.includes(normalizedOwnerQuery)
+  })
 }
 
 export const formatCatalogUpdatedAt = (value: string): string => {

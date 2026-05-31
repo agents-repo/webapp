@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Badge, Card, Col, Container, Form, InputGroup, Row, Stack } from 'react-bootstrap'
+import { Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import {
   filterRegistryPackages,
@@ -47,7 +47,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             size="sm"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by package, description, or tag"
+            placeholder="Search by package, owner (@slug), description, or tag"
             aria-label="Search registry packages"
             className="bg-dark text-light border-secondary search-input"
           />
@@ -119,9 +119,35 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                 >
                   <Card.Header className="p-3 p-lg-4">
                     <Stack direction="horizontal" className="justify-content-between align-items-start">
-                      <Card.Title as="h3" className="h6 fw-semibold mb-0 me-2 lh-sm">
-                        {pkg.name}
-                      </Card.Title>
+                      <div className="me-2">
+                        <Card.Title as="h3" className="h6 fw-semibold mb-0 lh-sm">
+                          {pkg.name}
+                        </Card.Title>
+                        <Card.Subtitle as="p" className="small text-body-secondary mb-0 mt-1">
+                          by{' '}
+                          <Dropdown as="span" align="end">
+                            <Dropdown.Toggle
+                              as="button"
+                              id={`owner-actions-${pkg.id}`}
+                              className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline"
+                            >
+                              {pkg.owner}
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu variant="dark">
+                              <Dropdown.Item
+                                href={`https://github.com/${pkg.owner}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                View GitHub profile
+                              </Dropdown.Item>
+                              <Dropdown.Item onClick={() => setQuery(`@${pkg.owner}`)}>
+                                Filter packages by this owner
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </Card.Subtitle>
+                      </div>
                       <Badge bg={pkg.status === 'active' ? 'success' : 'secondary'}>
                         {pkg.status}
                       </Badge>

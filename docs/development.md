@@ -39,11 +39,15 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - `src/styles/bootstrap-theme.scss` is the canonical Bootstrap customization entrypoint.
 - `src/index.scss` and `src/App.scss` hold the base app styles.
 - Do not add new `.css` entrypoints for application styling.
+- Prefer global, reusable Bootstrap Sass variables and theme tokens before
+   introducing custom classes.
+- Use custom classes only when the requirement cannot be represented with
+   Bootstrap variables, shared utilities, or component-level props.
 
 ## Current UI State
 
 - The landing page currently renders registry package cards from local mock data in
-   `src/data/registryMock.ts`.
+   `src/modules/registry/infrastructure/mockRegistryRepository.ts`.
 - Search is client-side only and transitions from hero to sticky header on scroll.
 - API fetching is intentionally deferred until a follow-up integration task.
 - The styling and architecture decisions are documented in `docs/styling-and-technology.md`

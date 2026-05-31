@@ -15,6 +15,13 @@ documentation checks.
 - `src/styles/bootstrap-theme.scss` is the canonical Bootstrap customization entrypoint.
 - `src/index.scss` owns base document-level styles.
 - `src/App.scss` owns app-shell and shared page chrome styles.
+- Prefer global, reusable Bootstrap Sass variables and theme tokens before
+  creating custom classes.
+- Use custom classes only when the requirement cannot be expressed through
+  Bootstrap variables, shared utilities, or component props.
+- When a Bootstrap token exists, define it in
+  `src/styles/bootstrap-theme.scss` instead of adding one-off style overrides
+  in page or shell styles.
 
 ## Current State
 

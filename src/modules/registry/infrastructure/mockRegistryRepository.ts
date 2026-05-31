@@ -1,14 +1,15 @@
 import type { RegistryCatalog } from '../domain/package'
 
 const mockRegistryCatalog: RegistryCatalog = {
-  schemaVersion: '1.0.0',
-  updatedAt: '2026-05-26T17:05:22.666Z',
+  schemaVersion: '1.1.0',
+  updatedAt: '2026-05-31T12:44:33.845Z',
   packages: [
     {
       id: 'agents-repo-package-creation',
       name: 'agents-repo-package-creation',
       description:
         'Agents and flow for creating, reviewing, and validating new registry packages for agents-repo from requirements to submission-ready source.',
+      owner: 'agents-repo',
       latest: '1.0.0',
       tags: [
         'agents-repo-package-creation',
@@ -28,6 +29,7 @@ const mockRegistryCatalog: RegistryCatalog = {
       id: 'hello-agent',
       name: 'hello-agent',
       description: 'Hello Agent package scaffolded by package-create',
+      owner: 'agents-repo',
       latest: '1.0.0',
       tags: ['agent', 'hello'],
       status: 'active',

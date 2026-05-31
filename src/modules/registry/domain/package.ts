@@ -5,6 +5,7 @@ export interface RegistryPackage {
   id: string
   name: string
   description: string
+  owner: string
   latest: string
   tags: string[]
   status: PackageStatus
