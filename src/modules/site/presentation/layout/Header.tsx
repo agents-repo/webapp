@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleInfo, faEnvelope, faHandsHelping, faHouse } from '@fortawesome/free-solid-svg-icons'
-import { Badge, Container, Nav, Navbar } from 'react-bootstrap'
+import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import { siteRoutes } from '../routes/siteRoutes'
@@ -50,9 +50,6 @@ function Header({ searchSlot }: HeaderProps) {
               <FontAwesomeIcon icon={faHandsHelping} className="me-1" aria-hidden="true" />
               Help Us
             </Nav.Link>
-            <Badge bg="primary" pill className="text-uppercase fw-semibold ms-md-1 mt-1 mt-md-0">
-              Registry
-            </Badge>
           </Nav>
         </Navbar.Collapse>
       </Container>
