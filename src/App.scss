@@ -11,6 +11,14 @@
   background-color: rgba(19, 15, 27, 0.88) !important;
 }
 
+.app-navbar-main {
+  align-items: center;
+}
+
+.app-navbar-collapse {
+  flex-basis: 100%;
+}
+
 .app-nav-link {
   font-size: 0.95rem;
   opacity: 0.88;
@@ -27,7 +35,11 @@
 }
 
 .app-navbar-search {
-  max-width: 34rem;
+  width: min(100%, 34rem);
+}
+
+.app-navbar-search-wrapper {
+  min-width: 0;
 }
 
 .hero-search {
@@ -89,4 +101,15 @@
 
 .footer-note {
   max-width: 28ch;
+}
+
+@media (min-width: 768px) {
+  .app-navbar-collapse {
+    flex-basis: auto;
+    flex-grow: 0;
+  }
+
+  .app-navbar-search {
+    width: min(100%, 30rem);
+  }
 }
