@@ -139,7 +139,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                             <Dropdown.Toggle
                               as="button"
                               id={`owner-actions-${pkg.id}`}
-                              className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline d-inline-flex align-items-center"
+                              className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline d-inline-flex align-items-center owner-dropdown-toggle"
                             >
                               {pkg.owner}
                               <FontAwesomeIcon icon={faChevronDown} size="xs" className="ms-1" aria-hidden="true" />
