@@ -117,23 +117,22 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   text="light"
                   className="h-100 border-secondary-subtle shadow-sm package-card"
                 >
-                  <Card.Body className="d-flex flex-column gap-2 p-3 p-lg-4">
-                    <div>
-                      <Stack
-                        direction="horizontal"
-                        className="justify-content-between align-items-start mb-2"
-                      >
-                        <h3 className="h6 fw-semibold mb-0 me-2 lh-sm">{pkg.name}</h3>
-                        <Badge bg={pkg.status === 'active' ? 'success' : 'secondary'}>
-                          {pkg.status}
-                        </Badge>
-                      </Stack>
-                      <p className="small text-body-secondary mb-0 package-description">
-                        {pkg.description}
-                      </p>
-                    </div>
+                  <Card.Header className="p-3 p-lg-4">
+                    <Stack direction="horizontal" className="justify-content-between align-items-start">
+                      <Card.Title as="h3" className="h6 fw-semibold mb-0 me-2 lh-sm">
+                        {pkg.name}
+                      </Card.Title>
+                      <Badge bg={pkg.status === 'active' ? 'success' : 'secondary'}>
+                        {pkg.status}
+                      </Badge>
+                    </Stack>
+                  </Card.Header>
 
-                    <Stack direction="horizontal" gap={2} className="flex-wrap pt-1">
+                  <Card.Body className="d-flex flex-column gap-3 p-3 p-lg-4">
+                    <Card.Text as="p" className="small text-body-secondary mb-0 package-description">
+                      {pkg.description}
+                    </Card.Text>
+                    <Stack direction="horizontal" gap={2} className="flex-wrap">
                       <Badge bg="primary">v{pkg.latest}</Badge>
                       <Badge bg="secondary">{pkg.category}</Badge>
                       <Badge bg="info" text="dark">
@@ -141,7 +140,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                       </Badge>
                     </Stack>
 
-                    <div className="d-flex gap-2 flex-wrap mt-auto">
+                    <div className="d-flex gap-2 flex-wrap">
                       {pkg.tags.map((tag) => (
                         <Badge key={tag} bg="light" text="dark" pill className="fw-normal">
                           #{tag}
