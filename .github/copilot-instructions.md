@@ -11,16 +11,45 @@ without relying on undocumented tribal knowledge.
 
 ## Primary References
 
-Before introducing a new convention, check these files first:
+Before making any change, agents MUST consult the relevant source-of-truth
+docs/specs first.
+
+Mandatory for all changes:
 
 - `README.md`
 - `docs/development.md`
-- `docs/ai-collaboration.md`
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
-If a change alters local setup, contributor workflow, review expectations, or
-validation commands, update the affected docs in the same change.
+Mandatory before structural, architectural, styling, or technology stack
+changes:
+
+- `docs/ai-collaboration.md`
+- `docs/styling-and-technology.md`
+- `docs/architecture/ddd-decision.md`
+
+If a change alters local setup, contributor workflow, review expectations,
+validation commands, architecture, project structure, styling model, or
+technology/tooling choices, update the affected docs/specs in the same change.
+
+If code and docs/specs disagree, resolve the mismatch in the same change by
+updating docs/specs or aligning implementation.
+
+## Architectural and Tech Stack Decisions
+
+Do NOT change module boundaries, project structure, styling approach, or the
+technology stack without updating the corresponding decision docs in the same
+pull request.
+
+For this repository, this includes:
+
+- `docs/architecture/ddd-decision.md` for module boundaries and architecture
+  rules
+- `docs/styling-and-technology.md` for styling model and stack/tooling choices
+
+If no existing decision record is sufficient, create or update the nearest
+relevant document under `docs/` in the same change before considering the work
+complete.
 
 ## Code and UI Expectations
 
@@ -48,9 +77,12 @@ If a command cannot be run, explicitly say why in the handoff.
 
 ## Documentation Standard
 
-Any user-facing behavior, contributor workflow, or AI workflow change should be
-documented. At minimum, update the nearest relevant document instead of leaving
-new expectations only in code or CI.
+Any user-facing behavior, contributor workflow, architectural decision,
+technology stack decision, or AI workflow change MUST be documented.
+
+At minimum, update the nearest relevant docs/specs instead of leaving new
+expectations only in code or CI. Undocumented decision-impacting work is
+incomplete.
 
 ## Pull Requests
 
