@@ -125,7 +125,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                 <Card
                   bg="dark"
                   text="light"
-                  className="h-100 border-secondary-subtle shadow-sm package-card"
+                  className="h-100 border-secondary-subtle package-card"
                 >
                   <Card.Header className="p-3 p-lg-4">
                     <Stack direction="horizontal" className="justify-content-between align-items-start">
@@ -133,9 +133,9 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                         <Card.Title as="h3" className="h6 fw-semibold mb-0 lh-sm">
                           {pkg.name}
                         </Card.Title>
-                        <Card.Subtitle as="p" className="small text-body-secondary mb-0 mt-1">
+                        <Card.Subtitle as="div" className="small text-body-secondary mb-0 mt-1">
                           by{' '}
-                          <Dropdown as="span" align="end">
+                          <Dropdown as="div" align="end" className="d-inline-block">
                             <Dropdown.Toggle
                               as="button"
                               id={`owner-actions-${pkg.id}`}
