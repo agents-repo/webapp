@@ -1,37 +1,6 @@
-export type CostBand = 'low' | 'moderate' | 'high'
+import type { RegistryCatalog } from '../domain/package'
 
-export interface RegistryPackage {
-  id: string
-  name: string
-  description: string
-  latest: string
-  tags: string[]
-  status: 'active' | 'inactive'
-  category: string
-  estimateOverallCost: {
-    estimatedCost: number
-    band: CostBand
-  }
-  quickstart?: string
-}
-
-interface RegistryCatalogSource {
-  schemaVersion: string
-  updatedAt: string
-  packages: RegistryPackage[]
-}
-
-export interface RegistryPackageView extends RegistryPackage {
-  searchIndex: string
-}
-
-export interface RegistryCatalogView {
-  schemaVersion: string
-  updatedAt: string
-  packages: RegistryPackageView[]
-}
-
-const source: RegistryCatalogSource = {
+const mockRegistryCatalog: RegistryCatalog = {
   schemaVersion: '1.0.0',
   updatedAt: '2026-05-26T17:05:22.666Z',
   packages: [
@@ -73,15 +42,4 @@ const source: RegistryCatalogSource = {
   ],
 }
 
-const toSearchIndex = (pkg: RegistryPackage): string => {
-  return [pkg.name, pkg.description, pkg.tags.join(' ')].join(' ').toLowerCase()
-}
-
-export const registryCatalog: RegistryCatalogView = {
-  schemaVersion: source.schemaVersion,
-  updatedAt: source.updatedAt,
-  packages: source.packages.map((pkg) => ({
-    ...pkg,
-    searchIndex: toSearchIndex(pkg),
-  })),
-}
+export const getMockRegistryCatalog = (): RegistryCatalog => mockRegistryCatalog

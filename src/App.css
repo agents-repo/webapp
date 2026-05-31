@@ -11,6 +11,23 @@
   background-color: rgba(19, 15, 27, 0.88) !important;
 }
 
+.app-nav-link {
+  color: var(--bs-body-color) !important;
+  font-size: 0.95rem;
+  opacity: 0.88;
+  transition: color 0.16s ease, opacity 0.16s ease;
+}
+
+.app-nav-link:hover {
+  opacity: 1;
+}
+
+.app-nav-link.active {
+  color: var(--bs-primary) !important;
+  opacity: 1;
+  font-weight: 600;
+}
+
 .app-navbar-search {
   max-width: 34rem;
 }
@@ -43,5 +60,35 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden;
+}
+
+.site-footer {
+  background-color: rgba(17, 13, 26, 0.82);
+}
+
+.footer-column-title {
+  letter-spacing: 0.04em;
+}
+
+.footer-link {
+  color: var(--bs-body-color);
+  text-decoration: none;
+  line-height: 1.4;
+  width: fit-content;
+  transition: color 0.16s ease;
+}
+
+.footer-link:hover,
+.footer-link.active {
+  color: var(--bs-primary);
+}
+
+.footer-link.active {
+  font-weight: 600;
+}
+
+.footer-note {
+  max-width: 28ch;
 }
