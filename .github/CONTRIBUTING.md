@@ -87,6 +87,10 @@ npm run build
 
 This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
 
+Note: `LICENSE` is intentionally excluded from workspace markdownlint checks.
+The file is kept as canonical plain-text license content for compatibility with
+GitHub license detection and compliance tooling.
+
 ## Pull Requests
 
 1. Keep PRs reviewable and scoped.
