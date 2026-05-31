@@ -72,7 +72,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           <Row className="justify-content-center">
             <Col xl={8} className="text-center">
               <Stack gap={3} className="align-items-center">
-                <img src={brandLogo} width="72" height="72" alt="agents-repo brand symbol" />
+                <img src={brandLogo} width="72" height="72" alt="Agents Repo brand symbol" />
                 <Badge bg="primary" pill>
                   Curated package registry
                 </Badge>

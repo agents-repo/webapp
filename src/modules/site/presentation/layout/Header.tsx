@@ -18,8 +18,8 @@ function Header({ searchSlot }: HeaderProps) {
     >
       <Container className="gap-2">
         <Navbar.Brand as={NavLink} to={siteRoutes.home} className="d-flex align-items-center gap-2 fw-semibold">
-          <img src={brandLogo} width="30" height="30" alt="agents-repo logo" />
-          <span>agents-repo</span>
+          <img src={brandLogo} width="30" height="30" alt="Agents Repo logo" />
+          <span>Agents Repo</span>
         </Navbar.Brand>
 
         <Nav className="ms-auto align-items-center gap-2 flex-wrap" navbar>
