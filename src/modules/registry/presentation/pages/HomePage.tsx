@@ -21,6 +21,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
   const catalog = getMockRegistryCatalog()
+  const trimmedQuery = query.trim()
 
   useEffect(() => {
     const updateStickyState = (): void => {
@@ -41,7 +42,12 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
   const searchControl = useMemo(
     () => (
-      <Form role="search" aria-label="Search packages" className="w-100">
+      <Form
+        role="search"
+        aria-label="Search packages"
+        className="w-100"
+        onSubmit={(event) => event.preventDefault()}
+      >
         <InputGroup size="sm" className="search-control">
           <InputGroup.Text className="bg-primary border-primary text-white">
             <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
@@ -102,7 +108,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           <Row className="align-items-end mb-3 g-2">
             <Col lg={8}>
               <h2 className="h3 mb-1 d-flex align-items-center gap-2 flex-wrap">
-                Recently updated packages
+                {trimmedQuery ? `Search results for "${trimmedQuery}"` : 'Recently updated packages'}
                 <Badge bg="secondary" pill className="fw-normal">
                   schema v{catalog.schemaVersion}
                 </Badge>
