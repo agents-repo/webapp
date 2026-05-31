@@ -1,0 +1,47 @@
+import type { RegistryCatalog } from '../domain/package'
+
+const mockRegistryCatalog: RegistryCatalog = {
+  schemaVersion: '1.1.0',
+  updatedAt: '2026-05-31T12:44:33.845Z',
+  packages: [
+    {
+      id: 'agents-repo-package-creation',
+      name: 'agents-repo-package-creation',
+      description:
+        'Agents and flow for creating, reviewing, and validating new registry packages for agents-repo from requirements to submission-ready source.',
+      owner: 'agents-repo',
+      latest: '1.0.0',
+      tags: [
+        'agents-repo-package-creation',
+        'authoring',
+        'validation',
+        'review',
+        'registry',
+      ],
+      status: 'active',
+      category: 'assistant',
+      estimateOverallCost: {
+        estimatedCost: 6,
+        band: 'moderate',
+      },
+    },
+    {
+      id: 'hello-agent',
+      name: 'hello-agent',
+      description: 'Hello Agent package scaffolded by package-create',
+      owner: 'agents-repo',
+      latest: '1.0.0',
+      tags: ['agent', 'hello'],
+      status: 'active',
+      category: 'assistant',
+      estimateOverallCost: {
+        estimatedCost: 1,
+        band: 'low',
+      },
+      quickstart:
+        'https://github.com/agents-repo/registry/blob/main/packages/hello-agent/README.md',
+    },
+  ],
+}
+
+export const getMockRegistryCatalog = (): RegistryCatalog => mockRegistryCatalog

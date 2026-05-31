@@ -29,8 +29,35 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - `src/` contains the React application
 - `public/` contains static assets served directly by Vite
 - `docs/` contains contributor-facing documentation
+- `docs/architecture/` contains architecture decision records, including the DDD boundary note
 - `.github/` contains AI guidance, issue templates, and workflows
 - `.vscode/` contains recommended workspace defaults
+
+## Styling
+
+- App styling is authored in SCSS only.
+- `src/styles/bootstrap-theme.scss` is the canonical Bootstrap customization entrypoint.
+- `src/index.scss` and `src/App.scss` hold the base app styles.
+- Do not add new `.css` entrypoints for application styling.
+- Prefer global, reusable Bootstrap Sass variables and theme tokens before
+   introducing custom classes.
+- Use custom classes only when the requirement cannot be represented with
+   Bootstrap variables, shared utilities, or component-level props.
+
+## Current UI State
+
+- The landing page currently renders registry package cards from local mock data in
+   `src/modules/registry/infrastructure/mockRegistryRepository.ts`.
+- Search is client-side only. On `lg+`, it transitions from hero to sticky header
+   on scroll; below `lg`, hero search stays visible because sticky header search
+   is hidden.
+- The shared header uses a mobile-first navbar: below `lg` navigation is
+   collapsed behind a hamburger toggle.
+- Sticky header search is hidden below `lg`; from `lg` upward it appears in
+   the middle region while brand stays left and page links stay right.
+- API fetching is intentionally deferred until a follow-up integration task.
+- The styling and architecture decisions are documented in `docs/styling-and-technology.md`
+   and `docs/architecture/ddd-decision.md`.
 
 ## Pull Requests
 

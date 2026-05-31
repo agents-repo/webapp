@@ -14,7 +14,7 @@ AI-first contributor workflow.
 - React 19
 - TypeScript
 - Vite
-- Bootstrap and React Bootstrap
+- Bootstrap, SCSS, React Bootstrap, and Font Awesome React
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 
@@ -79,6 +79,8 @@ Documentation-only work uses the task/chore issue category and a
 
 - Development workflow: [docs/development.md](docs/development.md)
 - AI collaboration guidance: [docs/ai-collaboration.md](docs/ai-collaboration.md)
+- Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
+- Architecture and DDD decision: [docs/architecture/ddd-decision.md](docs/architecture/ddd-decision.md)
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - Copilot project instructions:
   [.github/copilot-instructions.md](.github/copilot-instructions.md)

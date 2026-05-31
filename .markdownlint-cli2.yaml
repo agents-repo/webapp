@@ -14,3 +14,4 @@ globs:
 ignores:
   - "node_modules/**"
   - "dist/**"
+  - "LICENSE"
