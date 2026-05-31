@@ -4,18 +4,17 @@
 
 Describe the change and why it is needed.
 
-## Linked Issue
+## Related Issues
 
-Include the issue created from `.github/ISSUE_TEMPLATE/` (for example: `Closes #123`).
+Include `Closes #<issue-number>` for the issue this PR closes.
+Every PR targeting `main` must close a tracking issue.
 
 ## Change Type
 
-- [ ] Initial structure
-- [ ] Feature
-- [ ] Bug fix
-- [ ] Documentation
-- [ ] Tooling or workflow
-- [ ] Maintenance
+- [ ] Spec change
+- [ ] Feature proposal
+- [ ] Bug or inconsistency
+- [ ] Task or chore
 
 ## Scope
 
@@ -35,6 +34,7 @@ List affected paths or areas:
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
 - [ ] Matching issue template was used, or equivalent required context is included.
+- [ ] `Related Issues` includes `Closes #<issue-number>` for the issue this PR closes.
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
 

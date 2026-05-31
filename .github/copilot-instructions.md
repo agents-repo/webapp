@@ -57,6 +57,31 @@ concrete about:
 - how it was validated
 - any follow-up work that remains
 
+`## Related Issues` MUST include `Closes #<issue-number>`.
+Every PR targeting `main` MUST close a tracking issue.
+
+When opening tracking issues, agents MUST use the matching category form in
+`.github/ISSUE_TEMPLATE/`:
+
+- bug or inconsistency: `.github/ISSUE_TEMPLATE/bug-inconsistency.yml`
+- spec change: `.github/ISSUE_TEMPLATE/spec-change.yml`
+- feature proposal: `.github/ISSUE_TEMPLATE/feature-proposal.yml`
+- task or chore: `.github/ISSUE_TEMPLATE/task-chore.yml`
+
+Documentation-only work uses the task/chore issue category and the `docs/`
+branch prefix.
+
+Branch names MUST follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
+short lowercase kebab-case.
+
+Use the prefix that matches the work category:
+
+- bug or inconsistency: `fix/`
+- spec change: `spec/`
+- feature proposal: `feat/`
+- task or chore: `chore/`
+- documentation-only work: `docs/`
+
 ## GitHub Communication Method (gh CLI Preferred)
 
 For GitHub communication in this repository, agents and contributors SHOULD use

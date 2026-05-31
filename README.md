@@ -65,6 +65,16 @@ gh issue view <number> --repo agents-repo/webapp
 gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>
 ```
 
+Issue categories in this repository are:
+
+- bug or inconsistency
+- spec change
+- feature proposal
+- task or chore
+
+Documentation-only work uses the task/chore issue category and a
+`docs/<issue-number>-<slug>` branch name.
+
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)

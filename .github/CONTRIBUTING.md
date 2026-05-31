@@ -14,9 +14,25 @@ docs in the same pull request.
 ## Before You Start
 
 1. Confirm the task scope and expected outcome.
-2. Open an issue using `.github/ISSUE_TEMPLATE/` before starting implementation.
-3. Keep the branch focused on one change set.
+2. Open an issue using the matching form in
+   `.github/ISSUE_TEMPLATE/` before starting implementation.
+3. Create a non-`main` branch from the latest `main` and keep it focused on one change set.
 4. Identify the commands needed to validate the work.
+
+Issue form selection MUST match one of these categories:
+
+| Category | Issue form |
+| --- | --- |
+| Bug or inconsistency | `.github/ISSUE_TEMPLATE/bug-inconsistency.yml` |
+| Spec change | `.github/ISSUE_TEMPLATE/spec-change.yml` |
+| Feature proposal | `.github/ISSUE_TEMPLATE/feature-proposal.yml` |
+| Task or chore | `.github/ISSUE_TEMPLATE/task-chore.yml` |
+
+Documentation-only work uses the task/chore issue category and the `docs/`
+branch prefix.
+
+If template application is not possible, manually include equivalent sections
+in the issue body.
 
 ## GitHub Communication Method (Preferred)
 
@@ -27,8 +43,9 @@ Recommended flow:
 
 1. Inspect and confirm issue scope:
    `gh issue view <number> --repo agents-repo/webapp`
-2. Create a branch using the naming rules in this guide.
-3. Open a draft pull request with the required template sections:
+2. Create and switch to a non-`main` branch from the latest `main` using the
+   naming rules in this guide.
+3. Open a draft pull request to `main` with the required template sections:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
 
 For long issue/PR descriptions, use `--body-file` to avoid shell escaping and
@@ -36,12 +53,18 @@ truncation issues.
 
 ## Branch Naming
 
-Use a descriptive lowercase branch name with a clear prefix, such as:
+Branch names must follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
+short lowercase kebab-case.
 
-- `feat/<short-description>`
-- `fix/<short-description>`
-- `docs/<short-description>`
-- `chore/<short-description>`
+| Work type | Prefix | Example |
+| --- | --- | --- |
+| Bug or inconsistency | `fix/` | `fix/42-related-issues-checklist` |
+| Spec change | `spec/` | `spec/57-pr-policy-clarity` |
+| Feature proposal | `feat/` | `feat/89-search-refinement` |
+| Task or chore | `chore/` | `chore/31-sync-workflow-docs` |
+| Documentation-only work | `docs/` | `docs/88-update-pr-guidance` |
+
+Create the issue first to obtain the issue number, then open the branch.
 
 ## Commit Message Convention
 
@@ -68,10 +91,11 @@ This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
 
 1. Keep PRs reviewable and scoped.
 2. Use `.github/pull_request_template.md`.
-3. Link the matching issue in the PR body.
-4. List the validation commands you ran.
-5. Call out any documentation or workflow impact.
-6. If the PR template cannot be applied, include the same required sections manually.
+3. In `## Related Issues`, include `Closes #<issue-number>`.
+4. Every PR targeting `main` must close a tracking issue.
+5. List the validation commands you ran.
+6. Call out any documentation or workflow impact.
+7. If the PR template cannot be applied, include the same required sections manually.
 
 ## AI Collaboration
 
