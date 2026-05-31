@@ -14,6 +14,8 @@ import { getMockRegistryCatalog } from '../../infrastructure/mockRegistryReposit
 const STICKY_SEARCH_THRESHOLD = 180
 const MOBILE_BREAKPOINT = 768
 
+const isMobileViewportWidth = (): boolean => globalThis.window.innerWidth < MOBILE_BREAKPOINT
+
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
 }
@@ -21,34 +23,32 @@ interface HomePageProps {
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
-  const [isMobileViewport, setIsMobileViewport] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false,
-  )
+  const [isMobileViewport, setIsMobileViewport] = useState(isMobileViewportWidth)
   const catalog = getMockRegistryCatalog()
 
   useEffect(() => {
     const updateStickyState = (): void => {
-      setStickySearch(window.scrollY > STICKY_SEARCH_THRESHOLD)
+      setStickySearch(globalThis.window.scrollY > STICKY_SEARCH_THRESHOLD)
     }
 
     updateStickyState()
-    window.addEventListener('scroll', updateStickyState, { passive: true })
+    globalThis.window.addEventListener('scroll', updateStickyState, { passive: true })
 
     return () => {
-      window.removeEventListener('scroll', updateStickyState)
+      globalThis.window.removeEventListener('scroll', updateStickyState)
     }
   }, [])
 
   useEffect(() => {
     const updateViewportState = (): void => {
-      setIsMobileViewport(window.innerWidth < MOBILE_BREAKPOINT)
+      setIsMobileViewport(isMobileViewportWidth())
     }
 
     updateViewportState()
-    window.addEventListener('resize', updateViewportState)
+    globalThis.window.addEventListener('resize', updateViewportState)
 
     return () => {
-      window.removeEventListener('resize', updateViewportState)
+      globalThis.window.removeEventListener('resize', updateViewportState)
     }
   }, [])
 
