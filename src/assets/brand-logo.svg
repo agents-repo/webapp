@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="agents-repo logo">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bf6bff" />
+      <stop offset="100%" stop-color="#8f3cff" />
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="36" fill="none" />
+  <g fill="none" stroke="url(#g)" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="14" d="M72 46h112l56 82-56 82H72l-56-82z" />
+    <circle cx="128" cy="128" r="58" stroke-width="12" />
+    <rect x="84" y="106" width="88" height="44" rx="20" stroke-width="10" />
+    <circle cx="112" cy="128" r="6" fill="#8f3cff" stroke-width="0" />
+    <circle cx="144" cy="128" r="6" fill="#8f3cff" stroke-width="0" />
+    <path stroke-width="10" d="M102 162h52" />
+    <path stroke-width="10" d="M128 62v14" />
+  </g>
+</svg>

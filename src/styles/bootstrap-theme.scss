@@ -1,14 +1,19 @@
-$primary: #0f6bff;
-$secondary: #0b1220;
-$success: #11a06a;
+$primary: #b149ff;
+$secondary: #3a2a57;
+$success: #2dc28e;
+$info: #88d2ff;
 $border-radius: 0.9rem;
 $border-radius-sm: 0.65rem;
 $border-radius-lg: 1.15rem;
 $font-family-sans-serif:
-  "Manrope", "Inter", "Segoe UI", "Roboto", "Helvetica Neue", Arial,
+  "Manrope", "Space Grotesk", "Segoe UI", "Roboto", "Helvetica Neue", Arial,
   sans-serif;
 $headings-font-weight: 700;
-$body-color: #1a2233;
-$body-bg: #f4f7fb;
+$body-color: #f3ecff;
+$headings-color: #f9f5ff;
+$body-bg: #14101d;
+$card-bg: #1b1628;
+$card-color: #f4eeff;
+$border-color: #3b2f52;
 
 @import 'bootstrap/scss/bootstrap';

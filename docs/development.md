@@ -32,6 +32,13 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - `.github/` contains AI guidance, issue templates, and workflows
 - `.vscode/` contains recommended workspace defaults
 
+## Current UI State
+
+- The landing page currently renders registry package cards from local mock data in
+   `src/data/registryMock.ts`.
+- Search is client-side only and transitions from hero to sticky header on scroll.
+- API fetching is intentionally deferred until a follow-up integration task.
+
 ## Pull Requests
 
 Use the pull request template in `.github/pull_request_template.md`.
