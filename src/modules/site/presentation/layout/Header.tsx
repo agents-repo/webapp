@@ -16,7 +16,7 @@ function Header({ searchSlot }: HeaderProps) {
       sticky="top"
       bg="dark"
       variant="dark"
-      expand="md"
+      expand="lg"
       collapseOnSelect
       className="border-bottom border-secondary-subtle py-2 app-navbar"
     >
@@ -26,14 +26,14 @@ function Header({ searchSlot }: HeaderProps) {
           <span>Agents Repo</span>
         </Navbar.Brand>
 
-        <div className="app-navbar-search-wrapper d-none d-md-flex flex-grow-1 justify-content-center">
+        <div className="app-navbar-search-wrapper d-none d-lg-flex flex-grow-1 justify-content-center">
           {searchSlot ? <div className="app-navbar-search">{searchSlot}</div> : null}
         </div>
 
         <Navbar.Toggle aria-controls="site-navbar-nav" className="ms-auto" />
 
-        <Navbar.Collapse id="site-navbar-nav" className="app-navbar-collapse">
-          <Nav className="ms-md-auto align-items-md-center gap-md-2 flex-column flex-md-row pt-2 pt-md-0" navbar>
+        <Navbar.Collapse id="site-navbar-nav">
+          <Nav className="ms-lg-auto align-items-lg-center gap-lg-2 flex-column flex-lg-row pt-2 pt-lg-0" navbar>
             <Nav.Link as={NavLink} to={siteRoutes.home} end className="app-nav-link px-2">
               <FontAwesomeIcon icon={faHouse} className="me-1" aria-hidden="true" />
               Home

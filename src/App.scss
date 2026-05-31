@@ -15,10 +15,6 @@
   align-items: center;
 }
 
-.app-navbar-collapse {
-  flex-basis: 100%;
-}
-
 .app-nav-link {
   font-size: 0.95rem;
   opacity: 0.88;
@@ -35,7 +31,7 @@
 }
 
 .app-navbar-search {
-  width: min(100%, 34rem);
+  width: min(100%, 24rem);
 }
 
 .app-navbar-search-wrapper {
@@ -101,15 +97,4 @@
 
 .footer-note {
   max-width: 28ch;
-}
-
-@media (min-width: 768px) {
-  .app-navbar-collapse {
-    flex-basis: auto;
-    flex-grow: 0;
-  }
-
-  .app-navbar-search {
-    width: min(100%, 30rem);
-  }
 }

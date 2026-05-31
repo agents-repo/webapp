@@ -48,12 +48,12 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 
 - The landing page currently renders registry package cards from local mock data in
    `src/modules/registry/infrastructure/mockRegistryRepository.ts`.
-- Search is client-side only. On `md+`, it transitions from hero to sticky header
-   on scroll; on smaller screens, hero search stays visible because sticky header
-   search is hidden.
-- The shared header uses a mobile-first navbar: below `md` navigation is
+- Search is client-side only. On `lg+`, it transitions from hero to sticky header
+   on scroll; below `lg`, hero search stays visible because sticky header search
+   is hidden.
+- The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
-- Sticky header search is hidden below `md`; from `md` upward it appears in
+- Sticky header search is hidden below `lg`; from `lg` upward it appears in
    the middle region while brand stays left and page links stay right.
 - API fetching is intentionally deferred until a follow-up integration task.
 - The styling and architecture decisions are documented in `docs/styling-and-technology.md`
