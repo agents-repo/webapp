@@ -71,6 +71,17 @@ When opening tracking issues, agents MUST use the matching category form in
 Documentation-only work uses the task/chore issue category and the `docs/`
 branch prefix.
 
+Branch names MUST follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
+short lowercase kebab-case.
+
+Use the prefix that matches the work category:
+
+- bug or inconsistency: `fix/`
+- spec change: `spec/`
+- feature proposal: `feat/`
+- task or chore: `chore/`
+- documentation-only work: `docs/`
+
 ## GitHub Communication Method (gh CLI Preferred)
 
 For GitHub communication in this repository, agents and contributors SHOULD use

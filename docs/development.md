@@ -44,6 +44,15 @@ Before opening a PR:
    proposal, or task/chore.
 3. Documentation-only work uses the task/chore issue category and the `docs/`
    branch prefix.
-4. Create a non-`main` branch from the latest `main`.
-5. In `## Related Issues`, include `Closes #<issue-number>`.
-6. Every PR targeting `main` must close a tracking issue.
+4. Create a non-`main` branch from the latest `main` using
+   `<prefix>/<issue-number>-<slug>`.
+5. Use the prefix that matches the work category:
+
+   - `fix/` for bug or inconsistency
+   - `spec/` for spec change
+   - `feat/` for feature proposal
+   - `chore/` for task or chore
+   - `docs/` for documentation-only work
+
+6. In `## Related Issues`, include `Closes #<issue-number>`.
+7. Every PR targeting `main` must close a tracking issue.
