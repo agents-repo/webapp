@@ -41,7 +41,16 @@ function Footer() {
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Legal</h2>
             <p className="mb-0 small text-body-secondary footer-note">
               <FontAwesomeIcon icon={faScaleBalanced} className="me-2" />
-              Licensed under MIT.
+              Licensed under{' '}
+              <a
+                className="footer-link"
+                href="https://github.com/agents-repo/webapp/blob/main/LICENSE"
+                target="_blank"
+                rel="noreferrer"
+              >
+                MIT
+              </a>
+              .
             </p>
           </Col>
 
