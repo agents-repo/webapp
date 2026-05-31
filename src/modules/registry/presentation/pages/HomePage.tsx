@@ -60,7 +60,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search by package, owner (@slug), description, or tag"
             aria-label="Search registry packages"
-            className="bg-dark text-light border-secondary search-input"
+            className="border-secondary search-input"
           />
         </InputGroup>
       </Form>
@@ -123,11 +123,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           <Row xs={1} md={2} xl={3} className="g-3">
             {filteredPackages.map((pkg) => (
               <Col key={pkg.id}>
-                <Card
-                  bg="dark"
-                  text="light"
-                  className="h-100 border-secondary-subtle package-card"
-                >
+                <Card className="h-100 border-secondary-subtle package-card">
                   <Card.Header className="p-3 p-lg-4">
                     <Stack direction="horizontal" className="justify-content-between align-items-start">
                       <div className="me-2">
@@ -145,7 +141,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                               {pkg.owner}
                               <FontAwesomeIcon icon={faChevronDown} size="xs" className="ms-1" aria-hidden="true" />
                             </Dropdown.Toggle>
-                            <Dropdown.Menu variant="dark">
+                            <Dropdown.Menu>
                               <Dropdown.Item
                                 href={`https://github.com/${pkg.owner}`}
                                 target="_blank"
@@ -200,7 +196,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           </Row>
 
           {filteredPackages.length === 0 ? (
-            <Card bg="dark" text="light" className="mt-4 border-secondary-subtle">
+            <Card className="mt-4 border-secondary-subtle">
               <Card.Body className="text-center py-4">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
                 No packages match your current search.

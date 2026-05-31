@@ -32,6 +32,12 @@ integration task.
 The app currently uses Font Awesome React components for navigation and status
 icons instead of introducing a separate in-house icon system.
 
+The UI now supports Bootstrap 5.3 color modes through a header dropdown that
+lets users choose light, dark, or auto. The selected mode is persisted.
+
+Header chrome is intentionally fixed to a dark surface for consistency, while
+page content surfaces (including cards) follow the selected color mode.
+
 ## Why This Split Exists
 
 This split keeps Bootstrap customization centralized and makes the right
