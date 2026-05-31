@@ -11,9 +11,10 @@ Every PR targeting `main` must close a tracking issue.
 
 ## Change Type
 
-- [ ] Initial structure
-- [ ] Feature
-- [ ] Bug fix
+- [ ] Spec change
+- [ ] Feature proposal
+- [ ] Bug or inconsistency
+- [ ] Task or chore
 - [ ] Documentation
 - [ ] Tooling or workflow
 - [ ] Maintenance

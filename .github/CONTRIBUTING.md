@@ -19,9 +19,20 @@ docs in the same pull request.
 3. Create a non-`main` branch from the latest `main` and keep it focused on one change set.
 4. Identify the commands needed to validate the work.
 
-Issue form selection should match the task type (`bug-report`,
-`feature-request`, or `task`). If template application is not possible,
-manually include equivalent sections in the issue body.
+Issue form selection MUST match one of these categories:
+
+| Category | Issue form |
+| --- | --- |
+| Bug or inconsistency | `.github/ISSUE_TEMPLATE/bug-inconsistency.yml` |
+| Spec change | `.github/ISSUE_TEMPLATE/spec-change.yml` |
+| Feature proposal | `.github/ISSUE_TEMPLATE/feature-proposal.yml` |
+| Task or chore | `.github/ISSUE_TEMPLATE/task-chore.yml` |
+
+Documentation-only work uses the task/chore issue category and the `docs/`
+branch prefix.
+
+If template application is not possible, manually include equivalent sections
+in the issue body.
 
 ## GitHub Communication Method (Preferred)
 
@@ -47,8 +58,9 @@ short lowercase kebab-case.
 
 | Work type | Prefix | Example |
 | --- | --- | --- |
-| Bug report | `fix/` | `fix/42-related-issues-checklist` |
-| Feature request | `feat/` | `feat/57-pr-policy-clarity` |
+| Bug or inconsistency | `fix/` | `fix/42-related-issues-checklist` |
+| Spec change | `spec/` | `spec/57-pr-policy-clarity` |
+| Feature proposal | `feat/` | `feat/89-search-refinement` |
 | Task or chore | `chore/` | `chore/31-sync-workflow-docs` |
 | Documentation-only work | `docs/` | `docs/88-update-pr-guidance` |
 

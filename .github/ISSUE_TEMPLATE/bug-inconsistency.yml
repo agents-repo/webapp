@@ -1,5 +1,5 @@
-name: Bug report
-description: Report a defect in the webapp.
+name: Bug or inconsistency
+description: Report a defect or behavior inconsistency in the webapp.
 title: "fix: "
 labels:
   - bug

@@ -1,0 +1,32 @@
+name: Spec change
+description: Propose a normative behavior, contract, or workflow rule change.
+title: "spec: "
+labels:
+  - documentation
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What gap, inconsistency, or requirement drives this change?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-rule
+    attributes:
+      label: Proposed rule
+      description: Describe the normative rule change and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impacted docs and workflows
+      description: List files or workflows that must be updated together.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation plan
+      description: Which checks should pass for this change?

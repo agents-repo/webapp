@@ -4,6 +4,11 @@ title: "chore: "
 labels:
   - chore
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for task/chore work. Documentation-only work should
+        use this issue form and a `docs/<issue-number>-<slug>` branch.
   - type: textarea
     id: goal
     attributes:

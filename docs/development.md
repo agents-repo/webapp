@@ -40,6 +40,10 @@ Keep changes scoped and document any UI or workflow impact clearly.
 Before opening a PR:
 
 1. Create an issue from the matching form in `.github/ISSUE_TEMPLATE/`.
-2. Create a non-`main` branch from the latest `main`.
-3. In `## Related Issues`, include `Closes #<issue-number>`.
-4. Every PR targeting `main` must close a tracking issue.
+2. Choose the matching category: bug/inconsistency, spec change, feature
+   proposal, or task/chore.
+3. Documentation-only work uses the task/chore issue category and the `docs/`
+   branch prefix.
+4. Create a non-`main` branch from the latest `main`.
+5. In `## Related Issues`, include `Closes #<issue-number>`.
+6. Every PR targeting `main` must close a tracking issue.
