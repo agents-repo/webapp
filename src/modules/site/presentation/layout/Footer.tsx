@@ -53,7 +53,7 @@ function Footer() {
                 className="footer-link"
                 href="https://github.com/agents-repo/webapp/blob/main/LICENSE"
                 target="_blank"
-                rel="noreferrer"
+                rel="noreferrer noopener"
               >
                 MIT
               </a>.

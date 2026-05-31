@@ -25,7 +25,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
   useEffect(() => {
     const updateStickyState = (): void => {
-      setStickySearch(globalThis.window.scrollY > STICKY_SEARCH_THRESHOLD)
+      const nextStickySearch = globalThis.window.scrollY > STICKY_SEARCH_THRESHOLD
+      setStickySearch((prev) => (prev === nextStickySearch ? prev : nextStickySearch))
     }
 
     updateStickyState()
@@ -148,7 +149,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                               <Dropdown.Item
                                 href={`https://github.com/${pkg.owner}`}
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="noreferrer noopener"
                                 aria-label={`View GitHub profile for ${pkg.owner} (opens in a new tab)`}
                               >
                                 <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
