@@ -15,9 +15,6 @@ Every PR targeting `main` must close a tracking issue.
 - [ ] Feature proposal
 - [ ] Bug or inconsistency
 - [ ] Task or chore
-- [ ] Documentation
-- [ ] Tooling or workflow
-- [ ] Maintenance
 
 ## Scope
 

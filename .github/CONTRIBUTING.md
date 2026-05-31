@@ -53,7 +53,7 @@ truncation issues.
 
 ## Branch Naming
 
-Branch names should follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
+Branch names must follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
 short lowercase kebab-case.
 
 | Work type | Prefix | Example |
