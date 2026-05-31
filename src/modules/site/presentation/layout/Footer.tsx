@@ -16,7 +16,7 @@ function Footer() {
     <footer className="border-top border-secondary-subtle py-4 py-lg-5 site-footer">
       <Container>
         <Row className="g-3 g-lg-4">
-          <Col sm={6} lg={3}>
+          <Col sm={6} lg={4}>
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Product</h2>
             <div className="d-flex flex-column gap-2">
               <NavLink to={siteRoutes.home} className="footer-link">
@@ -30,7 +30,7 @@ function Footer() {
             </div>
           </Col>
 
-          <Col sm={6} lg={3}>
+          <Col sm={6} lg={4}>
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Connect</h2>
             <div className="d-flex flex-column gap-2">
               <NavLink to={siteRoutes.contact} className="footer-link">
@@ -44,7 +44,7 @@ function Footer() {
             </div>
           </Col>
 
-          <Col sm={6} lg={3}>
+          <Col sm={6} lg={4}>
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Legal</h2>
             <p className="mb-0 small text-body-secondary footer-note">
               <FontAwesomeIcon icon={faScaleBalanced} className="me-2" aria-hidden="true" />
@@ -59,17 +59,16 @@ function Footer() {
               </a>.
             </p>
           </Col>
+        </Row>
 
-          <Col sm={6} lg={3}>
-            <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Credits</h2>
-            <p className="mb-0 small text-body-secondary footer-note">
-              Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by
-              Maicon + GitHub Copilot and collaborators.
-            </p>
-            <p className="mb-0 mt-2 small text-body-secondary footer-note">
-              <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
-              Registry template preview.
-            </p>
+        <Row className="mt-4 mt-lg-5">
+          <Col>
+            <div className="footer-credits-row">
+              <p className="mb-0 text-body-secondary text-center">
+                Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by
+                Maicon + GitHub Copilot and collaborators.
+              </p>
+            </div>
           </Col>
         </Row>
       </Container>
