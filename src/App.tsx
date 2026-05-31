@@ -10,7 +10,7 @@ import {
   Row,
   Stack,
 } from 'react-bootstrap'
-import brandLogo from './assets/brand-logo.svg'
+import brandLogo from './assets/logo/agents-repo-logo.svg'
 import { registryCatalog } from './data/registryMock'
 import './App.css'
 
