@@ -12,6 +12,7 @@ import {
 import { getMockRegistryCatalog } from '../../infrastructure/mockRegistryRepository'
 
 const STICKY_SEARCH_THRESHOLD = 180
+const MOBILE_BREAKPOINT = 768
 
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
@@ -20,6 +21,9 @@ interface HomePageProps {
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false,
+  )
   const catalog = getMockRegistryCatalog()
 
   useEffect(() => {
@@ -32,6 +36,19 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
     return () => {
       window.removeEventListener('scroll', updateStickyState)
+    }
+  }, [])
+
+  useEffect(() => {
+    const updateViewportState = (): void => {
+      setIsMobileViewport(window.innerWidth < MOBILE_BREAKPOINT)
+    }
+
+    updateViewportState()
+    window.addEventListener('resize', updateViewportState)
+
+    return () => {
+      window.removeEventListener('resize', updateViewportState)
     }
   }, [])
 
@@ -62,12 +79,12 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   )
 
   useEffect(() => {
-    setHeaderSearchSlot(stickySearch ? searchControl : null)
+    setHeaderSearchSlot(!isMobileViewport && stickySearch ? searchControl : null)
 
     return () => {
       setHeaderSearchSlot(null)
     }
-  }, [searchControl, setHeaderSearchSlot, stickySearch])
+  }, [isMobileViewport, searchControl, setHeaderSearchSlot, stickySearch])
 
   return (
     <main>
@@ -86,7 +103,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                 <p className="lead fs-6 text-body-secondary mb-0">
                   Browse active package templates with quick metadata using local mock data.
                 </p>
-                {stickySearch ? null : <div className="w-100 hero-search">{searchControl}</div>}
+                {stickySearch && !isMobileViewport ? null : <div className="w-100 hero-search">{searchControl}</div>}
                 <p className="small text-body-secondary mb-0">
                   Updated {formatCatalogUpdatedAt(catalog.updatedAt)} with{' '}
                   {catalog.packages.length} packages in this mock view.
