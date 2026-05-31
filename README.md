@@ -14,7 +14,7 @@ AI-first contributor workflow.
 - React 19
 - TypeScript
 - Vite
-- Bootstrap, SCSS, and React Bootstrap
+- Bootstrap, SCSS, React Bootstrap, and Font Awesome React
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 

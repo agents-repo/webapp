@@ -3,10 +3,10 @@
 ## Stack
 
 The webapp is a Vite + React + TypeScript frontend. It uses Bootstrap and
-React Bootstrap for UI primitives, React Router for page navigation, Sass for
-authored styles, ESLint (including SonarJS rules, selected security checks,
-and type-aware TypeScript analysis) for code linting, and markdownlint for
-documentation checks.
+React Bootstrap for UI primitives, Font Awesome React for iconography, React
+Router for page navigation, Sass for authored styles, ESLint (including
+SonarJS rules, selected security checks, and type-aware TypeScript analysis)
+for code linting, and markdownlint for documentation checks.
 
 ## Styling Policy
 
@@ -28,6 +28,9 @@ documentation checks.
 The current UI is intentionally mock-data-first. The registry landing page
 renders local package data while API fetching remains deferred to a later
 integration task.
+
+The app currently uses Font Awesome React components for navigation and status
+icons instead of introducing a separate in-house icon system.
 
 ## Why This Split Exists
 

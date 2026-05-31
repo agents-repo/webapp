@@ -34,11 +34,11 @@ function Footer() {
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Connect</h2>
             <div className="d-flex flex-column gap-2">
               <NavLink to={siteRoutes.contact} className="footer-link">
-                <FontAwesomeIcon icon={faEnvelope} className="me-2" />
+                <FontAwesomeIcon icon={faEnvelope} className="me-2" aria-hidden="true" />
                 Contact
               </NavLink>
               <NavLink to={siteRoutes.helpUs} className="footer-link">
-                <FontAwesomeIcon icon={faHandsHelping} className="me-2" />
+                <FontAwesomeIcon icon={faHandsHelping} className="me-2" aria-hidden="true" />
                 Help Us
               </NavLink>
             </div>
@@ -47,7 +47,7 @@ function Footer() {
           <Col sm={6} lg={3}>
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Legal</h2>
             <p className="mb-0 small text-body-secondary footer-note">
-              <FontAwesomeIcon icon={faScaleBalanced} className="me-2" />
+              <FontAwesomeIcon icon={faScaleBalanced} className="me-2" aria-hidden="true" />
               Licensed under{' '}
               <a
                 className="footer-link"
@@ -63,11 +63,11 @@ function Footer() {
           <Col sm={6} lg={3}>
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Credits</h2>
             <p className="mb-0 small text-body-secondary footer-note">
-              Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" /> by
+              Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by
               Maicon + GitHub Copilot and collaborators.
             </p>
             <p className="mb-0 mt-2 small text-body-secondary footer-note">
-              <FontAwesomeIcon icon={faCircleInfo} className="me-2" />
+              <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
               Registry template preview.
             </p>
           </Col>
