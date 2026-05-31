@@ -29,8 +29,16 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - `src/` contains the React application
 - `public/` contains static assets served directly by Vite
 - `docs/` contains contributor-facing documentation
+- `docs/architecture/` contains architecture decision records, including the DDD boundary note
 - `.github/` contains AI guidance, issue templates, and workflows
 - `.vscode/` contains recommended workspace defaults
+
+## Styling
+
+- App styling is authored in SCSS only.
+- `src/styles/bootstrap-theme.scss` is the canonical Bootstrap customization entrypoint.
+- `src/index.scss` and `src/App.scss` hold the base app styles.
+- Do not add new `.css` entrypoints for application styling.
 
 ## Current UI State
 
@@ -38,6 +46,8 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    `src/data/registryMock.ts`.
 - Search is client-side only and transitions from hero to sticky header on scroll.
 - API fetching is intentionally deferred until a follow-up integration task.
+- The styling and architecture decisions are documented in `docs/styling-and-technology.md`
+   and `docs/architecture/ddd-decision.md`.
 
 ## Pull Requests
 

@@ -30,4 +30,9 @@ The main contributor instructions live in:
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
+Project-specific decision records live in:
+
+- `docs/styling-and-technology.md`
+- `docs/architecture/ddd-decision.md`
+
 If code and docs disagree, update one of them in the same change.

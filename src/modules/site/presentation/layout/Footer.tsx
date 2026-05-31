@@ -49,8 +49,7 @@ function Footer() {
                 rel="noreferrer"
               >
                 MIT
-              </a>
-              .
+              </a>.
             </p>
           </Col>
 

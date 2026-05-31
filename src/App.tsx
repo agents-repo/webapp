@@ -8,7 +8,7 @@ import AboutPage from './modules/site/presentation/pages/AboutPage'
 import ContactPage from './modules/site/presentation/pages/ContactPage'
 import HelpUsPage from './modules/site/presentation/pages/HelpUsPage'
 import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
-import './App.css'
+import './App.scss'
 
 function App() {
   const [headerSearchSlot, setHeaderSearchSlot] = useState<ReactNode | null>(null)

@@ -26,7 +26,12 @@ validation commands, update the affected docs in the same change.
 
 - Prefer small, targeted changes over broad rewrites.
 - Preserve the Vite + React + TypeScript structure already in place.
-- Keep Bootstrap usage consistent with the existing theme entrypoint in `src/`.
+- Keep Bootstrap usage consistent with the existing theme entrypoint in
+  `src/styles/bootstrap-theme.scss`.
+- Author app styling in SCSS only. Do not introduce new `.css` files for application styles.
+- Keep the base styling split between `src/index.scss`, `src/App.scss`, and
+  `src/styles/bootstrap-theme.scss` unless a new SCSS file is explicitly
+  documented.
 - Favor accessible, deterministic UI behavior over clever abstractions.
 - Avoid adding dependencies unless they clearly reduce maintenance cost.
 
