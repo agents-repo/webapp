@@ -40,7 +40,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
     () => (
       <Form role="search" aria-label="Search packages" className="w-100">
         <InputGroup size="sm" className="search-control">
-          <InputGroup.Text className="bg-body-tertiary border-secondary-subtle text-body-secondary">
+          <InputGroup.Text className="bg-primary border-primary text-white">
             Search
           </InputGroup.Text>
           <Form.Control
@@ -49,7 +49,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search by package, description, or tag"
             aria-label="Search registry packages"
-            className="bg-body border-secondary-subtle"
+            className="bg-dark text-light border-secondary search-input"
           />
         </InputGroup>
       </Form>

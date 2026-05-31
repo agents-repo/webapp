@@ -40,6 +40,16 @@
   box-shadow: 0 0.15rem 0.75rem rgba(0, 0, 0, 0.25);
 }
 
+.search-input::placeholder {
+  color: #bcc3ce;
+  opacity: 1;
+}
+
+.search-input:focus {
+  background-color: #212529;
+  color: #f8f9fa;
+}
+
 .app-hero {
   background: linear-gradient(180deg, rgba(177, 73, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
 }
