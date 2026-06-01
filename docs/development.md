@@ -48,27 +48,27 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 
 - The landing page loads registry package cards from a configured index source
    URL and shows an error alert if no catalog data can be loaded.
-- Search is client-side only. On `lg+`, it transitions from hero to sticky header
-   on scroll; below `lg`, hero search stays visible because sticky header search
-   is hidden.
+- Search is client-side only. On `lg+`, it transitions from hero to sticky
+   header on scroll; below `lg`, hero search stays visible because sticky header
+   search is hidden.
 - The header includes an icon-only Bootstrap-style color mode dropdown alongside
    page links on desktop, with light, dark, and auto choices shown in menu
    items. Auto follows system color preference and the selected value persists
    across reloads.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
-  collapsed behind a hamburger toggle.
-- Header chrome remains intentionally dark across all modes, while page content
-  (including cards) follows the selected color mode.
-- Sticky header search is hidden below `lg`; from `lg` upward it appears in
-  the middle region while brand stays left and page links stay right.
+   collapsed behind a hamburger toggle.
+- Header chrome remains intentionally dark across all modes, while page
+   content (including cards) follows the selected color mode.
+- Sticky header search is hidden below `lg`; from `lg` upward it appears in the
+   middle region while brand stays left and page links stay right.
 - Registry source configuration can be customized with Vite env vars:
-  `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
-  `VITE_REGISTRY_INDEX_PATH`.
+   `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
+   `VITE_REGISTRY_INDEX_PATH`.
 - Registry catalog loading uses a 24h app-owned cache policy plus focused
-  service worker runtime caching for static assets and the configured index
-  URL.
-- The styling and architecture decisions are documented in `docs/styling-and-technology.md`
-  and `docs/architecture/ddd-decision.md`.
+   service worker runtime caching for static assets and the configured index
+   URL.
+- The styling and architecture decisions are documented in
+   `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
 
 ## Cache and PWA Validation
 
