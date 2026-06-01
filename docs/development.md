@@ -55,6 +55,10 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    page links on desktop, with light, dark, and auto choices shown in menu
    items. Auto follows system color preference and the selected value persists
    across reloads.
+- The header now includes a settings cog control next to color mode. It opens a
+   website settings modal with runtime registry base URL override support. The
+   override persists in localStorage and takes precedence over build-time source
+   configuration.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page
@@ -64,6 +68,8 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Registry source configuration can be customized with Vite env vars:
    `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
    `VITE_REGISTRY_INDEX_PATH`.
+- Home page catalog source status now appears below the package cards and
+   includes updated date, package count, source URL, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional
    GET revalidation. After the TTL expires the app sends `If-None-Match` and/or
    `If-Modified-Since` request headers. A `304 Not Modified` response resets the

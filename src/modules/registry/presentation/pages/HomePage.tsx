@@ -16,6 +16,7 @@ const STICKY_SEARCH_THRESHOLD = 180
 
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
+  readonly registrySettingsVersion: number
 }
 
 type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
@@ -34,32 +35,32 @@ const isSafeExternalHttpUrl = (value: string): boolean => {
   }
 }
 
-const getCatalogSummary = ({
+const getCatalogStatusTag = ({
   catalog,
   cacheState,
   isLoading,
+  errorMessage,
 }: {
   catalog: RegistryCatalog | null
   cacheState: CatalogCacheState
   isLoading: boolean
+  errorMessage: string | null
 }): string => {
   if (isLoading) {
-    return 'Loading registry catalog from configured source...'
+    return 'loading'
   }
 
   if (!catalog) {
-    return 'Registry catalog unavailable due to a loading error.'
+    return 'unavailable'
   }
-
-  const summaryPrefix = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages`
 
   switch (cacheState) {
     case 'fresh':
-      return `${summaryPrefix} from 24h cache.`
+      return 'fresh cache'
     case 'stale-fallback':
-      return `${summaryPrefix} from stale cache after remote refresh failure.`
+      return 'stale cache after refresh failure'
     default:
-      return `${summaryPrefix} from remote index data.`
+      return errorMessage ? 'remote refresh failed' : 'remote source'
   }
 }
 
@@ -93,7 +94,7 @@ const getCatalogAlertState = ({
   return null
 }
 
-function HomePage({ setHeaderSearchSlot }: HomePageProps) {
+function HomePage({ setHeaderSearchSlot, registrySettingsVersion }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
   const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
@@ -102,10 +103,11 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
-  const catalogSummary = getCatalogSummary({
+  const catalogStatusTag = getCatalogStatusTag({
     catalog,
     cacheState: catalogCacheState,
     isLoading: isCatalogLoading,
+    errorMessage: catalogErrorMessage,
   })
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
@@ -119,6 +121,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
     let isActive = true
 
     const loadCatalog = async (): Promise<void> => {
+      setIsCatalogLoading(true)
       const result = await loadRegistryCatalog({ signal: abortController.signal })
 
       if (!isActive) {
@@ -143,7 +146,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       isActive = false
       abortController.abort()
     }
-  }, [])
+  }, [registrySettingsVersion])
 
   useEffect(() => {
     const updateStickyState = (): void => {
@@ -220,7 +223,6 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   Browse active package templates with quick metadata sourced from the registry index.
                 </p>
                 <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>{searchControl}</div>
-                <p className="small text-body-secondary mb-0">{catalogSummary}</p>
               </Stack>
             </Col>
           </Row>
@@ -345,6 +347,23 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               </Card.Body>
             </Card>
           ) : null}
+
+          <p className="small text-body-secondary mt-3 mb-0 catalog-status-note">
+            {catalog
+              ? `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages from `
+              : 'Registry catalog unavailable from '}
+            {canShowCatalogSourceLink ? (
+              <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
+                {catalogSourceUrl}
+              </a>
+            ) : (
+              <span>{catalogSourceUrl || 'configured source'}</span>
+            )}
+            {' '}
+            <Badge bg="secondary" pill className="fw-normal">
+              {catalogStatusTag}
+            </Badge>
+          </p>
         </Container>
       </section>
     </main>

@@ -12,15 +12,24 @@ import './App.scss'
 
 function App() {
   const [headerSearchSlot, setHeaderSearchSlot] = useState<ReactNode | null>(null)
+  const [registrySettingsVersion, setRegistrySettingsVersion] = useState(0)
 
   return (
     <div className="app-shell">
-      <Header searchSlot={headerSearchSlot} />
+      <Header
+        searchSlot={headerSearchSlot}
+        onRegistrySettingsSaved={() => setRegistrySettingsVersion((currentValue) => currentValue + 1)}
+      />
 
       <Routes>
         <Route
           path={siteRoutes.home}
-          element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
+          element={
+            <HomePage
+              setHeaderSearchSlot={setHeaderSearchSlot}
+              registrySettingsVersion={registrySettingsVersion}
+            />
+          }
         />
         <Route path={siteRoutes.about} element={<AboutPage />} />
         <Route path={siteRoutes.contact} element={<ContactPage />} />

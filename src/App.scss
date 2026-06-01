@@ -121,6 +121,19 @@
   transition: color 0.16s ease;
 }
 
+.app-header-icon-button {
+  padding: 0.25rem;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.88);
+  transition: color 0.16s ease;
+}
+
+.app-header-icon-button:hover,
+.app-header-icon-button:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
 .theme-mode-dropdown .dropdown-toggle:hover,
 .theme-mode-dropdown .dropdown-toggle:focus-visible {
   color: #fff;
@@ -129,4 +142,8 @@
 
 .theme-mode-dropdown .dropdown-item.active {
   font-weight: 600;
+}
+
+.catalog-status-note a {
+  word-break: break-word;
 }

@@ -47,8 +47,13 @@ npm run build
 
 ## Registry Source Configuration
 
-The app loads the registry catalog from a source URL configured at build time
-through Vite `VITE_...` environment variables.
+The app resolves the registry source URL with runtime-first precedence:
+
+1. Browser runtime override saved from Website settings in the header (cog icon)
+2. Build-time Vite `VITE_...` environment variables
+3. Repository defaults
+
+Build-time variables remain:
 
 - `VITE_REGISTRY_REPOSITORY_URL`: human-facing repository URL. Default:
   `https://github.com/agents-repo/registry`
@@ -64,6 +69,9 @@ normalization only supports branch names without `/`. For refs like
 With defaults, the effective fetch URL resolves to:
 
 `https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
+
+At runtime, users can set a custom registry base URL in the header settings modal.
+Leaving the runtime field empty resets to configured defaults.
 
 ## Caching and Offline Behavior
 
