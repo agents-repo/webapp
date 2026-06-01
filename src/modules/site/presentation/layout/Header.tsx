@@ -1,13 +1,63 @@
 import type { ReactNode } from 'react'
+import { faCheck, faCircleHalfStroke, faCircleInfo, faEnvelope, faHandsHelping, faHouse, faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleInfo, faEnvelope, faHandsHelping, faHouse } from '@fortawesome/free-solid-svg-icons'
-import { Container, Nav, Navbar } from 'react-bootstrap'
+import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import { type ThemeMode } from '../../application/theme/themeMode'
+import { useThemeMode } from '../../application/theme/themeModeContext'
 import { siteRoutes } from '../routes/siteRoutes'
+
+interface ThemeModeOption {
+  readonly mode: ThemeMode
+  readonly label: string
+  readonly icon: typeof faSun
+}
+
+const themeModeOptions: readonly ThemeModeOption[] = [
+  { mode: 'light', label: 'Light', icon: faSun },
+  { mode: 'dark', label: 'Dark', icon: faMoon },
+  { mode: 'auto', label: 'Auto', icon: faCircleHalfStroke },
+]
 
 interface HeaderProps {
   readonly searchSlot?: ReactNode
+}
+
+function ThemeModeDropdown() {
+  const { mode, setMode } = useThemeMode()
+  const activeOption = themeModeOptions.find((option) => option.mode === mode) ?? themeModeOptions[1]
+
+  return (
+    <Dropdown align="end" className="theme-mode-dropdown">
+      <Dropdown.Toggle
+        id="theme-mode-dropdown"
+        variant="link"
+        className="d-inline-flex align-items-center justify-content-center app-theme-toggle"
+        aria-label={`Color mode: ${activeOption.label}`}
+        title={`Color mode: ${activeOption.label}`}
+      >
+        <FontAwesomeIcon icon={activeOption.icon} className="fa-fw" aria-hidden="true" />
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu data-bs-theme="dark">
+        {themeModeOptions.map((option) => (
+          <Dropdown.Item
+            key={option.mode}
+            as="button"
+            type="button"
+            className="d-flex align-items-center gap-2"
+            active={mode === option.mode}
+            onClick={() => setMode(option.mode)}
+          >
+            <FontAwesomeIcon icon={option.icon} className="fa-fw" aria-hidden="true" />
+            <span className="flex-grow-1">{option.label}</span>
+            {mode === option.mode ? <FontAwesomeIcon icon={faCheck} aria-hidden="true" /> : null}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
+  )
 }
 
 function Header({ searchSlot }: HeaderProps) {
@@ -16,6 +66,7 @@ function Header({ searchSlot }: HeaderProps) {
       sticky="top"
       bg="dark"
       variant="dark"
+      data-bs-theme="dark"
       expand="lg"
       collapseOnSelect
       className="border-bottom border-secondary-subtle py-2 app-navbar"
@@ -50,10 +101,12 @@ function Header({ searchSlot }: HeaderProps) {
               <FontAwesomeIcon icon={faHandsHelping} className="me-1" aria-hidden="true" />
               Help Us
             </Nav.Link>
+            <Nav.Item className="ms-lg-2 d-flex align-items-center">
+              <ThemeModeDropdown />
+            </Nav.Item>
           </Nav>
         </Navbar.Collapse>
       </Container>
-
     </Navbar>
   )
 }

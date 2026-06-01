@@ -13,7 +13,7 @@ import { siteRoutes } from '../routes/siteRoutes'
 
 function Footer() {
   return (
-    <footer className="border-top border-secondary-subtle py-4 py-lg-5 site-footer">
+    <footer className="border-top border-secondary-subtle py-4 py-lg-5 site-footer bg-body-tertiary">
       <Container>
         <Row className="g-3 g-lg-4">
           <Col sm={6} lg={4}>

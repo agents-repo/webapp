@@ -1,7 +1,7 @@
 $primary: #b149ff;
-$secondary: #3a2a57;
+$secondary: #6e5a89;
 $success: #2dc28e;
-$info: #88d2ff;
+$info: #5ca9ff;
 $border-radius: 0.9rem;
 $border-radius-sm: 0.65rem;
 $border-radius-lg: 1.15rem;
@@ -9,27 +9,62 @@ $font-family-sans-serif:
   "Segoe UI", "Roboto", "Helvetica Neue", Arial,
   sans-serif;
 $headings-font-weight: 700;
-$body-color: #f3ecff;
-$headings-color: #f9f5ff;
-$body-bg: #14101d;
-$card-bg: #1b1628;
-$card-color: #f4eeff;
-$border-color: #3b2f52;
-$input-placeholder-color: #bcc3ce;
-$input-focus-bg: #212529;
-$input-focus-color: #f8f9fa;
-$navbar-dark-color: rgba($body-color, 0.88);
-$navbar-dark-hover-color: $body-color;
+$body-color: #221833;
+$headings-color: #1d132a;
+$body-bg: #fbf8ff;
+$card-bg: #ffffff;
+$card-color: #221833;
+$border-color: #e3d7f3;
+$input-placeholder-color: #7c708d;
+$input-focus-bg: #ffffff;
+$input-focus-color: #1d132a;
+$navbar-light-color: rgba($body-color, 0.82);
+$navbar-light-hover-color: $body-color;
+$navbar-light-active-color: $primary;
+$navbar-light-brand-color: $body-color;
+$navbar-light-brand-hover-color: $body-color;
+$dropdown-light-bg: $card-bg;
+$dropdown-light-color: $body-color;
+$dropdown-light-border-color: $border-color;
+$dropdown-light-link-color: $body-color;
+$dropdown-light-link-hover-color: $body-color;
+$dropdown-light-link-hover-bg: rgba($primary, 0.12);
+$dropdown-light-link-active-color: $body-color;
+$dropdown-light-link-active-bg: rgba($primary, 0.18);
+
+$body-color-dark: #f3ecff;
+$headings-color-dark: #f9f5ff;
+$body-bg-dark: #14101d;
+$card-bg-dark: #1b1628;
+$card-color-dark: #f4eeff;
+$border-color-dark: #3b2f52;
+$input-placeholder-color-dark: #bcc3ce;
+$input-focus-bg-dark: #212529;
+$input-focus-color-dark: #f8f9fa;
+$navbar-dark-color: rgba($body-color-dark, 0.88);
+$navbar-dark-hover-color: $body-color-dark;
 $navbar-dark-active-color: $primary;
-$navbar-dark-brand-color: $body-color;
-$navbar-dark-brand-hover-color: $body-color;
-$dropdown-dark-bg: $card-bg;
-$dropdown-dark-color: $body-color;
-$dropdown-dark-border-color: $border-color;
-$dropdown-dark-link-color: $body-color;
-$dropdown-dark-link-hover-color: $body-color;
+$navbar-dark-brand-color: $body-color-dark;
+$navbar-dark-brand-hover-color: $body-color-dark;
+$dropdown-dark-bg: $card-bg-dark;
+$dropdown-dark-color: $body-color-dark;
+$dropdown-dark-border-color: $border-color-dark;
+$dropdown-dark-link-color: $body-color-dark;
+$dropdown-dark-link-hover-color: $body-color-dark;
 $dropdown-dark-link-hover-bg: rgba($primary, 0.22);
-$dropdown-dark-link-active-color: $body-color;
+$dropdown-dark-link-active-color: $body-color-dark;
 $dropdown-dark-link-active-bg: rgba($primary, 0.28);
 
 @import 'bootstrap/scss/bootstrap';
+
+// Bootstrap 5.3 does not auto-generate dark mode overrides for component-level
+// CSS variables (e.g. --bs-card-bg) when $card-bg is a static Sass value.
+// These rules apply our custom dark tokens explicitly.
+[data-bs-theme="dark"] {
+  .card {
+    --bs-card-bg: #{$card-bg-dark};
+    --bs-card-color: #{$card-color-dark};
+    --bs-card-border-color: #{$border-color-dark};
+    --bs-card-cap-bg: rgba(255, 255, 255, 0.04);
+  }
+}

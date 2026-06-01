@@ -15,6 +15,7 @@ AI-first contributor workflow.
 - TypeScript
 - Vite
 - Bootstrap, SCSS, React Bootstrap, and Font Awesome React
+- Bootstrap 5.3 color modes with a header dropdown for light, dark, and auto
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 

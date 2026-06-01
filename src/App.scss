@@ -1,8 +1,8 @@
 .app-shell {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 20% 0%, rgba(177, 73, 255, 0.22), transparent 36%),
-    radial-gradient(circle at 100% 100%, rgba(130, 68, 240, 0.17), transparent 30%),
+    radial-gradient(circle at 20% 0%, rgba(177, 73, 255, 0.18), transparent 36%),
+    radial-gradient(circle at 100% 100%, rgba(130, 68, 240, 0.12), transparent 30%),
     var(--bs-body-bg);
 }
 
@@ -28,6 +28,7 @@
 .app-nav-link.active {
   opacity: 1;
   font-weight: 600;
+  color: var(--bs-primary) !important;
 }
 
 .app-navbar-search {
@@ -43,17 +44,17 @@
 }
 
 .search-control {
-  box-shadow: 0 0.15rem 0.75rem rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0.15rem 0.75rem rgba(0, 0, 0, 0.2);
 }
 
 .app-hero {
-  background: linear-gradient(180deg, rgba(177, 73, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(180deg, rgba(177, 73, 255, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
 .package-card {
   box-shadow:
     inset 0 0 0 1px rgba(177, 73, 255, 0.16),
-    0 0.3rem 0.85rem rgba(0, 0, 0, 0.2);
+    0 0.3rem 0.85rem rgba(0, 0, 0, 0.16);
   transition: box-shadow 0.18s ease;
 }
 
@@ -80,7 +81,7 @@
 }
 
 .site-footer {
-  background-color: rgba(17, 13, 26, 0.82);
+  backdrop-filter: blur(8px);
 }
 
 .footer-column-title {
@@ -109,6 +110,23 @@
 }
 
 .footer-credits-row {
-  border-top: 1px solid rgba(243, 236, 255, 0.08);
+  border-top: 1px solid var(--bs-border-color-translucent);
   padding-top: 1rem;
+}
+
+.theme-mode-dropdown .dropdown-toggle {
+  padding: 0.25rem;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.88);
+  transition: color 0.16s ease;
+}
+
+.theme-mode-dropdown .dropdown-toggle:hover,
+.theme-mode-dropdown .dropdown-toggle:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
+.theme-mode-dropdown .dropdown-item.active {
+  font-weight: 600;
 }
