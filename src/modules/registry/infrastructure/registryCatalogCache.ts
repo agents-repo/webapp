@@ -1,4 +1,5 @@
 import type { RegistryCatalog } from '../domain/package'
+import { isRegistryCatalog } from './registryCatalogValidation'
 
 const CACHE_STORAGE_KEY = 'registry.catalog.cache.v1'
 const CACHE_VERSION = 1
@@ -57,18 +58,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null
 }
 
-const isRegistryCatalogLike = (value: unknown): value is RegistryCatalog => {
-  if (!isRecord(value)) {
-    return false
-  }
-
-  return (
-    typeof value.schemaVersion === 'string' &&
-    typeof value.updatedAt === 'string' &&
-    Array.isArray(value.packages)
-  )
-}
-
 const isEnvelope = (value: unknown): value is RegistryCatalogCacheEnvelope => {
   if (!isRecord(value)) {
     return false
@@ -78,7 +67,7 @@ const isEnvelope = (value: unknown): value is RegistryCatalogCacheEnvelope => {
     value.cacheVersion === CACHE_VERSION &&
     typeof value.cachedAt === 'number' &&
     typeof value.indexUrl === 'string' &&
-    isRegistryCatalogLike(value.catalog)
+    isRegistryCatalog(value.catalog)
   )
 }
 

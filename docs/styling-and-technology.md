@@ -8,7 +8,7 @@ Router for page navigation, Sass for authored styles, ESLint (including
 SonarJS rules, selected security checks, and type-aware TypeScript analysis)
 for code linting, and markdownlint for documentation checks. Runtime
 installability and offline support are provided through `vite-plugin-pwa`, and
-registry catalog cache semantics are implemented with `lru-cache` plus
+registry catalog cache semantics are implemented with a lightweight in-memory LRU policy plus
 persistent browser storage.
 
 ## Styling Policy

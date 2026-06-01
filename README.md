@@ -17,7 +17,8 @@ AI-first contributor workflow.
 - Bootstrap, SCSS, React Bootstrap, and Font Awesome React
 - Bootstrap 5.3 color modes with a header dropdown for light, dark, and auto
 - PWA service worker runtime caching through `vite-plugin-pwa`
-- In-app 24h registry index cache semantics using `lru-cache` + persistent browser storage
+- In-app 24h registry index cache semantics using a lightweight in-memory LRU
+  policy + persistent browser storage
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 

@@ -125,6 +125,11 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       setCatalogCacheState(result.cacheState ?? 'none')
       setCatalogSourceUrl(result.indexUrl)
       setCatalogErrorMessage(result.errorMessage ?? null)
+
+      if (result.errorMessage) {
+        console.warn('Registry catalog loading fallback triggered:', result.errorMessage)
+      }
+
       setIsCatalogLoading(false)
     }
 
@@ -241,8 +246,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   </a>.
                 </>
               ) : null}
-              {' '}
-              <span className="small">({catalogErrorMessage})</span>
+              {catalogErrorMessage ? <span className="small"> Details are available in the browser console.</span> : null}
             </Alert>
           ) : null}
 
