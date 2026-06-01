@@ -96,9 +96,18 @@ export const loadRegistryCatalog = async (
     const result = await fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders)
 
     if (result.notModified) {
+      if (!envelope?.catalog) {
+        return {
+          catalog: null,
+          indexUrl,
+          cacheState: 'none',
+          errorMessage: 'Registry returned 304 Not Modified without cached catalog state',
+        }
+      }
+
       touchCatalogCache(indexUrl)
 
-      return { catalog: envelope!.catalog, indexUrl, cacheState: 'fresh' }
+      return { catalog: envelope.catalog, indexUrl, cacheState: 'fresh' }
     }
 
     writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
