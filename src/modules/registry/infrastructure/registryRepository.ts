@@ -27,6 +27,7 @@ export const loadRegistryCatalog = async (
   try {
     const response = await fetch(indexUrl, {
       signal: options.signal,
+      cache: 'no-store',
       headers: {
         Accept: 'application/json',
       },
