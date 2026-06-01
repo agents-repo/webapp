@@ -29,14 +29,15 @@ LRU policy plus persistent browser storage.
 ## Current State
 
 The current UI loads registry index data from a source URL configured at build
-time (Vite `VITE_...` env vars) and falls back to local mock catalog data if
-remote loading fails.
+time (Vite `VITE_...` env vars). If remote loading fails, the UI uses cached
+catalog data when available and otherwise shows an error state.
 
 Registry index loading now follows an app-owned 24h freshness policy:
 
 - Use fresh cache when available.
 - Attempt remote refresh when fresh cache is unavailable.
-- If refresh fails, prefer stale cache before mock fallback.
+- If refresh fails, prefer stale cache before showing an error state when no
+  cache exists.
 
 Service worker runtime caching is intentionally focused to static assets and the
 configured registry index URL. Broad interception of all GET requests is

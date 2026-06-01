@@ -14,6 +14,12 @@ interface RuntimeCachingRequestLike {
   destination?: string
 }
 
+interface RuntimeCachingUrlMatchContext {
+  request: RuntimeCachingRequestLike
+  url: URL
+  sameOrigin?: boolean
+}
+
 const resolveRegistryIndexUrl = (env: Record<string, string>): string => {
   const repositoryUrl = env.VITE_REGISTRY_REPOSITORY_URL?.trim() || DEFAULT_REGISTRY_REPOSITORY_URL
   const configuredBaseUrl = env.VITE_REGISTRY_BASE_URL?.trim() || repositoryUrl
@@ -50,7 +56,7 @@ export default defineConfig(({ mode }) => {
         workbox: {
           runtimeCaching: [
             {
-              urlPattern: ({ request, url }: { request: RuntimeCachingRequestLike; url: URL }) => {
+              urlPattern: ({ request, url }: RuntimeCachingUrlMatchContext) => {
                 return request.method === 'GET' && url.href === registryIndexUrl
               },
               handler: 'NetworkFirst',
@@ -64,9 +70,10 @@ export default defineConfig(({ mode }) => {
               },
             },
             {
-              urlPattern: ({ request, url }: { request: RuntimeCachingRequestLike; url: URL }) => {
+              urlPattern: ({ request, url, sameOrigin }: RuntimeCachingUrlMatchContext) => {
                 return (
                   request.method === 'GET' &&
+                  sameOrigin === true &&
                   !url.pathname.endsWith('.json') &&
                   (request.destination === 'style' ||
                     request.destination === 'script' ||
