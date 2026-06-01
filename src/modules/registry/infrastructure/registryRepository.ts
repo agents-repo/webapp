@@ -1,14 +1,13 @@
 import type { RegistryCatalog } from '../domain/package'
-import { getMockRegistryCatalog } from './mockRegistryRepository'
 import { isRegistryCatalog } from './registryCatalogValidation'
 import { readFreshCatalogCache, readStaleCatalogCache, writeCatalogCache } from './registryCatalogCache'
 import { getRegistrySourceConfig } from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
-  catalog: RegistryCatalog
-  source: 'remote' | 'mock'
+  catalog: RegistryCatalog | null
+  source: 'remote'
   indexUrl: string
-  cacheState?: 'none' | 'fresh' | 'stale-fallback'
+  cacheState: 'none' | 'fresh' | 'stale-fallback'
   errorMessage?: string
 }
 
@@ -68,8 +67,8 @@ export const loadRegistryCatalog = async (
     }
 
     return {
-      catalog: getMockRegistryCatalog(),
-      source: 'mock',
+      catalog: null,
+      source: 'remote',
       indexUrl,
       cacheState: 'none',
       errorMessage,

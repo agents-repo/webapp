@@ -5,11 +5,11 @@ import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } fr
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import type { RegistryCatalog } from '../../domain/package'
 import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
-import { getMockRegistryCatalog } from '../../infrastructure/mockRegistryRepository'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 
 const STICKY_SEARCH_THRESHOLD = 180
@@ -18,10 +18,10 @@ interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
 }
 
-type CatalogSource = 'remote' | 'mock'
 type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
 
 interface CatalogAlertState {
+  variant: 'warning' | 'danger'
   message: string
 }
 
@@ -35,27 +35,23 @@ const isSafeExternalHttpUrl = (value: string): boolean => {
 }
 
 const getCatalogSummary = ({
-  source,
+  catalog,
   cacheState,
-  updatedAt,
-  packageCount,
   isLoading,
 }: {
-  source: CatalogSource
+  catalog: RegistryCatalog | null
   cacheState: CatalogCacheState
-  updatedAt: string
-  packageCount: number
   isLoading: boolean
 }): string => {
   if (isLoading) {
     return 'Loading registry catalog from configured source...'
   }
 
-  const summaryPrefix = `Updated ${formatCatalogUpdatedAt(updatedAt)} with ${packageCount} packages`
-
-  if (source === 'mock') {
-    return `${summaryPrefix} from fallback mock data.`
+  if (!catalog) {
+    return 'Registry catalog unavailable due to a loading error.'
   }
+
+  const summaryPrefix = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages`
 
   switch (cacheState) {
     case 'fresh':
@@ -68,11 +64,11 @@ const getCatalogSummary = ({
 }
 
 const getCatalogAlertState = ({
-  source,
+  hasCatalog,
   cacheState,
   errorMessage,
 }: {
-  source: CatalogSource
+  hasCatalog: boolean
   cacheState: CatalogCacheState
   errorMessage: string | null
 }): CatalogAlertState | null => {
@@ -80,14 +76,16 @@ const getCatalogAlertState = ({
     return null
   }
 
-  if (source === 'mock') {
+  if (!hasCatalog) {
     return {
-      message: 'Unable to load remote registry index. Displaying fallback mock catalog.',
+      variant: 'danger',
+      message: 'Unable to load the registry index. No catalog data is available.',
     }
   }
 
-  if (source === 'remote' && cacheState === 'stale-fallback') {
+  if (cacheState === 'stale-fallback') {
     return {
+      variant: 'warning',
       message: 'Remote registry refresh failed. Displaying stale cached catalog while keeping the app available.',
     }
   }
@@ -98,22 +96,19 @@ const getCatalogAlertState = ({
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
-  const [catalog, setCatalog] = useState(getMockRegistryCatalog)
-  const [catalogSource, setCatalogSource] = useState<CatalogSource>('mock')
+  const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
   const [catalogCacheState, setCatalogCacheState] = useState<CatalogCacheState>('none')
   const [catalogSourceUrl, setCatalogSourceUrl] = useState('')
   const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
   const catalogSummary = getCatalogSummary({
-    source: catalogSource,
+    catalog,
     cacheState: catalogCacheState,
-    updatedAt: catalog.updatedAt,
-    packageCount: catalog.packages.length,
     isLoading: isCatalogLoading,
   })
   const catalogAlertState = getCatalogAlertState({
-    source: catalogSource,
+    hasCatalog: catalog !== null,
     cacheState: catalogCacheState,
     errorMessage: catalogErrorMessage,
   })
@@ -131,8 +126,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       }
 
       setCatalog(result.catalog)
-      setCatalogSource(result.source)
-      setCatalogCacheState(result.cacheState ?? 'none')
+      setCatalogCacheState(result.cacheState)
       setCatalogSourceUrl(result.indexUrl)
       setCatalogErrorMessage(result.errorMessage ?? null)
 
@@ -166,6 +160,10 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   }, [])
 
   const filteredPackages = useMemo(() => {
+    if (!catalog) {
+      return []
+    }
+
     return filterRegistryPackages(catalog, query)
   }, [catalog, query])
 
@@ -235,18 +233,20 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             <Col lg={8}>
               <h2 className="h3 mb-1 d-flex align-items-center gap-2 flex-wrap">
                 {trimmedQuery ? `Search results for "${trimmedQuery}"` : 'Recently updated packages'}
-                <Badge bg="secondary" pill className="fw-normal">
-                  schema v{catalog.schemaVersion}
-                </Badge>
+                {catalog ? (
+                  <Badge bg="secondary" pill className="fw-normal">
+                    schema v{catalog.schemaVersion}
+                  </Badge>
+                ) : null}
               </h2>
               <p className="text-body-secondary mb-0 small">
-                Showing {filteredPackages.length} of {catalog.packages.length}
+                Showing {filteredPackages.length} of {catalog?.packages.length ?? 0}
               </p>
             </Col>
           </Row>
 
           {catalogAlertState ? (
-            <Alert variant="warning" className="mb-3">
+            <Alert variant={catalogAlertState.variant} className="mb-3">
               {catalogAlertState.message}
               {canShowCatalogSourceLink ? (
                 <>
@@ -339,7 +339,9 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             <Card className="mt-4 border-secondary-subtle">
               <Card.Body className="text-center py-4">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
-                No packages match your current search.
+                {catalog
+                  ? 'No packages match your current search.'
+                  : 'No catalog data available.'}
               </Card.Body>
             </Card>
           ) : null}

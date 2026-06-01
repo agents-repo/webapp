@@ -57,6 +57,10 @@ through Vite `VITE_...` environment variables.
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
 
+When using GitHub `/tree/<branch>` or `/blob/<branch>` repository URLs,
+normalization only supports branch names without `/`. For refs like
+`feature/foo`, set `VITE_REGISTRY_BASE_URL` directly.
+
 With defaults, the effective fetch URL resolves to:
 
 `https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
@@ -68,8 +72,8 @@ Registry catalog loading now uses two coordinated cache layers:
 - App-layer cache contract:
   - 24h freshness window for `index.json`
   - Fresh cache is used before network fetches
-  - If remote refresh fails, stale cached catalog is used before falling back
-    to mock data
+  - If remote refresh fails, stale cached catalog is used when available
+  - If refresh fails and no cached catalog exists, the app shows an error alert
 - Service worker runtime cache:
   - Focused caching for static assets and the configured registry index URL
   - Network-first behavior for the index URL to favor fresh data when online

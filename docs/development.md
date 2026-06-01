@@ -47,9 +47,7 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 ## Current UI State
 
 - The landing page loads registry package cards from a configured index source
-   URL, with a deterministic fallback to local mock data in
-   `src/modules/registry/infrastructure/mockRegistryRepository.ts` if remote
-   loading fails.
+   URL and shows an error alert if no catalog data can be loaded.
 - Search is client-side only. On `lg+`, it transitions from hero to sticky header
    on scroll; below `lg`, hero search stays visible because sticky header search
    is hidden.
@@ -81,8 +79,10 @@ After changing cache or service worker behavior, validate locally with:
 3. Confirm first online load populates catalog and cache entries.
 4. Reload and confirm catalog can be served from app cache within 24h.
 5. Simulate network failure for the index request and confirm stale cached
-   catalog is used before mock fallback.
-6. Verify service worker is active and runtime caches include static assets and
+   catalog is used when available.
+6. Simulate network failure with no cached catalog and confirm an error alert is
+   shown.
+7. Verify service worker is active and runtime caches include static assets and
    the configured index URL.
 
 ## Cache and Service Worker Reset
