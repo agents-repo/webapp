@@ -16,6 +16,9 @@ AI-first contributor workflow.
 - Vite
 - Bootstrap, SCSS, React Bootstrap, and Font Awesome React
 - Bootstrap 5.3 color modes with a header dropdown for light, dark, and auto
+- PWA service worker runtime caching through `vite-plugin-pwa`
+- In-app 24h registry index cache semantics using a lightweight in-memory LRU
+  policy + persistent browser storage
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 
@@ -41,6 +44,41 @@ npm run lint:all
 npm run typecheck
 npm run build
 ```
+
+## Registry Source Configuration
+
+The app loads the registry catalog from a source URL configured at build time
+through Vite `VITE_...` environment variables.
+
+- `VITE_REGISTRY_REPOSITORY_URL`: human-facing repository URL. Default:
+  `https://github.com/agents-repo/registry`
+- `VITE_REGISTRY_BASE_URL`: optional direct base URL override for fetches.
+  If omitted, the repository URL is normalized to raw GitHub format.
+- `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
+  `packages/index.json`
+
+When using GitHub `/tree/<branch>` or `/blob/<branch>` repository URLs,
+normalization only supports branch names without `/`. For refs like
+`feature/foo`, set `VITE_REGISTRY_BASE_URL` directly.
+
+With defaults, the effective fetch URL resolves to:
+
+`https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
+
+## Caching and Offline Behavior
+
+Registry catalog loading now uses two coordinated cache layers:
+
+- App-layer cache contract:
+  - 24h freshness window for `index.json`
+  - Fresh cache is used before network fetches
+  - If remote refresh fails, stale cached catalog is used when available
+  - If refresh fails and no cached catalog exists, the app shows an error alert
+- Service worker runtime cache:
+  - Focused caching for same-origin static assets only
+
+This keeps registry freshness decisions in app logic while still improving
+offline resilience for app assets.
 
 ## GitHub CLI
 

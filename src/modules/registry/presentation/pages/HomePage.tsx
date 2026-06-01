@@ -3,13 +3,14 @@ import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
+import { Alert, Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import type { RegistryCatalog } from '../../domain/package'
 import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
-import { getMockRegistryCatalog } from '../../infrastructure/mockRegistryRepository'
+import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 
 const STICKY_SEARCH_THRESHOLD = 180
 
@@ -17,11 +18,132 @@ interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
 }
 
+type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
+
+interface CatalogAlertState {
+  variant: 'warning' | 'danger'
+  message: string
+}
+
+const isSafeExternalHttpUrl = (value: string): boolean => {
+  try {
+    const parsed = new URL(value)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+const getCatalogSummary = ({
+  catalog,
+  cacheState,
+  isLoading,
+}: {
+  catalog: RegistryCatalog | null
+  cacheState: CatalogCacheState
+  isLoading: boolean
+}): string => {
+  if (isLoading) {
+    return 'Loading registry catalog from configured source...'
+  }
+
+  if (!catalog) {
+    return 'Registry catalog unavailable due to a loading error.'
+  }
+
+  const summaryPrefix = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages`
+
+  switch (cacheState) {
+    case 'fresh':
+      return `${summaryPrefix} from 24h cache.`
+    case 'stale-fallback':
+      return `${summaryPrefix} from stale cache after remote refresh failure.`
+    default:
+      return `${summaryPrefix} from remote index data.`
+  }
+}
+
+const getCatalogAlertState = ({
+  hasCatalog,
+  cacheState,
+  errorMessage,
+}: {
+  hasCatalog: boolean
+  cacheState: CatalogCacheState
+  errorMessage: string | null
+}): CatalogAlertState | null => {
+  if (!errorMessage) {
+    return null
+  }
+
+  if (!hasCatalog) {
+    return {
+      variant: 'danger',
+      message: 'Unable to load the registry index. No catalog data is available.',
+    }
+  }
+
+  if (cacheState === 'stale-fallback') {
+    return {
+      variant: 'warning',
+      message: 'Remote registry refresh failed. Displaying stale cached catalog while keeping the app available.',
+    }
+  }
+
+  return null
+}
+
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
-  const catalog = getMockRegistryCatalog()
+  const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
+  const [catalogCacheState, setCatalogCacheState] = useState<CatalogCacheState>('none')
+  const [catalogSourceUrl, setCatalogSourceUrl] = useState('')
+  const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
+  const catalogSummary = getCatalogSummary({
+    catalog,
+    cacheState: catalogCacheState,
+    isLoading: isCatalogLoading,
+  })
+  const catalogAlertState = getCatalogAlertState({
+    hasCatalog: catalog !== null,
+    cacheState: catalogCacheState,
+    errorMessage: catalogErrorMessage,
+  })
+  const canShowCatalogSourceLink = isSafeExternalHttpUrl(catalogSourceUrl)
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    let isActive = true
+
+    const loadCatalog = async (): Promise<void> => {
+      const result = await loadRegistryCatalog({ signal: abortController.signal })
+
+      if (!isActive) {
+        return
+      }
+
+      setCatalog(result.catalog)
+      setCatalogCacheState(result.cacheState)
+      setCatalogSourceUrl(result.indexUrl)
+      setCatalogErrorMessage(result.errorMessage ?? null)
+
+      if (result.errorMessage) {
+        console.warn('Registry catalog loading fallback triggered:', result.errorMessage)
+      }
+
+      setIsCatalogLoading(false)
+    }
+
+    void loadCatalog()
+
+    return () => {
+      isActive = false
+      abortController.abort()
+    }
+  }, [])
 
   useEffect(() => {
     const updateStickyState = (): void => {
@@ -38,6 +160,10 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   }, [])
 
   const filteredPackages = useMemo(() => {
+    if (!catalog) {
+      return []
+    }
+
     return filterRegistryPackages(catalog, query)
   }, [catalog, query])
 
@@ -91,13 +217,10 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   Explore package templates for agents and flows
                 </h1>
                 <p className="lead fs-6 text-body-secondary mb-0">
-                  Browse active package templates with quick metadata using local mock data.
+                  Browse active package templates with quick metadata sourced from the registry index.
                 </p>
                 <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>{searchControl}</div>
-                <p className="small text-body-secondary mb-0">
-                  Updated {formatCatalogUpdatedAt(catalog.updatedAt)} with{' '}
-                  {catalog.packages.length} packages in this mock view.
-                </p>
+                <p className="small text-body-secondary mb-0">{catalogSummary}</p>
               </Stack>
             </Col>
           </Row>
@@ -110,15 +233,32 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             <Col lg={8}>
               <h2 className="h3 mb-1 d-flex align-items-center gap-2 flex-wrap">
                 {trimmedQuery ? `Search results for "${trimmedQuery}"` : 'Recently updated packages'}
-                <Badge bg="secondary" pill className="fw-normal">
-                  schema v{catalog.schemaVersion}
-                </Badge>
+                {catalog ? (
+                  <Badge bg="secondary" pill className="fw-normal">
+                    schema v{catalog.schemaVersion}
+                  </Badge>
+                ) : null}
               </h2>
               <p className="text-body-secondary mb-0 small">
-                Showing {filteredPackages.length} of {catalog.packages.length}
+                Showing {filteredPackages.length} of {catalog?.packages.length ?? 0}
               </p>
             </Col>
           </Row>
+
+          {catalogAlertState ? (
+            <Alert variant={catalogAlertState.variant} className="mb-3">
+              {catalogAlertState.message}
+              {canShowCatalogSourceLink ? (
+                <>
+                  {' '}
+                  <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
+                    Check configured index URL
+                  </a>.
+                </>
+              ) : null}
+              {catalogErrorMessage ? <span className="small"> Details are available in the browser console.</span> : null}
+            </Alert>
+          ) : null}
 
           <Row xs={1} md={2} xl={3} className="g-3">
             {filteredPackages.map((pkg) => (
@@ -195,11 +335,13 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             ))}
           </Row>
 
-          {filteredPackages.length === 0 ? (
+          {!isCatalogLoading && filteredPackages.length === 0 ? (
             <Card className="mt-4 border-secondary-subtle">
               <Card.Body className="text-center py-4">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
-                No packages match your current search.
+                {catalog
+                  ? 'No packages match your current search.'
+                  : 'No catalog data available.'}
               </Card.Body>
             </Card>
           ) : null}

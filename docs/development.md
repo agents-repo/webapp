@@ -40,30 +40,71 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - `src/index.scss` and `src/App.scss` hold the base app styles.
 - Do not add new `.css` entrypoints for application styling.
 - Prefer global, reusable Bootstrap Sass variables and theme tokens before
-   introducing custom classes.
+  introducing custom classes.
 - Use custom classes only when the requirement cannot be represented with
-   Bootstrap variables, shared utilities, or component-level props.
+  Bootstrap variables, shared utilities, or component-level props.
 
 ## Current UI State
 
-- The landing page currently renders registry package cards from local mock data in
-   `src/modules/registry/infrastructure/mockRegistryRepository.ts`.
-- Search is client-side only. On `lg+`, it transitions from hero to sticky header
-   on scroll; below `lg`, hero search stays visible because sticky header search
-   is hidden.
+- The landing page loads registry package cards from a configured index source
+   URL and shows an error alert if no catalog data can be loaded.
+- Search is client-side only. On `lg+`, it transitions from hero to sticky
+   header on scroll; below `lg`, hero search stays visible because sticky header
+   search is hidden.
 - The header includes an icon-only Bootstrap-style color mode dropdown alongside
-   page links on desktop, with light, dark, and auto choices shown in menu items.
-   Auto follows system color preference and the selected value persists across
-   reloads.
+   page links on desktop, with light, dark, and auto choices shown in menu
+   items. Auto follows system color preference and the selected value persists
+   across reloads.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
-- Header chrome remains intentionally dark across all modes, while page content
-   (including cards) follows the selected color mode.
-- Sticky header search is hidden below `lg`; from `lg` upward it appears in
-   the middle region while brand stays left and page links stay right.
-- API fetching is intentionally deferred until a follow-up integration task.
-- The styling and architecture decisions are documented in `docs/styling-and-technology.md`
-   and `docs/architecture/ddd-decision.md`.
+- Header chrome remains intentionally dark across all modes, while page
+   content (including cards) follows the selected color mode.
+- Sticky header search is hidden below `lg`; from `lg` upward it appears in the
+   middle region while brand stays left and page links stay right.
+- Registry source configuration can be customized with Vite env vars:
+   `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
+   `VITE_REGISTRY_INDEX_PATH`.
+- Registry catalog loading uses a 24h app-owned cache policy with conditional
+   GET revalidation. After the TTL expires the app sends `If-None-Match` and/or
+   `If-Modified-Since` request headers. A `304 Not Modified` response resets the
+   TTL with zero body downloaded; a `200` response stores the new payload and
+   the updated `ETag`/`Last-Modified` headers. Service worker runtime caching is
+   focused to same-origin static assets only.
+- The styling and architecture decisions are documented in
+   `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
+
+## Cache and PWA Validation
+
+After changing cache or service worker behavior, validate locally with:
+
+1. Start the app with `npm run dev`.
+2. Open browser devtools and inspect Application > Storage and Service Workers.
+3. Confirm first online load populates catalog and cache entries. Inspect
+   Application > Local Storage and confirm the stored envelope contains `etag`
+   or `lastModified` fields when the server returned those headers.
+4. Reload and confirm catalog can be served from app cache within 24h (no
+   network request visible in the Network tab).
+5. Force-expire the cache by editing `cachedAt` to `0` in the stored envelope
+   (Application > Local Storage), then reload. Confirm the outgoing request
+   carries `If-None-Match` and/or `If-Modified-Since` headers. If the server
+   returns `304`, no response body should appear; `cachedAt` should be updated
+   in storage. If the server returns `200`, the new payload and headers should
+   be stored.
+6. Simulate network failure for the index request and confirm stale cached
+   catalog is used when available.
+7. Simulate network failure with no cached catalog and confirm an error alert is
+   shown.
+8. Verify service worker is active and runtime caches include same-origin static
+   assets.
+
+## Cache and Service Worker Reset
+
+When debugging stale behavior, clear both layers before retesting:
+
+1. In devtools Application tab, clear local storage for the app origin.
+2. Clear Cache Storage entries for runtime caches.
+3. Unregister the active service worker.
+4. Hard reload the page.
 
 ## Pull Requests
 
