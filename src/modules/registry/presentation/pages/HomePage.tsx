@@ -3,13 +3,14 @@ import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
+import { Alert, Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
 import { getMockRegistryCatalog } from '../../infrastructure/mockRegistryRepository'
+import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 
 const STICKY_SEARCH_THRESHOLD = 180
 
@@ -20,8 +21,47 @@ interface HomePageProps {
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
-  const catalog = getMockRegistryCatalog()
+  const [catalog, setCatalog] = useState(getMockRegistryCatalog)
+  const [catalogSource, setCatalogSource] = useState<'remote' | 'mock'>('mock')
+  const [catalogSourceUrl, setCatalogSourceUrl] = useState('')
+  const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
+  let catalogSummary = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages from fallback mock data.`
+
+  if (catalogSource === 'remote') {
+    catalogSummary = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages from remote index data.`
+  }
+
+  if (isCatalogLoading) {
+    catalogSummary = 'Loading registry catalog from configured source...'
+  }
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    let isActive = true
+
+    const loadCatalog = async (): Promise<void> => {
+      const result = await loadRegistryCatalog({ signal: abortController.signal })
+
+      if (!isActive) {
+        return
+      }
+
+      setCatalog(result.catalog)
+      setCatalogSource(result.source)
+      setCatalogSourceUrl(result.indexUrl)
+      setCatalogErrorMessage(result.source === 'mock' ? result.errorMessage ?? 'Registry request failed.' : null)
+      setIsCatalogLoading(false)
+    }
+
+    void loadCatalog()
+
+    return () => {
+      isActive = false
+      abortController.abort()
+    }
+  }, [])
 
   useEffect(() => {
     const updateStickyState = (): void => {
@@ -91,13 +131,10 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   Explore package templates for agents and flows
                 </h1>
                 <p className="lead fs-6 text-body-secondary mb-0">
-                  Browse active package templates with quick metadata using local mock data.
+                  Browse active package templates with quick metadata sourced from the registry index.
                 </p>
                 <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>{searchControl}</div>
-                <p className="small text-body-secondary mb-0">
-                  Updated {formatCatalogUpdatedAt(catalog.updatedAt)} with{' '}
-                  {catalog.packages.length} packages in this mock view.
-                </p>
+                <p className="small text-body-secondary mb-0">{catalogSummary}</p>
               </Stack>
             </Col>
           </Row>
@@ -119,6 +156,23 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               </p>
             </Col>
           </Row>
+
+          {catalogSource === 'mock' && catalogErrorMessage ? (
+            <Alert variant="warning" className="mb-3">
+              Unable to load remote registry index. Displaying fallback mock catalog.
+              {catalogSourceUrl ? (
+                <>
+                  {' '}
+                  <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
+                    Check configured index URL
+                  </a>
+                  .
+                </>
+              ) : null}
+              {' '}
+              <span className="small">({catalogErrorMessage})</span>
+            </Alert>
+          ) : null}
 
           <Row xs={1} md={2} xl={3} className="g-3">
             {filteredPackages.map((pkg) => (

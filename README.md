@@ -42,6 +42,21 @@ npm run typecheck
 npm run build
 ```
 
+## Registry Source Configuration
+
+The app loads the registry catalog from a configured source URL at runtime.
+
+- `VITE_REGISTRY_REPOSITORY_URL`: human-facing repository URL. Default:
+  `https://github.com/agents-repo/registry`
+- `VITE_REGISTRY_BASE_URL`: optional direct base URL override for fetches.
+  If omitted, the repository URL is normalized to raw GitHub format.
+- `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
+  `packages/index.json`
+
+With defaults, the effective fetch URL resolves to:
+
+`https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
+
 ## GitHub CLI
 
 This repository prefers GitHub communication through `gh` CLI for issue and

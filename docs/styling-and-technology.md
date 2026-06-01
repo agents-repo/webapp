@@ -25,9 +25,8 @@ for code linting, and markdownlint for documentation checks.
 
 ## Current State
 
-The current UI is intentionally mock-data-first. The registry landing page
-renders local package data while API fetching remains deferred to a later
-integration task.
+The current UI loads registry index data from a configurable runtime source URL
+and falls back to local mock catalog data if remote loading fails.
 
 The app currently uses Font Awesome React components for navigation and status
 icons instead of introducing a separate in-house icon system.
