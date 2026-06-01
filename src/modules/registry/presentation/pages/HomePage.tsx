@@ -165,8 +165,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   {' '}
                   <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
                     Check configured index URL
-                  </a>
-                  .
+                  </a>.
                 </>
               ) : null}
               {' '}
