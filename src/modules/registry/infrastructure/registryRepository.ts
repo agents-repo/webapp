@@ -1,6 +1,11 @@
 import type { RegistryCatalog } from '../domain/package'
 import { isRegistryCatalog } from './registryCatalogValidation'
-import { readFreshCatalogCache, readStaleCatalogCache, writeCatalogCache } from './registryCatalogCache'
+import {
+  readFreshCatalogCache,
+  readCatalogCacheEnvelope,
+  touchCatalogCache,
+  writeCatalogCache,
+} from './registryCatalogCache'
 import { getRegistrySourceConfig } from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
@@ -10,6 +15,70 @@ export interface RegistryCatalogLoadResult {
   errorMessage?: string
 }
 
+interface FetchCatalogResult {
+  notModified: true
+  catalog?: never
+  etag?: never
+  lastModified?: never
+}
+
+interface FetchCatalogSuccess {
+  notModified?: false
+  catalog: RegistryCatalog
+  etag: string | undefined
+  lastModified: string | undefined
+}
+
+type FetchCatalogNetworkResult = FetchCatalogResult | FetchCatalogSuccess
+
+const buildConditionalHeaders = (
+  envelope: ReturnType<typeof readCatalogCacheEnvelope>,
+): Record<string, string> => {
+  const headers: Record<string, string> = {}
+
+  if (envelope?.etag) {
+    headers['If-None-Match'] = envelope.etag
+  }
+
+  if (envelope?.lastModified) {
+    headers['If-Modified-Since'] = envelope.lastModified
+  }
+
+  return headers
+}
+
+const fetchCatalogFromNetwork = async (
+  indexUrl: string,
+  signal: AbortSignal | undefined,
+  conditionalHeaders: Record<string, string>,
+): Promise<FetchCatalogNetworkResult> => {
+  const response = await fetch(indexUrl, {
+    signal,
+    cache: 'no-store',
+    headers: { Accept: 'application/json', ...conditionalHeaders },
+  })
+
+  if (response.status === 304) {
+    return { notModified: true }
+  }
+
+  if (!response.ok) {
+    throw new Error(`Registry request failed (${response.status} ${response.statusText})`)
+  }
+
+  const payload: unknown = await response.json()
+
+  if (!isRegistryCatalog(payload)) {
+    throw new Error('Registry payload does not match expected catalog schema')
+  }
+
+  return {
+    catalog: payload,
+    etag: response.headers.get('ETag') ?? undefined,
+    lastModified: response.headers.get('Last-Modified') ?? undefined,
+  }
+}
+
 export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
@@ -17,57 +86,31 @@ export const loadRegistryCatalog = async (
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
-    return {
-      catalog: cachedCatalog,
-      indexUrl,
-      cacheState: 'fresh',
-    }
+    return { catalog: cachedCatalog, indexUrl, cacheState: 'fresh' }
   }
 
+  const envelope = readCatalogCacheEnvelope(indexUrl)
+  const conditionalHeaders = buildConditionalHeaders(envelope)
+
   try {
-    const response = await fetch(indexUrl, {
-      signal: options.signal,
-      cache: 'no-store',
-      headers: {
-        Accept: 'application/json',
-      },
-    })
+    const result = await fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders)
 
-    if (!response.ok) {
-      throw new Error(`Registry request failed (${response.status} ${response.statusText})`)
+    if (result.notModified) {
+      touchCatalogCache(indexUrl)
+
+      return { catalog: envelope!.catalog, indexUrl, cacheState: 'fresh' }
     }
 
-    const payload: unknown = await response.json()
+    writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
 
-    if (!isRegistryCatalog(payload)) {
-      throw new Error('Registry payload does not match expected catalog schema')
-    }
-
-    writeCatalogCache(indexUrl, payload)
-
-    return {
-      catalog: payload,
-      indexUrl,
-      cacheState: 'none',
-    }
+    return { catalog: result.catalog, indexUrl, cacheState: 'none' }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
-    const staleCatalog = readStaleCatalogCache(indexUrl)
 
-    if (staleCatalog) {
-      return {
-        catalog: staleCatalog,
-        indexUrl,
-        cacheState: 'stale-fallback',
-        errorMessage,
-      }
+    if (envelope?.catalog) {
+      return { catalog: envelope.catalog, indexUrl, cacheState: 'stale-fallback', errorMessage }
     }
 
-    return {
-      catalog: null,
-      indexUrl,
-      cacheState: 'none',
-      errorMessage,
-    }
+    return { catalog: null, indexUrl, cacheState: 'none', errorMessage }
   }
 }

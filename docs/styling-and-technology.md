@@ -32,12 +32,18 @@ The current UI loads registry index data from a source URL configured at build
 time (Vite `VITE_...` env vars). If remote loading fails, the UI uses cached
 catalog data when available and otherwise shows an error state.
 
-Registry index loading now follows an app-owned 24h freshness policy:
+Registry index loading follows an app-owned 24h freshness policy with
+conditional GET revalidation to minimize network usage:
 
-- Use fresh cache when available.
-- Attempt remote refresh when fresh cache is unavailable.
-- If refresh fails, prefer stale cache before showing an error state when no
-  cache exists.
+- Serve directly from cache when within 24h TTL — no network request.
+- After TTL expires, send a conditional GET using `If-None-Match` (ETag) and/or
+  `If-Modified-Since` headers stored from the previous response.
+- A `304 Not Modified` response resets the TTL with zero body downloaded.
+- A `200` response stores the new payload and the updated `ETag`/`Last-Modified`
+  headers for future conditional requests.
+- If the request fails, serve stale cache before showing an error state.
+- Servers that do not send `ETag` or `Last-Modified` fall back silently to a
+  full unconditional GET.
 
 Service worker runtime caching is intentionally focused to same-origin static
 assets. Registry index freshness is owned by the app-layer cache contract, and

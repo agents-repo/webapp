@@ -64,8 +64,12 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Registry source configuration can be customized with Vite env vars:
    `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
    `VITE_REGISTRY_INDEX_PATH`.
-- Registry catalog loading uses a 24h app-owned cache policy plus focused
-   service worker runtime caching for same-origin static assets.
+- Registry catalog loading uses a 24h app-owned cache policy with conditional
+   GET revalidation. After the TTL expires the app sends `If-None-Match` and/or
+   `If-Modified-Since` request headers. A `304 Not Modified` response resets the
+   TTL with zero body downloaded; a `200` response stores the new payload and
+   the updated `ETag`/`Last-Modified` headers. Service worker runtime caching is
+   focused to same-origin static assets only.
 - The styling and architecture decisions are documented in
    `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
 
@@ -75,13 +79,22 @@ After changing cache or service worker behavior, validate locally with:
 
 1. Start the app with `npm run dev`.
 2. Open browser devtools and inspect Application > Storage and Service Workers.
-3. Confirm first online load populates catalog and cache entries.
-4. Reload and confirm catalog can be served from app cache within 24h.
-5. Simulate network failure for the index request and confirm stale cached
+3. Confirm first online load populates catalog and cache entries. Inspect
+   Application > Local Storage and confirm the stored envelope contains `etag`
+   or `lastModified` fields when the server returned those headers.
+4. Reload and confirm catalog can be served from app cache within 24h (no
+   network request visible in the Network tab).
+5. Force-expire the cache by editing `cachedAt` to `0` in the stored envelope
+   (Application > Local Storage), then reload. Confirm the outgoing request
+   carries `If-None-Match` and/or `If-Modified-Since` headers. If the server
+   returns `304`, no response body should appear; `cachedAt` should be updated
+   in storage. If the server returns `200`, the new payload and headers should
+   be stored.
+6. Simulate network failure for the index request and confirm stale cached
    catalog is used when available.
-6. Simulate network failure with no cached catalog and confirm an error alert is
+7. Simulate network failure with no cached catalog and confirm an error alert is
    shown.
-7. Verify service worker is active and runtime caches include same-origin static
+8. Verify service worker is active and runtime caches include same-origin static
    assets.
 
 ## Cache and Service Worker Reset

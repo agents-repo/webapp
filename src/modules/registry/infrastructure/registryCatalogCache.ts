@@ -11,6 +11,8 @@ interface RegistryCatalogCacheEnvelope {
   cachedAt: number
   indexUrl: string
   catalog: RegistryCatalog
+  etag?: string
+  lastModified?: string
 }
 
 class RegistryCatalogLruCache {
@@ -153,18 +155,37 @@ export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null 
   return envelope.catalog
 }
 
-export const readStaleCatalogCache = (indexUrl: string): RegistryCatalog | null => {
-  const envelope = getEnvelopeFromMemoryOrStorage(indexUrl)
-
-  return envelope ? envelope.catalog : null
+export const readCatalogCacheEnvelope = (
+  indexUrl: string,
+): RegistryCatalogCacheEnvelope | null => {
+  return getEnvelopeFromMemoryOrStorage(indexUrl)
 }
 
-export const writeCatalogCache = (indexUrl: string, catalog: RegistryCatalog): void => {
+export const touchCatalogCache = (indexUrl: string): void => {
+  const envelope = getEnvelopeFromMemoryOrStorage(indexUrl)
+
+  if (!envelope) {
+    return
+  }
+
+  memoryCacheByIndexUrl.set(indexUrl, { ...envelope, cachedAt: Date.now() })
+
+  persistCache()
+}
+
+export const writeCatalogCache = (
+  indexUrl: string,
+  catalog: RegistryCatalog,
+  etag?: string,
+  lastModified?: string,
+): void => {
   memoryCacheByIndexUrl.set(indexUrl, {
     cacheVersion: CACHE_VERSION,
     cachedAt: Date.now(),
     indexUrl,
     catalog,
+    etag,
+    lastModified,
   })
 
   persistCache()
