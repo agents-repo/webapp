@@ -17,6 +17,11 @@ const STICKY_SEARCH_THRESHOLD = 180
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
   readonly registrySettingsVersion: number
+  readonly onCatalogStatusNoteChange: (note: {
+    summaryText: string
+    sourceUrl: string
+    statusTag: string
+  } | null) => void
 }
 
 type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
@@ -94,7 +99,11 @@ const getCatalogAlertState = ({
   return null
 }
 
-function HomePage({ setHeaderSearchSlot, registrySettingsVersion }: HomePageProps) {
+function HomePage({
+  setHeaderSearchSlot,
+  registrySettingsVersion,
+  onCatalogStatusNoteChange,
+}: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
   const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
@@ -103,12 +112,6 @@ function HomePage({ setHeaderSearchSlot, registrySettingsVersion }: HomePageProp
   const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
-  const catalogStatusTag = getCatalogStatusTag({
-    catalog,
-    cacheState: catalogCacheState,
-    isLoading: isCatalogLoading,
-    errorMessage: catalogErrorMessage,
-  })
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
     cacheState: catalogCacheState,
@@ -133,6 +136,21 @@ function HomePage({ setHeaderSearchSlot, registrySettingsVersion }: HomePageProp
       setCatalogSourceUrl(result.indexUrl)
       setCatalogErrorMessage(result.errorMessage ?? null)
 
+      const noteStatusTag = getCatalogStatusTag({
+        catalog: result.catalog,
+        cacheState: result.cacheState,
+        isLoading: false,
+        errorMessage: result.errorMessage ?? null,
+      })
+
+      onCatalogStatusNoteChange({
+        summaryText: result.catalog
+          ? `Updated ${formatCatalogUpdatedAt(result.catalog.updatedAt)} with ${result.catalog.packages.length} packages from `
+          : 'Registry catalog unavailable from ',
+        sourceUrl: result.indexUrl,
+        statusTag: noteStatusTag,
+      })
+
       if (result.errorMessage) {
         console.warn('Registry catalog loading fallback triggered:', result.errorMessage)
       }
@@ -146,7 +164,7 @@ function HomePage({ setHeaderSearchSlot, registrySettingsVersion }: HomePageProp
       isActive = false
       abortController.abort()
     }
-  }, [registrySettingsVersion])
+  }, [onCatalogStatusNoteChange, registrySettingsVersion])
 
   useEffect(() => {
     const updateStickyState = (): void => {
@@ -348,22 +366,6 @@ function HomePage({ setHeaderSearchSlot, registrySettingsVersion }: HomePageProp
             </Card>
           ) : null}
 
-          <p className="small text-body-secondary mt-3 mb-0 catalog-status-note">
-            {catalog
-              ? `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages from `
-              : 'Registry catalog unavailable from '}
-            {canShowCatalogSourceLink ? (
-              <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
-                {catalogSourceUrl}
-              </a>
-            ) : (
-              <span>{catalogSourceUrl || 'configured source'}</span>
-            )}
-            {' '}
-            <Badge bg="secondary" pill className="fw-normal">
-              {catalogStatusTag}
-            </Badge>
-          </p>
         </Container>
       </section>
     </main>

@@ -35,6 +35,11 @@ const themeModeOptions: readonly ThemeModeOption[] = [
 interface HeaderProps {
   readonly searchSlot?: ReactNode
   readonly onRegistrySettingsSaved?: () => void
+  readonly registryCatalogStatusNote?: {
+    summaryText: string
+    sourceUrl: string
+    statusTag: string
+  } | null
 }
 
 const isSafeExternalHttpUrl = (value: string): boolean => {
@@ -88,7 +93,17 @@ interface SettingsModalState {
   validationError: string | null
 }
 
-function RegistrySettingsControl({ onSaved }: { readonly onSaved?: () => void }) {
+function RegistrySettingsControl({
+  onSaved,
+  registryCatalogStatusNote,
+}: {
+  readonly onSaved?: () => void
+  readonly registryCatalogStatusNote?: {
+    summaryText: string
+    sourceUrl: string
+    statusTag: string
+  } | null
+}) {
   const configuredSource = getConfiguredRegistrySourceConfig()
   const initialSource = getRegistrySourceConfig()
   const [currentSourceUrl, setCurrentSourceUrl] = useState(initialSource.baseUrl)
@@ -223,6 +238,25 @@ function RegistrySettingsControl({ onSaved }: { readonly onSaved?: () => void })
                   {currentSourceMode === 'runtime-override' ? 'runtime override' : 'configured source'}
                 </Badge>
               </div>
+
+              {registryCatalogStatusNote ? (
+                <p className="small text-body-secondary opacity-75 mt-3 mb-0">
+                  {registryCatalogStatusNote.summaryText}
+                  {isSafeExternalHttpUrl(registryCatalogStatusNote.sourceUrl) ? (
+                    <a
+                      href={registryCatalogStatusNote.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-reset text-break"
+                    >
+                      {registryCatalogStatusNote.sourceUrl}
+                    </a>
+                  ) : (
+                    <span>{registryCatalogStatusNote.sourceUrl || 'configured source'}</span>
+                  )}
+                  <span className="opacity-75"> ({registryCatalogStatusNote.statusTag})</span>
+                </p>
+              ) : null}
             </section>
 
             <section>
@@ -250,7 +284,7 @@ function RegistrySettingsControl({ onSaved }: { readonly onSaved?: () => void })
   )
 }
 
-function Header({ searchSlot, onRegistrySettingsSaved }: HeaderProps) {
+function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote }: HeaderProps) {
   return (
     <Navbar
       sticky="top"
@@ -292,7 +326,10 @@ function Header({ searchSlot, onRegistrySettingsSaved }: HeaderProps) {
               Help Us
             </Nav.Link>
             <Nav.Item className="ms-lg-2 d-flex align-items-center">
-              <RegistrySettingsControl onSaved={onRegistrySettingsSaved} />
+              <RegistrySettingsControl
+                onSaved={onRegistrySettingsSaved}
+                registryCatalogStatusNote={registryCatalogStatusNote}
+              />
             </Nav.Item>
             <Nav.Item className="ms-lg-2 d-flex align-items-center">
               <ThemeModeDropdown />
