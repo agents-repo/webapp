@@ -47,7 +47,8 @@ npm run build
 
 ## Registry Source Configuration
 
-The app loads the registry catalog from a configured source URL at runtime.
+The app loads the registry catalog from a source URL configured at build time
+through Vite `VITE_...` environment variables.
 
 - `VITE_REGISTRY_REPOSITORY_URL`: human-facing repository URL. Default:
   `https://github.com/agents-repo/registry`

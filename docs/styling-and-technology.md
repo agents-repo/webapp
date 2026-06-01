@@ -28,8 +28,9 @@ LRU policy plus persistent browser storage.
 
 ## Current State
 
-The current UI loads registry index data from a configurable runtime source URL
-and falls back to local mock catalog data if remote loading fails.
+The current UI loads registry index data from a source URL configured at build
+time (Vite `VITE_...` env vars) and falls back to local mock catalog data if
+remote loading fails.
 
 Registry index loading now follows an app-owned 24h freshness policy:
 
