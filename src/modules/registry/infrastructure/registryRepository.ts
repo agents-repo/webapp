@@ -5,7 +5,6 @@ import { getRegistrySourceConfig } from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
-  source: 'remote'
   indexUrl: string
   cacheState: 'none' | 'fresh' | 'stale-fallback'
   errorMessage?: string
@@ -20,7 +19,6 @@ export const loadRegistryCatalog = async (
   if (cachedCatalog) {
     return {
       catalog: cachedCatalog,
-      source: 'remote',
       indexUrl,
       cacheState: 'fresh',
     }
@@ -48,7 +46,6 @@ export const loadRegistryCatalog = async (
 
     return {
       catalog: payload,
-      source: 'remote',
       indexUrl,
       cacheState: 'none',
     }
@@ -59,7 +56,6 @@ export const loadRegistryCatalog = async (
     if (staleCatalog) {
       return {
         catalog: staleCatalog,
-        source: 'remote',
         indexUrl,
         cacheState: 'stale-fallback',
         errorMessage,
@@ -68,7 +64,6 @@ export const loadRegistryCatalog = async (
 
     return {
       catalog: null,
-      source: 'remote',
       indexUrl,
       cacheState: 'none',
       errorMessage,

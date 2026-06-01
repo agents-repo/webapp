@@ -65,8 +65,7 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
    `VITE_REGISTRY_INDEX_PATH`.
 - Registry catalog loading uses a 24h app-owned cache policy plus focused
-   service worker runtime caching for static assets and the configured index
-   URL.
+   service worker runtime caching for same-origin static assets.
 - The styling and architecture decisions are documented in
    `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
 
@@ -82,8 +81,8 @@ After changing cache or service worker behavior, validate locally with:
    catalog is used when available.
 6. Simulate network failure with no cached catalog and confirm an error alert is
    shown.
-7. Verify service worker is active and runtime caches include static assets and
-   the configured index URL.
+7. Verify service worker is active and runtime caches include same-origin static
+   assets.
 
 ## Cache and Service Worker Reset
 

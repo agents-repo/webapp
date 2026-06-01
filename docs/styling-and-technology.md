@@ -39,9 +39,10 @@ Registry index loading now follows an app-owned 24h freshness policy:
 - If refresh fails, prefer stale cache before showing an error state when no
   cache exists.
 
-Service worker runtime caching is intentionally focused to static assets and the
-configured registry index URL. Broad interception of all GET requests is
-intentionally avoided to reduce stale-data risk.
+Service worker runtime caching is intentionally focused to same-origin static
+assets. Registry index freshness is owned by the app-layer cache contract, and
+broad interception of GET requests is intentionally avoided to reduce stale-data
+risk.
 
 The app currently uses Font Awesome React components for navigation and status
 icons instead of introducing a separate in-house icon system.

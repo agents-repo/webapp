@@ -75,11 +75,10 @@ Registry catalog loading now uses two coordinated cache layers:
   - If remote refresh fails, stale cached catalog is used when available
   - If refresh fails and no cached catalog exists, the app shows an error alert
 - Service worker runtime cache:
-  - Focused caching for static assets and the configured registry index URL
-  - Network-first behavior for the index URL to favor fresh data when online
+  - Focused caching for same-origin static assets only
 
-This keeps user-facing freshness decisions in app logic while still improving
-offline resilience.
+This keeps registry freshness decisions in app logic while still improving
+offline resilience for app assets.
 
 ## GitHub CLI
 
