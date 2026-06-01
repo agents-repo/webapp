@@ -8,6 +8,10 @@ const isStringArray = (value: unknown): value is string[] => {
   return Array.isArray(value) && value.every((item) => typeof item === 'string')
 }
 
+const isValidDateString = (value: string): boolean => {
+  return Number.isFinite(Date.parse(value))
+}
+
 const isEstimateOverallCost = (
   value: unknown,
 ): value is RegistryPackage['estimateOverallCost'] => {
@@ -61,7 +65,11 @@ export const isRegistryCatalog = (value: unknown): value is RegistryCatalog => {
     return false
   }
 
-  if (typeof value.schemaVersion !== 'string' || typeof value.updatedAt !== 'string') {
+  if (
+    typeof value.schemaVersion !== 'string' ||
+    typeof value.updatedAt !== 'string' ||
+    !isValidDateString(value.updatedAt)
+  ) {
     return false
   }
 
