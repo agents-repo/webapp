@@ -16,6 +16,8 @@ AI-first contributor workflow.
 - Vite
 - Bootstrap, SCSS, React Bootstrap, and Font Awesome React
 - Bootstrap 5.3 color modes with a header dropdown for light, dark, and auto
+- PWA service worker runtime caching through `vite-plugin-pwa`
+- In-app 24h registry index cache semantics using `lru-cache` + persistent browser storage
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 
@@ -56,6 +58,20 @@ The app loads the registry catalog from a configured source URL at runtime.
 With defaults, the effective fetch URL resolves to:
 
 `https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
+
+## Caching and Offline Behavior
+
+Registry catalog loading now uses two coordinated cache layers:
+
+- App-layer cache contract:
+  - 24h freshness window for `index.json`
+  - Fresh cache is used before network fetches
+  - If remote refresh fails, stale cached catalog is used before falling back to mock data
+- Service worker runtime cache:
+  - Focused caching for static assets and the configured registry index URL
+  - Network-first behavior for the index URL to favor fresh data when online
+
+This keeps user-facing freshness decisions in app logic while still improving offline resilience.
 
 ## GitHub CLI
 

@@ -18,6 +18,8 @@ presentation concerns separated when those layers are useful for the feature.
 - Keep cross-module imports narrow and intentional.
 - Put data access adapters in infrastructure, business rules in domain or
   application, and UI concerns in presentation.
+- Keep cache adapters and remote-fetch fallback policies in infrastructure so
+  presentation and application layers consume a stable loading contract.
 - Prefer local module composition over creating shared globals for feature-specific behavior.
 - When a module grows, split it by responsibility before duplicating logic elsewhere.
 

@@ -24,6 +24,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "bootstrap": "^5.3.8",
+    "lru-cache": "^11.2.2",
     "react": "^19.2.6",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.6",
@@ -50,6 +51,7 @@
     "sass": "^1.94.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "vite-plugin-pwa": "^1.1.0"
   }
 }

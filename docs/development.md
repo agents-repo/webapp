@@ -65,8 +65,32 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Registry source configuration can be customized with Vite env vars:
   `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
   `VITE_REGISTRY_INDEX_PATH`.
+- Registry catalog loading uses a 24h app-owned cache policy plus focused
+   service worker runtime caching for static assets and the configured index URL.
 - The styling and architecture decisions are documented in `docs/styling-and-technology.md`
    and `docs/architecture/ddd-decision.md`.
+
+## Cache and PWA Validation
+
+After changing cache or service worker behavior, validate locally with:
+
+1. Start the app with `npm run dev`.
+2. Open browser devtools and inspect Application > Storage and Service Workers.
+3. Confirm first online load populates catalog and cache entries.
+4. Reload and confirm catalog can be served from app cache within 24h.
+5. Simulate network failure for the index request and confirm stale cached
+   catalog is used before mock fallback.
+6. Verify service worker is active and runtime caches include static assets and
+   the configured index URL.
+
+## Cache and Service Worker Reset
+
+When debugging stale behavior, clear both layers before retesting:
+
+1. In devtools Application tab, clear local storage for the app origin.
+2. Clear Cache Storage entries for runtime caches.
+3. Unregister the active service worker.
+4. Hard reload the page.
 
 ## Pull Requests
 

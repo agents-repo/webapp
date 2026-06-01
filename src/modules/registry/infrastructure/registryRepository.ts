@@ -1,11 +1,13 @@
 import type { RegistryCatalog, RegistryPackage } from '../domain/package'
 import { getMockRegistryCatalog } from './mockRegistryRepository'
+import { readFreshCatalogCache, readStaleCatalogCache, writeCatalogCache } from './registryCatalogCache'
 import { getRegistrySourceConfig } from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog
   source: 'remote' | 'mock'
   indexUrl: string
+  cacheState?: 'none' | 'fresh' | 'stale-fallback'
   errorMessage?: string
 }
 
@@ -81,6 +83,16 @@ export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
   const { indexUrl } = getRegistrySourceConfig()
+  const cachedCatalog = readFreshCatalogCache(indexUrl)
+
+  if (cachedCatalog) {
+    return {
+      catalog: cachedCatalog,
+      source: 'remote',
+      indexUrl,
+      cacheState: 'fresh',
+    }
+  }
 
   try {
     const response = await fetch(indexUrl, {
@@ -100,18 +112,33 @@ export const loadRegistryCatalog = async (
       throw new Error('Registry payload does not match expected catalog schema')
     }
 
+    writeCatalogCache(indexUrl, payload)
+
     return {
       catalog: payload,
       source: 'remote',
       indexUrl,
+      cacheState: 'none',
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
+    const staleCatalog = readStaleCatalogCache(indexUrl)
+
+    if (staleCatalog) {
+      return {
+        catalog: staleCatalog,
+        source: 'remote',
+        indexUrl,
+        cacheState: 'stale-fallback',
+        errorMessage,
+      }
+    }
 
     return {
       catalog: getMockRegistryCatalog(),
       source: 'mock',
       indexUrl,
+      cacheState: 'none',
       errorMessage,
     }
   }

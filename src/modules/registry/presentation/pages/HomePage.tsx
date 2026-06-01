@@ -18,24 +18,96 @@ interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
 }
 
+type CatalogSource = 'remote' | 'mock'
+type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
+
+interface CatalogAlertState {
+  message: string
+}
+
+const getCatalogSummary = ({
+  source,
+  cacheState,
+  updatedAt,
+  packageCount,
+  isLoading,
+}: {
+  source: CatalogSource
+  cacheState: CatalogCacheState
+  updatedAt: string
+  packageCount: number
+  isLoading: boolean
+}): string => {
+  if (isLoading) {
+    return 'Loading registry catalog from configured source...'
+  }
+
+  const summaryPrefix = `Updated ${formatCatalogUpdatedAt(updatedAt)} with ${packageCount} packages`
+
+  if (source === 'mock') {
+    return `${summaryPrefix} from fallback mock data.`
+  }
+
+  switch (cacheState) {
+    case 'fresh':
+      return `${summaryPrefix} from 24h cache.`
+    case 'stale-fallback':
+      return `${summaryPrefix} from stale cache after remote refresh failure.`
+    default:
+      return `${summaryPrefix} from remote index data.`
+  }
+}
+
+const getCatalogAlertState = ({
+  source,
+  cacheState,
+  errorMessage,
+}: {
+  source: CatalogSource
+  cacheState: CatalogCacheState
+  errorMessage: string | null
+}): CatalogAlertState | null => {
+  if (!errorMessage) {
+    return null
+  }
+
+  if (source === 'mock') {
+    return {
+      message: 'Unable to load remote registry index. Displaying fallback mock catalog.',
+    }
+  }
+
+  if (source === 'remote' && cacheState === 'stale-fallback') {
+    return {
+      message: 'Remote registry refresh failed. Displaying stale cached catalog while keeping the app available.',
+    }
+  }
+
+  return null
+}
+
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
   const [catalog, setCatalog] = useState(getMockRegistryCatalog)
-  const [catalogSource, setCatalogSource] = useState<'remote' | 'mock'>('mock')
+  const [catalogSource, setCatalogSource] = useState<CatalogSource>('mock')
+  const [catalogCacheState, setCatalogCacheState] = useState<CatalogCacheState>('none')
   const [catalogSourceUrl, setCatalogSourceUrl] = useState('')
   const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
-  let catalogSummary = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages from fallback mock data.`
-
-  if (catalogSource === 'remote') {
-    catalogSummary = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages from remote index data.`
-  }
-
-  if (isCatalogLoading) {
-    catalogSummary = 'Loading registry catalog from configured source...'
-  }
+  const catalogSummary = getCatalogSummary({
+    source: catalogSource,
+    cacheState: catalogCacheState,
+    updatedAt: catalog.updatedAt,
+    packageCount: catalog.packages.length,
+    isLoading: isCatalogLoading,
+  })
+  const catalogAlertState = getCatalogAlertState({
+    source: catalogSource,
+    cacheState: catalogCacheState,
+    errorMessage: catalogErrorMessage,
+  })
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -50,8 +122,9 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
       setCatalog(result.catalog)
       setCatalogSource(result.source)
+      setCatalogCacheState(result.cacheState ?? 'none')
       setCatalogSourceUrl(result.indexUrl)
-      setCatalogErrorMessage(result.source === 'mock' ? result.errorMessage ?? 'Registry request failed.' : null)
+      setCatalogErrorMessage(result.errorMessage ?? null)
       setIsCatalogLoading(false)
     }
 
@@ -157,9 +230,9 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             </Col>
           </Row>
 
-          {catalogSource === 'mock' && catalogErrorMessage ? (
+          {catalogAlertState ? (
             <Alert variant="warning" className="mb-3">
-              Unable to load remote registry index. Displaying fallback mock catalog.
+              {catalogAlertState.message}
               {catalogSourceUrl ? (
                 <>
                   {' '}
