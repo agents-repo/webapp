@@ -2,6 +2,7 @@ export const DEFAULT_REGISTRY_REPOSITORY_URL = 'https://github.com/agents-repo/r
 export const DEFAULT_REGISTRY_INDEX_PATH = 'packages/index.json'
 export const DEFAULT_REGISTRY_BRANCH = 'main'
 const GITHUB_HOSTNAME = 'github.com'
+const GITHUB_WWW_HOSTNAME = 'www.github.com'
 const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
 
 const stripGitRepositorySuffix = (value: string): string => {
@@ -35,7 +36,10 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
     const parsedUrl = new URL(normalized)
     const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
 
-    if (parsedUrl.hostname !== GITHUB_HOSTNAME || segments.length < 2) {
+    if (
+      (parsedUrl.hostname !== GITHUB_HOSTNAME && parsedUrl.hostname !== GITHUB_WWW_HOSTNAME) ||
+      segments.length < 2
+    ) {
       return normalized
     }
 

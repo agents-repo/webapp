@@ -21,8 +21,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "vite.config.ts",
-    "src/modules/registry/infrastructure/registrySourceUrl.ts"
-  ]
+  "include": ["vite.config.ts"]
 }
