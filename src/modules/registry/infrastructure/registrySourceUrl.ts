@@ -2,6 +2,7 @@ export const DEFAULT_REGISTRY_REPOSITORY_URL = 'https://github.com/agents-repo/r
 export const DEFAULT_REGISTRY_INDEX_PATH = 'packages/index.json'
 export const DEFAULT_REGISTRY_BRANCH = 'main'
 const GITHUB_HOSTNAME = 'github.com'
+const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
 
 export const trimTrailingSlashes = (value: string): string => {
   let output = value
@@ -37,7 +38,9 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
     const owner = segments[0]
     const repository = segments[1]
     const branch =
-      segments.length >= 4 && segments[2] === 'blob' ? segments[3] : DEFAULT_REGISTRY_BRANCH
+      segments.length >= 4 && GITHUB_BRANCH_PATH_MARKERS.has(segments[2])
+        ? segments[3]
+        : DEFAULT_REGISTRY_BRANCH
 
     return `https://raw.githubusercontent.com/${owner}/${repository}/${branch}`
   } catch {

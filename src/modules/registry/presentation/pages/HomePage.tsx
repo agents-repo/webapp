@@ -25,6 +25,15 @@ interface CatalogAlertState {
   message: string
 }
 
+const isSafeExternalHttpUrl = (value: string): boolean => {
+  try {
+    const parsed = new URL(value)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 const getCatalogSummary = ({
   source,
   cacheState,
@@ -108,6 +117,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
     cacheState: catalogCacheState,
     errorMessage: catalogErrorMessage,
   })
+  const canShowCatalogSourceLink = isSafeExternalHttpUrl(catalogSourceUrl)
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -238,7 +248,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           {catalogAlertState ? (
             <Alert variant="warning" className="mb-3">
               {catalogAlertState.message}
-              {catalogSourceUrl ? (
+              {canShowCatalogSourceLink ? (
                 <>
                   {' '}
                   <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
