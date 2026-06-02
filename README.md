@@ -64,7 +64,10 @@ Build-time variables remain:
   `packages/index.json`
 
 GitHub repository URLs and `/tree/<ref>` or `/blob/<ref>` URLs are normalized
-to `raw.githubusercontent.com`, including refs that contain `/`.
+to `raw.githubusercontent.com`. When a tree/blob URL includes additional
+repository path segments (for example `/tree/main/packages`), only the first
+ref segment is used for derivation. To use slash refs, provide an explicit ref
+form such as `/tree/refs/heads/feature/foo`.
 
 With defaults, the effective fetch URL resolves to:
 

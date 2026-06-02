@@ -19,8 +19,14 @@ describe('registrySourceUrl', () => {
     )
   })
 
-  it('normalizes GitHub refs that include slashes', () => {
-    expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry/tree/feature/foo')).toBe(
+  it('treats additional tree path segments as repository paths, not ref segments', () => {
+    expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry/tree/main/packages')).toBe(
+      'https://raw.githubusercontent.com/agents-repo/registry/main',
+    )
+  })
+
+  it('supports explicit slash refs via refs/heads in tree URLs', () => {
+    expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry/tree/refs/heads/feature/foo')).toBe(
       'https://raw.githubusercontent.com/agents-repo/registry/feature/foo',
     )
   })

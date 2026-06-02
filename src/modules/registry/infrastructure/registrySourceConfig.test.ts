@@ -81,8 +81,16 @@ describe('registrySourceConfig', () => {
     expect(source.indexUrl).toBe('https://raw.githubusercontent.com/owner/repo/main/packages/index.json')
   })
 
-  it('normalizes GitHub runtime override refs that include slashes', () => {
-    setStoredRegistryBaseUrlOverride('https://github.com/owner/repo/tree/feature/foo')
+  it('uses first tree ref segment when additional repository path segments are present', () => {
+    setStoredRegistryBaseUrlOverride('https://github.com/owner/repo/tree/main/packages')
+    const source = getRegistrySourceConfig()
+
+    expect(source.baseUrl).toBe('https://raw.githubusercontent.com/owner/repo/main')
+    expect(source.indexUrl).toBe('https://raw.githubusercontent.com/owner/repo/main/packages/index.json')
+  })
+
+  it('normalizes explicit slash refs in runtime override URLs', () => {
+    setStoredRegistryBaseUrlOverride('https://github.com/owner/repo/tree/refs/heads/feature/foo')
     const source = getRegistrySourceConfig()
 
     expect(source.baseUrl).toBe('https://raw.githubusercontent.com/owner/repo/feature/foo')
