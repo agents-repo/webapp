@@ -153,11 +153,11 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
               <div className="small text-body-secondary mt-3 d-flex align-items-center gap-2 flex-wrap">
                 <span>Current source:</span>
                 {canShowCurrentSourceLink ? (
-                  <a href={currentSourceUrl} target="_blank" rel="noreferrer noopener">
+                  <a href={currentSourceUrl} target="_blank" rel="noreferrer noopener" className="text-reset text-break">
                     {currentSourceUrl}
                   </a>
                 ) : (
-                  <span>{currentSourceUrl}</span>
+                  <span className="text-break">{currentSourceUrl}</span>
                 )}
                 <Badge
                   bg={currentSourceMode === 'runtime-override' ? 'info' : 'secondary'}
