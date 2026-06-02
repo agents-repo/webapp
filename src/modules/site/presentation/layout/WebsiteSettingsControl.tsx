@@ -114,8 +114,9 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
             <section>
               <h3 className="h6 mb-2">Registry source</h3>
               <p className="small text-body-secondary mb-3">
-                Configure the registry base URL used to load packages/index.json at runtime. GitHub repository
-                URLs are converted to a raw content URL. Raw and other base URLs are used directly.
+                Configure the registry base URL used to load the registry index ({configuredSource.indexPath}) at
+                runtime. GitHub repository URLs are converted to a raw content URL. Raw and other base URLs are used
+                directly.
               </p>
 
               <Form
