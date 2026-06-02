@@ -94,7 +94,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
     <>
       <Button
         variant="link"
-        className="d-inline-flex align-items-center justify-content-center app-header-icon-button"
+        className="d-inline-flex align-items-center justify-content-center app-header-icon-control"
         onClick={openModal}
         aria-label="Open website settings"
         title="Website settings"
