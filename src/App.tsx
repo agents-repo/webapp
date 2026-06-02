@@ -21,7 +21,10 @@ function App() {
       <Header
         searchSlot={headerSearchSlot}
         registryCatalogStatusNote={registryCatalogStatusNote}
-        onRegistrySettingsSaved={() => setRegistrySettingsVersion((currentValue) => currentValue + 1)}
+        onRegistrySettingsSaved={() => {
+          setRegistryCatalogStatusNote(null)
+          setRegistrySettingsVersion((currentValue) => currentValue + 1)
+        }}
       />
 
       <Routes>

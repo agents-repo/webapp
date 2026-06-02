@@ -56,7 +56,10 @@ describe('registrySourceConfig', () => {
 
     expect(source.sourceMode).toBe('configured')
     expect(source.runtimeBaseUrlOverride).toBeNull()
+    expect(source.configuredBaseUrl).toBe('https://github.com/agents-repo/registry')
     expect(source.baseUrl).toBe(configuredSource.baseUrl)
+    expect(source.baseUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/main')
+    expect(source.baseUrl).not.toBe(source.configuredBaseUrl)
     expect(source.indexUrl).toBe(configuredSource.indexUrl)
   })
 

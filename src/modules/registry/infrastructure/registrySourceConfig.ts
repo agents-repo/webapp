@@ -31,7 +31,7 @@ export const getConfiguredRegistrySourceConfig = (): RegistrySourceConfig => {
 
   return {
     repositoryUrl,
-    configuredBaseUrl: baseUrl,
+    configuredBaseUrl,
     runtimeBaseUrlOverride: null,
     baseUrl,
     indexPath,

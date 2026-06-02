@@ -1,5 +1,5 @@
 export interface RegistryCatalogStatusNote {
-  summaryText: string
-  sourceUrl: string
-  statusTag: string
+  readonly summaryText: string
+  readonly sourceUrl: string
+  readonly statusTag: string
 }
