@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
     "lint:all": "npm run lint:md && npm run lint",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "preview": "vite preview",
     "prepare": "husky"
@@ -51,6 +52,7 @@
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12",
+    "vitest": "^4.0.7",
     "vite-plugin-pwa": "^1.1.0"
   }
 }

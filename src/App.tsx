@@ -8,13 +8,8 @@ import AboutPage from './modules/site/presentation/pages/AboutPage'
 import ContactPage from './modules/site/presentation/pages/ContactPage'
 import HelpUsPage from './modules/site/presentation/pages/HelpUsPage'
 import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
+import type { RegistryCatalogStatusNote } from './modules/site/application/websiteSettings/registryCatalogStatusNote'
 import './App.scss'
-
-interface RegistryCatalogStatusNote {
-  summaryText: string
-  sourceUrl: string
-  statusTag: string
-}
 
 function App() {
   const [headerSearchSlot, setHeaderSearchSlot] = useState<ReactNode | null>(null)

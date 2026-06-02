@@ -41,6 +41,7 @@ npm run dev
 ```bash
 npm run env:check
 npm run lint:all
+npm run test
 npm run typecheck
 npm run build
 ```

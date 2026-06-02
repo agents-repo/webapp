@@ -2,23 +2,17 @@ import { useState } from 'react'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Badge, Button, Form, Modal, Stack } from 'react-bootstrap'
+import { isSafeExternalHttpUrl } from '../../application/urlSafety'
+import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
   clearStoredRegistryBaseUrlOverride,
+  getConfiguredRegistrySourceConfig,
+  getRegistrySourceConfig,
   getStoredRegistryBaseUrlOverride,
   normalizeRegistryBaseUrlOverrideInput,
   setStoredRegistryBaseUrlOverride,
   validateRegistryBaseUrlOverrideInput,
-} from '../../../registry/application/registrySourceSettings'
-import {
-  getConfiguredRegistrySourceConfig,
-  getRegistrySourceConfig,
-} from '../../../registry/infrastructure/registrySourceConfig'
-
-export interface RegistryCatalogStatusNote {
-  summaryText: string
-  sourceUrl: string
-  statusTag: string
-}
+} from '../../../registry/application/registrySource'
 
 interface SettingsModalState {
   showModal: boolean
@@ -31,20 +25,10 @@ interface WebsiteSettingsControlProps {
   readonly registryCatalogStatusNote?: RegistryCatalogStatusNote | null
 }
 
-const isSafeExternalHttpUrl = (value: string): boolean => {
-  try {
-    const parsed = new URL(value)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
 function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteSettingsControlProps) {
   const configuredSource = getConfiguredRegistrySourceConfig()
-  const initialSource = getRegistrySourceConfig()
-  const [currentSourceUrl, setCurrentSourceUrl] = useState(initialSource.baseUrl)
-  const [currentSourceMode, setCurrentSourceMode] = useState(initialSource.sourceMode)
+  const [currentSourceUrl, setCurrentSourceUrl] = useState(() => getRegistrySourceConfig().baseUrl)
+  const [currentSourceMode, setCurrentSourceMode] = useState(() => getRegistrySourceConfig().sourceMode)
   const [modalState, setModalState] = useState<SettingsModalState>({
     showModal: false,
     baseUrlInput: '',
@@ -171,7 +155,10 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                 ) : (
                   <span>{currentSourceUrl}</span>
                 )}
-                <Badge bg={currentSourceMode === 'runtime-override' ? 'info' : 'secondary'} text="dark">
+                <Badge
+                  bg={currentSourceMode === 'runtime-override' ? 'info' : 'secondary'}
+                  text={currentSourceMode === 'runtime-override' ? 'dark' : undefined}
+                >
                   {currentSourceMode === 'runtime-override' ? 'runtime override' : 'configured source'}
                 </Badge>
               </div>
@@ -194,13 +181,6 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                   <span className="opacity-75"> ({registryCatalogStatusNote.statusTag})</span>
                 </p>
               ) : null}
-            </section>
-
-            <section>
-              <h3 className="h6 mb-2">Future settings</h3>
-              <p className="small text-body-secondary mb-0">
-                This modal is ready for additional website preferences, such as cache controls and package list display options.
-              </p>
             </section>
           </Stack>
         </Modal.Body>

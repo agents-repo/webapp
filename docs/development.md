@@ -18,6 +18,7 @@ Run these checks before opening a pull request:
 ```bash
 npm run env:check
 npm run lint:all
+npm run test
 npm run typecheck
 npm run build
 ```
@@ -68,8 +69,8 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Registry source configuration can be customized with Vite env vars:
    `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
    `VITE_REGISTRY_INDEX_PATH`.
-- Home page catalog source status now appears below the package cards and
-   includes updated date, package count, source URL, and cache/failure tag.
+- Website settings modal shows catalog source status details, including updated
+   date, package count, source URL, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional
    GET revalidation. After the TTL expires the app sends `If-None-Match` and/or
    `If-Modified-Since` request headers. A `304 Not Modified` response resets the

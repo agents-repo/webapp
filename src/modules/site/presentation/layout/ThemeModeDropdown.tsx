@@ -25,7 +25,7 @@ function ThemeModeDropdown() {
       <Dropdown.Toggle
         id="theme-mode-dropdown"
         variant="link"
-        className="d-inline-flex align-items-center justify-content-center app-theme-toggle"
+        className="d-inline-flex align-items-center justify-content-center app-header-icon-control"
         aria-label={`Color mode: ${activeOption.label}`}
         title={`Color mode: ${activeOption.label}`}
       >

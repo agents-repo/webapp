@@ -5,6 +5,8 @@ import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } fr
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
+import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
 import type { RegistryCatalog } from '../../domain/package'
 import {
   filterRegistryPackages,
@@ -17,11 +19,7 @@ const STICKY_SEARCH_THRESHOLD = 180
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
   readonly registrySettingsVersion: number
-  readonly onCatalogStatusNoteChange: (note: {
-    summaryText: string
-    sourceUrl: string
-    statusTag: string
-  } | null) => void
+  readonly onCatalogStatusNoteChange: (note: RegistryCatalogStatusNote | null) => void
 }
 
 type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
@@ -29,15 +27,6 @@ type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
 interface CatalogAlertState {
   variant: 'warning' | 'danger'
   message: string
-}
-
-const isSafeExternalHttpUrl = (value: string): boolean => {
-  try {
-    const parsed = new URL(value)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
 }
 
 const getCatalogStatusTag = ({

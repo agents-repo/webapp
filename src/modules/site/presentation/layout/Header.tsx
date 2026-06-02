@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import { siteRoutes } from '../routes/siteRoutes'
 import ThemeModeDropdown from './ThemeModeDropdown'
-import WebsiteSettingsControl, { type RegistryCatalogStatusNote } from './WebsiteSettingsControl'
+import WebsiteSettingsControl from './WebsiteSettingsControl'
 
 interface HeaderProps {
   readonly searchSlot?: ReactNode
