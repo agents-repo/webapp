@@ -41,14 +41,20 @@ npm run dev
 ```bash
 npm run env:check
 npm run lint:all
+npm run test
 npm run typecheck
 npm run build
 ```
 
 ## Registry Source Configuration
 
-The app loads the registry catalog from a source URL configured at build time
-through Vite `VITE_...` environment variables.
+The app resolves the registry source URL with runtime-first precedence:
+
+1. Browser runtime override saved from Website settings in the header (cog icon)
+2. Build-time Vite `VITE_...` environment variables
+3. Repository defaults
+
+Build-time variables remain:
 
 - `VITE_REGISTRY_REPOSITORY_URL`: human-facing repository URL. Default:
   `https://github.com/agents-repo/registry`
@@ -57,13 +63,25 @@ through Vite `VITE_...` environment variables.
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
 
-When using GitHub `/tree/<branch>` or `/blob/<branch>` repository URLs,
-normalization only supports branch names without `/`. For refs like
-`feature/foo`, set `VITE_REGISTRY_BASE_URL` directly.
+GitHub repository URLs and `/tree/<ref>` or `/blob/<ref>` URLs are normalized
+to `raw.githubusercontent.com`. When a tree/blob URL includes additional
+repository path segments (for example `/tree/main/packages`), only the first
+ref segment is used for derivation. To use slash refs, provide an explicit ref
+form such as `/tree/refs/heads/feature/foo`.
 
 With defaults, the effective fetch URL resolves to:
 
 `https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
+
+At runtime, users can set a custom registry base URL in the header settings
+modal. The field accepts GitHub repository URLs (auto-normalized), raw URLs,
+and other base URLs (used as-is). Leaving the runtime field empty resets to
+configured defaults.
+
+Note: URL format flexibility does not change the expected registry layout. The
+resolved base URL must expose a compatible registry structure, including a
+valid `packages/index.json` (or the configured `VITE_REGISTRY_INDEX_PATH`)
+that matches the app's registry catalog contract.
 
 ## Caching and Offline Behavior
 

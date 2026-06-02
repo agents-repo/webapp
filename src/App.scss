@@ -114,15 +114,15 @@
   padding-top: 1rem;
 }
 
-.theme-mode-dropdown .dropdown-toggle {
+.app-header-icon-control {
   padding: 0.25rem;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.88);
   transition: color 0.16s ease;
 }
 
-.theme-mode-dropdown .dropdown-toggle:hover,
-.theme-mode-dropdown .dropdown-toggle:focus-visible {
+.app-header-icon-control:hover,
+.app-header-icon-control:focus-visible {
   color: #fff;
   text-decoration: none;
 }

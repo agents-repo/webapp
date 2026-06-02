@@ -8,19 +8,35 @@ import AboutPage from './modules/site/presentation/pages/AboutPage'
 import ContactPage from './modules/site/presentation/pages/ContactPage'
 import HelpUsPage from './modules/site/presentation/pages/HelpUsPage'
 import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
+import type { RegistryCatalogStatusNote } from './modules/site/application/websiteSettings/registryCatalogStatusNote'
 import './App.scss'
 
 function App() {
   const [headerSearchSlot, setHeaderSearchSlot] = useState<ReactNode | null>(null)
+  const [registrySettingsVersion, setRegistrySettingsVersion] = useState(0)
+  const [registryCatalogStatusNote, setRegistryCatalogStatusNote] = useState<RegistryCatalogStatusNote | null>(null)
 
   return (
     <div className="app-shell">
-      <Header searchSlot={headerSearchSlot} />
+      <Header
+        searchSlot={headerSearchSlot}
+        registryCatalogStatusNote={registryCatalogStatusNote}
+        onRegistrySettingsSaved={() => {
+          setRegistryCatalogStatusNote(null)
+          setRegistrySettingsVersion((currentValue) => currentValue + 1)
+        }}
+      />
 
       <Routes>
         <Route
           path={siteRoutes.home}
-          element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
+          element={
+            <HomePage
+              setHeaderSearchSlot={setHeaderSearchSlot}
+              registrySettingsVersion={registrySettingsVersion}
+              onCatalogStatusNoteChange={setRegistryCatalogStatusNote}
+            />
+          }
         />
         <Route path={siteRoutes.about} element={<AboutPage />} />
         <Route path={siteRoutes.contact} element={<ContactPage />} />

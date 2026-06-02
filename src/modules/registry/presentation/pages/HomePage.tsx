@@ -5,6 +5,8 @@ import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } fr
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
+import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
 import type { RegistryCatalog } from '../../domain/package'
 import {
   filterRegistryPackages,
@@ -16,6 +18,8 @@ const STICKY_SEARCH_THRESHOLD = 180
 
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
+  readonly registrySettingsVersion: number
+  readonly onCatalogStatusNoteChange: (note: RegistryCatalogStatusNote | null) => void
 }
 
 type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
@@ -25,41 +29,32 @@ interface CatalogAlertState {
   message: string
 }
 
-const isSafeExternalHttpUrl = (value: string): boolean => {
-  try {
-    const parsed = new URL(value)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
-const getCatalogSummary = ({
+const getCatalogStatusTag = ({
   catalog,
   cacheState,
   isLoading,
+  errorMessage,
 }: {
   catalog: RegistryCatalog | null
   cacheState: CatalogCacheState
   isLoading: boolean
+  errorMessage: string | null
 }): string => {
   if (isLoading) {
-    return 'Loading registry catalog from configured source...'
+    return 'loading'
   }
 
   if (!catalog) {
-    return 'Registry catalog unavailable due to a loading error.'
+    return 'unavailable'
   }
-
-  const summaryPrefix = `Updated ${formatCatalogUpdatedAt(catalog.updatedAt)} with ${catalog.packages.length} packages`
 
   switch (cacheState) {
     case 'fresh':
-      return `${summaryPrefix} from 24h cache.`
+      return 'fresh cache'
     case 'stale-fallback':
-      return `${summaryPrefix} from stale cache after remote refresh failure.`
+      return 'stale cache after refresh failure'
     default:
-      return `${summaryPrefix} from remote index data.`
+      return errorMessage ? 'remote refresh failed' : 'remote source'
   }
 }
 
@@ -93,7 +88,11 @@ const getCatalogAlertState = ({
   return null
 }
 
-function HomePage({ setHeaderSearchSlot }: HomePageProps) {
+function HomePage({
+  setHeaderSearchSlot,
+  registrySettingsVersion,
+  onCatalogStatusNoteChange,
+}: HomePageProps) {
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
   const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
@@ -102,11 +101,6 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
-  const catalogSummary = getCatalogSummary({
-    catalog,
-    cacheState: catalogCacheState,
-    isLoading: isCatalogLoading,
-  })
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
     cacheState: catalogCacheState,
@@ -119,6 +113,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
     let isActive = true
 
     const loadCatalog = async (): Promise<void> => {
+      setIsCatalogLoading(true)
       const result = await loadRegistryCatalog({ signal: abortController.signal })
 
       if (!isActive) {
@@ -129,6 +124,21 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       setCatalogCacheState(result.cacheState)
       setCatalogSourceUrl(result.indexUrl)
       setCatalogErrorMessage(result.errorMessage ?? null)
+
+      const noteStatusTag = getCatalogStatusTag({
+        catalog: result.catalog,
+        cacheState: result.cacheState,
+        isLoading: false,
+        errorMessage: result.errorMessage ?? null,
+      })
+
+      onCatalogStatusNoteChange({
+        summaryText: result.catalog
+          ? `Updated ${formatCatalogUpdatedAt(result.catalog.updatedAt)} with ${result.catalog.packages.length} packages from `
+          : 'Registry catalog unavailable from ',
+        sourceUrl: result.indexUrl,
+        statusTag: noteStatusTag,
+      })
 
       if (result.errorMessage) {
         console.warn('Registry catalog loading fallback triggered:', result.errorMessage)
@@ -143,7 +153,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       isActive = false
       abortController.abort()
     }
-  }, [])
+  }, [onCatalogStatusNoteChange, registrySettingsVersion])
 
   useEffect(() => {
     const updateStickyState = (): void => {
@@ -220,7 +230,6 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   Browse active package templates with quick metadata sourced from the registry index.
                 </p>
                 <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>{searchControl}</div>
-                <p className="small text-body-secondary mb-0">{catalogSummary}</p>
               </Stack>
             </Col>
           </Row>
@@ -345,6 +354,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               </Card.Body>
             </Card>
           ) : null}
+
         </Container>
       </section>
     </main>

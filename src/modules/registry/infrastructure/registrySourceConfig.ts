@@ -4,6 +4,7 @@ import {
   DEFAULT_REGISTRY_REPOSITORY_URL,
   normalizeRegistryBaseUrl,
 } from './registrySourceUrl'
+import { getStoredRegistryBaseUrlOverride } from '../application/registrySourceSettings'
 
 interface RegistryImportMetaEnv {
   VITE_REGISTRY_REPOSITORY_URL?: string
@@ -11,14 +12,17 @@ interface RegistryImportMetaEnv {
   VITE_REGISTRY_INDEX_PATH?: string
 }
 
-interface RegistrySourceConfig {
+export interface RegistrySourceConfig {
   repositoryUrl: string
+  configuredBaseUrl: string
+  runtimeBaseUrlOverride: string | null
   baseUrl: string
   indexPath: string
   indexUrl: string
+  sourceMode: 'configured' | 'runtime-override'
 }
 
-export const getRegistrySourceConfig = (): RegistrySourceConfig => {
+export const getConfiguredRegistrySourceConfig = (): RegistrySourceConfig => {
   const env = import.meta.env as RegistryImportMetaEnv
   const repositoryUrl = env.VITE_REGISTRY_REPOSITORY_URL?.trim() || DEFAULT_REGISTRY_REPOSITORY_URL
   const configuredBaseUrl = env.VITE_REGISTRY_BASE_URL?.trim() || repositoryUrl
@@ -27,8 +31,30 @@ export const getRegistrySourceConfig = (): RegistrySourceConfig => {
 
   return {
     repositoryUrl,
+    configuredBaseUrl,
+    runtimeBaseUrlOverride: null,
     baseUrl,
     indexPath,
     indexUrl: buildRegistryIndexUrl(baseUrl, indexPath),
+    sourceMode: 'configured',
+  }
+}
+
+export const getRegistrySourceConfig = (): RegistrySourceConfig => {
+  const configuredSource = getConfiguredRegistrySourceConfig()
+  const runtimeBaseUrlOverride = getStoredRegistryBaseUrlOverride()
+
+  if (!runtimeBaseUrlOverride) {
+    return configuredSource
+  }
+
+  const runtimeBaseUrl = normalizeRegistryBaseUrl(runtimeBaseUrlOverride)
+
+  return {
+    ...configuredSource,
+    runtimeBaseUrlOverride,
+    baseUrl: runtimeBaseUrl,
+    indexUrl: buildRegistryIndexUrl(runtimeBaseUrl, configuredSource.indexPath),
+    sourceMode: 'runtime-override',
   }
 }
