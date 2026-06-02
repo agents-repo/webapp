@@ -80,4 +80,28 @@ describe('registrySourceConfig', () => {
     expect(source.baseUrl).toBe('https://raw.githubusercontent.com/owner/repo/main')
     expect(source.indexUrl).toBe('https://raw.githubusercontent.com/owner/repo/main/packages/index.json')
   })
+
+  it('normalizes GitHub runtime override refs that include slashes', () => {
+    setStoredRegistryBaseUrlOverride('https://github.com/owner/repo/tree/feature/foo')
+    const source = getRegistrySourceConfig()
+
+    expect(source.baseUrl).toBe('https://raw.githubusercontent.com/owner/repo/feature/foo')
+    expect(source.indexUrl).toBe('https://raw.githubusercontent.com/owner/repo/feature/foo/packages/index.json')
+  })
+
+  it('uses non-GitHub runtime overrides as direct base URLs', () => {
+    setStoredRegistryBaseUrlOverride('https://registry.example.workers.dev/catalog')
+    const source = getRegistrySourceConfig()
+
+    expect(source.baseUrl).toBe('https://registry.example.workers.dev/catalog')
+    expect(source.indexUrl).toBe('https://registry.example.workers.dev/catalog/packages/index.json')
+  })
+
+  it('keeps raw GitHub content runtime overrides unchanged', () => {
+    setStoredRegistryBaseUrlOverride('https://raw.githubusercontent.com/agents-repo/registry/main')
+    const source = getRegistrySourceConfig()
+
+    expect(source.baseUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/main')
+    expect(source.indexUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json')
+  })
 })

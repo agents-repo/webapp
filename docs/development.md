@@ -59,7 +59,8 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - The header now includes a settings cog control next to color mode. It opens a
    website settings modal with runtime registry base URL override support. The
    override persists in localStorage and takes precedence over build-time source
-   configuration.
+   configuration. The field accepts GitHub repository URLs (auto-normalized to
+   raw content), raw URLs, and other base URLs.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page
@@ -69,6 +70,10 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Registry source configuration can be customized with Vite env vars:
    `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
    `VITE_REGISTRY_INDEX_PATH`.
+- Registry source URLs may be GitHub repository URLs, raw URLs, or other base
+   URLs, but the resolved source must still provide the expected registry
+   structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`
+   (default `packages/index.json`).
 - Website settings modal shows catalog source status details, including updated
    date, package count, source URL, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional

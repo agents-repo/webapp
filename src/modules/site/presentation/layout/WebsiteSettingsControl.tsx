@@ -114,7 +114,8 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
             <section>
               <h3 className="h6 mb-2">Registry source</h3>
               <p className="small text-body-secondary mb-3">
-                Configure the registry base URL used to load packages/index.json at runtime.
+                Configure the registry base URL used to load packages/index.json at runtime. GitHub repository
+                URLs are converted to a raw content URL. Raw and other base URLs are used directly.
               </p>
 
               <Form
@@ -141,7 +142,9 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                   />
                   <Form.Control.Feedback type="invalid">{modalState.validationError}</Form.Control.Feedback>
                   <Form.Text>
-                    Leave this field empty to use the configured default source: {configuredSource.configuredBaseUrl}
+                    Enter a GitHub repository URL like https://github.com/agents-repo/registry, a GitHub tree URL,
+                    or any direct base URL. Leave this field empty to use the configured default source:{' '}
+                    {configuredSource.configuredBaseUrl}
                   </Form.Text>
                 </Form.Group>
               </Form>

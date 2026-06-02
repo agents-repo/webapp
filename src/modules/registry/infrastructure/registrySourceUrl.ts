@@ -5,6 +5,15 @@ const GITHUB_HOSTNAME = 'github.com'
 const GITHUB_WWW_HOSTNAME = 'www.github.com'
 const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
 
+const getGitHubRefFromSegments = (segments: string[]): string => {
+  if (segments.length < 4 || !GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
+    return DEFAULT_REGISTRY_BRANCH
+  }
+
+  const ref = segments.slice(3).join('/').trim()
+  return ref.length > 0 ? ref : DEFAULT_REGISTRY_BRANCH
+}
+
 const stripGitRepositorySuffix = (value: string): string => {
   return value.replace(/\.git$/i, '')
 }
@@ -45,10 +54,7 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
 
     const owner = segments[0]
     const repository = stripGitRepositorySuffix(segments[1])
-    const branch =
-      segments.length >= 4 && GITHUB_BRANCH_PATH_MARKERS.has(segments[2])
-        ? segments[3]
-        : DEFAULT_REGISTRY_BRANCH
+    const branch = getGitHubRefFromSegments(segments)
 
     return `https://raw.githubusercontent.com/${owner}/${repository}/${branch}`
   } catch {
