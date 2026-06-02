@@ -1,24 +1,14 @@
-import {
+export {
   clearStoredRegistryBaseUrlOverride,
   getStoredRegistryBaseUrlOverride,
   normalizeRegistryBaseUrlOverrideInput,
   setStoredRegistryBaseUrlOverride,
   validateRegistryBaseUrlOverrideInput,
 } from './registrySourceSettings'
-import {
-  getConfiguredRegistrySourceConfig,
-  getRegistrySourceConfig,
-  type RegistrySourceConfig,
-} from '../infrastructure/registrySourceConfig'
 
 export {
-  clearStoredRegistryBaseUrlOverride,
   getConfiguredRegistrySourceConfig,
   getRegistrySourceConfig,
-  getStoredRegistryBaseUrlOverride,
-  normalizeRegistryBaseUrlOverrideInput,
-  setStoredRegistryBaseUrlOverride,
-  validateRegistryBaseUrlOverrideInput,
-}
+} from '../infrastructure/registrySourceConfig'
 
-export type { RegistrySourceConfig }
+export type { RegistrySourceConfig } from '../infrastructure/registrySourceConfig'

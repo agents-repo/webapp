@@ -40,7 +40,9 @@ function ThemeModeDropdown() {
             type="button"
             className="d-flex align-items-center gap-2"
             active={mode === option.mode}
-            onClick={() => setMode(option.mode)}
+            onClick={() => {
+              setMode(option.mode)
+            }}
           >
             <FontAwesomeIcon icon={option.icon} className="fa-fw" aria-hidden="true" />
             <span className="flex-grow-1">{option.label}</span>
