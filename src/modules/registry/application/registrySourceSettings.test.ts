@@ -62,6 +62,7 @@ describe('registrySourceSettings', () => {
     expect(validateRegistryBaseUrlOverrideInput('   ')).toBeNull()
     expect(validateRegistryBaseUrlOverrideInput('ftp://example.com')).toBe('Enter a valid HTTP or HTTPS URL.')
     expect(validateRegistryBaseUrlOverrideInput('https://example.com')).toBeNull()
+    expect(validateRegistryBaseUrlOverrideInput('https://registry-proxy.example.workers.dev?ref=main')).toBeNull()
   })
 
   it('persists normalized overrides and reads them back', () => {

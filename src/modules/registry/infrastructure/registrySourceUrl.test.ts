@@ -62,6 +62,15 @@ describe('registrySourceUrl', () => {
     )
   })
 
+  it('builds index URL while preserving existing query parameters', () => {
+    expect(buildRegistryIndexUrl('https://registry-proxy.example.workers.dev?ref=main', 'packages/index.json')).toBe(
+      'https://registry-proxy.example.workers.dev/packages/index.json?ref=main',
+    )
+    expect(
+      buildRegistryIndexUrl('https://registry-proxy.example.workers.dev/catalog/?ref=release-2026-06', '/packages/index.json'),
+    ).toBe('https://registry-proxy.example.workers.dev/catalog/packages/index.json?ref=release-2026-06')
+  })
+
   it('trims leading and trailing slashes', () => {
     expect(trimTrailingSlashes('https://example.com///')).toBe('https://example.com')
     expect(trimLeadingSlashes('///packages/index.json')).toBe('packages/index.json')

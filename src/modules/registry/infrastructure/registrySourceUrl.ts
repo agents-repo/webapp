@@ -1,4 +1,4 @@
-export const DEFAULT_REGISTRY_REPOSITORY_URL = 'https://github.com/agents-repo/registry'
+export const DEFAULT_REGISTRY_REPOSITORY_URL = 'https://registry-proxy.maiconfz.workers.dev?ref=main'
 export const DEFAULT_REGISTRY_INDEX_PATH = 'packages/index.json'
 export const DEFAULT_REGISTRY_BRANCH = 'main'
 const GITHUB_HOSTNAME = 'github.com'
@@ -82,8 +82,16 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
 }
 
 export const buildRegistryIndexUrl = (baseUrl: string, indexPath: string): string => {
-  const normalizedBase = trimTrailingSlashes(baseUrl)
+  const normalizedBase = trimTrailingSlashes(baseUrl.trim())
   const normalizedPath = trimLeadingSlashes(indexPath)
+
+  try {
+    const parsedBaseUrl = new URL(normalizedBase)
+    parsedBaseUrl.pathname = `${trimTrailingSlashes(parsedBaseUrl.pathname)}/${normalizedPath}`
+    return parsedBaseUrl.toString()
+  } catch {
+    // Keep non-URL-compatible values working for testability and loose input handling.
+  }
 
   return `${normalizedBase}/${normalizedPath}`
 }

@@ -56,11 +56,12 @@ describe('registrySourceConfig', () => {
 
     expect(source.sourceMode).toBe('configured')
     expect(source.runtimeBaseUrlOverride).toBeNull()
-    expect(source.configuredBaseUrl).toBe('https://github.com/agents-repo/registry')
+    expect(source.configuredBaseUrl).toBe('https://registry-proxy.maiconfz.workers.dev?ref=main')
     expect(source.baseUrl).toBe(configuredSource.baseUrl)
-    expect(source.baseUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/main')
-    expect(source.baseUrl).not.toBe(source.configuredBaseUrl)
+    expect(source.baseUrl).toBe('https://registry-proxy.maiconfz.workers.dev?ref=main')
+    expect(source.baseUrl).toBe(source.configuredBaseUrl)
     expect(source.indexUrl).toBe(configuredSource.indexUrl)
+    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=main')
   })
 
   it('prefers runtime override over configured source values', () => {
