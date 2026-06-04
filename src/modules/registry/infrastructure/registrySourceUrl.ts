@@ -1,4 +1,4 @@
-export const DEFAULT_REGISTRY_REPOSITORY_URL = 'https://registry-proxy.maiconfz.workers.dev?ref=main'
+export const DEFAULT_REGISTRY_SOURCE_URL = 'https://registry-proxy.maiconfz.workers.dev?ref=main'
 export const DEFAULT_REGISTRY_INDEX_PATH = 'packages/index.json'
 export const DEFAULT_REGISTRY_BRANCH = 'main'
 const GITHUB_HOSTNAME = 'github.com'

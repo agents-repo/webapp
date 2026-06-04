@@ -1,7 +1,7 @@
 import {
   buildRegistryIndexUrl,
   DEFAULT_REGISTRY_INDEX_PATH,
-  DEFAULT_REGISTRY_REPOSITORY_URL,
+  DEFAULT_REGISTRY_SOURCE_URL,
   normalizeRegistryBaseUrl,
 } from './registrySourceUrl'
 import { getStoredRegistryBaseUrlOverride } from '../application/registrySourceSettings'
@@ -13,7 +13,7 @@ interface RegistryImportMetaEnv {
 }
 
 export interface RegistrySourceConfig {
-  repositoryUrl: string
+  sourceUrl: string
   configuredBaseUrl: string
   runtimeBaseUrlOverride: string | null
   baseUrl: string
@@ -24,13 +24,13 @@ export interface RegistrySourceConfig {
 
 export const getConfiguredRegistrySourceConfig = (): RegistrySourceConfig => {
   const env = import.meta.env as RegistryImportMetaEnv
-  const repositoryUrl = env.VITE_REGISTRY_REPOSITORY_URL?.trim() || DEFAULT_REGISTRY_REPOSITORY_URL
-  const configuredBaseUrl = env.VITE_REGISTRY_BASE_URL?.trim() || repositoryUrl
+  const sourceUrl = env.VITE_REGISTRY_REPOSITORY_URL?.trim() || DEFAULT_REGISTRY_SOURCE_URL
+  const configuredBaseUrl = env.VITE_REGISTRY_BASE_URL?.trim() || sourceUrl
   const indexPath = env.VITE_REGISTRY_INDEX_PATH?.trim() || DEFAULT_REGISTRY_INDEX_PATH
   const baseUrl = normalizeRegistryBaseUrl(configuredBaseUrl)
 
   return {
-    repositoryUrl,
+    sourceUrl,
     configuredBaseUrl,
     runtimeBaseUrlOverride: null,
     baseUrl,
