@@ -60,7 +60,7 @@ Build-time variables remain:
   repository URL or a direct source endpoint URL. Default:
   `https://registry-proxy.maiconfz.workers.dev?ref=main`
 - `VITE_REGISTRY_BASE_URL`: optional direct base URL override for fetches.
-  If omitted, the repository URL is normalized to raw GitHub format.
+  If omitted, the repository URL is used as the base URL (GitHub URLs are normalized to raw content).
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
 
@@ -73,6 +73,8 @@ form such as `/tree/refs/heads/feature/foo`.
 With defaults, the effective fetch URL resolves to:
 
 `https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=main`
+
+Query parameters on the source URL are preserved when composing the index URL.
 
 At runtime, users can set a custom registry base URL in the header settings
 modal. The field accepts GitHub repository URLs (auto-normalized), raw URLs,
