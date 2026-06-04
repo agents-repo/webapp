@@ -56,10 +56,11 @@ The app resolves the registry source URL with runtime-first precedence:
 
 Build-time variables remain:
 
-- `VITE_REGISTRY_REPOSITORY_URL`: human-facing repository URL. Default:
-  `https://github.com/agents-repo/registry`
+- `VITE_REGISTRY_REPOSITORY_URL`: source URL input. This may be a GitHub
+  repository URL or a direct source endpoint URL. Default:
+  `https://registry-proxy.maiconfz.workers.dev?ref=main`
 - `VITE_REGISTRY_BASE_URL`: optional direct base URL override for fetches.
-  If omitted, the repository URL is normalized to raw GitHub format.
+  If omitted, the source URL is used as the base URL (GitHub URLs are normalized to raw content).
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
 
@@ -71,7 +72,10 @@ form such as `/tree/refs/heads/feature/foo`.
 
 With defaults, the effective fetch URL resolves to:
 
-`https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json`
+`https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=main`
+
+Query parameters on the source URL are preserved when composing the index URL,
+except when GitHub URLs are normalized to raw content URLs.
 
 At runtime, users can set a custom registry base URL in the header settings
 modal. The field accepts GitHub repository URLs (auto-normalized), raw URLs,
