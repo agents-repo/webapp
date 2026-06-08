@@ -39,6 +39,10 @@ Use a fine-grained PAT (recommended) or classic PAT with:
 2. Go to **Secrets and variables** → **Actions**.
 3. Add `PAGES_DEPLOY_TOKEN` with the PAT value.
 
+The Pages Deploy workflow passes this secret to
+`peaceiris/actions-gh-pages@v4` as the `personal_token` input (required for
+cross-repo pushes).
+
 Deploy commits appear under the PAT owner's GitHub account, not
 `github-actions[bot]`.
 

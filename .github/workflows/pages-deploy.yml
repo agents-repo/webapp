@@ -49,7 +49,7 @@ jobs:
       - name: Deploy to agents-repo.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_access_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
           external_repository: agents-repo/agents-repo.github.io
           publish_branch: main
           publish_dir: ./dist
