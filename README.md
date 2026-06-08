@@ -44,6 +44,7 @@ npm run lint:all
 npm run test
 npm run typecheck
 npm run build
+npm run build:pages
 ```
 
 ## Registry Source Configuration
@@ -145,9 +146,40 @@ Issue categories in this repository are:
 Documentation-only work uses the task/chore issue category and a
 `docs/<issue-number>-<slug>` branch name.
 
+## Release Workflow
+
+- Release versions follow Semantic Versioning `MAJOR.MINOR.PATCH` sourced from
+  <https://semver.org>.
+- Pushes to `main` run release validation checks and then execute
+  `semantic-release`.
+- A release is published only when commit history includes releasable changes
+  per the commit-to-version mapping below.
+- `workflow_dispatch` remains available for operational checks.
+- `dry_run` defaults to `true`; set `dry_run=false` only when intentionally
+  running a manual publish from `main`.
+- Git tags use `v<MAJOR>.<MINOR>.<PATCH>` format.
+
+### Commit-To-Version Mapping
+
+- `type!:` or `BREAKING CHANGE:` => `MAJOR`
+- `feat:` => `MINOR`
+- `fix:`, `perf:`, and `revert:` => `PATCH`
+
+Commit types not listed above do not trigger an automated release.
+
+### GitHub Pages
+
+Published releases deploy the built webapp to:
+
+- <https://agents-repo.github.io/>
+
+See [docs/deployment.md](docs/deployment.md) for PAT setup, redeploy, and
+rollback instructions.
+
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)
+- Deployment and Pages: [docs/deployment.md](docs/deployment.md)
 - AI collaboration guidance: [docs/ai-collaboration.md](docs/ai-collaboration.md)
 - Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
 - Architecture and DDD decision: [docs/architecture/ddd-decision.md](docs/architecture/ddd-decision.md)
@@ -157,5 +189,8 @@ Documentation-only work uses the task/chore issue category and a
 
 ## Automation
 
-This repo intentionally includes baseline CI and AI-environment workflows, but
-does not include release automation yet.
+- **PR Baseline Checks** — lint, typecheck, test, and Pages build on pull
+  requests.
+- **Release** — validation plus `semantic-release` on pushes to `main`.
+- **Pages Deploy** — builds and publishes `dist/` to `agents-repo.github.io` on
+  each GitHub Release.

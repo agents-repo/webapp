@@ -74,6 +74,37 @@ Use conventional-style summaries when possible:
 - `docs: expand contributor guidance`
 - `chore: pin node and npm versions`
 
+## Release Workflow
+
+- Release versions use Semantic Versioning `MAJOR.MINOR.PATCH` sourced from
+  <https://semver.org>.
+- Pushes to `main` run release validation checks and then execute
+  `semantic-release`.
+- A release is published only when commit history includes releasable changes
+  per the commit-to-version mapping below.
+- `workflow_dispatch` remains available for operational checks.
+- The `dry_run` input defaults to `true`; use `dry_run=false` only when an
+  intentional manual publish is run from `main`.
+
+The semantic version value remains `<MAJOR>.<MINOR>.<PATCH>`. Release tags may
+use the common `v<MAJOR>.<MINOR>.<PATCH>` convention without changing the
+underlying version value.
+
+Commit-to-version mapping for automated releases:
+
+- `type!:` or `BREAKING CHANGE:` => `MAJOR`
+- `feat:` => `MINOR`
+- `fix:`, `perf:`, and `revert:` => `PATCH`
+
+Commit types not listed above do not trigger an automated release.
+
+Published releases deploy the built webapp to
+<https://agents-repo.github.io/>. See [docs/deployment.md](../docs/deployment.md)
+for PAT setup and redeploy instructions.
+
+When merging release-automation work, use a squash-merge title with `feat:` if
+the merge should trigger the first GitHub Release.
+
 ## Local Validation
 
 Before requesting review, run:
@@ -81,8 +112,9 @@ Before requesting review, run:
 ```bash
 npm run env:check
 npm run lint:all
+npm run test
 npm run typecheck
-npm run build
+npm run build:pages
 ```
 
 This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
