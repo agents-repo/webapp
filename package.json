@@ -11,6 +11,8 @@
     "dev": "vite",
     "env:check": "node scripts/validate-env.mjs",
     "build": "tsc -b && vite build",
+    "build:pages": "npm run build && node scripts/prepare-pages-dist.mjs",
+    "release:dry-run": "semantic-release --dry-run",
     "lint": "eslint .",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
     "lint:all": "npm run lint:md && npm run lint",
@@ -53,6 +55,11 @@
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12",
     "vitest": "^4.0.7",
-    "vite-plugin-pwa": "^1.1.0"
+    "vite-plugin-pwa": "^1.1.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/github": "^12.0.8",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "semantic-release": "^25.0.3"
   }
 }

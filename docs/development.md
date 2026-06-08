@@ -20,8 +20,13 @@ npm run env:check
 npm run lint:all
 npm run test
 npm run typecheck
-npm run build
+npm run build:pages
 ```
+
+Use `npm run build` for a standard production build. Use `npm run build:pages`
+when validating the GitHub Pages output (adds `.nojekyll` and `404.html`).
+
+Deployment and release details are documented in [deployment.md](deployment.md).
 
 Pre-commit hooks run `npm run lint:all` automatically through Husky.
 

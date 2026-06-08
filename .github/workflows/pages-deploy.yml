@@ -1,0 +1,57 @@
+name: Pages Deploy
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to redeploy (e.g. v1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    if: >-
+      (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'v')) ||
+      (github.event_name == 'release' && startsWith(github.event.release.tag_name, 'v'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve release tag
+        id: release
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout release tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 1
+
+      - name: Setup Node and pinned npm
+        uses: ./.github/actions/setup-node-pinned-npm
+
+      - name: Build for Pages
+        run: npm run build:pages
+
+      - name: Deploy to agents-repo.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_access_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          external_repository: agents-repo/agents-repo.github.io
+          publish_branch: main
+          publish_dir: ./dist
+          keep_files: true
+          commit_message: deploy: webapp ${{ steps.release.outputs.tag }}
