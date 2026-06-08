@@ -1,4 +1,12 @@
-import type { RegistryCatalog, RegistryPackage } from '../domain/package'
+import {
+  INDEX_INSTALL_TARGET_STATUSES,
+  INSTALL_TARGET_IDS,
+  PACKAGE_COST_BANDS,
+  PACKAGE_STATUS_VALUES,
+  type InstallTargetEntry,
+  type RegistryCatalog,
+  type RegistryPackage,
+} from '../domain/package'
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null
@@ -12,6 +20,22 @@ const isValidDateString = (value: string): boolean => {
   return Number.isFinite(Date.parse(value))
 }
 
+const isPackageStatus = (value: unknown): value is RegistryPackage['status'] => {
+  return typeof value === 'string' && (PACKAGE_STATUS_VALUES as readonly string[]).includes(value)
+}
+
+const isPackageCostBand = (value: unknown): value is RegistryPackage['estimateOverallCost']['band'] => {
+  return typeof value === 'string' && (PACKAGE_COST_BANDS as readonly string[]).includes(value)
+}
+
+const isInstallTargetId = (value: unknown): value is InstallTargetEntry['id'] => {
+  return typeof value === 'string' && (INSTALL_TARGET_IDS as readonly string[]).includes(value)
+}
+
+const isIndexInstallTargetStatus = (value: unknown): value is InstallTargetEntry['status'] => {
+  return typeof value === 'string' && (INDEX_INSTALL_TARGET_STATUSES as readonly string[]).includes(value)
+}
+
 const isEstimateOverallCost = (
   value: unknown,
 ): value is RegistryPackage['estimateOverallCost'] => {
@@ -19,10 +43,46 @@ const isEstimateOverallCost = (
     return false
   }
 
+  if (!isPackageCostBand(value.band)) {
+    return false
+  }
+
+  if (value.estimatedCost === undefined) {
+    return true
+  }
+
   return (
     typeof value.estimatedCost === 'number' &&
-    (value.band === 'low' || value.band === 'moderate' || value.band === 'high')
+    Number.isInteger(value.estimatedCost) &&
+    value.estimatedCost >= 1 &&
+    value.estimatedCost <= 10
   )
+}
+
+const isInstallTargets = (value: unknown): value is InstallTargetEntry[] => {
+  if (!Array.isArray(value) || value.length === 0) {
+    return false
+  }
+
+  const seen = new Set<string>()
+
+  for (const entry of value) {
+    if (!isRecord(entry)) {
+      return false
+    }
+
+    if (!isInstallTargetId(entry.id) || !isIndexInstallTargetStatus(entry.status)) {
+      return false
+    }
+
+    if (seen.has(entry.id)) {
+      return false
+    }
+
+    seen.add(entry.id)
+  }
+
+  return true
 }
 
 const hasRegistryPackageStrings = (value: Record<string, unknown>): boolean => {
@@ -49,7 +109,7 @@ const isRegistryPackage = (value: unknown): value is RegistryPackage => {
     return false
   }
 
-  if (value.status !== 'active' && value.status !== 'inactive') {
+  if (!isPackageStatus(value.status)) {
     return false
   }
 
@@ -57,7 +117,15 @@ const isRegistryPackage = (value: unknown): value is RegistryPackage => {
     return false
   }
 
-  return value.quickstart === undefined || typeof value.quickstart === 'string'
+  if (value.quickstart !== undefined && typeof value.quickstart !== 'string') {
+    return false
+  }
+
+  if (value.installTargets !== undefined && !isInstallTargets(value.installTargets)) {
+    return false
+  }
+
+  return true
 }
 
 export const isRegistryCatalog = (value: unknown): value is RegistryCatalog => {

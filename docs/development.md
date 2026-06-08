@@ -57,10 +57,13 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    items. Auto follows system color preference and the selected value persists
    across reloads.
 - The header now includes a settings cog control next to color mode. It opens a
-   website settings modal with runtime registry base URL override support. The
-   override persists in localStorage and takes precedence over build-time source
-   configuration. The field accepts GitHub repository URLs (auto-normalized to
-   raw content), raw URLs, and other base URLs.
+   website settings modal with two independent registry URL overrides:
+  - **Registry base URL override** for catalog fetching (GitHub URLs
+    auto-normalized to raw content, raw URLs and other base URLs used as-is).
+  - **GitHub repository URL** for package browse links in package card footers.
+    GitHub-only; does not affect catalog fetching.
+   Both overrides persist in localStorage and take precedence over build-time
+   configuration. Reset to default clears both overrides.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page
@@ -68,8 +71,8 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Sticky header search is hidden below `lg`; from `lg` upward it appears in the
    middle region while brand stays left and page links stay right.
 - Registry source configuration can be customized with Vite env vars:
-   `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`, and
-   `VITE_REGISTRY_INDEX_PATH`.
+   `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`,
+   `VITE_REGISTRY_INDEX_PATH`, and `VITE_REGISTRY_GITHUB_REPOSITORY_URL`.
 - Registry source URLs may be GitHub repository URLs, raw URLs, or other base
    URLs, but the resolved source must still provide the expected registry
    structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`

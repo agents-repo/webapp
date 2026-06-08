@@ -11,6 +11,7 @@ import { getRegistrySourceConfig } from './registrySourceConfig'
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
   indexUrl: string
+  registryBaseUrl: string
   cacheState: 'none' | 'fresh' | 'stale-fallback'
   errorMessage?: string
 }
@@ -82,11 +83,11 @@ const fetchCatalogFromNetwork = async (
 export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
-  const { indexUrl } = getRegistrySourceConfig()
+  const { indexUrl, baseUrl: registryBaseUrl } = getRegistrySourceConfig()
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
-    return { catalog: cachedCatalog, indexUrl, cacheState: 'fresh' }
+    return { catalog: cachedCatalog, indexUrl, registryBaseUrl, cacheState: 'fresh' }
   }
 
   const envelope = readCatalogCacheEnvelope(indexUrl)
@@ -100,6 +101,7 @@ export const loadRegistryCatalog = async (
         return {
           catalog: null,
           indexUrl,
+          registryBaseUrl,
           cacheState: 'none',
           errorMessage: 'Registry returned 304 Not Modified without cached catalog state',
         }
@@ -107,19 +109,19 @@ export const loadRegistryCatalog = async (
 
       touchCatalogCache(indexUrl)
 
-      return { catalog: envelope.catalog, indexUrl, cacheState: 'fresh' }
+      return { catalog: envelope.catalog, indexUrl, registryBaseUrl, cacheState: 'fresh' }
     }
 
     writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
 
-    return { catalog: result.catalog, indexUrl, cacheState: 'none' }
+    return { catalog: result.catalog, indexUrl, registryBaseUrl, cacheState: 'none' }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
 
     if (envelope?.catalog) {
-      return { catalog: envelope.catalog, indexUrl, cacheState: 'stale-fallback', errorMessage }
+      return { catalog: envelope.catalog, indexUrl, registryBaseUrl, cacheState: 'stale-fallback', errorMessage }
     }
 
-    return { catalog: null, indexUrl, cacheState: 'none', errorMessage }
+    return { catalog: null, indexUrl, registryBaseUrl, cacheState: 'none', errorMessage }
   }
 }

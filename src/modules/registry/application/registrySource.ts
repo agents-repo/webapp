@@ -1,9 +1,14 @@
 export {
   clearStoredRegistryBaseUrlOverride,
+  clearStoredRegistryGitHubRepositoryUrlOverride,
   getStoredRegistryBaseUrlOverride,
+  getStoredRegistryGitHubRepositoryUrlOverride,
   normalizeRegistryBaseUrlOverrideInput,
+  normalizeRegistryGitHubRepositoryUrlOverrideInput,
   setStoredRegistryBaseUrlOverride,
+  setStoredRegistryGitHubRepositoryUrlOverride,
   validateRegistryBaseUrlOverrideInput,
+  validateRegistryGitHubRepositoryUrlOverrideInput,
 } from './registrySourceSettings'
 
 export {

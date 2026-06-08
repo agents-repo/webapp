@@ -1,13 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   clearStoredRegistryBaseUrlOverride,
+  clearStoredRegistryGitHubRepositoryUrlOverride,
   getStoredRegistryBaseUrlOverride,
+  getStoredRegistryGitHubRepositoryUrlOverride,
   normalizeRegistryBaseUrlOverrideInput,
+  normalizeRegistryGitHubRepositoryUrlOverrideInput,
   setStoredRegistryBaseUrlOverride,
+  setStoredRegistryGitHubRepositoryUrlOverride,
   validateRegistryBaseUrlOverrideInput,
+  validateRegistryGitHubRepositoryUrlOverrideInput,
 } from './registrySourceSettings'
 
 const STORAGE_KEY = 'registry.source.baseUrlOverride'
+const GITHUB_STORAGE_KEY = 'registry.source.githubRepositoryUrlOverride'
 
 class MemoryStorage implements Storage {
   private readonly data = new Map<string, string>()
@@ -51,7 +57,7 @@ describe('registrySourceSettings', () => {
   })
 
   afterEach(() => {
-    clearStoredRegistryBaseUrlOverride()
+    storage.clear()
   })
 
   it('normalizes user input by trimming whitespace', () => {
@@ -84,5 +90,43 @@ describe('registrySourceSettings', () => {
 
     expect(getStoredRegistryBaseUrlOverride()).toBeNull()
     expect(storage.getItem(STORAGE_KEY)).toBeNull()
+  })
+
+  it('normalizes GitHub repository input by trimming whitespace', () => {
+    expect(normalizeRegistryGitHubRepositoryUrlOverrideInput('  https://github.com/owner/repo  ')).toBe(
+      'https://github.com/owner/repo',
+    )
+  })
+
+  it('validates GitHub repository URLs and rejects non-GitHub hosts', () => {
+    expect(validateRegistryGitHubRepositoryUrlOverrideInput('   ')).toBeNull()
+    expect(validateRegistryGitHubRepositoryUrlOverrideInput('https://github.com/owner/repo')).toBeNull()
+    expect(validateRegistryGitHubRepositoryUrlOverrideInput('https://registry-proxy.example.workers.dev?ref=main')).toBe(
+      'Enter a valid GitHub repository URL (https://github.com/owner/repo).',
+    )
+    expect(validateRegistryGitHubRepositoryUrlOverrideInput('not-a-valid-url')).toBe(
+      'Enter a valid GitHub repository URL (https://github.com/owner/repo).',
+    )
+  })
+
+  it('persists normalized GitHub repository overrides and reads them back', () => {
+    setStoredRegistryGitHubRepositoryUrlOverride('  https://github.com/owner/repo  ')
+
+    expect(getStoredRegistryGitHubRepositoryUrlOverride()).toBe('https://github.com/owner/repo')
+    expect(storage.getItem(GITHUB_STORAGE_KEY)).toBe('https://github.com/owner/repo')
+  })
+
+  it('ignores invalid stored GitHub repository values', () => {
+    storage.setItem(GITHUB_STORAGE_KEY, 'https://registry-proxy.example.workers.dev?ref=main')
+
+    expect(getStoredRegistryGitHubRepositoryUrlOverride()).toBeNull()
+  })
+
+  it('clears the persisted GitHub repository override value', () => {
+    setStoredRegistryGitHubRepositoryUrlOverride('https://github.com/owner/repo')
+    clearStoredRegistryGitHubRepositoryUrlOverride()
+
+    expect(getStoredRegistryGitHubRepositoryUrlOverride()).toBeNull()
+    expect(storage.getItem(GITHUB_STORAGE_KEY)).toBeNull()
   })
 })
