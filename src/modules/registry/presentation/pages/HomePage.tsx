@@ -1,20 +1,110 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown, faCircleCheck, faClock, faFilter, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import {
+  faChevronDown,
+  faCircleCheck,
+  faClock,
+  faDownload,
+  faEye,
+  faFilter,
+  faMagnifyingGlass,
+} from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { Alert, Badge, Card, Col, Container, Dropdown, Form, InputGroup, Row, Stack } from 'react-bootstrap'
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Container,
+  Dropdown,
+  Form,
+  InputGroup,
+  Row,
+  Stack,
+} from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
-import type { RegistryCatalog } from '../../domain/package'
+import type { InstallTargetEntry, PackageStatus, RegistryCatalog, RegistryPackage } from '../../domain/package'
+import { getInstallTargetLabel } from '../../application/installTargets'
 import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
+import { getRegistrySourceConfig } from '../../application/registrySource'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
+import { buildRegistryArtifactUrl, buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 
 const STICKY_SEARCH_THRESHOLD = 180
+
+interface PackageDownloadTarget {
+  id: InstallTargetEntry['id']
+  status: InstallTargetEntry['status']
+  label: string
+  href: string
+}
+
+const PACKAGE_STATUS_BADGE: Record<PackageStatus, { bg: string; icon: typeof faCircleCheck }> = {
+  active: { bg: 'success', icon: faCircleCheck },
+  deprecated: { bg: 'warning', icon: faClock },
+  archived: { bg: 'secondary', icon: faClock },
+  yanked: { bg: 'danger', icon: faClock },
+}
+
+const getPackageDownloadTargets = (
+  pkg: RegistryPackage,
+  registryBaseUrl: string,
+): PackageDownloadTarget[] => {
+  if (!registryBaseUrl.trim()) {
+    return []
+  }
+
+  return (pkg.installTargets ?? [])
+    .map((target) => ({
+      ...target,
+      label: getInstallTargetLabel(target.id),
+      href: buildRegistryArtifactUrl(registryBaseUrl, pkg.id, pkg.latest, target.id),
+    }))
+    .filter((target) => isSafeExternalHttpUrl(target.href))
+}
+
+const renderPackageDownloadAction = (
+  pkg: RegistryPackage,
+  downloadTargets: PackageDownloadTarget[],
+): ReactNode => (
+  <Dropdown align="end">
+    <Dropdown.Toggle
+      variant="outline-primary"
+      size="lg"
+      id={`download-actions-${pkg.id}`}
+      className="d-inline-flex align-items-center justify-content-center"
+      aria-label={`Download ${pkg.name}`}
+      title={`Download ${pkg.name}`}
+    >
+      <FontAwesomeIcon icon={faDownload} aria-hidden="true" className="me-1" />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      {downloadTargets.map((target) => (
+        <Dropdown.Item
+          key={target.id}
+          href={target.href}
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label={`Download ${pkg.name} for ${target.label} (opens in a new tab)`}
+        >
+          {target.label}
+          {target.status === 'experimental' ? (
+            <Badge bg="warning" text="dark" pill className="ms-2 fw-normal">
+              experimental
+            </Badge>
+          ) : null}
+        </Dropdown.Item>
+      ))}
+    </Dropdown.Menu>
+  </Dropdown>
+)
 
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
@@ -98,6 +188,8 @@ function HomePage({
   const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
   const [catalogCacheState, setCatalogCacheState] = useState<CatalogCacheState>('none')
   const [catalogSourceUrl, setCatalogSourceUrl] = useState('')
+  const [registryBaseUrl, setRegistryBaseUrl] = useState('')
+  const [githubRepositoryUrl, setGithubRepositoryUrl] = useState('')
   const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
   const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
@@ -123,6 +215,8 @@ function HomePage({
       setCatalog(result.catalog)
       setCatalogCacheState(result.cacheState)
       setCatalogSourceUrl(result.indexUrl)
+      setRegistryBaseUrl(result.registryBaseUrl)
+      setGithubRepositoryUrl(getRegistrySourceConfig().githubRepositoryUrl)
       setCatalogErrorMessage(result.errorMessage ?? null)
 
       const noteStatusTag = getCatalogStatusTag({
@@ -270,9 +364,16 @@ function HomePage({
           ) : null}
 
           <Row xs={1} md={2} xl={3} className="g-3">
-            {filteredPackages.map((pkg) => (
+            {filteredPackages.map((pkg) => {
+              const statusBadge = PACKAGE_STATUS_BADGE[pkg.status]
+              const downloadTargets = getPackageDownloadTargets(pkg, registryBaseUrl)
+              const packageBrowseUrl = buildRegistryPackageBrowseUrl(githubRepositoryUrl, pkg.id)
+              const safeBrowseUrl =
+                packageBrowseUrl && isSafeExternalHttpUrl(packageBrowseUrl) ? packageBrowseUrl : null
+
+              return (
               <Col key={pkg.id}>
-                <Card className="h-100 border-secondary-subtle package-card">
+                <Card className="h-100 d-flex flex-column border-secondary-subtle package-card">
                   <Card.Header className="p-3 p-lg-4">
                     <Stack direction="horizontal" className="justify-content-between align-items-start">
                       <div className="me-2">
@@ -308,18 +409,14 @@ function HomePage({
                           </Dropdown>
                         </Card.Subtitle>
                       </div>
-                      <Badge bg={pkg.status === 'active' ? 'success' : 'secondary'}>
-                        <FontAwesomeIcon
-                          icon={pkg.status === 'active' ? faCircleCheck : faClock}
-                          className="me-1"
-                          aria-hidden="true"
-                        />
+                      <Badge bg={statusBadge.bg}>
+                        <FontAwesomeIcon icon={statusBadge.icon} className="me-1" aria-hidden="true" />
                         {pkg.status}
                       </Badge>
                     </Stack>
                   </Card.Header>
 
-                  <Card.Body className="d-flex flex-column gap-3 p-3 p-lg-4">
+                  <Card.Body className="d-flex flex-column flex-grow-1 gap-3 p-3 p-lg-4">
                     <Card.Text as="p" className="small text-body-secondary mb-0 package-description">
                       {pkg.description}
                     </Card.Text>
@@ -339,9 +436,30 @@ function HomePage({
                       ))}
                     </div>
                   </Card.Body>
+
+                  {downloadTargets.length > 0 || safeBrowseUrl ? (
+                    <Card.Footer className="d-flex justify-content-center gap-2">
+                      {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, downloadTargets) : null}
+                      {safeBrowseUrl ? (
+                        <Button
+                          as="a"
+                          href={safeBrowseUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          variant="outline-primary"
+                          size="lg"
+                          className="d-inline-flex align-items-center justify-content-center"
+                          aria-label={`View ${pkg.name} on GitHub (opens in a new tab)`}
+                          title={`View ${pkg.name} on GitHub`}
+                        >
+                          <FontAwesomeIcon icon={faEye} aria-hidden="true" />
+                        </Button>
+                      ) : null}
+                    </Card.Footer>
+                  ) : null}
                 </Card>
               </Col>
-            ))}
+            )})}
           </Row>
 
           {!isCatalogLoading && filteredPackages.length === 0 ? (

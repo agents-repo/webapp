@@ -63,6 +63,9 @@ Build-time variables remain:
   If omitted, the source URL is used as the base URL (GitHub URLs are normalized to raw content).
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
+- `VITE_REGISTRY_GITHUB_REPOSITORY_URL`: GitHub repository URL used for package
+  browse links in package cards. Default:
+  `https://github.com/agents-repo/registry`
 
 GitHub repository URLs and `/tree/<ref>` or `/blob/<ref>` URLs are normalized
 to `raw.githubusercontent.com`. When a tree/blob URL includes additional
@@ -77,10 +80,16 @@ With defaults, the effective fetch URL resolves to:
 Query parameters on the source URL are preserved when composing the index URL,
 except when GitHub URLs are normalized to raw content URLs.
 
-At runtime, users can set a custom registry base URL in the header settings
-modal. The field accepts GitHub repository URLs (auto-normalized), raw URLs,
-and other base URLs (used as-is). Leaving the runtime field empty resets to
-configured defaults.
+At runtime, users can set custom registry URLs in the header settings modal:
+
+- **Registry base URL override** — catalog fetching (GitHub URLs auto-normalized,
+  raw URLs and other base URLs used as-is). Empty resets to configured defaults.
+- **GitHub repository URL** — package browse links only; opens
+  `github.com/.../tree/{ref}/packages/{id}` in package card footers. Independent
+  from the fetch override. Empty resets to `VITE_REGISTRY_GITHUB_REPOSITORY_URL`.
+
+Fetch defaults (proxy) and browse defaults (GitHub repository) serve different
+purposes. A proxy fetch URL cannot be converted into a GitHub tree browse link.
 
 Note: URL format flexibility does not change the expected registry layout. The
 resolved base URL must expose a compatible registry structure, including a

@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   clearStoredRegistryBaseUrlOverride,
+  clearStoredRegistryGitHubRepositoryUrlOverride,
   setStoredRegistryBaseUrlOverride,
+  setStoredRegistryGitHubRepositoryUrlOverride,
 } from '../application/registrySourceSettings'
 import {
   getConfiguredRegistrySourceConfig,
@@ -48,6 +50,7 @@ describe('registrySourceConfig', () => {
 
   afterEach(() => {
     clearStoredRegistryBaseUrlOverride()
+    clearStoredRegistryGitHubRepositoryUrlOverride()
   })
 
   it('returns configured source when no runtime override exists', () => {
@@ -62,6 +65,10 @@ describe('registrySourceConfig', () => {
     expect(source.baseUrl).toBe(source.configuredBaseUrl)
     expect(source.indexUrl).toBe(configuredSource.indexUrl)
     expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=main')
+    expect(source.githubRepositorySourceMode).toBe('configured')
+    expect(source.runtimeGithubRepositoryUrlOverride).toBeNull()
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry')
+    expect(source.githubRepositoryUrl).toBe(source.configuredGithubRepositoryUrl)
   })
 
   it('prefers runtime override over configured source values', () => {
@@ -112,5 +119,23 @@ describe('registrySourceConfig', () => {
 
     expect(source.baseUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/main')
     expect(source.indexUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json')
+  })
+
+  it('prefers runtime GitHub repository override over configured GitHub repository URL', () => {
+    setStoredRegistryGitHubRepositoryUrlOverride('https://github.com/owner/repo/tree/v1.1.0')
+    const source = getRegistrySourceConfig()
+
+    expect(source.githubRepositorySourceMode).toBe('runtime-override')
+    expect(source.runtimeGithubRepositoryUrlOverride).toBe('https://github.com/owner/repo/tree/v1.1.0')
+    expect(source.githubRepositoryUrl).toBe('https://github.com/owner/repo/tree/v1.1.0')
+  })
+
+  it('does not let fetch runtime override affect GitHub repository URL', () => {
+    setStoredRegistryBaseUrlOverride('https://example.com/runtime/')
+    const source = getRegistrySourceConfig()
+
+    expect(source.sourceMode).toBe('runtime-override')
+    expect(source.githubRepositorySourceMode).toBe('configured')
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry')
   })
 })
