@@ -1,5 +1,7 @@
 import semver from 'semver'
 
+import { inferRegistryRepositoryIdentity } from './registryMajorVersionRef'
+
 const TAG_LIST_CACHE_STORAGE_KEY = 'registry.tags.cache.v1'
 const TAG_LIST_CACHE_TTL_MS = 60 * 60 * 1000
 
@@ -10,12 +12,13 @@ interface GitHubTagPayload {
 interface TagListCacheEnvelope {
   readonly cacheVersion: number
   readonly cachedAt: number
-  readonly owner: string
-  readonly repo: string
+  readonly tagsUrl: string
   readonly tagNames: string[]
 }
 
-const TAG_LIST_CACHE_VERSION = 1
+const TAG_LIST_CACHE_VERSION = 2
+
+const GITHUB_HOSTNAMES = new Set(['github.com', 'www.github.com', 'raw.githubusercontent.com'])
 
 const getLocalStorage = (): Storage | null => {
   try {
@@ -25,7 +28,7 @@ const getLocalStorage = (): Storage | null => {
   }
 }
 
-const readTagListCache = (owner: string, repo: string): string[] | null => {
+const readTagListCache = (tagsUrl: string): string[] | null => {
   const storage = getLocalStorage()
 
   if (!storage) {
@@ -43,8 +46,7 @@ const readTagListCache = (owner: string, repo: string): string[] | null => {
 
     if (
       envelope.cacheVersion !== TAG_LIST_CACHE_VERSION ||
-      envelope.owner !== owner ||
-      envelope.repo !== repo ||
+      envelope.tagsUrl !== tagsUrl ||
       !Array.isArray(envelope.tagNames)
     ) {
       return null
@@ -60,7 +62,7 @@ const readTagListCache = (owner: string, repo: string): string[] | null => {
   }
 }
 
-const writeTagListCache = (owner: string, repo: string, tagNames: string[]): void => {
+const writeTagListCache = (tagsUrl: string, tagNames: string[]): void => {
   const storage = getLocalStorage()
 
   if (!storage) {
@@ -70,8 +72,7 @@ const writeTagListCache = (owner: string, repo: string, tagNames: string[]): voi
   const envelope: TagListCacheEnvelope = {
     cacheVersion: TAG_LIST_CACHE_VERSION,
     cachedAt: Date.now(),
-    owner,
-    repo,
+    tagsUrl,
     tagNames,
   }
 
@@ -96,6 +97,38 @@ export const clearRegistryTagListCache = (): void => {
   }
 }
 
+export const buildRegistryTagsUrl = (sourceUrl: string, fallbackRepositoryUrl: string): string => {
+  const normalizedSourceUrl = sourceUrl.trim()
+
+  if (normalizedSourceUrl.length > 0) {
+    try {
+      const parsedSourceUrl = new URL(normalizedSourceUrl)
+
+      if (!GITHUB_HOSTNAMES.has(parsedSourceUrl.hostname)) {
+        return `${parsedSourceUrl.origin}/tags`
+      }
+    } catch {
+      // Fall through to GitHub API URL derivation.
+    }
+  }
+
+  const repositoryIdentity = inferRegistryRepositoryIdentity(sourceUrl, fallbackRepositoryUrl)
+
+  if (!repositoryIdentity) {
+    throw new Error('Could not infer a GitHub repository for tag listing.')
+  }
+
+  return `https://api.github.com/repos/${repositoryIdentity.owner}/${repositoryIdentity.repo}/tags?per_page=100`
+}
+
+const isGitHubTagsApiUrl = (tagsUrl: string): boolean => {
+  try {
+    return new URL(tagsUrl).hostname === 'api.github.com'
+  } catch {
+    return false
+  }
+}
+
 const parseLinkHeaderNextUrl = (linkHeader: string | null): string | null => {
   if (!linkHeader) {
     return null
@@ -114,38 +147,44 @@ const parseLinkHeaderNextUrl = (linkHeader: string | null): string | null => {
   return match?.[1] ?? null
 }
 
-const fetchGitHubTagNamesPage = async (
+const parseTagNamesPayload = (payload: GitHubTagPayload[]): string[] => {
+  return payload.map((entry) => entry.name).filter((name) => name.trim().length > 0)
+}
+
+const fetchRegistryTagNamesPage = async (
   url: string,
   signal: AbortSignal | undefined,
 ): Promise<{ tagNames: string[]; nextUrl: string | null }> => {
+  const headers: Record<string, string> = {}
+
+  if (isGitHubTagsApiUrl(url)) {
+    headers.Accept = 'application/vnd.github+json'
+    headers['X-GitHub-Api-Version'] = '2022-11-28'
+  }
+
   const response = await fetch(url, {
     signal,
-    headers: {
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
+    headers,
   })
 
   if (!response.ok) {
-    throw new Error(`GitHub tags request failed (${response.status} ${response.statusText})`)
+    throw new Error(`Registry tags request failed (${response.status} ${response.statusText})`)
   }
 
   const payload = (await response.json()) as GitHubTagPayload[]
-  const tagNames = payload.map((entry) => entry.name).filter((name) => name.trim().length > 0)
 
   return {
-    tagNames,
-    nextUrl: parseLinkHeaderNextUrl(response.headers.get('Link')),
+    tagNames: parseTagNamesPayload(payload),
+    nextUrl: isGitHubTagsApiUrl(url) ? parseLinkHeaderNextUrl(response.headers.get('Link')) : null,
   }
 }
 
-export const fetchGitHubRepositoryTagNames = async (
-  owner: string,
-  repo: string,
+export const fetchRegistryRepositoryTagNames = async (
+  tagsUrl: string,
   options: { signal?: AbortSignal; bypassCache?: boolean } = {},
 ): Promise<string[]> => {
   if (!options.bypassCache) {
-    const cachedTagNames = readTagListCache(owner, repo)
+    const cachedTagNames = readTagListCache(tagsUrl)
 
     if (cachedTagNames) {
       return cachedTagNames
@@ -153,17 +192,28 @@ export const fetchGitHubRepositoryTagNames = async (
   }
 
   const tagNames: string[] = []
-  let nextUrl: string | null = `https://api.github.com/repos/${owner}/${repo}/tags?per_page=100`
+  let nextUrl: string | null = tagsUrl
 
   while (nextUrl) {
-    const pageResult = await fetchGitHubTagNamesPage(nextUrl, options.signal)
+    const pageResult = await fetchRegistryTagNamesPage(nextUrl, options.signal)
     tagNames.push(...pageResult.tagNames)
     nextUrl = pageResult.nextUrl
   }
 
-  writeTagListCache(owner, repo, tagNames)
+  writeTagListCache(tagsUrl, tagNames)
 
   return tagNames
+}
+
+export const fetchGitHubRepositoryTagNames = async (
+  owner: string,
+  repo: string,
+  options: { signal?: AbortSignal; bypassCache?: boolean } = {},
+): Promise<string[]> => {
+  return fetchRegistryRepositoryTagNames(
+    `https://api.github.com/repos/${owner}/${repo}/tags?per_page=100`,
+    options,
+  )
 }
 
 export const pickLatestStableTagForMajorVersion = (
@@ -193,9 +243,19 @@ export const resolveLatestStableTagForMajorVersion = async (
   owner: string,
   repo: string,
   major: number,
-  options: { signal?: AbortSignal; bypassCache?: boolean } = {},
+  options: {
+    signal?: AbortSignal
+    bypassCache?: boolean
+    sourceUrl?: string
+    fallbackRepositoryUrl?: string
+  } = {},
 ): Promise<string> => {
-  const tagNames = await fetchGitHubRepositoryTagNames(owner, repo, options)
+  const tagsUrl =
+    options.sourceUrl && options.fallbackRepositoryUrl
+      ? buildRegistryTagsUrl(options.sourceUrl, options.fallbackRepositoryUrl)
+      : `https://api.github.com/repos/${owner}/${repo}/tags?per_page=100`
+
+  const tagNames = await fetchRegistryRepositoryTagNames(tagsUrl, options)
   const resolvedTag = pickLatestStableTagForMajorVersion(tagNames, major)
 
   if (!resolvedTag) {

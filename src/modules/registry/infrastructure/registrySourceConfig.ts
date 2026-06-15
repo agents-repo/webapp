@@ -141,7 +141,12 @@ const resolveSourceUrlWithAlias = async (
     repositoryIdentity.owner,
     repositoryIdentity.repo,
     alias.major,
-    { signal: options.signal, bypassCache: options.bypassTagCache },
+    {
+      signal: options.signal,
+      bypassCache: options.bypassTagCache,
+      sourceUrl,
+      fallbackRepositoryUrl,
+    },
   )
 
   return {

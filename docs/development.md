@@ -70,9 +70,11 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    Both overrides persist in localStorage and take precedence over build-time
    configuration. Reset to default clears both overrides.
 - Major-version line refs (`1.x`, `v1.x`) in either override resolve to the
-   latest stable registry release tag via the GitHub tags API. Tag lists are
-   cached for 1 hour in localStorage; catalog loading re-resolves aliases before
-   using the 24h catalog cache. Resolution uses the `semver` package.
+   latest stable registry release tag. Tag lists are fetched from registry-proxy
+   `GET /tags` when the fetch source is a proxy URL, or from the GitHub tags API
+   as a fallback for GitHub-only source URLs. Tag lists are cached for 1 hour in
+   localStorage; catalog loading re-resolves aliases before using the 24h catalog
+   cache. Resolution uses the `semver` package.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page

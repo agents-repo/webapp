@@ -83,9 +83,11 @@ except when GitHub URLs are normalized to raw content URLs.
 
 Major-version line refs such as `1.x` or `v1.x` can be used in proxy `?ref=`
 values or GitHub `/tree/<ref>` URLs. The app resolves these aliases to the latest
-stable release tag from the registry repository using the GitHub tags API and
-[`semver`](https://www.npmjs.com/package/semver). Resolved refs are shown in
-website settings and catalog status notes as `1.x → v1.2.0`.
+stable release tag from the registry repository using registry-proxy `GET /tags`
+when the fetch source is a proxy URL, or the GitHub tags API as a fallback for
+GitHub-only source URLs. Tag selection uses [`semver`](https://www.npmjs.com/package/semver).
+Resolved refs are shown in website settings and catalog status notes as
+`1.x → v1.2.0`.
 
 At runtime, users can set custom registry URLs in the header settings modal:
 
