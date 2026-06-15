@@ -122,9 +122,7 @@ export const loadRegistryCatalog = async (
       indexUrl,
       registryBaseUrl,
       cacheState: 'fresh',
-      baseUrlRefResolution: sourceConfig.baseUrlRefResolution,
-      githubRepositoryUrl: sourceConfig.githubRepositoryUrl,
-      githubRepositoryRefResolution: sourceConfig.githubRepositoryRefResolution,
+      ...buildCatalogLoadMetadata(sourceConfig),
     }
   }
 
@@ -142,6 +140,7 @@ export const loadRegistryCatalog = async (
           registryBaseUrl,
           cacheState: 'none',
           errorMessage: 'Registry returned 304 Not Modified without cached catalog state',
+          ...buildCatalogLoadMetadata(sourceConfig),
         }
       }
 
