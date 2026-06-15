@@ -6,7 +6,7 @@ import {
   touchCatalogCache,
   writeCatalogCache,
 } from './registryCatalogCache'
-import { getRegistrySourceConfig } from './registrySourceConfig'
+import { resolveRegistrySourceConfig } from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
@@ -14,6 +14,9 @@ export interface RegistryCatalogLoadResult {
   registryBaseUrl: string
   cacheState: 'none' | 'fresh' | 'stale-fallback'
   errorMessage?: string
+  baseUrlRefResolution?: { alias: string; resolvedRef: string } | null
+  githubRepositoryUrl?: string
+  githubRepositoryRefResolution?: { alias: string; resolvedRef: string } | null
 }
 
 interface FetchCatalogResult {
@@ -31,6 +34,17 @@ interface FetchCatalogSuccess {
 }
 
 type FetchCatalogNetworkResult = FetchCatalogResult | FetchCatalogSuccess
+
+const buildCatalogLoadMetadata = (
+  sourceConfig: Awaited<ReturnType<typeof resolveRegistrySourceConfig>>,
+): Pick<
+  RegistryCatalogLoadResult,
+  'baseUrlRefResolution' | 'githubRepositoryUrl' | 'githubRepositoryRefResolution'
+> => ({
+  baseUrlRefResolution: sourceConfig.baseUrlRefResolution,
+  githubRepositoryUrl: sourceConfig.githubRepositoryUrl,
+  githubRepositoryRefResolution: sourceConfig.githubRepositoryRefResolution,
+})
 
 const buildConditionalHeaders = (
   envelope: ReturnType<typeof readCatalogCacheEnvelope>,
@@ -83,11 +97,35 @@ const fetchCatalogFromNetwork = async (
 export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
-  const { indexUrl, baseUrl: registryBaseUrl } = getRegistrySourceConfig()
+  let sourceConfig
+
+  try {
+    sourceConfig = await resolveRegistrySourceConfig({ signal: options.signal })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown registry source resolution error'
+
+    return {
+      catalog: null,
+      indexUrl: '',
+      registryBaseUrl: '',
+      cacheState: 'none',
+      errorMessage,
+    }
+  }
+
+  const { indexUrl, baseUrl: registryBaseUrl } = sourceConfig
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
-    return { catalog: cachedCatalog, indexUrl, registryBaseUrl, cacheState: 'fresh' }
+    return {
+      catalog: cachedCatalog,
+      indexUrl,
+      registryBaseUrl,
+      cacheState: 'fresh',
+      baseUrlRefResolution: sourceConfig.baseUrlRefResolution,
+      githubRepositoryUrl: sourceConfig.githubRepositoryUrl,
+      githubRepositoryRefResolution: sourceConfig.githubRepositoryRefResolution,
+    }
   }
 
   const envelope = readCatalogCacheEnvelope(indexUrl)
@@ -109,19 +147,45 @@ export const loadRegistryCatalog = async (
 
       touchCatalogCache(indexUrl)
 
-      return { catalog: envelope.catalog, indexUrl, registryBaseUrl, cacheState: 'fresh' }
+      return {
+        catalog: envelope.catalog,
+        indexUrl,
+        registryBaseUrl,
+        cacheState: 'fresh',
+        ...buildCatalogLoadMetadata(sourceConfig),
+      }
     }
 
     writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
 
-    return { catalog: result.catalog, indexUrl, registryBaseUrl, cacheState: 'none' }
+    return {
+      catalog: result.catalog,
+      indexUrl,
+      registryBaseUrl,
+      cacheState: 'none',
+      ...buildCatalogLoadMetadata(sourceConfig),
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
 
     if (envelope?.catalog) {
-      return { catalog: envelope.catalog, indexUrl, registryBaseUrl, cacheState: 'stale-fallback', errorMessage }
+      return {
+        catalog: envelope.catalog,
+        indexUrl,
+        registryBaseUrl,
+        cacheState: 'stale-fallback',
+        errorMessage,
+        ...buildCatalogLoadMetadata(sourceConfig),
+      }
     }
 
-    return { catalog: null, indexUrl, registryBaseUrl, cacheState: 'none', errorMessage }
+    return {
+      catalog: null,
+      indexUrl,
+      registryBaseUrl,
+      cacheState: 'none',
+      errorMessage,
+      ...buildCatalogLoadMetadata(sourceConfig),
+    }
   }
 }

@@ -1,0 +1,172 @@
+const MAJOR_VERSION_LINE_ALIAS_PATTERN = /^v?\d+\.x$/i
+
+const GITHUB_HOSTNAME = 'github.com'
+const GITHUB_WWW_HOSTNAME = 'www.github.com'
+const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
+const GITHUB_EXPLICIT_REF_PREFIX = 'refs'
+const GITHUB_EXPLICIT_REF_TYPES = new Set(['heads', 'tags'])
+
+export interface GitHubRepositoryIdentity {
+  readonly owner: string
+  readonly repo: string
+}
+
+export interface MajorVersionLineAlias {
+  readonly alias: string
+  readonly major: number
+}
+
+const stripGitRepositorySuffix = (value: string): string => {
+  return value.replace(/\.git$/i, '')
+}
+
+const isGitHubHostname = (hostname: string): boolean => {
+  return hostname === GITHUB_HOSTNAME || hostname === GITHUB_WWW_HOSTNAME
+}
+
+const getGitHubRefFromSegments = (segments: string[]): string | null => {
+  if (segments.length < 4 || !GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
+    return null
+  }
+
+  const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
+
+  if (refSegments.length === 0) {
+    return null
+  }
+
+  if (
+    refSegments.length >= 3 &&
+    refSegments[0] === GITHUB_EXPLICIT_REF_PREFIX &&
+    GITHUB_EXPLICIT_REF_TYPES.has(refSegments[1])
+  ) {
+    const explicitRef = refSegments.slice(2).join('/').trim()
+    return explicitRef.length > 0 ? explicitRef : null
+  }
+
+  return refSegments[0]
+}
+
+export const parseMajorVersionLineAlias = (ref: string): MajorVersionLineAlias | null => {
+  const normalizedRef = ref.trim()
+
+  if (!MAJOR_VERSION_LINE_ALIAS_PATTERN.test(normalizedRef)) {
+    return null
+  }
+
+  const majorMatch = /^v?(\d+)\.x$/i.exec(normalizedRef)
+
+  if (!majorMatch) {
+    return null
+  }
+
+  return {
+    alias: normalizedRef,
+    major: Number.parseInt(majorMatch[1], 10),
+  }
+}
+
+export const extractRegistryRef = (sourceUrl: string): string | null => {
+  const normalized = sourceUrl.trim()
+
+  if (normalized.length === 0) {
+    return null
+  }
+
+  try {
+    const parsedUrl = new URL(normalized)
+    const queryRef = parsedUrl.searchParams.get('ref')?.trim()
+
+    if (queryRef) {
+      return queryRef
+    }
+
+    const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
+
+    if (isGitHubHostname(parsedUrl.hostname) && segments.length >= 2) {
+      return getGitHubRefFromSegments(segments)
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
+export const extractMajorVersionLineAliasFromSourceUrl = (sourceUrl: string): MajorVersionLineAlias | null => {
+  const ref = extractRegistryRef(sourceUrl)
+
+  if (!ref) {
+    return null
+  }
+
+  return parseMajorVersionLineAlias(ref)
+}
+
+export const substituteRegistryRef = (sourceUrl: string, nextRef: string): string => {
+  const normalized = sourceUrl.trim()
+
+  try {
+    const parsedUrl = new URL(normalized)
+
+    if (parsedUrl.searchParams.has('ref')) {
+      parsedUrl.searchParams.set('ref', nextRef)
+      return parsedUrl.toString()
+    }
+
+    const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
+
+    if (isGitHubHostname(parsedUrl.hostname) && segments.length >= 4 && GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
+      const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
+
+      if (
+        refSegments.length >= 3 &&
+        refSegments[0] === GITHUB_EXPLICIT_REF_PREFIX &&
+        GITHUB_EXPLICIT_REF_TYPES.has(refSegments[1])
+      ) {
+        const nextSegments = [...segments.slice(0, 3), GITHUB_EXPLICIT_REF_PREFIX, refSegments[1], ...nextRef.split('/')]
+        parsedUrl.pathname = `/${nextSegments.join('/')}`
+        return parsedUrl.toString()
+      }
+
+      const nextSegments = [...segments.slice(0, 3), nextRef, ...refSegments.slice(1)]
+      parsedUrl.pathname = `/${nextSegments.join('/')}`
+      return parsedUrl.toString()
+    }
+  } catch {
+    return normalized
+  }
+
+  return normalized
+}
+
+export const parseGitHubRepositoryIdentity = (sourceUrl: string): GitHubRepositoryIdentity | null => {
+  const normalized = sourceUrl.trim()
+
+  if (normalized.length === 0) {
+    return null
+  }
+
+  try {
+    const parsedUrl = new URL(normalized)
+    const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
+
+    if (!isGitHubHostname(parsedUrl.hostname) || segments.length < 2) {
+      return null
+    }
+
+    return {
+      owner: segments[0],
+      repo: stripGitRepositorySuffix(segments[1]),
+    }
+  } catch {
+    return null
+  }
+}
+
+export const inferRegistryRepositoryIdentity = (
+  sourceUrl: string,
+  fallbackRepositoryUrl: string,
+): GitHubRepositoryIdentity | null => {
+  return parseGitHubRepositoryIdentity(sourceUrl) ?? parseGitHubRepositoryIdentity(fallbackRepositoryUrl)
+}

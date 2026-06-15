@@ -81,6 +81,12 @@ With defaults, the effective fetch URL resolves to:
 Query parameters on the source URL are preserved when composing the index URL,
 except when GitHub URLs are normalized to raw content URLs.
 
+Major-version line refs such as `1.x` or `v1.x` can be used in proxy `?ref=`
+values or GitHub `/tree/<ref>` URLs. The app resolves these aliases to the latest
+stable release tag from the registry repository using the GitHub tags API and
+[`semver`](https://www.npmjs.com/package/semver). Resolved refs are shown in
+website settings and catalog status notes as `1.x → v1.2.0`.
+
 At runtime, users can set custom registry URLs in the header settings modal:
 
 - **Registry base URL override** — catalog fetching (GitHub URLs auto-normalized,

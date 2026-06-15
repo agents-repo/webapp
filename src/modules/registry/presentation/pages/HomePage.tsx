@@ -33,7 +33,6 @@ import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
-import { getRegistrySourceConfig } from '../../application/registrySource'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 import { buildRegistryArtifactUrl, buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 
@@ -216,7 +215,7 @@ function HomePage({
       setCatalogCacheState(result.cacheState)
       setCatalogSourceUrl(result.indexUrl)
       setRegistryBaseUrl(result.registryBaseUrl)
-      setGithubRepositoryUrl(getRegistrySourceConfig().githubRepositoryUrl)
+      setGithubRepositoryUrl(result.githubRepositoryUrl ?? '')
       setCatalogErrorMessage(result.errorMessage ?? null)
 
       const noteStatusTag = getCatalogStatusTag({
@@ -232,6 +231,8 @@ function HomePage({
           : 'Registry catalog unavailable from ',
         sourceUrl: result.indexUrl,
         statusTag: noteStatusTag,
+        baseUrlRefResolution: result.baseUrlRefResolution ?? null,
+        githubRepositoryRefResolution: result.githubRepositoryRefResolution ?? null,
       })
 
       if (result.errorMessage) {
