@@ -4,6 +4,7 @@ const MAJOR_VERSION_LINE_ALIAS_PATTERN = /^v?\d+\.x$/i
 
 const GITHUB_HOSTNAME = 'github.com'
 const GITHUB_WWW_HOSTNAME = 'www.github.com'
+const RAW_GITHUB_HOSTNAME = 'raw.githubusercontent.com'
 const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
 const GITHUB_EXPLICIT_REF_PREFIX = 'refs'
 const GITHUB_EXPLICIT_REF_TYPES = new Set(['heads', 'tags'])
@@ -84,6 +85,10 @@ export const extractRegistryRef = (sourceUrl: string): string | null => {
     }
 
     const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
+
+    if (parsedUrl.hostname === RAW_GITHUB_HOSTNAME && segments.length >= 3) {
+      return segments[2]
+    }
 
     if (isGitHubHostname(parsedUrl.hostname) && segments.length >= 2) {
       const refFromTree = getGitHubRefFromSegments(segments)

@@ -20,6 +20,9 @@ describe('registryMajorVersionRef', () => {
     expect(extractRegistryRef('https://github.com/agents-repo/registry/tree/1.x')).toBe('1.x')
     expect(extractRegistryRef('https://registry-proxy.example.workers.dev?ref=1.x')).toBe('1.x')
     expect(extractRegistryRef('https://github.com/agents-repo/registry/tree/v1.2.0')).toBe('v1.2.0')
+    expect(extractRegistryRef('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0')).toBe(
+      'v1.2.0',
+    )
     expect(extractRegistryRef('https://github.com/agents-repo/registry/tree/refs/heads/feature/foo')).toBe(
       'feature/foo',
     )

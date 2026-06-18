@@ -102,6 +102,7 @@ describe('loadRegistryCatalog cache integration', () => {
     expect(result.indexUrl).toBe(
       'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0',
     )
+    expect(result.baseUrlRefResolution).toEqual({ alias: '1.x', resolvedRef: 'v1.2.0' })
   })
 
   it('serves a fresh raw GitHub localStorage catalog when fetch source resolution fails', async () => {
@@ -160,5 +161,6 @@ describe('loadRegistryCatalog cache integration', () => {
     expect(result.indexUrl).toBe(
       'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
     )
+    expect(result.baseUrlRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
   })
 })

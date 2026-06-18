@@ -18,6 +18,7 @@ import {
   getRegistryBaseUrlFromIndexUrl,
   getRegistrySourceCacheIdentity,
 } from './registrySourceUrl'
+import { extractMajorVersionLineAliasFromSourceUrl, extractRegistryRef } from './registryMajorVersionRef'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
@@ -76,6 +77,31 @@ const getConfiguredSourceCacheIdentity = (): ReturnType<typeof getRegistrySource
   return getRegistrySourceCacheIdentity(baseUrlInput, configuredSource.indexPath)
 }
 
+const inferBaseUrlRefResolutionFromCachedIndexUrl = (
+  configuredSource: ReturnType<typeof getRegistrySourceConfig>,
+  cachedIndexUrl: string,
+): { alias: string; resolvedRef: string } | null => {
+  const baseUrlInput =
+    configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
+  const alias = extractMajorVersionLineAliasFromSourceUrl(baseUrlInput)
+
+  if (!alias) {
+    return null
+  }
+
+  const registryBaseUrl = getRegistryBaseUrlFromIndexUrl(cachedIndexUrl, configuredSource.indexPath)
+  const resolvedRef = extractRegistryRef(registryBaseUrl)
+
+  if (!resolvedRef) {
+    return null
+  }
+
+  return {
+    alias: alias.alias,
+    resolvedRef,
+  }
+}
+
 const buildCatalogLoadResultFromCachedEnvelope = (
   envelope: RegistryCatalogCacheEnvelope,
   configuredSource: ReturnType<typeof getRegistrySourceConfig>,
@@ -88,7 +114,16 @@ const buildCatalogLoadResultFromCachedEnvelope = (
   registryBaseUrl: getRegistryBaseUrlFromIndexUrl(envelope.indexUrl, configuredSource.indexPath),
   cacheState,
   errorMessage,
-  ...buildCatalogLoadMetadata(configuredSource, browseMetadata),
+  ...buildCatalogLoadMetadata(
+    {
+      ...configuredSource,
+      baseUrlRefResolution: inferBaseUrlRefResolutionFromCachedIndexUrl(
+        configuredSource,
+        envelope.indexUrl,
+      ),
+    },
+    browseMetadata,
+  ),
 })
 
 const resolveBrowseCatalogLoadMetadata = async (options: {

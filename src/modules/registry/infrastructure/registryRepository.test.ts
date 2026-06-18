@@ -153,6 +153,7 @@ describe('loadRegistryCatalog', () => {
     expect(result.registryBaseUrl).toBe('https://registry-proxy.example.workers.dev/?ref=v1.2.0')
     expect(result.errorMessage).toBe('Registry tag listing failed (503 Service Unavailable)')
     expect(result.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.x')
+    expect(result.baseUrlRefResolution).toEqual({ alias: '1.x', resolvedRef: 'v1.2.0' })
     expect(globalThis.fetch).not.toHaveBeenCalled()
   })
 
