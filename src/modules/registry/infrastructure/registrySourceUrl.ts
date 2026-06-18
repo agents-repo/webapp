@@ -1,7 +1,10 @@
-export const DEFAULT_REGISTRY_BRANCH = 'main'
-export const DEFAULT_REGISTRY_SOURCE_URL = `https://registry-proxy.maiconfz.workers.dev?ref=${DEFAULT_REGISTRY_BRANCH}`
-export const DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL = 'https://github.com/agents-repo/registry'
+
+export const DEFAULT_REGISTRY_REF = 'v1.x'
+export const DEFAULT_REGISTRY_SOURCE_URL = `https://registry-proxy.maiconfz.workers.dev?ref=${DEFAULT_REGISTRY_REF}`
+export const DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL =
+  `https://github.com/agents-repo/registry/tree/${DEFAULT_REGISTRY_REF}`
 export const DEFAULT_REGISTRY_INDEX_PATH = 'packages/index.json'
+
 const GITHUB_HOSTNAME = 'github.com'
 const GITHUB_WWW_HOSTNAME = 'www.github.com'
 const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
@@ -11,13 +14,13 @@ const GITHUB_EXPLICIT_REF_TYPES = new Set(['heads', 'tags'])
 
 const getGitHubRefFromSegments = (segments: string[]): string => {
   if (segments.length < 4 || !GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
-    return DEFAULT_REGISTRY_BRANCH
+    return DEFAULT_REGISTRY_REF
   }
 
   const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
 
   if (refSegments.length === 0) {
-    return DEFAULT_REGISTRY_BRANCH
+    return DEFAULT_REGISTRY_REF
   }
 
   // GitHub tree/blob URLs can include additional path segments after the ref.
@@ -28,7 +31,7 @@ const getGitHubRefFromSegments = (segments: string[]): string => {
     GITHUB_EXPLICIT_REF_TYPES.has(refSegments[1])
   ) {
     const explicitRef = refSegments.slice(2).join('/').trim()
-    return explicitRef.length > 0 ? explicitRef : DEFAULT_REGISTRY_BRANCH
+    return explicitRef.length > 0 ? explicitRef : DEFAULT_REGISTRY_REF
   }
 
   return refSegments[0]
@@ -79,6 +82,67 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
     return `https://raw.githubusercontent.com/${owner}/${repository}/${branch}`
   } catch {
     return normalized
+  }
+}
+
+const RAW_GITHUB_HOSTNAME = 'raw.githubusercontent.com'
+
+export interface RegistrySourceCacheIdentity {
+  lookupKey: string
+  indexPath: string
+  sourceRef: string | null
+}
+
+export const getRegistryIndexCacheLookupKey = (indexUrl: string, indexPath: string): string | null => {
+  try {
+    const parsed = new URL(indexUrl)
+    const normalizedIndexPath = `/${trimLeadingSlashes(indexPath)}`
+
+    if (!parsed.pathname.endsWith(normalizedIndexPath)) {
+      return null
+    }
+
+    const prefix = parsed.pathname.slice(0, -normalizedIndexPath.length)
+    const prefixSegments = prefix.split('/').filter(Boolean)
+
+    if (parsed.hostname === RAW_GITHUB_HOSTNAME && prefixSegments.length >= 3) {
+      prefixSegments[prefixSegments.length - 1] = '{ref}'
+
+      return `${parsed.origin}/${prefixSegments.join('/')}${normalizedIndexPath}`
+    }
+
+    return `${parsed.origin}${parsed.pathname}`
+  } catch {
+    return null
+  }
+}
+
+export const getRegistrySourceCacheIdentity = (
+  baseUrlInput: string,
+  indexPath: string,
+): RegistrySourceCacheIdentity | null => {
+  const indexUrl = buildRegistryIndexUrl(normalizeRegistryBaseUrl(baseUrlInput), indexPath)
+  const lookupKey = getRegistryIndexCacheLookupKey(indexUrl, indexPath)
+
+  if (!lookupKey) {
+    return null
+  }
+
+  return { lookupKey, indexPath, sourceRef: null }
+}
+
+export const getRegistryBaseUrlFromIndexUrl = (indexUrl: string, indexPath: string): string => {
+  try {
+    const parsed = new URL(indexUrl)
+    const normalizedIndexPath = `/${trimLeadingSlashes(indexPath)}`
+
+    if (parsed.pathname.endsWith(normalizedIndexPath)) {
+      parsed.pathname = parsed.pathname.slice(0, -normalizedIndexPath.length) || '/'
+    }
+
+    return trimTrailingSlashes(parsed.toString())
+  } catch {
+    return ''
   }
 }
 

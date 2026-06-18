@@ -69,6 +69,12 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
     GitHub-only; does not affect catalog fetching.
    Both overrides persist in localStorage and take precedence over build-time
    configuration. Reset to default clears both overrides.
+- Major-version line refs (`1.x`, `v1.x`) in either override resolve to the
+   latest stable registry release tag. Tag lists are fetched from registry-proxy
+   `GET /tags` when the fetch source is a proxy URL, or from the GitHub tags API
+   as a fallback for GitHub-only source URLs. Tag lists are cached for 1 hour in
+   localStorage; catalog loading re-resolves aliases before using the 24h catalog
+   cache. Resolution uses the `semver` package.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page
@@ -83,9 +89,10 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`
    (default `packages/index.json`).
 - Default configured source is
-   `https://registry-proxy.maiconfz.workers.dev?ref=main`, which resolves to
-   `https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=main`
-   after index-path composition.
+   `https://registry-proxy.maiconfz.workers.dev?ref=v1.x`, which composes to
+   `https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.x`
+   before major-version alias resolution. At catalog load time, `v1.x` resolves
+   to the latest stable release tag.
 - Website settings modal shows catalog source status details, including updated
    date, package count, source URL, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional

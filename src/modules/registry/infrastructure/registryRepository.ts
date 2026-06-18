@@ -3,10 +3,23 @@ import { isRegistryCatalog } from './registryCatalogValidation'
 import {
   readFreshCatalogCache,
   readCatalogCacheEnvelope,
+  readFreshCatalogCacheEnvelopeForSourceIdentity,
+  readStaleCatalogCacheEnvelopeForSourceIdentity,
   touchCatalogCache,
   writeCatalogCache,
+  type RegistryCatalogCacheEnvelope,
 } from './registryCatalogCache'
-import { getRegistrySourceConfig } from './registrySourceConfig'
+import {
+  getRegistrySourceConfig,
+  resolveRegistryBrowseSourceMetadata,
+  resolveRegistryFetchSourceConfig,
+} from './registrySourceConfig'
+import {
+  getRegistryBaseUrlFromIndexUrl,
+  getRegistrySourceCacheIdentity,
+  type RegistrySourceCacheIdentity,
+} from './registrySourceUrl'
+import { extractMajorVersionLineAliasFromSourceUrl, extractRegistryRef } from './registryMajorVersionRef'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
@@ -14,6 +27,9 @@ export interface RegistryCatalogLoadResult {
   registryBaseUrl: string
   cacheState: 'none' | 'fresh' | 'stale-fallback'
   errorMessage?: string
+  baseUrlRefResolution?: { alias: string; resolvedRef: string } | null
+  githubRepositoryUrl?: string
+  githubRepositoryRefResolution?: { alias: string; resolvedRef: string } | null
 }
 
 interface FetchCatalogResult {
@@ -31,6 +47,103 @@ interface FetchCatalogSuccess {
 }
 
 type FetchCatalogNetworkResult = FetchCatalogResult | FetchCatalogSuccess
+
+const buildCatalogLoadMetadata = (
+  fetchSourceConfig: Awaited<ReturnType<typeof resolveRegistryFetchSourceConfig>>,
+  browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>>,
+): Pick<
+  RegistryCatalogLoadResult,
+  'baseUrlRefResolution' | 'githubRepositoryUrl' | 'githubRepositoryRefResolution'
+> => ({
+  baseUrlRefResolution: fetchSourceConfig.baseUrlRefResolution,
+  githubRepositoryUrl: browseMetadata.githubRepositoryUrl,
+  githubRepositoryRefResolution: browseMetadata.githubRepositoryRefResolution,
+})
+
+const getFallbackBrowseCatalogLoadMetadata = (): Awaited<
+  ReturnType<typeof resolveRegistryBrowseSourceMetadata>
+> => {
+  const configuredSource = getRegistrySourceConfig()
+
+  return {
+    githubRepositoryUrl: configuredSource.githubRepositoryUrl,
+    githubRepositoryRefResolution: null,
+  }
+}
+
+const getConfiguredSourceCacheIdentity = (): RegistrySourceCacheIdentity | null => {
+  const configuredSource = getRegistrySourceConfig()
+  const baseUrlInput = configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
+  const identity = getRegistrySourceCacheIdentity(baseUrlInput, configuredSource.indexPath)
+
+  if (!identity) {
+    return null
+  }
+
+  return {
+    ...identity,
+    sourceRef: extractRegistryRef(baseUrlInput),
+  }
+}
+
+const inferBaseUrlRefResolutionFromCachedIndexUrl = (
+  configuredSource: ReturnType<typeof getRegistrySourceConfig>,
+  cachedIndexUrl: string,
+): { alias: string; resolvedRef: string } | null => {
+  const baseUrlInput =
+    configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
+  const alias = extractMajorVersionLineAliasFromSourceUrl(baseUrlInput)
+
+  if (!alias) {
+    return null
+  }
+
+  const registryBaseUrl = getRegistryBaseUrlFromIndexUrl(cachedIndexUrl, configuredSource.indexPath)
+  const resolvedRef = extractRegistryRef(registryBaseUrl)
+
+  if (!resolvedRef) {
+    return null
+  }
+
+  return {
+    alias: alias.alias,
+    resolvedRef,
+  }
+}
+
+const buildCatalogLoadResultFromCachedEnvelope = (
+  envelope: RegistryCatalogCacheEnvelope,
+  configuredSource: ReturnType<typeof getRegistrySourceConfig>,
+  browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>>,
+  cacheState: 'fresh' | 'stale-fallback',
+  errorMessage: string,
+): RegistryCatalogLoadResult => ({
+  catalog: envelope.catalog,
+  indexUrl: envelope.indexUrl,
+  registryBaseUrl: getRegistryBaseUrlFromIndexUrl(envelope.indexUrl, configuredSource.indexPath),
+  cacheState,
+  errorMessage,
+  ...buildCatalogLoadMetadata(
+    {
+      ...configuredSource,
+      baseUrlRefResolution: inferBaseUrlRefResolutionFromCachedIndexUrl(
+        configuredSource,
+        envelope.indexUrl,
+      ),
+    },
+    browseMetadata,
+  ),
+})
+
+const resolveBrowseCatalogLoadMetadata = async (options: {
+  signal?: AbortSignal
+}): Promise<Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>>> => {
+  try {
+    return await resolveRegistryBrowseSourceMetadata(options)
+  } catch {
+    return getFallbackBrowseCatalogLoadMetadata()
+  }
+}
 
 const buildConditionalHeaders = (
   envelope: ReturnType<typeof readCatalogCacheEnvelope>,
@@ -80,21 +193,114 @@ const fetchCatalogFromNetwork = async (
   }
 }
 
+const readFreshCachedEnvelopeForConfiguredSource = (): RegistryCatalogCacheEnvelope | null => {
+  const cacheIdentity = getConfiguredSourceCacheIdentity()
+
+  if (!cacheIdentity) {
+    return null
+  }
+
+  return readFreshCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+}
+
+const buildCatalogLoadResultOnSourceResolutionFailure = async (
+  error: unknown,
+  browseMetadataPromise: ReturnType<typeof resolveBrowseCatalogLoadMetadata>,
+  freshCachedEnvelope: RegistryCatalogCacheEnvelope | null = null,
+): Promise<RegistryCatalogLoadResult> => {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown registry source resolution error'
+  const configuredSource = getRegistrySourceConfig()
+  const browseMetadata = await browseMetadataPromise
+
+  if (freshCachedEnvelope) {
+    return buildCatalogLoadResultFromCachedEnvelope(
+      freshCachedEnvelope,
+      configuredSource,
+      browseMetadata,
+      'fresh',
+      errorMessage,
+    )
+  }
+
+  const cacheIdentity = getConfiguredSourceCacheIdentity()
+
+  if (cacheIdentity) {
+    const freshEnvelope = readFreshCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+
+    if (freshEnvelope) {
+      return buildCatalogLoadResultFromCachedEnvelope(
+        freshEnvelope,
+        configuredSource,
+        browseMetadata,
+        'fresh',
+        errorMessage,
+      )
+    }
+
+    const staleEnvelope = readStaleCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+
+    if (staleEnvelope) {
+      return buildCatalogLoadResultFromCachedEnvelope(
+        staleEnvelope,
+        configuredSource,
+        browseMetadata,
+        'fresh',
+        errorMessage,
+      )
+    }
+  }
+
+  return {
+    catalog: null,
+    indexUrl: '',
+    registryBaseUrl: '',
+    cacheState: 'none',
+    errorMessage,
+    ...buildCatalogLoadMetadata(configuredSource, browseMetadata),
+  }
+}
+
 export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
-  const { indexUrl, baseUrl: registryBaseUrl } = getRegistrySourceConfig()
+  const browseMetadataPromise = resolveBrowseCatalogLoadMetadata({ signal: options.signal })
+  const freshCachedEnvelope = readFreshCachedEnvelopeForConfiguredSource()
+  let fetchSourceConfig
+
+  try {
+    fetchSourceConfig = await resolveRegistryFetchSourceConfig({ signal: options.signal })
+  } catch (error) {
+    return buildCatalogLoadResultOnSourceResolutionFailure(
+      error,
+      browseMetadataPromise,
+      freshCachedEnvelope,
+    )
+  }
+
+  const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
-    return { catalog: cachedCatalog, indexUrl, registryBaseUrl, cacheState: 'fresh' }
+    return {
+      catalog: cachedCatalog,
+      indexUrl,
+      registryBaseUrl,
+      cacheState: 'fresh',
+      ...buildCatalogLoadMetadata(fetchSourceConfig, await browseMetadataPromise),
+    }
   }
 
   const envelope = readCatalogCacheEnvelope(indexUrl)
   const conditionalHeaders = buildConditionalHeaders(envelope)
+  let browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>> | undefined
 
   try {
-    const result = await fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders)
+    const [result, resolvedBrowseMetadata] = await Promise.all([
+      fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders),
+      browseMetadataPromise,
+    ])
+    browseMetadata = resolvedBrowseMetadata
+    const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, browseMetadata)
 
     if (result.notModified) {
       if (!envelope?.catalog) {
@@ -104,24 +310,54 @@ export const loadRegistryCatalog = async (
           registryBaseUrl,
           cacheState: 'none',
           errorMessage: 'Registry returned 304 Not Modified without cached catalog state',
+          ...catalogMetadata,
         }
       }
 
       touchCatalogCache(indexUrl)
 
-      return { catalog: envelope.catalog, indexUrl, registryBaseUrl, cacheState: 'fresh' }
+      return {
+        catalog: envelope.catalog,
+        indexUrl,
+        registryBaseUrl,
+        cacheState: 'fresh',
+        ...catalogMetadata,
+      }
     }
 
     writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
 
-    return { catalog: result.catalog, indexUrl, registryBaseUrl, cacheState: 'none' }
+    return {
+      catalog: result.catalog,
+      indexUrl,
+      registryBaseUrl,
+      cacheState: 'none',
+      ...catalogMetadata,
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
+    const resolvedBrowseMetadata =
+      browseMetadata ?? (await browseMetadataPromise.catch(() => getFallbackBrowseCatalogLoadMetadata()))
+    const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, resolvedBrowseMetadata)
 
     if (envelope?.catalog) {
-      return { catalog: envelope.catalog, indexUrl, registryBaseUrl, cacheState: 'stale-fallback', errorMessage }
+      return {
+        catalog: envelope.catalog,
+        indexUrl,
+        registryBaseUrl,
+        cacheState: 'stale-fallback',
+        errorMessage,
+        ...catalogMetadata,
+      }
     }
 
-    return { catalog: null, indexUrl, registryBaseUrl, cacheState: 'none', errorMessage }
+    return {
+      catalog: null,
+      indexUrl,
+      registryBaseUrl,
+      cacheState: 'none',
+      errorMessage,
+      ...catalogMetadata,
+    }
   }
 }

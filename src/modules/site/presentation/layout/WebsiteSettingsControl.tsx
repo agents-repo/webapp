@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Badge, Button, Form, Modal, Stack } from 'react-bootstrap'
 import { isSafeExternalHttpUrl } from '../../application/urlSafety'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
+  clearRegistryTagListCache,
   clearStoredRegistryBaseUrlOverride,
   clearStoredRegistryGitHubRepositoryUrlOverride,
   getConfiguredRegistrySourceConfig,
@@ -13,11 +14,14 @@ import {
   getStoredRegistryGitHubRepositoryUrlOverride,
   normalizeRegistryBaseUrlOverrideInput,
   normalizeRegistryGitHubRepositoryUrlOverrideInput,
+  resolveRegistrySourceConfig,
   setStoredRegistryBaseUrlOverride,
   setStoredRegistryGitHubRepositoryUrlOverride,
   validateRegistryBaseUrlOverrideInput,
   validateRegistryGitHubRepositoryUrlOverrideInput,
+  validateRegistrySourceUrlForMajorVersionAlias,
 } from '../../../registry/application/registrySource'
+import type { RegistryRefResolution, RegistrySourceConfig } from '../../../registry/application/registrySource'
 
 interface SettingsModalState {
   showModal: boolean
@@ -25,6 +29,7 @@ interface SettingsModalState {
   baseUrlValidationError: string | null
   githubRepositoryUrlInput: string
   githubRepositoryUrlValidationError: string | null
+  isSaving: boolean
 }
 
 interface WebsiteSettingsControlProps {
@@ -32,26 +37,109 @@ interface WebsiteSettingsControlProps {
   readonly registryCatalogStatusNote?: RegistryCatalogStatusNote | null
 }
 
+const formatRefResolutionLabel = (resolution: RegistryRefResolution | null | undefined): string | null => {
+  if (!resolution) {
+    return null
+  }
+
+  return `${resolution.alias} → ${resolution.resolvedRef}`
+}
+
+const renderSourceLink = (url: string): ReactNode => {
+  if (isSafeExternalHttpUrl(url)) {
+    return (
+      <a href={url} target="_blank" rel="noreferrer noopener" className="text-reset text-break">
+        {url}
+      </a>
+    )
+  }
+
+  return <span className="text-break">{url}</span>
+}
+
+const renderCatalogStatusNote = (note: RegistryCatalogStatusNote): ReactNode => (
+  <p className="small text-body-secondary opacity-75 mb-0">
+    {note.summaryText}
+    {isSafeExternalHttpUrl(note.sourceUrl) ? (
+      <a href={note.sourceUrl} target="_blank" rel="noreferrer noopener" className="text-reset text-break">
+        {note.sourceUrl}
+      </a>
+    ) : (
+      <span>{note.sourceUrl || 'configured source'}</span>
+    )}
+    {note.baseUrlRefResolution ? (
+      <span className="ms-1">
+        ({note.baseUrlRefResolution.alias} → {note.baseUrlRefResolution.resolvedRef})
+      </span>
+    ) : null}
+    <span className="opacity-75"> ({note.statusTag})</span>
+  </p>
+)
+
+function SourceModeBadge({ mode }: { readonly mode: 'configured' | 'runtime-override' }) {
+  const isRuntimeOverride = mode === 'runtime-override'
+
+  return (
+    <Badge bg={isRuntimeOverride ? 'info' : 'secondary'} text={isRuntimeOverride ? 'dark' : undefined}>
+      {isRuntimeOverride ? 'runtime override' : 'configured source'}
+    </Badge>
+  )
+}
+
+function RefResolutionBadge({ label }: { readonly label: string | null }) {
+  if (!label) {
+    return null
+  }
+
+  return (
+    <Badge bg="light" text="dark">
+      {label}
+    </Badge>
+  )
+}
+
 function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteSettingsControlProps) {
   const configuredSource = getConfiguredRegistrySourceConfig()
-  const [currentSourceUrl, setCurrentSourceUrl] = useState(() => getRegistrySourceConfig().baseUrl)
-  const [currentSourceMode, setCurrentSourceMode] = useState(() => getRegistrySourceConfig().sourceMode)
-  const [currentGithubRepositoryUrl, setCurrentGithubRepositoryUrl] = useState(
-    () => getRegistrySourceConfig().githubRepositoryUrl,
-  )
-  const [currentGithubRepositorySourceMode, setCurrentGithubRepositorySourceMode] = useState(
-    () => getRegistrySourceConfig().githubRepositorySourceMode,
-  )
+  const [resolvedSource, setResolvedSource] = useState<RegistrySourceConfig | null>(null)
+  const [isRefreshingSource, setIsRefreshingSource] = useState(false)
+  const refreshRequestIdRef = useRef(0)
   const [modalState, setModalState] = useState<SettingsModalState>({
     showModal: false,
     baseUrlInput: '',
     baseUrlValidationError: null,
     githubRepositoryUrlInput: '',
     githubRepositoryUrlValidationError: null,
+    isSaving: false,
   })
 
+  const refreshResolvedSource = async (): Promise<void> => {
+    const requestId = ++refreshRequestIdRef.current
+    setIsRefreshingSource(true)
+
+    try {
+      const nextSource = await resolveRegistrySourceConfig()
+
+      if (requestId !== refreshRequestIdRef.current) {
+        return
+      }
+
+      setResolvedSource(nextSource)
+    } catch {
+      if (requestId !== refreshRequestIdRef.current) {
+        return
+      }
+
+      setResolvedSource(null)
+    } finally {
+      if (requestId === refreshRequestIdRef.current) {
+        setIsRefreshingSource(false)
+      }
+    }
+  }
+
   const openModal = (): void => {
-    const nextSource = getRegistrySourceConfig()
+    setResolvedSource(null)
+    setIsRefreshingSource(true)
 
     setModalState({
       showModal: true,
@@ -59,12 +147,10 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
       baseUrlValidationError: null,
       githubRepositoryUrlInput: getStoredRegistryGitHubRepositoryUrlOverride() ?? '',
       githubRepositoryUrlValidationError: null,
+      isSaving: false,
     })
 
-    setCurrentSourceUrl(nextSource.baseUrl)
-    setCurrentSourceMode(nextSource.sourceMode)
-    setCurrentGithubRepositoryUrl(nextSource.githubRepositoryUrl)
-    setCurrentGithubRepositorySourceMode(nextSource.githubRepositorySourceMode)
+    void refreshResolvedSource()
   }
 
   const closeModal = (): void => {
@@ -73,18 +159,11 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
       showModal: false,
       baseUrlValidationError: null,
       githubRepositoryUrlValidationError: null,
+      isSaving: false,
     }))
   }
 
-  const updateSourceMetadata = (): void => {
-    const nextSource = getRegistrySourceConfig()
-    setCurrentSourceUrl(nextSource.baseUrl)
-    setCurrentSourceMode(nextSource.sourceMode)
-    setCurrentGithubRepositoryUrl(nextSource.githubRepositoryUrl)
-    setCurrentGithubRepositorySourceMode(nextSource.githubRepositorySourceMode)
-  }
-
-  const saveRegistrySettings = (): void => {
+  const saveRegistrySettings = async (): Promise<void> => {
     const baseUrlValidationMessage = validateRegistryBaseUrlOverrideInput(modalState.baseUrlInput)
     const githubRepositoryUrlValidationMessage = validateRegistryGitHubRepositoryUrlOverrideInput(
       modalState.githubRepositoryUrlInput,
@@ -99,46 +178,103 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
       return
     }
 
-    const normalizedBaseUrlInput = normalizeRegistryBaseUrlOverrideInput(modalState.baseUrlInput)
+    setModalState((previousValue) => ({
+      ...previousValue,
+      isSaving: true,
+      baseUrlValidationError: null,
+      githubRepositoryUrlValidationError: null,
+    }))
 
-    if (normalizedBaseUrlInput.length === 0) {
-      clearStoredRegistryBaseUrlOverride()
-    } else {
-      setStoredRegistryBaseUrlOverride(normalizedBaseUrlInput)
+    try {
+      const normalizedBaseUrlInput = normalizeRegistryBaseUrlOverrideInput(modalState.baseUrlInput)
+      const normalizedGithubRepositoryUrlInput = normalizeRegistryGitHubRepositoryUrlOverrideInput(
+        modalState.githubRepositoryUrlInput,
+      )
+
+      const baseUrlAliasValidationMessage =
+        normalizedBaseUrlInput.length > 0
+          ? await validateRegistrySourceUrlForMajorVersionAlias(
+              normalizedBaseUrlInput,
+              configuredSource.configuredGithubRepositoryUrl,
+              { bypassTagCache: true },
+            )
+          : null
+
+      const githubRepositoryAliasValidationMessage =
+        normalizedGithubRepositoryUrlInput.length > 0
+          ? await validateRegistrySourceUrlForMajorVersionAlias(
+              normalizedGithubRepositoryUrlInput,
+              configuredSource.configuredGithubRepositoryUrl,
+              { bypassTagCache: true },
+            )
+          : null
+
+      if (baseUrlAliasValidationMessage || githubRepositoryAliasValidationMessage) {
+        setModalState((previousValue) => ({
+          ...previousValue,
+          baseUrlValidationError: baseUrlAliasValidationMessage,
+          githubRepositoryUrlValidationError: githubRepositoryAliasValidationMessage,
+        }))
+      } else {
+        clearRegistryTagListCache()
+
+        if (normalizedBaseUrlInput.length === 0) {
+          clearStoredRegistryBaseUrlOverride()
+        } else {
+          setStoredRegistryBaseUrlOverride(normalizedBaseUrlInput)
+        }
+
+        if (normalizedGithubRepositoryUrlInput.length === 0) {
+          clearStoredRegistryGitHubRepositoryUrlOverride()
+        } else {
+          setStoredRegistryGitHubRepositoryUrlOverride(normalizedGithubRepositoryUrlInput)
+        }
+
+        await refreshResolvedSource()
+        closeModal()
+        onSaved?.()
+      }
+    } finally {
+      setModalState((previousValue) => ({
+        ...previousValue,
+        isSaving: false,
+      }))
     }
-
-    const normalizedGithubRepositoryUrlInput = normalizeRegistryGitHubRepositoryUrlOverrideInput(
-      modalState.githubRepositoryUrlInput,
-    )
-
-    if (normalizedGithubRepositoryUrlInput.length === 0) {
-      clearStoredRegistryGitHubRepositoryUrlOverride()
-    } else {
-      setStoredRegistryGitHubRepositoryUrlOverride(normalizedGithubRepositoryUrlInput)
-    }
-
-    updateSourceMetadata()
-    closeModal()
-    onSaved?.()
   }
 
-  const resetRegistrySettings = (): void => {
+  const resetRegistrySettings = async (): Promise<void> => {
     clearStoredRegistryBaseUrlOverride()
     clearStoredRegistryGitHubRepositoryUrlOverride()
+    clearRegistryTagListCache()
     setModalState((previousValue) => ({
       ...previousValue,
       baseUrlInput: '',
       baseUrlValidationError: null,
       githubRepositoryUrlInput: '',
       githubRepositoryUrlValidationError: null,
+      isSaving: true,
     }))
-    updateSourceMetadata()
-    closeModal()
-    onSaved?.()
+
+    try {
+      await refreshResolvedSource()
+      closeModal()
+      onSaved?.()
+    } finally {
+      setModalState((previousValue) => ({
+        ...previousValue,
+        isSaving: false,
+      }))
+    }
   }
 
-  const canShowCurrentSourceLink = isSafeExternalHttpUrl(currentSourceUrl)
-  const canShowCurrentGithubRepositoryLink = isSafeExternalHttpUrl(currentGithubRepositoryUrl)
+  const activeSource = resolvedSource ?? getRegistrySourceConfig()
+  const shouldShowRefResolution = resolvedSource !== null && !isRefreshingSource
+  const currentBaseUrlRefResolution = shouldShowRefResolution
+    ? formatRefResolutionLabel(activeSource.baseUrlRefResolution)
+    : null
+  const currentGithubRepositoryRefResolution = shouldShowRefResolution
+    ? formatRefResolutionLabel(activeSource.githubRepositoryRefResolution)
+    : null
 
   return (
     <>
@@ -166,14 +302,14 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
               <p className="small text-body-secondary mb-3">
                 Configure the registry base URL used to load the registry index ({configuredSource.indexPath}) at
                 runtime. GitHub repository URLs are converted to a raw content URL. Raw and other base URLs are used
-                directly.
+                directly. Major-version line refs such as <code>1.x</code> resolve to the latest stable release tag.
               </p>
 
               <Form
                 noValidate
                 onSubmit={(event) => {
                   event.preventDefault()
-                  saveRegistrySettings()
+                  void saveRegistrySettings()
                 }}
               >
                 <Form.Group controlId="registry-base-url-override-input" className="mb-3">
@@ -190,50 +326,25 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                       }))
                     }}
                     isInvalid={modalState.baseUrlValidationError !== null}
+                    disabled={modalState.isSaving}
                   />
                   <Form.Control.Feedback type="invalid">{modalState.baseUrlValidationError}</Form.Control.Feedback>
                   <Form.Text>
                     Enter a GitHub repository URL like https://github.com/agents-repo/registry, a GitHub tree URL,
-                    or any direct base URL. Leave this field empty to use the configured default source:{' '}
-                    {configuredSource.configuredBaseUrl}
+                    a proxy URL with <code>?ref=1.x</code>, or any direct base URL. Leave this field empty to use the
+                    configured default source: {configuredSource.configuredBaseUrl}
                   </Form.Text>
                 </Form.Group>
 
                 <div className="small text-body-secondary mb-3 d-flex align-items-center gap-2 flex-wrap">
                   <span>Current source:</span>
-                  {canShowCurrentSourceLink ? (
-                    <a href={currentSourceUrl} target="_blank" rel="noreferrer noopener" className="text-reset text-break">
-                      {currentSourceUrl}
-                    </a>
-                  ) : (
-                    <span className="text-break">{currentSourceUrl}</span>
-                  )}
-                  <Badge
-                    bg={currentSourceMode === 'runtime-override' ? 'info' : 'secondary'}
-                    text={currentSourceMode === 'runtime-override' ? 'dark' : undefined}
-                  >
-                    {currentSourceMode === 'runtime-override' ? 'runtime override' : 'configured source'}
-                  </Badge>
+                  {renderSourceLink(activeSource.baseUrl)}
+                  <SourceModeBadge mode={activeSource.sourceMode} />
+                  {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
+                  <RefResolutionBadge label={currentBaseUrlRefResolution} />
                 </div>
 
-                {registryCatalogStatusNote ? (
-                  <p className="small text-body-secondary opacity-75 mb-0">
-                    {registryCatalogStatusNote.summaryText}
-                    {isSafeExternalHttpUrl(registryCatalogStatusNote.sourceUrl) ? (
-                      <a
-                        href={registryCatalogStatusNote.sourceUrl}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="text-reset text-break"
-                      >
-                        {registryCatalogStatusNote.sourceUrl}
-                      </a>
-                    ) : (
-                      <span>{registryCatalogStatusNote.sourceUrl || 'configured source'}</span>
-                    )}
-                    <span className="opacity-75"> ({registryCatalogStatusNote.statusTag})</span>
-                  </p>
-                ) : null}
+                {registryCatalogStatusNote ? renderCatalogStatusNote(registryCatalogStatusNote) : null}
               </Form>
             </section>
 
@@ -241,7 +352,8 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
               <h3 className="h6 mb-2">Package browse links</h3>
               <p className="small text-body-secondary mb-3">
                 Configure the GitHub repository URL used for &quot;view package on GitHub&quot; links in package cards.
-                This does not affect catalog fetching.
+                This does not affect catalog fetching. GitHub tree URLs may use major-version line refs such as{' '}
+                <code>1.x</code>.
               </p>
 
               <Form.Group controlId="registry-github-repository-url-override-input">
@@ -258,53 +370,38 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                     }))
                   }}
                   isInvalid={modalState.githubRepositoryUrlValidationError !== null}
+                  disabled={modalState.isSaving}
                 />
                 <Form.Control.Feedback type="invalid">
                   {modalState.githubRepositoryUrlValidationError}
                 </Form.Control.Feedback>
                 <Form.Text>
-                  Enter a GitHub repository URL like https://github.com/agents-repo/registry or a GitHub tree URL.
-                  Leave this field empty to use the configured default:{' '}
-                  {configuredSource.configuredGithubRepositoryUrl}
+                  Enter a GitHub repository URL like https://github.com/agents-repo/registry or a GitHub tree URL such
+                  as https://github.com/agents-repo/registry/tree/1.x. Leave this field empty to use the configured
+                  default: {configuredSource.configuredGithubRepositoryUrl}
                 </Form.Text>
               </Form.Group>
 
               <div className="small text-body-secondary mt-3 d-flex align-items-center gap-2 flex-wrap">
                 <span>Current GitHub repository:</span>
-                {canShowCurrentGithubRepositoryLink ? (
-                  <a
-                    href={currentGithubRepositoryUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-reset text-break"
-                  >
-                    {currentGithubRepositoryUrl}
-                  </a>
-                ) : (
-                  <span className="text-break">{currentGithubRepositoryUrl}</span>
-                )}
-                <Badge
-                  bg={currentGithubRepositorySourceMode === 'runtime-override' ? 'info' : 'secondary'}
-                  text={currentGithubRepositorySourceMode === 'runtime-override' ? 'dark' : undefined}
-                >
-                  {currentGithubRepositorySourceMode === 'runtime-override'
-                    ? 'runtime override'
-                    : 'configured source'}
-                </Badge>
+                {renderSourceLink(activeSource.githubRepositoryUrl)}
+                <SourceModeBadge mode={activeSource.githubRepositorySourceMode} />
+                {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
+                <RefResolutionBadge label={currentGithubRepositoryRefResolution} />
               </div>
             </section>
           </Stack>
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={resetRegistrySettings}>
+          <Button variant="outline-secondary" onClick={() => void resetRegistrySettings()} disabled={modalState.isSaving}>
             Reset to default
           </Button>
-          <Button variant="secondary" onClick={closeModal}>
+          <Button variant="secondary" onClick={closeModal} disabled={modalState.isSaving}>
             Close
           </Button>
-          <Button variant="primary" onClick={saveRegistrySettings}>
-            Save changes
+          <Button variant="primary" onClick={() => void saveRegistrySettings()} disabled={modalState.isSaving}>
+            {modalState.isSaving ? 'Saving…' : 'Save changes'}
           </Button>
         </Modal.Footer>
       </Modal>

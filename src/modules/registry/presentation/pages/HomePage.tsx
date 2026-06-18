@@ -33,7 +33,6 @@ import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
-import { getRegistrySourceConfig } from '../../application/registrySource'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 import { buildRegistryArtifactUrl, buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 
@@ -140,7 +139,9 @@ const getCatalogStatusTag = ({
 
   switch (cacheState) {
     case 'fresh':
-      return 'fresh cache'
+      return errorMessage
+        ? 'cached catalog after source resolution failure'
+        : 'fresh cache'
     case 'stale-fallback':
       return 'stale cache after refresh failure'
     default:
@@ -172,6 +173,14 @@ const getCatalogAlertState = ({
     return {
       variant: 'warning',
       message: 'Remote registry refresh failed. Displaying stale cached catalog while keeping the app available.',
+    }
+  }
+
+  if (cacheState === 'fresh') {
+    return {
+      variant: 'warning',
+      message:
+        'Registry source resolution failed. Displaying cached catalog while keeping the app available.',
     }
   }
 
@@ -216,7 +225,7 @@ function HomePage({
       setCatalogCacheState(result.cacheState)
       setCatalogSourceUrl(result.indexUrl)
       setRegistryBaseUrl(result.registryBaseUrl)
-      setGithubRepositoryUrl(getRegistrySourceConfig().githubRepositoryUrl)
+      setGithubRepositoryUrl(result.githubRepositoryUrl ?? '')
       setCatalogErrorMessage(result.errorMessage ?? null)
 
       const noteStatusTag = getCatalogStatusTag({
@@ -232,6 +241,8 @@ function HomePage({
           : 'Registry catalog unavailable from ',
         sourceUrl: result.indexUrl,
         statusTag: noteStatusTag,
+        baseUrlRefResolution: result.baseUrlRefResolution ?? null,
+        githubRepositoryRefResolution: result.githubRepositoryRefResolution ?? null,
       })
 
       if (result.errorMessage) {

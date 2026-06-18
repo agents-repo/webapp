@@ -1,5 +1,10 @@
 import type { RegistryCatalog } from '../domain/package'
 import { isRegistryCatalog } from './registryCatalogValidation'
+import { extractRegistryRef, refsAreCompatibleForCatalogCacheFallback } from './registryMajorVersionRef'
+import {
+  getRegistryIndexCacheLookupKey,
+  type RegistrySourceCacheIdentity,
+} from './registrySourceUrl'
 
 const CACHE_STORAGE_KEY = 'registry.catalog.cache.v1'
 const CACHE_VERSION = 1
@@ -14,6 +19,8 @@ interface RegistryCatalogCacheEnvelope {
   etag?: string
   lastModified?: string
 }
+
+export type { RegistryCatalogCacheEnvelope }
 
 class RegistryCatalogLruCache {
   readonly #entries = new Map<string, RegistryCatalogCacheEnvelope>()
@@ -51,6 +58,10 @@ class RegistryCatalogLruCache {
 
   values(): IterableIterator<RegistryCatalogCacheEnvelope> {
     return this.#entries.values()
+  }
+
+  clear(): void {
+    this.#entries.clear()
   }
 }
 
@@ -145,6 +156,62 @@ const isFresh = (cachedAt: number): boolean => {
   return Date.now() - cachedAt <= CACHE_TTL_MS
 }
 
+export type { RegistrySourceCacheIdentity as RegistryCatalogCacheSourceIdentity }
+
+const listAllCatalogCacheEnvelopes = (): RegistryCatalogCacheEnvelope[] => {
+  const persistentEntries = loadPersistentCache()
+
+  for (const entry of persistentEntries) {
+    if (!memoryCacheByIndexUrl.get(entry.indexUrl)) {
+      memoryCacheByIndexUrl.set(entry.indexUrl, entry)
+    }
+  }
+
+  return Array.from(memoryCacheByIndexUrl.values())
+}
+
+const envelopeMatchesSourceIdentity = (
+  envelope: RegistryCatalogCacheEnvelope,
+  identity: RegistrySourceCacheIdentity,
+): boolean => {
+  const envelopeLookupKey = getRegistryIndexCacheLookupKey(envelope.indexUrl, identity.indexPath)
+
+  if (envelopeLookupKey !== identity.lookupKey) {
+    return false
+  }
+
+  const envelopeRef = extractRegistryRef(envelope.indexUrl)
+
+  return refsAreCompatibleForCatalogCacheFallback(identity.sourceRef, envelopeRef)
+}
+
+const readCatalogCacheEnvelopeForSourceIdentity = (
+  identity: RegistrySourceCacheIdentity,
+  options: { freshOnly: boolean },
+): RegistryCatalogCacheEnvelope | null => {
+  const matchingEnvelopes = listAllCatalogCacheEnvelopes()
+    .filter(
+      (envelope) =>
+        envelopeMatchesSourceIdentity(envelope, identity) &&
+        (!options.freshOnly || isFresh(envelope.cachedAt)),
+    )
+    .sort((left, right) => right.cachedAt - left.cachedAt)
+
+  return matchingEnvelopes[0] ?? null
+}
+
+export const readFreshCatalogCacheEnvelopeForSourceIdentity = (
+  identity: RegistrySourceCacheIdentity,
+): RegistryCatalogCacheEnvelope | null => {
+  return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: true })
+}
+
+export const readStaleCatalogCacheEnvelopeForSourceIdentity = (
+  identity: RegistrySourceCacheIdentity,
+): RegistryCatalogCacheEnvelope | null => {
+  return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: false })
+}
+
 export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null => {
   const envelope = getEnvelopeFromMemoryOrStorage(indexUrl)
 
@@ -189,4 +256,14 @@ export const writeCatalogCache = (
   })
 
   persistCache()
+}
+
+export const resetRegistryCatalogCacheForTests = (): void => {
+  memoryCacheByIndexUrl.clear()
+
+  const storage = getLocalStorage()
+
+  if (storage) {
+    storage.removeItem(CACHE_STORAGE_KEY)
+  }
 }

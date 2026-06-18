@@ -14,6 +14,10 @@ export {
 export {
   getConfiguredRegistrySourceConfig,
   getRegistrySourceConfig,
+  resolveRegistrySourceConfig,
+  validateRegistrySourceUrlForMajorVersionAlias,
 } from '../infrastructure/registrySourceConfig'
 
-export type { RegistrySourceConfig } from '../infrastructure/registrySourceConfig'
+export type { RegistryRefResolution, RegistrySourceConfig } from '../infrastructure/registrySourceConfig'
+
+export { clearRegistryTagListCache } from '../infrastructure/registryTagResolver'
