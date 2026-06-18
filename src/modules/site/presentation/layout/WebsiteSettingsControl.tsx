@@ -169,56 +169,62 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
       githubRepositoryUrlValidationError: null,
     }))
 
-    const normalizedBaseUrlInput = normalizeRegistryBaseUrlOverrideInput(modalState.baseUrlInput)
-    const normalizedGithubRepositoryUrlInput = normalizeRegistryGitHubRepositoryUrlOverrideInput(
-      modalState.githubRepositoryUrlInput,
-    )
+    try {
+      const normalizedBaseUrlInput = normalizeRegistryBaseUrlOverrideInput(modalState.baseUrlInput)
+      const normalizedGithubRepositoryUrlInput = normalizeRegistryGitHubRepositoryUrlOverrideInput(
+        modalState.githubRepositoryUrlInput,
+      )
 
-    const baseUrlAliasValidationMessage =
-      normalizedBaseUrlInput.length > 0
-        ? await validateRegistrySourceUrlForMajorVersionAlias(
-            normalizedBaseUrlInput,
-            configuredSource.configuredGithubRepositoryUrl,
-            { bypassTagCache: true },
-          )
-        : null
+      const baseUrlAliasValidationMessage =
+        normalizedBaseUrlInput.length > 0
+          ? await validateRegistrySourceUrlForMajorVersionAlias(
+              normalizedBaseUrlInput,
+              configuredSource.configuredGithubRepositoryUrl,
+              { bypassTagCache: true },
+            )
+          : null
 
-    const githubRepositoryAliasValidationMessage =
-      normalizedGithubRepositoryUrlInput.length > 0
-        ? await validateRegistrySourceUrlForMajorVersionAlias(
-            normalizedGithubRepositoryUrlInput,
-            configuredSource.configuredGithubRepositoryUrl,
-            { bypassTagCache: true },
-          )
-        : null
+      const githubRepositoryAliasValidationMessage =
+        normalizedGithubRepositoryUrlInput.length > 0
+          ? await validateRegistrySourceUrlForMajorVersionAlias(
+              normalizedGithubRepositoryUrlInput,
+              configuredSource.configuredGithubRepositoryUrl,
+              { bypassTagCache: true },
+            )
+          : null
 
-    if (baseUrlAliasValidationMessage || githubRepositoryAliasValidationMessage) {
+      if (baseUrlAliasValidationMessage || githubRepositoryAliasValidationMessage) {
+        setModalState((previousValue) => ({
+          ...previousValue,
+          baseUrlValidationError: baseUrlAliasValidationMessage,
+          githubRepositoryUrlValidationError: githubRepositoryAliasValidationMessage,
+        }))
+        return
+      }
+
+      clearRegistryTagListCache()
+
+      if (normalizedBaseUrlInput.length === 0) {
+        clearStoredRegistryBaseUrlOverride()
+      } else {
+        setStoredRegistryBaseUrlOverride(normalizedBaseUrlInput)
+      }
+
+      if (normalizedGithubRepositoryUrlInput.length === 0) {
+        clearStoredRegistryGitHubRepositoryUrlOverride()
+      } else {
+        setStoredRegistryGitHubRepositoryUrlOverride(normalizedGithubRepositoryUrlInput)
+      }
+
+      await refreshResolvedSource()
+      closeModal()
+      onSaved?.()
+    } finally {
       setModalState((previousValue) => ({
         ...previousValue,
         isSaving: false,
-        baseUrlValidationError: baseUrlAliasValidationMessage,
-        githubRepositoryUrlValidationError: githubRepositoryAliasValidationMessage,
       }))
-      return
     }
-
-    clearRegistryTagListCache()
-
-    if (normalizedBaseUrlInput.length === 0) {
-      clearStoredRegistryBaseUrlOverride()
-    } else {
-      setStoredRegistryBaseUrlOverride(normalizedBaseUrlInput)
-    }
-
-    if (normalizedGithubRepositoryUrlInput.length === 0) {
-      clearStoredRegistryGitHubRepositoryUrlOverride()
-    } else {
-      setStoredRegistryGitHubRepositoryUrlOverride(normalizedGithubRepositoryUrlInput)
-    }
-
-    await refreshResolvedSource()
-    closeModal()
-    onSaved?.()
   }
 
   const resetRegistrySettings = (): void => {
