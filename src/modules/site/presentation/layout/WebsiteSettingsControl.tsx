@@ -9,6 +9,7 @@ import {
   clearStoredRegistryBaseUrlOverride,
   clearStoredRegistryGitHubRepositoryUrlOverride,
   getConfiguredRegistrySourceConfig,
+  getRegistrySourceConfig,
   getStoredRegistryBaseUrlOverride,
   getStoredRegistryGitHubRepositoryUrlOverride,
   normalizeRegistryBaseUrlOverrideInput,
@@ -215,7 +216,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
     onSaved?.()
   }
 
-  const activeSource = resolvedSource ?? configuredSource
+  const activeSource = resolvedSource ?? getRegistrySourceConfig()
   const currentBaseUrlRefResolution = formatRefResolutionLabel(activeSource.baseUrlRefResolution)
   const currentGithubRepositoryRefResolution = formatRefResolutionLabel(
     activeSource.githubRepositoryRefResolution,
