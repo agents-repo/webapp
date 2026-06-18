@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Badge, Button, Form, Modal, Stack } from 'react-bootstrap'
@@ -102,6 +102,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
   const configuredSource = getConfiguredRegistrySourceConfig()
   const [resolvedSource, setResolvedSource] = useState<RegistrySourceConfig | null>(null)
   const [isRefreshingSource, setIsRefreshingSource] = useState(false)
+  const refreshRequestIdRef = useRef(0)
   const [modalState, setModalState] = useState<SettingsModalState>({
     showModal: false,
     baseUrlInput: '',
@@ -112,19 +113,34 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
   })
 
   const refreshResolvedSource = async (): Promise<void> => {
+    const requestId = ++refreshRequestIdRef.current
     setIsRefreshingSource(true)
 
     try {
       const nextSource = await resolveRegistrySourceConfig()
+
+      if (requestId !== refreshRequestIdRef.current) {
+        return
+      }
+
       setResolvedSource(nextSource)
     } catch {
+      if (requestId !== refreshRequestIdRef.current) {
+        return
+      }
+
       setResolvedSource(null)
     } finally {
-      setIsRefreshingSource(false)
+      if (requestId === refreshRequestIdRef.current) {
+        setIsRefreshingSource(false)
+      }
     }
   }
 
   const openModal = (): void => {
+    setResolvedSource(null)
+    setIsRefreshingSource(true)
+
     setModalState({
       showModal: true,
       baseUrlInput: getStoredRegistryBaseUrlOverride() ?? '',
@@ -244,10 +260,13 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
   }
 
   const activeSource = resolvedSource ?? getRegistrySourceConfig()
-  const currentBaseUrlRefResolution = formatRefResolutionLabel(activeSource.baseUrlRefResolution)
-  const currentGithubRepositoryRefResolution = formatRefResolutionLabel(
-    activeSource.githubRepositoryRefResolution,
-  )
+  const shouldShowRefResolution = resolvedSource !== null && !isRefreshingSource
+  const currentBaseUrlRefResolution = shouldShowRefResolution
+    ? formatRefResolutionLabel(activeSource.baseUrlRefResolution)
+    : null
+  const currentGithubRepositoryRefResolution = shouldShowRefResolution
+    ? formatRefResolutionLabel(activeSource.githubRepositoryRefResolution)
+    : null
 
   return (
     <>
@@ -359,6 +378,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                 <span>Current GitHub repository:</span>
                 {renderSourceLink(activeSource.githubRepositoryUrl)}
                 <SourceModeBadge mode={activeSource.githubRepositorySourceMode} />
+                {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
                 <RefResolutionBadge label={currentGithubRepositoryRefResolution} />
               </div>
             </section>
