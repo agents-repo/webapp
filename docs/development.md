@@ -89,9 +89,10 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`
    (default `packages/index.json`).
 - Default configured source is
-   `https://registry-proxy.maiconfz.workers.dev?ref=main`, which resolves to
-   `https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=main`
-   after index-path composition.
+   `https://registry-proxy.maiconfz.workers.dev?ref=v1.x`, which composes to
+   `https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.x`
+   before major-version alias resolution. At catalog load time, `v1.x` resolves
+   to the latest stable release tag.
 - Website settings modal shows catalog source status details, including updated
    date, package count, source URL, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional

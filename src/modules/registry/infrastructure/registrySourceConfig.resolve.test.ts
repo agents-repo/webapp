@@ -51,14 +51,35 @@ describe('resolveRegistrySourceConfig', () => {
     clearStoredRegistryGitHubRepositoryUrlOverride()
   })
 
+  it('resolves default v1.x configured source without runtime overrides', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    )
+
+    const source = await resolveRegistrySourceConfig()
+
+    expect(source.baseUrlRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
+    expect(source.githubRepositoryRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
+    expect(source.baseUrl).toBe('https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0')
+    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0')
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.2.0')
+  })
+
   it('resolves major-version line refs before building fetch URLs', async () => {
     setStoredRegistryBaseUrlOverride('https://registry-proxy.example.workers.dev?ref=1.x')
 
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }),
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
     )
 
     const source = await resolveRegistrySourceConfig()

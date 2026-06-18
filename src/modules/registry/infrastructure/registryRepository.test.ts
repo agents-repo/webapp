@@ -17,13 +17,13 @@ describe('loadRegistryCatalog', () => {
 
     vi.spyOn(registrySourceConfig, 'resolveRegistrySourceConfig').mockResolvedValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=main',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=v1.2.0',
       indexPath: 'packages/index.json',
       indexUrl,
       sourceMode: 'runtime-override',
-      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
       runtimeGithubRepositoryUrlOverride: null,
       githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.2.0',
       githubRepositorySourceMode: 'configured',
