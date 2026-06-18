@@ -244,7 +244,7 @@ const buildCatalogLoadResultOnSourceResolutionFailure = async (
         staleEnvelope,
         configuredSource,
         browseMetadata,
-        'stale-fallback',
+        'fresh',
         errorMessage,
       )
     }
