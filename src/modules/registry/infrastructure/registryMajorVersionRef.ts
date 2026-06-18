@@ -1,3 +1,5 @@
+import { DEFAULT_REGISTRY_REF } from './registrySourceUrl'
+
 const MAJOR_VERSION_LINE_ALIAS_PATTERN = /^v?\d+\.x$/i
 
 const GITHUB_HOSTNAME = 'github.com'
@@ -84,7 +86,16 @@ export const extractRegistryRef = (sourceUrl: string): string | null => {
     const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
 
     if (isGitHubHostname(parsedUrl.hostname) && segments.length >= 2) {
-      return getGitHubRefFromSegments(segments)
+      const refFromTree = getGitHubRefFromSegments(segments)
+
+      if (refFromTree !== null) {
+        return refFromTree
+      }
+
+      // Bare github.com/owner/repo URLs default to the major-version line alias.
+      if (segments.length === 2) {
+        return DEFAULT_REGISTRY_REF
+      }
     }
   } catch {
     return null
@@ -115,6 +126,13 @@ export const substituteRegistryRef = (sourceUrl: string, nextRef: string): strin
     }
 
     const segments = parsedUrl.pathname.split('/').filter((segment) => segment.length > 0)
+
+    if (isGitHubHostname(parsedUrl.hostname) && segments.length === 2) {
+      const owner = segments[0]
+      const repository = stripGitRepositorySuffix(segments[1])
+      parsedUrl.pathname = `/${owner}/${repository}/tree/${nextRef}`
+      return parsedUrl.toString()
+    }
 
     if (isGitHubHostname(parsedUrl.hostname) && segments.length >= 4 && GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
       const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
