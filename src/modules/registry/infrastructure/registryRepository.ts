@@ -149,13 +149,35 @@ const fetchCatalogFromNetwork = async (
   }
 }
 
+const readFreshCachedEnvelopeForConfiguredSource = (): RegistryCatalogCacheEnvelope | null => {
+  const cacheIdentity = getConfiguredSourceCacheIdentity()
+
+  if (!cacheIdentity) {
+    return null
+  }
+
+  return readFreshCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+}
+
 const buildCatalogLoadResultOnSourceResolutionFailure = async (
   error: unknown,
   browseMetadataPromise: ReturnType<typeof resolveBrowseCatalogLoadMetadata>,
+  freshCachedEnvelope: RegistryCatalogCacheEnvelope | null = null,
 ): Promise<RegistryCatalogLoadResult> => {
   const errorMessage = error instanceof Error ? error.message : 'Unknown registry source resolution error'
   const configuredSource = getRegistrySourceConfig()
   const browseMetadata = await browseMetadataPromise
+
+  if (freshCachedEnvelope) {
+    return buildCatalogLoadResultFromCachedEnvelope(
+      freshCachedEnvelope,
+      configuredSource,
+      browseMetadata,
+      'fresh',
+      errorMessage,
+    )
+  }
+
   const cacheIdentity = getConfiguredSourceCacheIdentity()
 
   if (cacheIdentity) {
@@ -198,12 +220,17 @@ export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
   const browseMetadataPromise = resolveBrowseCatalogLoadMetadata({ signal: options.signal })
+  const freshCachedEnvelope = readFreshCachedEnvelopeForConfiguredSource()
   let fetchSourceConfig
 
   try {
     fetchSourceConfig = await resolveRegistryFetchSourceConfig({ signal: options.signal })
   } catch (error) {
-    return buildCatalogLoadResultOnSourceResolutionFailure(error, browseMetadataPromise)
+    return buildCatalogLoadResultOnSourceResolutionFailure(
+      error,
+      browseMetadataPromise,
+      freshCachedEnvelope,
+    )
   }
 
   const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig

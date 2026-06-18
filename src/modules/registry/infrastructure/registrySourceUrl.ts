@@ -83,9 +83,35 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
   }
 }
 
+const RAW_GITHUB_HOSTNAME = 'raw.githubusercontent.com'
+
 export interface RegistrySourceCacheIdentity {
-  origin: string
-  indexPathname: string
+  lookupKey: string
+  indexPath: string
+}
+
+export const getRegistryIndexCacheLookupKey = (indexUrl: string, indexPath: string): string | null => {
+  try {
+    const parsed = new URL(indexUrl)
+    const normalizedIndexPath = `/${trimLeadingSlashes(indexPath)}`
+
+    if (!parsed.pathname.endsWith(normalizedIndexPath)) {
+      return null
+    }
+
+    const prefix = parsed.pathname.slice(0, -normalizedIndexPath.length)
+    const prefixSegments = prefix.split('/').filter(Boolean)
+
+    if (parsed.hostname === RAW_GITHUB_HOSTNAME && prefixSegments.length >= 3) {
+      prefixSegments[prefixSegments.length - 1] = '{ref}'
+
+      return `${parsed.origin}/${prefixSegments.join('/')}${normalizedIndexPath}`
+    }
+
+    return `${parsed.origin}${parsed.pathname}`
+  } catch {
+    return null
+  }
 }
 
 export const getRegistrySourceCacheIdentity = (
@@ -93,17 +119,13 @@ export const getRegistrySourceCacheIdentity = (
   indexPath: string,
 ): RegistrySourceCacheIdentity | null => {
   const indexUrl = buildRegistryIndexUrl(normalizeRegistryBaseUrl(baseUrlInput), indexPath)
+  const lookupKey = getRegistryIndexCacheLookupKey(indexUrl, indexPath)
 
-  try {
-    const parsed = new URL(indexUrl)
-
-    return {
-      origin: parsed.origin,
-      indexPathname: trimTrailingSlashes(parsed.pathname) || '/',
-    }
-  } catch {
+  if (!lookupKey) {
     return null
   }
+
+  return { lookupKey, indexPath }
 }
 
 export const getRegistryBaseUrlFromIndexUrl = (indexUrl: string, indexPath: string): string => {

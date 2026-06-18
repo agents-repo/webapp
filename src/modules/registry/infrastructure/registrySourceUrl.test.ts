@@ -4,6 +4,8 @@ import {
   buildRegistryArtifactUrl,
   buildRegistryIndexUrl,
   buildRegistryPackageBrowseUrl,
+  getRegistryIndexCacheLookupKey,
+  getRegistrySourceCacheIdentity,
   normalizeRegistryBaseUrl,
   trimLeadingSlashes,
   trimTrailingSlashes,
@@ -138,5 +140,34 @@ describe('registrySourceUrl', () => {
     ).toBeNull()
     expect(buildRegistryPackageBrowseUrl('not-a-url', 'hello-agent')).toBeNull()
     expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', '   ')).toBeNull()
+  })
+
+  it('builds cache lookup keys that ignore query-string refs', () => {
+    expect(
+      getRegistryIndexCacheLookupKey(
+        'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0',
+        'packages/index.json',
+      ),
+    ).toBe('https://registry-proxy.example.workers.dev/packages/index.json')
+    expect(
+      getRegistryIndexCacheLookupKey(
+        'https://registry-proxy.example.workers.dev/packages/index.json?ref=1.x',
+        'packages/index.json',
+      ),
+    ).toBe('https://registry-proxy.example.workers.dev/packages/index.json')
+  })
+
+  it('builds cache lookup keys that normalize raw GitHub path refs', () => {
+    expect(
+      getRegistryIndexCacheLookupKey(
+        'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
+        'packages/index.json',
+      ),
+    ).toBe('https://raw.githubusercontent.com/agents-repo/registry/{ref}/packages/index.json')
+    expect(getRegistrySourceCacheIdentity('https://github.com/agents-repo/registry/tree/v1.x', 'packages/index.json'))
+      .toEqual({
+        lookupKey: 'https://raw.githubusercontent.com/agents-repo/registry/{ref}/packages/index.json',
+        indexPath: 'packages/index.json',
+      })
   })
 })

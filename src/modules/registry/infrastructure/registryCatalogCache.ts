@@ -1,6 +1,9 @@
 import type { RegistryCatalog } from '../domain/package'
 import { isRegistryCatalog } from './registryCatalogValidation'
-import { trimTrailingSlashes } from './registrySourceUrl'
+import {
+  getRegistryIndexCacheLookupKey,
+  type RegistrySourceCacheIdentity,
+} from './registrySourceUrl'
 
 const CACHE_STORAGE_KEY = 'registry.catalog.cache.v1'
 const CACHE_VERSION = 1
@@ -148,10 +151,7 @@ const isFresh = (cachedAt: number): boolean => {
   return Date.now() - cachedAt <= CACHE_TTL_MS
 }
 
-export interface RegistryCatalogCacheSourceIdentity {
-  origin: string
-  indexPathname: string
-}
+export type { RegistrySourceCacheIdentity as RegistryCatalogCacheSourceIdentity }
 
 const listAllCatalogCacheEnvelopes = (): RegistryCatalogCacheEnvelope[] => {
   const persistentEntries = loadPersistentCache()
@@ -167,22 +167,15 @@ const listAllCatalogCacheEnvelopes = (): RegistryCatalogCacheEnvelope[] => {
 
 const envelopeMatchesSourceIdentity = (
   envelope: RegistryCatalogCacheEnvelope,
-  identity: RegistryCatalogCacheSourceIdentity,
+  identity: RegistrySourceCacheIdentity,
 ): boolean => {
-  try {
-    const parsed = new URL(envelope.indexUrl)
+  const envelopeLookupKey = getRegistryIndexCacheLookupKey(envelope.indexUrl, identity.indexPath)
 
-    return (
-      parsed.origin === identity.origin &&
-      (trimTrailingSlashes(parsed.pathname) || '/') === identity.indexPathname
-    )
-  } catch {
-    return false
-  }
+  return envelopeLookupKey === identity.lookupKey
 }
 
 const readCatalogCacheEnvelopeForSourceIdentity = (
-  identity: RegistryCatalogCacheSourceIdentity,
+  identity: RegistrySourceCacheIdentity,
   options: { freshOnly: boolean },
 ): RegistryCatalogCacheEnvelope | null => {
   const matchingEnvelopes = listAllCatalogCacheEnvelopes()
@@ -197,13 +190,13 @@ const readCatalogCacheEnvelopeForSourceIdentity = (
 }
 
 export const readFreshCatalogCacheEnvelopeForSourceIdentity = (
-  identity: RegistryCatalogCacheSourceIdentity,
+  identity: RegistrySourceCacheIdentity,
 ): RegistryCatalogCacheEnvelope | null => {
   return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: true })
 }
 
 export const readStaleCatalogCacheEnvelopeForSourceIdentity = (
-  identity: RegistryCatalogCacheSourceIdentity,
+  identity: RegistrySourceCacheIdentity,
 ): RegistryCatalogCacheEnvelope | null => {
   return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: false })
 }
