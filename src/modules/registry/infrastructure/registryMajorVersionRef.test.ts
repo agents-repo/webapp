@@ -62,6 +62,21 @@ describe('registryMajorVersionRef', () => {
     ).toBe('https://github.com/agents-repo/registry/tree/v1.2.0')
   })
 
+  it('substitutes refs in raw.githubusercontent.com paths', () => {
+    expect(
+      substituteRegistryRef('https://raw.githubusercontent.com/agents-repo/registry/v1.x', 'v1.2.0'),
+    ).toBe('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0')
+    expect(
+      substituteRegistryRef('https://raw.githubusercontent.com/agents-repo/registry/1.x', 'v1.2.0'),
+    ).toBe('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0')
+    expect(
+      substituteRegistryRef(
+        'https://raw.githubusercontent.com/agents-repo/registry/v1.x/packages/index.json',
+        'v1.2.0',
+      ),
+    ).toBe('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json')
+  })
+
   it('infers repository identity from GitHub URLs with fallback', () => {
     expect(inferRegistryRepositoryIdentity('https://registry-proxy.example.workers.dev?ref=1.x', 'https://github.com/agents-repo/registry')).toEqual({
       owner: 'agents-repo',

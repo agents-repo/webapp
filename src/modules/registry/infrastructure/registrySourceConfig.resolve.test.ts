@@ -165,4 +165,25 @@ describe('resolveRegistrySourceConfig', () => {
       'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
     )
   })
+
+  it('resolves major-version line refs for raw.githubusercontent.com base URL overrides', async () => {
+    setStoredRegistryBaseUrlOverride('https://raw.githubusercontent.com/agents-repo/registry/v1.x')
+
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    )
+
+    const source = await resolveRegistrySourceConfig()
+
+    expect(source.baseUrlRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
+    expect(source.baseUrl).toBe('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0')
+    expect(source.indexUrl).toBe(
+      'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
+    )
+  })
 })

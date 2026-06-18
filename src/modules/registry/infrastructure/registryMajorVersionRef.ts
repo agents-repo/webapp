@@ -163,6 +163,33 @@ export const refsAreCompatibleForCatalogCacheFallback = (
   return envelopeMajor !== null && envelopeMajor === sourceAlias.major
 }
 
+const substituteRawGitHubPathRef = (segments: string[], nextRef: string): string => {
+  const nextRefSegments = nextRef.split('/').filter((segment) => segment.length > 0)
+  const nextSegments = [...segments.slice(0, 2), ...nextRefSegments, ...segments.slice(3)]
+
+  return `/${nextSegments.join('/')}`
+}
+
+const substituteGitHubTreePathRef = (segments: string[], nextRef: string): string | null => {
+  if (segments.length < 4 || !GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
+    return null
+  }
+
+  const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
+
+  if (
+    refSegments.length >= 3 &&
+    refSegments[0] === GITHUB_EXPLICIT_REF_PREFIX &&
+    GITHUB_EXPLICIT_REF_TYPES.has(refSegments[1])
+  ) {
+    const nextSegments = [...segments.slice(0, 3), GITHUB_EXPLICIT_REF_PREFIX, refSegments[1], ...nextRef.split('/')]
+    return `/${nextSegments.join('/')}`
+  }
+
+  const nextSegments = [...segments.slice(0, 3), nextRef, ...refSegments.slice(1)]
+  return `/${nextSegments.join('/')}`
+}
+
 export const substituteRegistryRef = (sourceUrl: string, nextRef: string): string => {
   const normalized = sourceUrl.trim()
 
@@ -183,22 +210,18 @@ export const substituteRegistryRef = (sourceUrl: string, nextRef: string): strin
       return parsedUrl.toString()
     }
 
-    if (isGitHubHostname(parsedUrl.hostname) && segments.length >= 4 && GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
-      const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
+    if (parsedUrl.hostname === RAW_GITHUB_HOSTNAME && segments.length >= 3) {
+      parsedUrl.pathname = substituteRawGitHubPathRef(segments, nextRef)
+      return parsedUrl.toString()
+    }
 
-      if (
-        refSegments.length >= 3 &&
-        refSegments[0] === GITHUB_EXPLICIT_REF_PREFIX &&
-        GITHUB_EXPLICIT_REF_TYPES.has(refSegments[1])
-      ) {
-        const nextSegments = [...segments.slice(0, 3), GITHUB_EXPLICIT_REF_PREFIX, refSegments[1], ...nextRef.split('/')]
-        parsedUrl.pathname = `/${nextSegments.join('/')}`
+    if (isGitHubHostname(parsedUrl.hostname)) {
+      const nextPathname = substituteGitHubTreePathRef(segments, nextRef)
+
+      if (nextPathname) {
+        parsedUrl.pathname = nextPathname
         return parsedUrl.toString()
       }
-
-      const nextSegments = [...segments.slice(0, 3), nextRef, ...refSegments.slice(1)]
-      parsedUrl.pathname = `/${nextSegments.join('/')}`
-      return parsedUrl.toString()
     }
   } catch {
     return normalized
