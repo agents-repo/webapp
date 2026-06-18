@@ -220,22 +220,49 @@ const resolveGithubRepositorySourceUrl = async (
   }
 }
 
-export const resolveRegistrySourceConfig = async (
+export const resolveRegistryBrowseSourceMetadata = async (
+  options: ResolveSourceUrlOptions = {},
+): Promise<{
+  githubRepositoryUrl: string
+  githubRepositoryRefResolution: RegistryRefResolution | null
+}> => {
+  const configuredSource = getRegistrySourceConfig()
+
+  try {
+    return await resolveGithubRepositorySourceUrl(configuredSource, options)
+  } catch {
+    return {
+      githubRepositoryUrl: configuredSource.githubRepositoryUrl,
+      githubRepositoryRefResolution: null,
+    }
+  }
+}
+
+export const resolveRegistryFetchSourceConfig = async (
   options: ResolveSourceUrlOptions = {},
 ): Promise<RegistrySourceConfig> => {
   const configuredSource = getRegistrySourceConfig()
-  const [baseSourceResolution, githubRepositoryResolution] = await Promise.all([
-    resolveRegistryBaseSourceUrl(configuredSource, options),
-    resolveGithubRepositorySourceUrl(configuredSource, options),
-  ])
-
+  const baseSourceResolution = await resolveRegistryBaseSourceUrl(configuredSource, options)
   const baseUrl = normalizeRegistryBaseUrl(baseSourceResolution.baseUrlInput)
 
   return buildRegistrySourceConfig({
     ...configuredSource,
     baseUrl,
-    githubRepositoryUrl: githubRepositoryResolution.githubRepositoryUrl,
     baseUrlRefResolution: baseSourceResolution.baseUrlRefResolution,
+  })
+}
+
+export const resolveRegistrySourceConfig = async (
+  options: ResolveSourceUrlOptions = {},
+): Promise<RegistrySourceConfig> => {
+  const [fetchSourceConfig, githubRepositoryResolution] = await Promise.all([
+    resolveRegistryFetchSourceConfig(options),
+    resolveRegistryBrowseSourceMetadata(options),
+  ])
+
+  return buildRegistrySourceConfig({
+    ...fetchSourceConfig,
+    githubRepositoryUrl: githubRepositoryResolution.githubRepositoryUrl,
     githubRepositoryRefResolution: githubRepositoryResolution.githubRepositoryRefResolution,
   })
 }

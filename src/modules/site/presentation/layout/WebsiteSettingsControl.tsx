@@ -76,6 +76,28 @@ const renderCatalogStatusNote = (note: RegistryCatalogStatusNote): ReactNode => 
   </p>
 )
 
+function SourceModeBadge({ mode }: { readonly mode: 'configured' | 'runtime-override' }) {
+  const isRuntimeOverride = mode === 'runtime-override'
+
+  return (
+    <Badge bg={isRuntimeOverride ? 'info' : 'secondary'} text={isRuntimeOverride ? 'dark' : undefined}>
+      {isRuntimeOverride ? 'runtime override' : 'configured source'}
+    </Badge>
+  )
+}
+
+function RefResolutionBadge({ label }: { readonly label: string | null }) {
+  if (!label) {
+    return null
+  }
+
+  return (
+    <Badge bg="light" text="dark">
+      {label}
+    </Badge>
+  )
+}
+
 function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteSettingsControlProps) {
   const configuredSource = getConfiguredRegistrySourceConfig()
   const [resolvedSource, setResolvedSource] = useState<RegistrySourceConfig | null>(null)
@@ -285,18 +307,9 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                 <div className="small text-body-secondary mb-3 d-flex align-items-center gap-2 flex-wrap">
                   <span>Current source:</span>
                   {renderSourceLink(activeSource.baseUrl)}
-                  <Badge
-                    bg={activeSource.sourceMode === 'runtime-override' ? 'info' : 'secondary'}
-                    text={activeSource.sourceMode === 'runtime-override' ? 'dark' : undefined}
-                  >
-                    {activeSource.sourceMode === 'runtime-override' ? 'runtime override' : 'configured source'}
-                  </Badge>
+                  <SourceModeBadge mode={activeSource.sourceMode} />
                   {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
-                  {currentBaseUrlRefResolution ? (
-                    <Badge bg="light" text="dark">
-                      {currentBaseUrlRefResolution}
-                    </Badge>
-                  ) : null}
+                  <RefResolutionBadge label={currentBaseUrlRefResolution} />
                 </div>
 
                 {registryCatalogStatusNote ? renderCatalogStatusNote(registryCatalogStatusNote) : null}
@@ -340,19 +353,8 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
               <div className="small text-body-secondary mt-3 d-flex align-items-center gap-2 flex-wrap">
                 <span>Current GitHub repository:</span>
                 {renderSourceLink(activeSource.githubRepositoryUrl)}
-                <Badge
-                  bg={activeSource.githubRepositorySourceMode === 'runtime-override' ? 'info' : 'secondary'}
-                  text={activeSource.githubRepositorySourceMode === 'runtime-override' ? 'dark' : undefined}
-                >
-                  {activeSource.githubRepositorySourceMode === 'runtime-override'
-                    ? 'runtime override'
-                    : 'configured source'}
-                </Badge>
-                {currentGithubRepositoryRefResolution ? (
-                  <Badge bg="light" text="dark">
-                    {currentGithubRepositoryRefResolution}
-                  </Badge>
-                ) : null}
+                <SourceModeBadge mode={activeSource.githubRepositorySourceMode} />
+                <RefResolutionBadge label={currentGithubRepositoryRefResolution} />
               </div>
             </section>
           </Stack>

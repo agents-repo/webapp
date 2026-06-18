@@ -6,7 +6,11 @@ import {
   touchCatalogCache,
   writeCatalogCache,
 } from './registryCatalogCache'
-import { getRegistrySourceConfig, resolveRegistrySourceConfig } from './registrySourceConfig'
+import {
+  getRegistrySourceConfig,
+  resolveRegistryBrowseSourceMetadata,
+  resolveRegistryFetchSourceConfig,
+} from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
@@ -36,14 +40,15 @@ interface FetchCatalogSuccess {
 type FetchCatalogNetworkResult = FetchCatalogResult | FetchCatalogSuccess
 
 const buildCatalogLoadMetadata = (
-  sourceConfig: Awaited<ReturnType<typeof resolveRegistrySourceConfig>>,
+  fetchSourceConfig: Awaited<ReturnType<typeof resolveRegistryFetchSourceConfig>>,
+  browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>>,
 ): Pick<
   RegistryCatalogLoadResult,
   'baseUrlRefResolution' | 'githubRepositoryUrl' | 'githubRepositoryRefResolution'
 > => ({
-  baseUrlRefResolution: sourceConfig.baseUrlRefResolution,
-  githubRepositoryUrl: sourceConfig.githubRepositoryUrl,
-  githubRepositoryRefResolution: sourceConfig.githubRepositoryRefResolution,
+  baseUrlRefResolution: fetchSourceConfig.baseUrlRefResolution,
+  githubRepositoryUrl: browseMetadata.githubRepositoryUrl,
+  githubRepositoryRefResolution: browseMetadata.githubRepositoryRefResolution,
 })
 
 const buildConditionalHeaders = (
@@ -97,12 +102,13 @@ const fetchCatalogFromNetwork = async (
 export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
-  let sourceConfig
+  let fetchSourceConfig
 
   try {
-    sourceConfig = await resolveRegistrySourceConfig({ signal: options.signal })
+    fetchSourceConfig = await resolveRegistryFetchSourceConfig({ signal: options.signal })
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry source resolution error'
+    const configuredSource = getRegistrySourceConfig()
 
     return {
       catalog: null,
@@ -110,11 +116,15 @@ export const loadRegistryCatalog = async (
       registryBaseUrl: '',
       cacheState: 'none',
       errorMessage,
-      ...buildCatalogLoadMetadata(getRegistrySourceConfig()),
+      ...buildCatalogLoadMetadata(configuredSource, {
+        githubRepositoryUrl: configuredSource.githubRepositoryUrl,
+        githubRepositoryRefResolution: null,
+      }),
     }
   }
 
-  const { indexUrl, baseUrl: registryBaseUrl } = sourceConfig
+  const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig
+  const browseMetadataPromise = resolveRegistryBrowseSourceMetadata({ signal: options.signal })
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
@@ -123,7 +133,7 @@ export const loadRegistryCatalog = async (
       indexUrl,
       registryBaseUrl,
       cacheState: 'fresh',
-      ...buildCatalogLoadMetadata(sourceConfig),
+      ...buildCatalogLoadMetadata(fetchSourceConfig, await browseMetadataPromise),
     }
   }
 
@@ -131,7 +141,11 @@ export const loadRegistryCatalog = async (
   const conditionalHeaders = buildConditionalHeaders(envelope)
 
   try {
-    const result = await fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders)
+    const [result, browseMetadata] = await Promise.all([
+      fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders),
+      browseMetadataPromise,
+    ])
+    const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, browseMetadata)
 
     if (result.notModified) {
       if (!envelope?.catalog) {
@@ -141,7 +155,7 @@ export const loadRegistryCatalog = async (
           registryBaseUrl,
           cacheState: 'none',
           errorMessage: 'Registry returned 304 Not Modified without cached catalog state',
-          ...buildCatalogLoadMetadata(sourceConfig),
+          ...catalogMetadata,
         }
       }
 
@@ -152,7 +166,7 @@ export const loadRegistryCatalog = async (
         indexUrl,
         registryBaseUrl,
         cacheState: 'fresh',
-        ...buildCatalogLoadMetadata(sourceConfig),
+        ...catalogMetadata,
       }
     }
 
@@ -163,10 +177,11 @@ export const loadRegistryCatalog = async (
       indexUrl,
       registryBaseUrl,
       cacheState: 'none',
-      ...buildCatalogLoadMetadata(sourceConfig),
+      ...catalogMetadata,
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
+    const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, await browseMetadataPromise)
 
     if (envelope?.catalog) {
       return {
@@ -175,7 +190,7 @@ export const loadRegistryCatalog = async (
         registryBaseUrl,
         cacheState: 'stale-fallback',
         errorMessage,
-        ...buildCatalogLoadMetadata(sourceConfig),
+        ...catalogMetadata,
       }
     }
 
@@ -185,7 +200,7 @@ export const loadRegistryCatalog = async (
       registryBaseUrl,
       cacheState: 'none',
       errorMessage,
-      ...buildCatalogLoadMetadata(sourceConfig),
+      ...catalogMetadata,
     }
   }
 }

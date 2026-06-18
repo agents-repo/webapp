@@ -36,6 +36,18 @@ class MemoryStorage implements Storage {
   }
 }
 
+const getFetchInputUrl = (input: RequestInfo | URL): string => {
+  if (typeof input === 'string') {
+    return input
+  }
+
+  if (input instanceof URL) {
+    return input.href
+  }
+
+  return input.url
+}
+
 describe('resolveRegistrySourceConfig', () => {
   beforeEach(() => {
     Object.defineProperty(globalThis, 'localStorage', {
@@ -107,5 +119,29 @@ describe('resolveRegistrySourceConfig', () => {
     expect(source.baseUrlRefResolution).toEqual({ alias: '1.x', resolvedRef: 'v1.2.0' })
     expect(source.githubRepositoryRefResolution).toEqual({ alias: '2.x', resolvedRef: 'v2.0.0' })
     expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.0.0')
+  })
+
+  it('keeps unresolved GitHub browse metadata when browse tag resolution fails', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
+      const url = getFetchInputUrl(input)
+
+      if (url.includes('registry-proxy')) {
+        return Promise.resolve(
+          new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        )
+      }
+
+      return Promise.resolve(new Response(null, { status: 503, statusText: 'Service Unavailable' }))
+    })
+
+    const source = await resolveRegistrySourceConfig()
+
+    expect(source.baseUrlRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
+    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0')
+    expect(source.githubRepositoryRefResolution).toBeNull()
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.x')
   })
 })
