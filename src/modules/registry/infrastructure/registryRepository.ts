@@ -51,6 +51,27 @@ const buildCatalogLoadMetadata = (
   githubRepositoryRefResolution: browseMetadata.githubRepositoryRefResolution,
 })
 
+const getFallbackBrowseCatalogLoadMetadata = (): Awaited<
+  ReturnType<typeof resolveRegistryBrowseSourceMetadata>
+> => {
+  const configuredSource = getRegistrySourceConfig()
+
+  return {
+    githubRepositoryUrl: configuredSource.githubRepositoryUrl,
+    githubRepositoryRefResolution: null,
+  }
+}
+
+const resolveBrowseCatalogLoadMetadata = async (options: {
+  signal?: AbortSignal
+}): Promise<Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>>> => {
+  try {
+    return await resolveRegistryBrowseSourceMetadata(options)
+  } catch {
+    return getFallbackBrowseCatalogLoadMetadata()
+  }
+}
+
 const buildConditionalHeaders = (
   envelope: ReturnType<typeof readCatalogCacheEnvelope>,
 ): Record<string, string> => {
@@ -116,15 +137,12 @@ export const loadRegistryCatalog = async (
       registryBaseUrl: '',
       cacheState: 'none',
       errorMessage,
-      ...buildCatalogLoadMetadata(configuredSource, {
-        githubRepositoryUrl: configuredSource.githubRepositoryUrl,
-        githubRepositoryRefResolution: null,
-      }),
+      ...buildCatalogLoadMetadata(configuredSource, getFallbackBrowseCatalogLoadMetadata()),
     }
   }
 
   const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig
-  const browseMetadataPromise = resolveRegistryBrowseSourceMetadata({ signal: options.signal })
+  const browseMetadataPromise = resolveBrowseCatalogLoadMetadata({ signal: options.signal })
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {

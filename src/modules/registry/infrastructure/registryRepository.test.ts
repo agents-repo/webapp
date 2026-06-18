@@ -137,4 +137,64 @@ describe('loadRegistryCatalog', () => {
     expect(result.githubRepositoryRefResolution).toBeNull()
     expect(globalThis.fetch).not.toHaveBeenCalled()
   })
+
+  it('returns stale fallback when network fetch fails and browse metadata rejects', async () => {
+    const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
+    const staleCatalog: RegistryCatalog = {
+      schemaVersion: '1.2.0',
+      updatedAt: '2026-06-08T02:09:56.645Z',
+      packages: [
+        {
+          id: 'demo',
+          name: 'Demo',
+          description: 'Demo package',
+          owner: 'agents-repo',
+          latest: '1.0.0',
+          tags: [],
+          status: 'active',
+          category: 'assistant',
+          estimateOverallCost: { band: 'low' },
+        },
+      ],
+    }
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
+      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      runtimeBaseUrlOverride: null,
+      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0',
+      indexPath: 'packages/index.json',
+      indexUrl,
+      sourceMode: 'configured',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeGithubRepositoryUrlOverride: null,
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositorySourceMode: 'configured',
+      baseUrlRefResolution: { alias: 'v1.x', resolvedRef: 'v1.2.0' },
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockRejectedValue(
+      new Error('GitHub browse tag resolution failed'),
+    )
+
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue({
+      cacheVersion: 1,
+      cachedAt: Date.now(),
+      indexUrl,
+      catalog: staleCatalog,
+      etag: '"abc123"',
+    })
+
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Registry request failed (503 Service Unavailable)'))
+
+    const result = await loadRegistryCatalog()
+
+    expect(result.catalog).toEqual(staleCatalog)
+    expect(result.cacheState).toBe('stale-fallback')
+    expect(result.errorMessage).toBe('Registry request failed (503 Service Unavailable)')
+    expect(result.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.x')
+    expect(result.githubRepositoryRefResolution).toBeNull()
+  })
 })
