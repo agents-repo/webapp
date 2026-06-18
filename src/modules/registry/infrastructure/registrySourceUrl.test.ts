@@ -10,9 +10,9 @@ import {
 } from './registrySourceUrl'
 
 describe('registrySourceUrl', () => {
-  it('normalizes GitHub repository URLs to raw main by default', () => {
+  it('normalizes GitHub repository URLs to the default registry ref when no tree ref is present', () => {
     expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry')).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/main',
+      'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
     )
   })
 
@@ -51,7 +51,7 @@ describe('registrySourceUrl', () => {
 
   it('strips .git suffix on GitHub repository URLs', () => {
     expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry.git')).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/main',
+      'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
     )
   })
 
@@ -113,7 +113,7 @@ describe('registrySourceUrl', () => {
 
   it('builds package browse URL from GitHub repository root', () => {
     expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', 'hello-agent')).toBe(
-      'https://github.com/agents-repo/registry/tree/main/packages/hello-agent',
+      'https://github.com/agents-repo/registry/tree/v1.x/packages/hello-agent',
     )
   })
 

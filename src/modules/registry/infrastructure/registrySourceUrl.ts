@@ -1,4 +1,3 @@
-export const DEFAULT_REGISTRY_BRANCH = 'main'
 export const DEFAULT_REGISTRY_REF = 'v1.x'
 export const DEFAULT_REGISTRY_SOURCE_URL = `https://registry-proxy.maiconfz.workers.dev?ref=${DEFAULT_REGISTRY_REF}`
 export const DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL =
@@ -13,13 +12,13 @@ const GITHUB_EXPLICIT_REF_TYPES = new Set(['heads', 'tags'])
 
 const getGitHubRefFromSegments = (segments: string[]): string => {
   if (segments.length < 4 || !GITHUB_BRANCH_PATH_MARKERS.has(segments[2])) {
-    return DEFAULT_REGISTRY_BRANCH
+    return DEFAULT_REGISTRY_REF
   }
 
   const refSegments = segments.slice(3).filter((segment) => segment.length > 0)
 
   if (refSegments.length === 0) {
-    return DEFAULT_REGISTRY_BRANCH
+    return DEFAULT_REGISTRY_REF
   }
 
   // GitHub tree/blob URLs can include additional path segments after the ref.
@@ -30,7 +29,7 @@ const getGitHubRefFromSegments = (segments: string[]): string => {
     GITHUB_EXPLICIT_REF_TYPES.has(refSegments[1])
   ) {
     const explicitRef = refSegments.slice(2).join('/').trim()
-    return explicitRef.length > 0 ? explicitRef : DEFAULT_REGISTRY_BRANCH
+    return explicitRef.length > 0 ? explicitRef : DEFAULT_REGISTRY_REF
   }
 
   return refSegments[0]
