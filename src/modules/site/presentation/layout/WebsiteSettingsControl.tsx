@@ -199,26 +199,25 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
           baseUrlValidationError: baseUrlAliasValidationMessage,
           githubRepositoryUrlValidationError: githubRepositoryAliasValidationMessage,
         }))
-        return
-      }
-
-      clearRegistryTagListCache()
-
-      if (normalizedBaseUrlInput.length === 0) {
-        clearStoredRegistryBaseUrlOverride()
       } else {
-        setStoredRegistryBaseUrlOverride(normalizedBaseUrlInput)
-      }
+        clearRegistryTagListCache()
 
-      if (normalizedGithubRepositoryUrlInput.length === 0) {
-        clearStoredRegistryGitHubRepositoryUrlOverride()
-      } else {
-        setStoredRegistryGitHubRepositoryUrlOverride(normalizedGithubRepositoryUrlInput)
-      }
+        if (normalizedBaseUrlInput.length === 0) {
+          clearStoredRegistryBaseUrlOverride()
+        } else {
+          setStoredRegistryBaseUrlOverride(normalizedBaseUrlInput)
+        }
 
-      await refreshResolvedSource()
-      closeModal()
-      onSaved?.()
+        if (normalizedGithubRepositoryUrlInput.length === 0) {
+          clearStoredRegistryGitHubRepositoryUrlOverride()
+        } else {
+          setStoredRegistryGitHubRepositoryUrlOverride(normalizedGithubRepositoryUrlInput)
+        }
+
+        await refreshResolvedSource()
+        closeModal()
+        onSaved?.()
+      }
     } finally {
       setModalState((previousValue) => ({
         ...previousValue,
