@@ -242,7 +242,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
     }
   }
 
-  const resetRegistrySettings = (): void => {
+  const resetRegistrySettings = async (): Promise<void> => {
     clearStoredRegistryBaseUrlOverride()
     clearStoredRegistryGitHubRepositoryUrlOverride()
     clearRegistryTagListCache()
@@ -252,11 +252,19 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
       baseUrlValidationError: null,
       githubRepositoryUrlInput: '',
       githubRepositoryUrlValidationError: null,
-      isSaving: false,
+      isSaving: true,
     }))
-    void refreshResolvedSource()
-    closeModal()
-    onSaved?.()
+
+    try {
+      await refreshResolvedSource()
+      closeModal()
+      onSaved?.()
+    } finally {
+      setModalState((previousValue) => ({
+        ...previousValue,
+        isSaving: false,
+      }))
+    }
   }
 
   const activeSource = resolvedSource ?? getRegistrySourceConfig()
@@ -386,7 +394,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={resetRegistrySettings} disabled={modalState.isSaving}>
+          <Button variant="outline-secondary" onClick={() => void resetRegistrySettings()} disabled={modalState.isSaving}>
             Reset to default
           </Button>
           <Button variant="secondary" onClick={closeModal} disabled={modalState.isSaving}>

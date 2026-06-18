@@ -221,12 +221,14 @@ export const loadRegistryCatalog = async (
 
   const envelope = readCatalogCacheEnvelope(indexUrl)
   const conditionalHeaders = buildConditionalHeaders(envelope)
+  let browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>> | undefined
 
   try {
-    const [result, browseMetadata] = await Promise.all([
+    const [result, resolvedBrowseMetadata] = await Promise.all([
       fetchCatalogFromNetwork(indexUrl, options.signal, conditionalHeaders),
       browseMetadataPromise,
     ])
+    browseMetadata = resolvedBrowseMetadata
     const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, browseMetadata)
 
     if (result.notModified) {
@@ -263,7 +265,9 @@ export const loadRegistryCatalog = async (
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown registry loading error'
-    const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, await browseMetadataPromise)
+    const resolvedBrowseMetadata =
+      browseMetadata ?? (await browseMetadataPromise.catch(() => getFallbackBrowseCatalogLoadMetadata()))
+    const catalogMetadata = buildCatalogLoadMetadata(fetchSourceConfig, resolvedBrowseMetadata)
 
     if (envelope?.catalog) {
       return {
