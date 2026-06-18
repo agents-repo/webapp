@@ -44,4 +44,36 @@ describe('loadRegistryCatalog', () => {
     expect(result.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.2.0')
     expect(result.githubRepositoryRefResolution).toBeNull()
   })
+
+  it('includes github repository metadata when source resolution fails', async () => {
+    vi.spyOn(registrySourceConfig, 'resolveRegistrySourceConfig').mockRejectedValue(
+      new Error('Could not infer a GitHub repository for major-version line ref resolution.'),
+    )
+
+    vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
+      sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
+      baseUrl: 'https://registry-proxy.example.workers.dev/?ref=1.x',
+      indexPath: 'packages/index.json',
+      indexUrl: 'https://registry-proxy.example.workers.dev/packages/index.json?ref=1.x',
+      sourceMode: 'runtime-override',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeGithubRepositoryUrlOverride: null,
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositorySourceMode: 'configured',
+      baseUrlRefResolution: null,
+      githubRepositoryRefResolution: null,
+    })
+
+    const result = await loadRegistryCatalog()
+
+    expect(result.catalog).toBeNull()
+    expect(result.errorMessage).toBe(
+      'Could not infer a GitHub repository for major-version line ref resolution.',
+    )
+    expect(result.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.x')
+    expect(result.baseUrlRefResolution).toBeNull()
+    expect(result.githubRepositoryRefResolution).toBeNull()
+  })
 })

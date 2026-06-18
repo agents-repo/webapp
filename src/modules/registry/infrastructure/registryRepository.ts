@@ -6,7 +6,7 @@ import {
   touchCatalogCache,
   writeCatalogCache,
 } from './registryCatalogCache'
-import { resolveRegistrySourceConfig } from './registrySourceConfig'
+import { getRegistrySourceConfig, resolveRegistrySourceConfig } from './registrySourceConfig'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
@@ -110,6 +110,7 @@ export const loadRegistryCatalog = async (
       registryBaseUrl: '',
       cacheState: 'none',
       errorMessage,
+      ...buildCatalogLoadMetadata(getRegistrySourceConfig()),
     }
   }
 
