@@ -72,6 +72,11 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
+    vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryRefResolution: null,
+    })
+
     vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
     vi.spyOn(registryCatalogCache, 'readStaleCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
 
