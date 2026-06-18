@@ -3,14 +3,21 @@ import { isRegistryCatalog } from './registryCatalogValidation'
 import {
   readFreshCatalogCache,
   readCatalogCacheEnvelope,
+  readFreshCatalogCacheEnvelopeForSourceIdentity,
+  readStaleCatalogCacheEnvelopeForSourceIdentity,
   touchCatalogCache,
   writeCatalogCache,
+  type RegistryCatalogCacheEnvelope,
 } from './registryCatalogCache'
 import {
   getRegistrySourceConfig,
   resolveRegistryBrowseSourceMetadata,
   resolveRegistryFetchSourceConfig,
 } from './registrySourceConfig'
+import {
+  getRegistryBaseUrlFromIndexUrl,
+  getRegistrySourceCacheIdentity,
+} from './registrySourceUrl'
 
 export interface RegistryCatalogLoadResult {
   catalog: RegistryCatalog | null
@@ -61,6 +68,28 @@ const getFallbackBrowseCatalogLoadMetadata = (): Awaited<
     githubRepositoryRefResolution: null,
   }
 }
+
+const getConfiguredSourceCacheIdentity = (): ReturnType<typeof getRegistrySourceCacheIdentity> => {
+  const configuredSource = getRegistrySourceConfig()
+  const baseUrlInput = configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
+
+  return getRegistrySourceCacheIdentity(baseUrlInput, configuredSource.indexPath)
+}
+
+const buildCatalogLoadResultFromCachedEnvelope = (
+  envelope: RegistryCatalogCacheEnvelope,
+  configuredSource: ReturnType<typeof getRegistrySourceConfig>,
+  browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>>,
+  cacheState: 'fresh' | 'stale-fallback',
+  errorMessage: string,
+): RegistryCatalogLoadResult => ({
+  catalog: envelope.catalog,
+  indexUrl: envelope.indexUrl,
+  registryBaseUrl: getRegistryBaseUrlFromIndexUrl(envelope.indexUrl, configuredSource.indexPath),
+  cacheState,
+  errorMessage,
+  ...buildCatalogLoadMetadata(configuredSource, browseMetadata),
+})
 
 const resolveBrowseCatalogLoadMetadata = async (options: {
   signal?: AbortSignal
@@ -120,29 +149,64 @@ const fetchCatalogFromNetwork = async (
   }
 }
 
+const buildCatalogLoadResultOnSourceResolutionFailure = async (
+  error: unknown,
+  browseMetadataPromise: ReturnType<typeof resolveBrowseCatalogLoadMetadata>,
+): Promise<RegistryCatalogLoadResult> => {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown registry source resolution error'
+  const configuredSource = getRegistrySourceConfig()
+  const browseMetadata = await browseMetadataPromise
+  const cacheIdentity = getConfiguredSourceCacheIdentity()
+
+  if (cacheIdentity) {
+    const freshEnvelope = readFreshCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+
+    if (freshEnvelope) {
+      return buildCatalogLoadResultFromCachedEnvelope(
+        freshEnvelope,
+        configuredSource,
+        browseMetadata,
+        'fresh',
+        errorMessage,
+      )
+    }
+
+    const staleEnvelope = readStaleCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+
+    if (staleEnvelope) {
+      return buildCatalogLoadResultFromCachedEnvelope(
+        staleEnvelope,
+        configuredSource,
+        browseMetadata,
+        'stale-fallback',
+        errorMessage,
+      )
+    }
+  }
+
+  return {
+    catalog: null,
+    indexUrl: '',
+    registryBaseUrl: '',
+    cacheState: 'none',
+    errorMessage,
+    ...buildCatalogLoadMetadata(configuredSource, browseMetadata),
+  }
+}
+
 export const loadRegistryCatalog = async (
   options: { signal?: AbortSignal } = {},
 ): Promise<RegistryCatalogLoadResult> => {
+  const browseMetadataPromise = resolveBrowseCatalogLoadMetadata({ signal: options.signal })
   let fetchSourceConfig
 
   try {
     fetchSourceConfig = await resolveRegistryFetchSourceConfig({ signal: options.signal })
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown registry source resolution error'
-    const configuredSource = getRegistrySourceConfig()
-
-    return {
-      catalog: null,
-      indexUrl: '',
-      registryBaseUrl: '',
-      cacheState: 'none',
-      errorMessage,
-      ...buildCatalogLoadMetadata(configuredSource, getFallbackBrowseCatalogLoadMetadata()),
-    }
+    return buildCatalogLoadResultOnSourceResolutionFailure(error, browseMetadataPromise)
   }
 
   const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig
-  const browseMetadataPromise = resolveBrowseCatalogLoadMetadata({ signal: options.signal })
   const cachedCatalog = readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {

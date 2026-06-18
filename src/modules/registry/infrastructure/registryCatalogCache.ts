@@ -1,5 +1,6 @@
 import type { RegistryCatalog } from '../domain/package'
 import { isRegistryCatalog } from './registryCatalogValidation'
+import { trimTrailingSlashes } from './registrySourceUrl'
 
 const CACHE_STORAGE_KEY = 'registry.catalog.cache.v1'
 const CACHE_VERSION = 1
@@ -14,6 +15,8 @@ interface RegistryCatalogCacheEnvelope {
   etag?: string
   lastModified?: string
 }
+
+export type { RegistryCatalogCacheEnvelope }
 
 class RegistryCatalogLruCache {
   readonly #entries = new Map<string, RegistryCatalogCacheEnvelope>()
@@ -143,6 +146,66 @@ const getEnvelopeFromMemoryOrStorage = (indexUrl: string): RegistryCatalogCacheE
 
 const isFresh = (cachedAt: number): boolean => {
   return Date.now() - cachedAt <= CACHE_TTL_MS
+}
+
+export interface RegistryCatalogCacheSourceIdentity {
+  origin: string
+  indexPathname: string
+}
+
+const listAllCatalogCacheEnvelopes = (): RegistryCatalogCacheEnvelope[] => {
+  const persistentEntries = loadPersistentCache()
+
+  for (const entry of persistentEntries) {
+    if (!memoryCacheByIndexUrl.get(entry.indexUrl)) {
+      memoryCacheByIndexUrl.set(entry.indexUrl, entry)
+    }
+  }
+
+  return Array.from(memoryCacheByIndexUrl.values())
+}
+
+const envelopeMatchesSourceIdentity = (
+  envelope: RegistryCatalogCacheEnvelope,
+  identity: RegistryCatalogCacheSourceIdentity,
+): boolean => {
+  try {
+    const parsed = new URL(envelope.indexUrl)
+
+    return (
+      parsed.origin === identity.origin &&
+      (trimTrailingSlashes(parsed.pathname) || '/') === identity.indexPathname
+    )
+  } catch {
+    return false
+  }
+}
+
+const readCatalogCacheEnvelopeForSourceIdentity = (
+  identity: RegistryCatalogCacheSourceIdentity,
+  options: { freshOnly: boolean },
+): RegistryCatalogCacheEnvelope | null => {
+  const matchingEnvelopes = listAllCatalogCacheEnvelopes()
+    .filter(
+      (envelope) =>
+        envelopeMatchesSourceIdentity(envelope, identity) &&
+        (!options.freshOnly || isFresh(envelope.cachedAt)),
+    )
+    .sort((left, right) => right.cachedAt - left.cachedAt)
+
+  return matchingEnvelopes[0] ?? null
+}
+
+export const readFreshCatalogCacheEnvelopeForSourceIdentity = (
+  identity: RegistryCatalogCacheSourceIdentity,
+): RegistryCatalogCacheEnvelope | null => {
+  return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: true })
+}
+
+export const readStaleCatalogCacheEnvelopeForSourceIdentity = (
+  identity: RegistryCatalogCacheSourceIdentity,
+): RegistryCatalogCacheEnvelope | null => {
+  return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: false })
 }
 
 export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null => {

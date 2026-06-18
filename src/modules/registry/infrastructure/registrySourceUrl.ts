@@ -83,6 +83,44 @@ export const normalizeRegistryBaseUrl = (value: string): string => {
   }
 }
 
+export interface RegistrySourceCacheIdentity {
+  origin: string
+  indexPathname: string
+}
+
+export const getRegistrySourceCacheIdentity = (
+  baseUrlInput: string,
+  indexPath: string,
+): RegistrySourceCacheIdentity | null => {
+  const indexUrl = buildRegistryIndexUrl(normalizeRegistryBaseUrl(baseUrlInput), indexPath)
+
+  try {
+    const parsed = new URL(indexUrl)
+
+    return {
+      origin: parsed.origin,
+      indexPathname: trimTrailingSlashes(parsed.pathname) || '/',
+    }
+  } catch {
+    return null
+  }
+}
+
+export const getRegistryBaseUrlFromIndexUrl = (indexUrl: string, indexPath: string): string => {
+  try {
+    const parsed = new URL(indexUrl)
+    const normalizedIndexPath = `/${trimLeadingSlashes(indexPath)}`
+
+    if (parsed.pathname.endsWith(normalizedIndexPath)) {
+      parsed.pathname = parsed.pathname.slice(0, -normalizedIndexPath.length) || '/'
+    }
+
+    return trimTrailingSlashes(parsed.toString())
+  } catch {
+    return ''
+  }
+}
+
 export const buildRegistryIndexUrl = (baseUrl: string, indexPath: string): string => {
   const normalizedBase = trimTrailingSlashes(baseUrl.trim())
   const normalizedPath = trimLeadingSlashes(indexPath)
