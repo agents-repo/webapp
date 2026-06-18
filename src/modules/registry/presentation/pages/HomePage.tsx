@@ -139,7 +139,9 @@ const getCatalogStatusTag = ({
 
   switch (cacheState) {
     case 'fresh':
-      return 'fresh cache'
+      return errorMessage
+        ? 'cached catalog after source resolution failure'
+        : 'fresh cache'
     case 'stale-fallback':
       return 'stale cache after refresh failure'
     default:
@@ -171,6 +173,14 @@ const getCatalogAlertState = ({
     return {
       variant: 'warning',
       message: 'Remote registry refresh failed. Displaying stale cached catalog while keeping the app available.',
+    }
+  }
+
+  if (cacheState === 'fresh') {
+    return {
+      variant: 'warning',
+      message:
+        'Registry source resolution failed. Displaying cached catalog while keeping the app available.',
     }
   }
 
