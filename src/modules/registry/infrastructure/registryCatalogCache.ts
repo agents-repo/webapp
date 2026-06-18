@@ -1,5 +1,6 @@
 import type { RegistryCatalog } from '../domain/package'
 import { isRegistryCatalog } from './registryCatalogValidation'
+import { extractRegistryRef, refsAreCompatibleForCatalogCacheFallback } from './registryMajorVersionRef'
 import {
   getRegistryIndexCacheLookupKey,
   type RegistrySourceCacheIdentity,
@@ -57,6 +58,10 @@ class RegistryCatalogLruCache {
 
   values(): IterableIterator<RegistryCatalogCacheEnvelope> {
     return this.#entries.values()
+  }
+
+  clear(): void {
+    this.#entries.clear()
   }
 }
 
@@ -171,7 +176,13 @@ const envelopeMatchesSourceIdentity = (
 ): boolean => {
   const envelopeLookupKey = getRegistryIndexCacheLookupKey(envelope.indexUrl, identity.indexPath)
 
-  return envelopeLookupKey === identity.lookupKey
+  if (envelopeLookupKey !== identity.lookupKey) {
+    return false
+  }
+
+  const envelopeRef = extractRegistryRef(envelope.indexUrl)
+
+  return refsAreCompatibleForCatalogCacheFallback(identity.sourceRef, envelopeRef)
 }
 
 const readCatalogCacheEnvelopeForSourceIdentity = (
@@ -245,4 +256,14 @@ export const writeCatalogCache = (
   })
 
   persistCache()
+}
+
+export const resetRegistryCatalogCacheForTests = (): void => {
+  memoryCacheByIndexUrl.clear()
+
+  const storage = getLocalStorage()
+
+  if (storage) {
+    storage.removeItem(CACHE_STORAGE_KEY)
+  }
 }

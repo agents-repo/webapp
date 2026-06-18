@@ -4,6 +4,7 @@ import {
   extractRegistryRef,
   inferRegistryRepositoryIdentity,
   parseMajorVersionLineAlias,
+  refsAreCompatibleForCatalogCacheFallback,
   substituteRegistryRef,
 } from './registryMajorVersionRef'
 
@@ -75,5 +76,17 @@ describe('registryMajorVersionRef', () => {
       owner: 'custom-owner',
       repo: 'custom-repo',
     })
+  })
+
+  it('matches cache fallback refs only within the same major-version line alias', () => {
+    expect(refsAreCompatibleForCatalogCacheFallback('v1.x', 'v1.2.0')).toBe(true)
+    expect(refsAreCompatibleForCatalogCacheFallback('1.x', 'v1.2.0')).toBe(true)
+    expect(refsAreCompatibleForCatalogCacheFallback('v1.x', 'v1.x')).toBe(true)
+    expect(refsAreCompatibleForCatalogCacheFallback('v1.x', 'main')).toBe(false)
+    expect(refsAreCompatibleForCatalogCacheFallback('v1.x', 'v2.0.0')).toBe(false)
+    expect(refsAreCompatibleForCatalogCacheFallback('main', 'main')).toBe(true)
+    expect(refsAreCompatibleForCatalogCacheFallback('main', 'v1.2.0')).toBe(false)
+    expect(refsAreCompatibleForCatalogCacheFallback(null, null)).toBe(true)
+    expect(refsAreCompatibleForCatalogCacheFallback('v1.x', null)).toBe(false)
   })
 })

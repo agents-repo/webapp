@@ -168,6 +168,7 @@ describe('registrySourceUrl', () => {
       .toEqual({
         lookupKey: 'https://raw.githubusercontent.com/agents-repo/registry/{ref}/packages/index.json',
         indexPath: 'packages/index.json',
+        sourceRef: null,
       })
   })
 })

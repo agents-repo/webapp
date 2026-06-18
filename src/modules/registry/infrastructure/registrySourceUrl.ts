@@ -1,8 +1,10 @@
+
 export const DEFAULT_REGISTRY_REF = 'v1.x'
 export const DEFAULT_REGISTRY_SOURCE_URL = `https://registry-proxy.maiconfz.workers.dev?ref=${DEFAULT_REGISTRY_REF}`
 export const DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL =
   `https://github.com/agents-repo/registry/tree/${DEFAULT_REGISTRY_REF}`
 export const DEFAULT_REGISTRY_INDEX_PATH = 'packages/index.json'
+
 const GITHUB_HOSTNAME = 'github.com'
 const GITHUB_WWW_HOSTNAME = 'www.github.com'
 const GITHUB_BRANCH_PATH_MARKERS = new Set(['blob', 'tree'])
@@ -88,6 +90,7 @@ const RAW_GITHUB_HOSTNAME = 'raw.githubusercontent.com'
 export interface RegistrySourceCacheIdentity {
   lookupKey: string
   indexPath: string
+  sourceRef: string | null
 }
 
 export const getRegistryIndexCacheLookupKey = (indexUrl: string, indexPath: string): string | null => {
@@ -125,7 +128,7 @@ export const getRegistrySourceCacheIdentity = (
     return null
   }
 
-  return { lookupKey, indexPath }
+  return { lookupKey, indexPath, sourceRef: null }
 }
 
 export const getRegistryBaseUrlFromIndexUrl = (indexUrl: string, indexPath: string): string => {

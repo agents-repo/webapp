@@ -17,6 +17,7 @@ import {
 import {
   getRegistryBaseUrlFromIndexUrl,
   getRegistrySourceCacheIdentity,
+  type RegistrySourceCacheIdentity,
 } from './registrySourceUrl'
 import { extractMajorVersionLineAliasFromSourceUrl, extractRegistryRef } from './registryMajorVersionRef'
 
@@ -70,11 +71,19 @@ const getFallbackBrowseCatalogLoadMetadata = (): Awaited<
   }
 }
 
-const getConfiguredSourceCacheIdentity = (): ReturnType<typeof getRegistrySourceCacheIdentity> => {
+const getConfiguredSourceCacheIdentity = (): RegistrySourceCacheIdentity | null => {
   const configuredSource = getRegistrySourceConfig()
   const baseUrlInput = configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
+  const identity = getRegistrySourceCacheIdentity(baseUrlInput, configuredSource.indexPath)
 
-  return getRegistrySourceCacheIdentity(baseUrlInput, configuredSource.indexPath)
+  if (!identity) {
+    return null
+  }
+
+  return {
+    ...identity,
+    sourceRef: extractRegistryRef(baseUrlInput),
+  }
 }
 
 const inferBaseUrlRefResolutionFromCachedIndexUrl = (

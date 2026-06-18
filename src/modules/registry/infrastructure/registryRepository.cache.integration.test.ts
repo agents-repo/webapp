@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RegistryCatalog } from '../domain/package'
 import { loadRegistryCatalog } from './registryRepository'
 import * as registrySourceConfig from './registrySourceConfig'
-import { writeCatalogCache } from './registryCatalogCache'
+import { writeCatalogCache, resetRegistryCatalogCacheForTests } from './registryCatalogCache'
 
 class MemoryStorage implements Storage {
   private readonly data = new Map<string, string>()
@@ -39,6 +39,7 @@ describe('loadRegistryCatalog cache integration', () => {
       writable: true,
       value: new MemoryStorage(),
     })
+    resetRegistryCatalogCacheForTests()
     vi.restoreAllMocks()
   })
 
@@ -162,5 +163,62 @@ describe('loadRegistryCatalog cache integration', () => {
       'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
     )
     expect(result.baseUrlRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
+  })
+
+  it('does not serve a different-ref catalog when fetch source resolution fails', async () => {
+    const mainCatalog: RegistryCatalog = {
+      schemaVersion: '1.2.0',
+      updatedAt: '2026-06-08T02:09:56.645Z',
+      packages: [
+        {
+          id: 'main-only',
+          name: 'Main Only',
+          description: 'Cached from main branch',
+          owner: 'agents-repo',
+          latest: '9.9.9',
+          tags: [],
+          status: 'active',
+          category: 'assistant',
+          estimateOverallCost: { band: 'low' },
+        },
+      ],
+    }
+
+    writeCatalogCache(
+      'https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json',
+      mainCatalog,
+    )
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockRejectedValue(
+      new Error('Registry tag listing failed (503 Service Unavailable)'),
+    )
+
+    vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
+      sourceUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      configuredBaseUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeBaseUrlOverride: null,
+      baseUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
+      indexPath: 'packages/index.json',
+      indexUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v1.x/packages/index.json',
+      sourceMode: 'configured',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeGithubRepositoryUrlOverride: null,
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositorySourceMode: 'configured',
+      baseUrlRefResolution: null,
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryRefResolution: null,
+    })
+
+    const result = await loadRegistryCatalog()
+
+    expect(result.catalog).toBeNull()
+    expect(result.cacheState).toBe('none')
+    expect(result.baseUrlRefResolution).toBeNull()
+    expect(result.errorMessage).toBe('Registry tag listing failed (503 Service Unavailable)')
   })
 })

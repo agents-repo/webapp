@@ -1,3 +1,4 @@
+import semver from 'semver'
 import { DEFAULT_REGISTRY_REF } from './registrySourceUrl'
 
 const MAJOR_VERSION_LINE_ALIAS_PATTERN = /^v?\d+\.x$/i
@@ -117,6 +118,49 @@ export const extractMajorVersionLineAliasFromSourceUrl = (sourceUrl: string): Ma
   }
 
   return parseMajorVersionLineAlias(ref)
+}
+
+const getMajorVersionFromConcreteRef = (ref: string): number | null => {
+  const version = semver.valid(semver.coerce(ref, { loose: true }))
+
+  if (!version) {
+    return null
+  }
+
+  return semver.major(version)
+}
+
+export const refsAreCompatibleForCatalogCacheFallback = (
+  sourceRef: string | null,
+  envelopeRef: string | null,
+): boolean => {
+  if (!sourceRef && !envelopeRef) {
+    return true
+  }
+
+  if (!sourceRef || !envelopeRef) {
+    return false
+  }
+
+  if (sourceRef === envelopeRef) {
+    return true
+  }
+
+  const sourceAlias = parseMajorVersionLineAlias(sourceRef)
+
+  if (!sourceAlias) {
+    return false
+  }
+
+  const envelopeAlias = parseMajorVersionLineAlias(envelopeRef)
+
+  if (envelopeAlias) {
+    return envelopeAlias.major === sourceAlias.major
+  }
+
+  const envelopeMajor = getMajorVersionFromConcreteRef(envelopeRef)
+
+  return envelopeMajor !== null && envelopeMajor === sourceAlias.major
 }
 
 export const substituteRegistryRef = (sourceUrl: string, nextRef: string): string => {
