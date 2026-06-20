@@ -20,9 +20,9 @@ function AboutPage() {
             <Card.Body>
               <h2 className="h4">Mission</h2>
               <p className="text-body-secondary mb-0">
-                Agents Repo is the web interface for browsing, searching, and downloading curated agent
-                and flow package templates from the registry. It helps teams discover maintained templates,
-                understand package status, and install packages for their preferred targets.
+                Agents Repo is the web interface for browsing, searching, and downloading curated agents
+                and flows from the registry. It helps teams discover maintained packages that are ready for
+                direct use in projects, understand package status, and install them for their preferred targets.
               </p>
             </Card.Body>
           </Card>
@@ -33,7 +33,7 @@ function AboutPage() {
                 <Card.Body>
                   <h2 className="h4">What you can do</h2>
                   <ul className="text-body-secondary mb-0">
-                    <li>Browse and search the catalog of package templates</li>
+                    <li>Browse and search the catalog of agents and flows</li>
                     <li>Filter packages and review status badges</li>
                     <li>Download packages for supported install targets</li>
                     <li>Configure the registry source from Website settings in the header</li>
@@ -108,7 +108,7 @@ function AboutPage() {
                   <a href={REGISTRY_REPO_URL} target="_blank" rel="noreferrer noopener">
                     agents-repo/registry
                   </a>{' '}
-                  — package templates and index
+                  — agents, flows, and registry index
                 </li>
               </ul>
             </Card.Body>
