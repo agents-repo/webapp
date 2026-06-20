@@ -66,7 +66,7 @@ function Footer() {
             <div className="footer-credits-row">
               <p className="mb-0 text-body-secondary text-center">
                 Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by
-                Maicon + GitHub Copilot and collaborators.
+                Maicon + collaborators.
               </p>
             </div>
           </Col>
