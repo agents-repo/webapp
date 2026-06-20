@@ -329,10 +329,11 @@ function HomePage({
                   Curated package registry
                 </Badge>
                 <h1 className="display-5 fw-semibold mb-0">
-                  Explore package templates for agents and flows
+                  Explore ready-to-use agents and flows
                 </h1>
                 <p className="lead fs-6 text-body-secondary mb-0">
-                  Browse active package templates with quick metadata sourced from the registry index.
+                  Browse agents and flows ready for direct use in your projects, with quick metadata from
+                  the registry index.
                 </p>
                 <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>{searchControl}</div>
               </Stack>
