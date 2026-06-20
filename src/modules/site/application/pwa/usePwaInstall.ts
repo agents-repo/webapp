@@ -41,13 +41,20 @@ export function usePwaInstall() {
   }, [])
 
   const promptInstall = useCallback(async (): Promise<PwaInstallPromptOutcome> => {
+    const deferredPrompt = installPromptEvent
+
     setIsInstalling(true)
 
     try {
-      const outcome = await runPwaInstallPrompt(installPromptEvent)
+      const outcome = await runPwaInstallPrompt(deferredPrompt)
+
+      // prompt() consumes the deferred beforeinstallprompt event; drop it so we
+      // do not offer install again until the browser fires a new one.
+      if (deferredPrompt) {
+        setInstallPromptEvent(null)
+      }
 
       if (outcome === 'accepted') {
-        setInstallPromptEvent(null)
         setIsInstalled(true)
       }
 

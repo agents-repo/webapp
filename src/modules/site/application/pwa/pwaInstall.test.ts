@@ -46,7 +46,7 @@ describe('pwaInstall', () => {
       await expect(runPwaInstallPrompt(null)).resolves.toBe('unavailable')
     })
 
-    it('returns the browser choice after prompting', async () => {
+    it('returns accepted after the user installs', async () => {
       const installPromptEvent = new Event('beforeinstallprompt') as Event & {
         prompt: () => Promise<void>
         userChoice: Promise<{ outcome: 'accepted'; platform: string }>
@@ -55,6 +55,18 @@ describe('pwaInstall', () => {
       installPromptEvent.userChoice = Promise.resolve({ outcome: 'accepted', platform: 'web' })
 
       await expect(runPwaInstallPrompt(installPromptEvent)).resolves.toBe('accepted')
+      expect(installPromptEvent.prompt).toHaveBeenCalledOnce()
+    })
+
+    it('returns dismissed when the user closes the prompt', async () => {
+      const installPromptEvent = new Event('beforeinstallprompt') as Event & {
+        prompt: () => Promise<void>
+        userChoice: Promise<{ outcome: 'dismissed'; platform: string }>
+      }
+      installPromptEvent.prompt = vi.fn().mockResolvedValue(undefined)
+      installPromptEvent.userChoice = Promise.resolve({ outcome: 'dismissed', platform: 'web' })
+
+      await expect(runPwaInstallPrompt(installPromptEvent)).resolves.toBe('dismissed')
       expect(installPromptEvent.prompt).toHaveBeenCalledOnce()
     })
   })
