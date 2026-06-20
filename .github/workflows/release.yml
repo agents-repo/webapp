@@ -79,6 +79,9 @@ jobs:
       pull-requests: write
     needs:
       - validate
+    outputs:
+      published: ${{ steps.release.outputs.published }}
+      tag: ${{ steps.release.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -88,7 +91,61 @@ jobs:
       - name: Setup Node and pinned npm
         uses: ./.github/actions/setup-node-pinned-npm
 
+      - name: Record release tags before publish
+        run: |
+          git fetch --tags origin
+          git tag -l 'v*' --sort=v:refname > "$RUNNER_TEMP/tags-before.txt"
+
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Detect published release
+        id: release
+        run: |
+          git fetch --tags origin
+          NEW_TAGS=""
+          while IFS= read -r tag; do
+            [ -z "$tag" ] && continue
+            if ! grep -Fxq "$tag" "$RUNNER_TEMP/tags-before.txt"; then
+              NEW_TAGS="${NEW_TAGS}${NEW_TAGS:+$'\n'}${tag}"
+            fi
+          done < <(git tag -l 'v*' --sort=v:refname)
+
+          if [ -z "$NEW_TAGS" ]; then
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "tag=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          HEAD_SHA=$(git rev-parse HEAD)
+          PUBLISHED_TAG=""
+          while IFS= read -r tag; do
+            [ -z "$tag" ] && continue
+            if [ "$(git rev-parse "${tag}^{commit}" 2>/dev/null || true)" = "$HEAD_SHA" ]; then
+              PUBLISHED_TAG="$tag"
+              break
+            fi
+          done <<< "$NEW_TAGS"
+
+          if [ -z "$PUBLISHED_TAG" ]; then
+            echo "::warning::New v* tags were added but none point at HEAD; skipping Pages deploy."
+          fi
+
+          if [ -n "$PUBLISHED_TAG" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "tag=${PUBLISHED_TAG}" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "tag=" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: release-publish
+    if: needs.release-publish.outputs.published == 'true'
+    uses: ./.github/workflows/pages-deploy.yml
+    with:
+      tag: ${{ needs.release-publish.outputs.tag }}
+    secrets: inherit
