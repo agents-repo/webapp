@@ -91,11 +91,8 @@ jobs:
       - name: Setup Node and pinned npm
         uses: ./.github/actions/setup-node-pinned-npm
 
-      - name: Record latest release tag
-        id: before
-        run: |
-          TAG=$(git tag -l 'v*' --sort=-v:refname | head -1 || true)
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+      - name: Record release tags before publish
+        run: git tag -l 'v*' --sort=v:refname > "$RUNNER_TEMP/tags-before.txt"
 
       - name: Run semantic-release
         env:
@@ -105,11 +102,43 @@ jobs:
       - name: Detect published release
         id: release
         run: |
-          BEFORE="${{ steps.before.outputs.tag }}"
-          AFTER=$(git tag -l 'v*' --sort=-v:refname | head -1 || true)
-          if [ -n "$AFTER" ] && [ "$AFTER" != "$BEFORE" ]; then
+          git fetch --tags origin
+          NEW_TAGS=""
+          while IFS= read -r tag; do
+            [ -z "$tag" ] && continue
+            if ! grep -Fxq "$tag" "$RUNNER_TEMP/tags-before.txt"; then
+              NEW_TAGS="${NEW_TAGS}${NEW_TAGS:+$'\n'}${tag}"
+            fi
+          done < <(git tag -l 'v*' --sort=v:refname)
+
+          if [ -z "$NEW_TAGS" ]; then
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "tag=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          HEAD_SHA=$(git rev-parse HEAD)
+          PUBLISHED_TAG=""
+          while IFS= read -r tag; do
+            [ -z "$tag" ] && continue
+            if [ "$(git rev-parse "${tag}^{commit}" 2>/dev/null || true)" = "$HEAD_SHA" ]; then
+              PUBLISHED_TAG="$tag"
+              break
+            fi
+          done <<< "$NEW_TAGS"
+
+          if [ -z "$PUBLISHED_TAG" ]; then
+            TAG_COUNT=$(printf '%s\n' "$NEW_TAGS" | sed '/^$/d' | wc -l | tr -d ' ')
+            if [ "$TAG_COUNT" -eq 1 ]; then
+              PUBLISHED_TAG=$(printf '%s\n' "$NEW_TAGS" | sed '/^$/d' | head -1)
+            else
+              echo "::warning::Multiple new v* tags were added but none point at HEAD; skipping Pages deploy."
+            fi
+          fi
+
+          if [ -n "$PUBLISHED_TAG" ]; then
             echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "tag=${AFTER}" >> "$GITHUB_OUTPUT"
+            echo "tag=${PUBLISHED_TAG}" >> "$GITHUB_OUTPUT"
           else
             echo "published=false" >> "$GITHUB_OUTPUT"
             echo "tag=" >> "$GITHUB_OUTPUT"
