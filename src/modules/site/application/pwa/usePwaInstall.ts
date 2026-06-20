@@ -9,7 +9,6 @@ import {
 
 export function usePwaInstall() {
   const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null)
-  const [isInstalled, setIsInstalled] = useState(() => isRunningAsInstalledPwa())
   const [isInstalling, setIsInstalling] = useState(false)
 
   useEffect(() => {
@@ -28,7 +27,6 @@ export function usePwaInstall() {
 
     const handleAppInstalled = (): void => {
       setInstallPromptEvent(null)
-      setIsInstalled(true)
     }
 
     globalThis.window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
@@ -54,10 +52,6 @@ export function usePwaInstall() {
         setInstallPromptEvent(null)
       }
 
-      if (outcome === 'accepted') {
-        setIsInstalled(true)
-      }
-
       return outcome
     } finally {
       setIsInstalling(false)
@@ -65,7 +59,7 @@ export function usePwaInstall() {
   }, [installPromptEvent])
 
   return {
-    canInstall: installPromptEvent !== null && !isInstalled,
+    canInstall: installPromptEvent !== null && !isRunningAsInstalledPwa(),
     isInstalling,
     promptInstall,
   }
