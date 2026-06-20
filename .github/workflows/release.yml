@@ -79,6 +79,9 @@ jobs:
       pull-requests: write
     needs:
       - validate
+    outputs:
+      published: ${{ steps.release.outputs.published }}
+      tag: ${{ steps.release.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -88,7 +91,35 @@ jobs:
       - name: Setup Node and pinned npm
         uses: ./.github/actions/setup-node-pinned-npm
 
+      - name: Record latest release tag
+        id: before
+        run: |
+          TAG=$(git tag -l 'v*' --sort=-v:refname | head -1 || true)
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Detect published release
+        id: release
+        run: |
+          BEFORE="${{ steps.before.outputs.tag }}"
+          AFTER=$(git tag -l 'v*' --sort=-v:refname | head -1 || true)
+          if [ -n "$AFTER" ] && [ "$AFTER" != "$BEFORE" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "tag=${AFTER}" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "tag=" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    needs: release-publish
+    if: needs.release-publish.outputs.published == 'true'
+    uses: ./.github/workflows/pages-deploy.yml
+    with:
+      tag: ${{ needs.release-publish.outputs.tag }}
+    secrets: inherit
