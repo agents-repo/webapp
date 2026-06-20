@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import { siteRoutes } from '../routes/siteRoutes'
+import PwaInstallControl from './PwaInstallControl'
 import ThemeModeDropdown from './ThemeModeDropdown'
 import WebsiteSettingsControl from './WebsiteSettingsControl'
 
@@ -56,6 +57,9 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
               <FontAwesomeIcon icon={faHandsHelping} className="me-1" aria-hidden="true" />
               Help Us
             </Nav.Link>
+            <Nav.Item className="ms-lg-2 d-flex align-items-center">
+              <PwaInstallControl />
+            </Nav.Item>
             <Nav.Item className="ms-lg-2 d-flex align-items-center">
               <WebsiteSettingsControl
                 onSaved={onRegistrySettingsSaved}

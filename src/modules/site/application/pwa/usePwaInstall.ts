@@ -1,0 +1,66 @@
+import { useCallback, useEffect, useState } from 'react'
+import {
+  isBeforeInstallPromptEvent,
+  isRunningAsInstalledPwa,
+  runPwaInstallPrompt,
+  type BeforeInstallPromptEvent,
+  type PwaInstallPromptOutcome,
+} from './pwaInstall'
+
+export function usePwaInstall() {
+  const [installPromptEvent, setInstallPromptEvent] = useState<BeforeInstallPromptEvent | null>(null)
+  const [isInstalling, setIsInstalling] = useState(false)
+
+  useEffect(() => {
+    if (isRunningAsInstalledPwa()) {
+      return
+    }
+
+    const handleBeforeInstallPrompt = (event: Event): void => {
+      if (!isBeforeInstallPromptEvent(event)) {
+        return
+      }
+
+      event.preventDefault()
+      setInstallPromptEvent(event)
+    }
+
+    const handleAppInstalled = (): void => {
+      setInstallPromptEvent(null)
+    }
+
+    globalThis.window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    globalThis.window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      globalThis.window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      globalThis.window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const promptInstall = useCallback(async (): Promise<PwaInstallPromptOutcome> => {
+    const deferredPrompt = installPromptEvent
+
+    setIsInstalling(true)
+
+    try {
+      const outcome = await runPwaInstallPrompt(deferredPrompt)
+
+      // prompt() consumes the deferred beforeinstallprompt event; drop it so we
+      // do not offer install again until the browser fires a new one.
+      if (deferredPrompt) {
+        setInstallPromptEvent(null)
+      }
+
+      return outcome
+    } finally {
+      setIsInstalling(false)
+    }
+  }, [installPromptEvent])
+
+  return {
+    canInstall: installPromptEvent !== null && !isRunningAsInstalledPwa(),
+    isInstalling,
+    promptInstall,
+  }
+}

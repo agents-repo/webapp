@@ -61,6 +61,10 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    page links on desktop, with light, dark, and auto choices shown in menu
    items. Auto follows system color preference and the selected value persists
    across reloads.
+- The header includes an install-app control (download icon) when the browser
+   exposes a deferred PWA install prompt. The button is hidden when the app is
+   already installed or install is unavailable (for example in local dev without
+   a production service worker).
 - The header now includes a settings cog control next to color mode. It opens a
    website settings modal with two independent registry URL overrides:
   - **Registry base URL override** for catalog fetching (GitHub URLs
@@ -127,6 +131,19 @@ After changing cache or service worker behavior, validate locally with:
    shown.
 8. Verify service worker is active and runtime caches include same-origin static
    assets.
+
+## PWA Install Validation
+
+Validate the in-app install control with a production build (Chromium-based
+browsers):
+
+1. Run `npm run build && npm run preview`.
+2. Open the preview URL in a fresh profile or after clearing site data.
+3. Confirm the header shows the install control (download icon) once install
+   criteria are met.
+4. Click the control and complete the browser install prompt.
+5. Confirm the control disappears after install, or when reopening the app in
+   standalone mode.
 
 ## Cache and Service Worker Reset
 
