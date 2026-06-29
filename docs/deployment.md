@@ -12,16 +12,15 @@ static `dist/` output to `agents-repo/agents-repo.github.io`.
 1. A releasable conventional commit is merged to `main`.
 2. The **Release** workflow runs validation and `semantic-release`, creating a
    `v<MAJOR>.<MINOR>.<PATCH>` tag and GitHub Release when applicable.
-3. When semantic-release publishes a new release, a follow-up workflow step reads
-   the release tag from git (`git describe --tags --exact-match`) and sets
-   `published=true` and `tag=vX.Y.Z` on `$GITHUB_OUTPUT` from the Actions step
-   shell. The **Release** workflow then chains to **Pages Deploy** via
-   `workflow_call`, checks out the release tag, runs `npm run build:pages`, and
-   pushes `dist/` to the Pages repository `main` branch.
+3. When semantic-release publishes a new release, the **Release** workflow
+   `release-publish` job fetches tags (`git fetch --tags`), detects the tag on
+   HEAD (`git tag --points-at HEAD`), and runs `npm run build:pages` plus
+   `peaceiris/actions-gh-pages` as conditional steps in the same job.
 
 Automated releases use `GITHUB_TOKEN`, which does not trigger `release:
-published` in separate workflows. Chaining deploy from the Release workflow
-avoids that GitHub Actions limitation.
+published` in separate workflows. Inline deploy in the Release workflow avoids
+that GitHub Actions limitation. Use the **Pages Deploy** workflow for manual
+redeploy of an existing tag.
 
 The `build:pages` script adds GitHub Pages SPA support:
 
