@@ -92,10 +92,21 @@ jobs:
         uses: ./.github/actions/setup-node-pinned-npm
 
       - name: Run semantic-release
-        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Set release outputs
+        id: release
+        run: |
+          TAG=$(git describe --tags --exact-match 2>/dev/null || true)
+          if [[ "$TAG" == v* ]]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "tag=" >> "$GITHUB_OUTPUT"
+          fi
 
   deploy-pages:
     name: Deploy to GitHub Pages
