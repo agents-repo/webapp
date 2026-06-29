@@ -12,10 +12,11 @@ static `dist/` output to `agents-repo/agents-repo.github.io`.
 1. A releasable conventional commit is merged to `main`.
 2. The **Release** workflow runs validation and `semantic-release`, creating a
    `v<MAJOR>.<MINOR>.<PATCH>` tag and GitHub Release when applicable.
-3. When semantic-release publishes a new tag, the **Release** workflow chains
-   to **Pages Deploy** via `workflow_call`, checks out the release tag, runs
-   `npm run build:pages`, and pushes `dist/` to the Pages repository `main`
-   branch.
+3. When semantic-release publishes a new release, `@semantic-release/exec`
+   writes `published=true` and the release tag to `$GITHUB_OUTPUT`. The
+   **Release** workflow then chains to **Pages Deploy** via `workflow_call`,
+   checks out the release tag, runs `npm run build:pages`, and pushes `dist/` to
+   the Pages repository `main` branch.
 
 Automated releases use `GITHUB_TOKEN`, which does not trigger `release:
 published` in separate workflows. Chaining deploy from the Release workflow
