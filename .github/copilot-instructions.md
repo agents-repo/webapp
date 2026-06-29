@@ -21,12 +21,17 @@ Mandatory for all changes:
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
+Mandatory for UI and accessibility changes:
+
+- `docs/accessibility.md`
+
 Mandatory before structural, architectural, styling, or technology stack
 changes:
 
 - `docs/ai-collaboration.md`
 - `docs/styling-and-technology.md`
 - `docs/architecture/ddd-decision.md`
+- `docs/architecture/accessibility-decision.md`
 
 If a change alters local setup, contributor workflow, review expectations,
 validation commands, architecture, project structure, styling model, or

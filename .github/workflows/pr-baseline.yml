@@ -28,3 +28,6 @@ jobs:
 
       - name: Build for Pages
         run: npm run build:pages
+
+      - name: Accessibility scan (Lighthouse + pa11y)
+        run: npm run a11y:ci

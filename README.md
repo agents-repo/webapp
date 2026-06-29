@@ -47,6 +47,16 @@ npm run build
 npm run build:pages
 ```
 
+Accessibility-focused checks:
+
+```bash
+npm run test:a11y
+npm run a11y:ci
+```
+
+See [docs/accessibility.md](docs/accessibility.md) for patterns and the public
+statement at `/accessibility`.
+
 ## Registry Source Configuration
 
 The app resolves the registry source URL with runtime-first precedence:
@@ -193,14 +203,16 @@ rollback instructions.
 - AI collaboration guidance: [docs/ai-collaboration.md](docs/ai-collaboration.md)
 - Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
 - Architecture and DDD decision: [docs/architecture/ddd-decision.md](docs/architecture/ddd-decision.md)
+- Accessibility guide: [docs/accessibility.md](docs/accessibility.md)
+- Public accessibility statement: `/accessibility` route in the deployed app
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - Copilot project instructions:
   [.github/copilot-instructions.md](.github/copilot-instructions.md)
 
 ## Automation
 
-- **PR Baseline Checks** — lint, typecheck, test, and Pages build on pull
-  requests.
+- **PR Baseline Checks** — lint, typecheck, test, Pages build, and accessibility
+  scans (Lighthouse + pa11y) on pull requests.
 - **Release** — validation plus `semantic-release` on pushes to `main`.
 - **Pages Deploy** — builds and publishes `dist/` to `agents-repo.github.io` on
   each GitHub Release.

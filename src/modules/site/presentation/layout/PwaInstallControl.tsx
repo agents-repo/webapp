@@ -18,7 +18,8 @@ function PwaInstallControl() {
         void promptInstall()
       }}
       disabled={isInstalling}
-      aria-label="Install Agents Repo app"
+      aria-busy={isInstalling}
+      aria-label={isInstalling ? 'Installing Agents Repo app' : 'Install Agents Repo app'}
       title="Install app"
     >
       <FontAwesomeIcon icon={faDownload} className="fa-fw" aria-hidden="true" />

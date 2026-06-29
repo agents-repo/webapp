@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import globals from 'globals'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import security from 'eslint-plugin-security'
@@ -35,9 +36,17 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
       sonarjs.configs.recommended,
+      jsxA11y.flatConfigs.recommended,
     ],
     plugins: {
       security,
+    },
+    settings: {
+      'jsx-a11y': {
+        components: {
+          NavLink: 'a',
+        },
+      },
     },
     languageOptions: {
       globals: globals.browser,
@@ -48,6 +57,14 @@ export default defineConfig([
     rules: {
       complexity: ['warn', 12],
       'max-depth': ['warn', 4],
+      'jsx-a11y/anchor-is-valid': [
+        'error',
+        {
+          components: ['NavLink', 'Link'],
+          specialLink: ['to'],
+          aspects: ['invalidHref', 'preferButton'],
+        },
+      ],
       'security/detect-object-injection': 'off',
       'security/detect-non-literal-regexp': 'warn',
       'sonarjs/cognitive-complexity': ['warn', 12],

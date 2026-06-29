@@ -1,5 +1,8 @@
 import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
+import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
@@ -12,8 +15,10 @@ const WEBAPP_CONTRIBUTING_URL =
 const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 
 function HelpUsPage() {
+  useDocumentTitle(sitePageMeta[siteRoutes.helpUs].title)
+
   return (
-    <main className="py-5">
+    <main id="main-content" tabIndex={-1} className="py-5">
       <Container>
         <h1 className="h2 mb-4">Help Us</h1>
 
@@ -60,19 +65,34 @@ function HelpUsPage() {
               </ul>
               <ul className="mb-0">
                 <li>
-                  <a href={REGISTRY_REPO_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={REGISTRY_REPO_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                  >
                     agents-repo/registry
                   </a>{' '}
                   — agents, flows, and registry index
                 </li>
                 <li>
-                  <a href={REGISTRY_CONTRIBUTING_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={REGISTRY_CONTRIBUTING_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('Registry contributing guide')}
+                  >
                     Contributing guide
                   </a>{' '}
                   — package submission workflow and requirements
                 </li>
                 <li>
-                  <a href={REGISTRY_ISSUES_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={REGISTRY_ISSUES_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('Registry issues')}
+                  >
                     Issues
                   </a>{' '}
                   — package submissions and catalog work
@@ -103,19 +123,34 @@ function HelpUsPage() {
               </ul>
               <ul className="mb-0">
                 <li>
-                  <a href={WEBAPP_REPO_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={WEBAPP_REPO_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('agents-repo/webapp repository')}
+                  >
                     agents-repo/webapp
                   </a>{' '}
                   — this web application
                 </li>
                 <li>
-                  <a href={WEBAPP_CONTRIBUTING_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={WEBAPP_CONTRIBUTING_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('Webapp contributing guide')}
+                  >
                     Contributing guide
                   </a>{' '}
                   — branch naming, validation, and PR expectations
                 </li>
                 <li>
-                  <a href={WEBAPP_ISSUES_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={WEBAPP_ISSUES_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('Webapp issues')}
+                  >
                     Issues
                   </a>{' '}
                   — bugs, UI problems, and tracked work

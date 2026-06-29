@@ -115,7 +115,10 @@ npm run lint:all
 npm run test
 npm run typecheck
 npm run build:pages
+npm run a11y:ci
 ```
+
+For UI changes, also run `npm run test:a11y`. See [docs/accessibility.md](../docs/accessibility.md).
 
 This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
 

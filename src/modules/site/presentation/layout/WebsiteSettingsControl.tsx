@@ -3,6 +3,7 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Badge, Button, Form, Modal, Stack } from 'react-bootstrap'
 import { isSafeExternalHttpUrl } from '../../application/urlSafety'
+import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
   clearRegistryTagListCache,
@@ -48,7 +49,13 @@ const formatRefResolutionLabel = (resolution: RegistryRefResolution | null | und
 const renderSourceLink = (url: string): ReactNode => {
   if (isSafeExternalHttpUrl(url)) {
     return (
-      <a href={url} target="_blank" rel="noreferrer noopener" className="text-reset text-break">
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="text-reset text-break"
+        aria-label={externalLinkAccessibleName(url)}
+      >
         {url}
       </a>
     )
@@ -61,7 +68,13 @@ const renderCatalogStatusNote = (note: RegistryCatalogStatusNote): ReactNode => 
   <p className="small text-body-secondary opacity-75 mb-0">
     {note.summaryText}
     {isSafeExternalHttpUrl(note.sourceUrl) ? (
-      <a href={note.sourceUrl} target="_blank" rel="noreferrer noopener" className="text-reset text-break">
+      <a
+        href={note.sourceUrl}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="text-reset text-break"
+        aria-label={externalLinkAccessibleName(note.sourceUrl)}
+      >
         {note.sourceUrl}
       </a>
     ) : (
@@ -296,22 +309,23 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
         </Modal.Header>
 
         <Modal.Body>
-          <Stack gap={4}>
-            <section>
-              <h3 className="h6 mb-2">Registry source</h3>
-              <p className="small text-body-secondary mb-3">
-                Configure the registry base URL used to load the registry index ({configuredSource.indexPath}) at
-                runtime. GitHub repository URLs are converted to a raw content URL. Raw and other base URLs are used
-                directly. Major-version line refs such as <code>1.x</code> resolve to the latest stable release tag.
-              </p>
+          <Form
+            id="website-settings-form"
+            noValidate
+            onSubmit={(event) => {
+              event.preventDefault()
+              void saveRegistrySettings()
+            }}
+          >
+            <Stack gap={4}>
+              <section>
+                <h3 className="h6 mb-2">Registry source</h3>
+                <p className="small text-body-secondary mb-3">
+                  Configure the registry base URL used to load the registry index ({configuredSource.indexPath}) at
+                  runtime. GitHub repository URLs are converted to a raw content URL. Raw and other base URLs are used
+                  directly. Major-version line refs such as <code>1.x</code> resolve to the latest stable release tag.
+                </p>
 
-              <Form
-                noValidate
-                onSubmit={(event) => {
-                  event.preventDefault()
-                  void saveRegistrySettings()
-                }}
-              >
                 <Form.Group controlId="registry-base-url-override-input" className="mb-3">
                   <Form.Label>Registry base URL override</Form.Label>
                   <Form.Control
@@ -345,52 +359,52 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                 </div>
 
                 {registryCatalogStatusNote ? renderCatalogStatusNote(registryCatalogStatusNote) : null}
-              </Form>
-            </section>
+              </section>
 
-            <section>
-              <h3 className="h6 mb-2">Package browse links</h3>
-              <p className="small text-body-secondary mb-3">
-                Configure the GitHub repository URL used for &quot;view package on GitHub&quot; links in package cards.
-                This does not affect catalog fetching. GitHub tree URLs may use major-version line refs such as{' '}
-                <code>1.x</code>.
-              </p>
+              <section>
+                <h3 className="h6 mb-2">Package browse links</h3>
+                <p className="small text-body-secondary mb-3">
+                  Configure the GitHub repository URL used for &quot;view package on GitHub&quot; links in package cards.
+                  This does not affect catalog fetching. GitHub tree URLs may use major-version line refs such as{' '}
+                  <code>1.x</code>.
+                </p>
 
-              <Form.Group controlId="registry-github-repository-url-override-input">
-                <Form.Label>GitHub repository URL</Form.Label>
-                <Form.Control
-                  type="url"
-                  placeholder={configuredSource.configuredGithubRepositoryUrl}
-                  value={modalState.githubRepositoryUrlInput}
-                  onChange={(event) => {
-                    setModalState((previousValue) => ({
-                      ...previousValue,
-                      githubRepositoryUrlInput: event.target.value,
-                      githubRepositoryUrlValidationError: null,
-                    }))
-                  }}
-                  isInvalid={modalState.githubRepositoryUrlValidationError !== null}
-                  disabled={modalState.isSaving}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {modalState.githubRepositoryUrlValidationError}
-                </Form.Control.Feedback>
-                <Form.Text>
-                  Enter a GitHub repository URL like https://github.com/agents-repo/registry or a GitHub tree URL such
-                  as https://github.com/agents-repo/registry/tree/1.x. Leave this field empty to use the configured
-                  default: {configuredSource.configuredGithubRepositoryUrl}
-                </Form.Text>
-              </Form.Group>
+                <Form.Group controlId="registry-github-repository-url-override-input">
+                  <Form.Label>GitHub repository URL</Form.Label>
+                  <Form.Control
+                    type="url"
+                    placeholder={configuredSource.configuredGithubRepositoryUrl}
+                    value={modalState.githubRepositoryUrlInput}
+                    onChange={(event) => {
+                      setModalState((previousValue) => ({
+                        ...previousValue,
+                        githubRepositoryUrlInput: event.target.value,
+                        githubRepositoryUrlValidationError: null,
+                      }))
+                    }}
+                    isInvalid={modalState.githubRepositoryUrlValidationError !== null}
+                    disabled={modalState.isSaving}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {modalState.githubRepositoryUrlValidationError}
+                  </Form.Control.Feedback>
+                  <Form.Text>
+                    Enter a GitHub repository URL like https://github.com/agents-repo/registry or a GitHub tree URL such
+                    as https://github.com/agents-repo/registry/tree/1.x. Leave this field empty to use the configured
+                    default: {configuredSource.configuredGithubRepositoryUrl}
+                  </Form.Text>
+                </Form.Group>
 
-              <div className="small text-body-secondary mt-3 d-flex align-items-center gap-2 flex-wrap">
-                <span>Current GitHub repository:</span>
-                {renderSourceLink(activeSource.githubRepositoryUrl)}
-                <SourceModeBadge mode={activeSource.githubRepositorySourceMode} />
-                {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
-                <RefResolutionBadge label={currentGithubRepositoryRefResolution} />
-              </div>
-            </section>
-          </Stack>
+                <div className="small text-body-secondary mt-3 d-flex align-items-center gap-2 flex-wrap">
+                  <span>Current GitHub repository:</span>
+                  {renderSourceLink(activeSource.githubRepositoryUrl)}
+                  <SourceModeBadge mode={activeSource.githubRepositorySourceMode} />
+                  {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
+                  <RefResolutionBadge label={currentGithubRepositoryRefResolution} />
+                </div>
+              </section>
+            </Stack>
+          </Form>
         </Modal.Body>
 
         <Modal.Footer>
@@ -400,7 +414,12 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
           <Button variant="secondary" onClick={closeModal} disabled={modalState.isSaving}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => void saveRegistrySettings()} disabled={modalState.isSaving}>
+          <Button
+            variant="primary"
+            type="submit"
+            form="website-settings-form"
+            disabled={modalState.isSaving}
+          >
             {modalState.isSaving ? 'Saving…' : 'Save changes'}
           </Button>
         </Modal.Footer>

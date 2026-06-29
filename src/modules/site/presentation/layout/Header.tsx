@@ -26,6 +26,7 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
       expand="lg"
       collapseOnSelect
       className="border-bottom border-secondary-subtle py-2 app-navbar"
+      aria-label="Primary"
     >
       <Container className="gap-2 app-navbar-main">
         <Navbar.Brand as={NavLink} to={siteRoutes.home} className="d-flex align-items-center gap-2 fw-semibold">
