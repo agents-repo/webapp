@@ -38,7 +38,6 @@
         "preset": "conventionalcommits"
       }
     ],
-    "@semantic-release/github",
-    "semantic-release-gha-output"
+    "@semantic-release/github"
   ]
 }
