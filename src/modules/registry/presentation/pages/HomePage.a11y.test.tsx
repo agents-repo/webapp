@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
@@ -32,9 +32,7 @@ describe('HomePage accessibility', () => {
       />,
     )
 
-    await waitFor(() => {
-      expect(loadRegistryCatalogMock).toHaveBeenCalled()
-    })
+    await screen.findByRole('heading', { name: 'sample-agent' })
 
     const results = await axe(container, axeOptions)
     expect(results.violations).toHaveLength(0)

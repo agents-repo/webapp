@@ -11,13 +11,13 @@ function RouteAnnouncer() {
     const pageMeta = getSitePageMeta(location.pathname)
     const mainContent = document.getElementById('main-content')
 
-    if (announcementRef.current) {
-      announcementRef.current.textContent = `Navigated to ${pageMeta.routeLabel}`
-    }
-
     if (isInitialRenderRef.current) {
       isInitialRenderRef.current = false
       return
+    }
+
+    if (announcementRef.current) {
+      announcementRef.current.textContent = `Navigated to ${pageMeta.routeLabel}`
     }
 
     const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
