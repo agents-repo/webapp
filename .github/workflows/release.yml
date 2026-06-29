@@ -79,9 +79,6 @@ jobs:
       pull-requests: write
     needs:
       - validate
-    outputs:
-      published: ${{ steps.release.outputs.published }}
-      tag: ${{ steps.release.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -99,8 +96,9 @@ jobs:
       - name: Set release outputs
         id: release
         run: |
-          TAG=$(git describe --tags --exact-match 2>/dev/null || true)
-          if [[ "$TAG" == v* ]]; then
+          git fetch --tags origin
+          TAG=$(git tag -l 'v*' --points-at HEAD | sort -V | tail -1)
+          if [ -n "$TAG" ]; then
             echo "published=true" >> "$GITHUB_OUTPUT"
             echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           else
@@ -108,13 +106,17 @@ jobs:
             echo "tag=" >> "$GITHUB_OUTPUT"
           fi
 
-  deploy-pages:
-    name: Deploy to GitHub Pages
-    needs: release-publish
-    if: >-
-      needs.release-publish.outputs.published == 'true' &&
-      startsWith(needs.release-publish.outputs.tag, 'v')
-    uses: ./.github/workflows/pages-deploy.yml
-    with:
-      tag: ${{ needs.release-publish.outputs.tag }}
-    secrets: inherit
+      - name: Build for Pages
+        if: steps.release.outputs.published == 'true'
+        run: npm run build:pages
+
+      - name: Deploy to agents-repo.github.io
+        if: steps.release.outputs.published == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          external_repository: agents-repo/agents-repo.github.io
+          publish_branch: main
+          publish_dir: ./dist
+          keep_files: true
+          commit_message: "deploy: webapp ${{ steps.release.outputs.tag }}"
