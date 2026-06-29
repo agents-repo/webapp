@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+    }
+  },
+  "urls": [
+    "http://localhost:4173/",
+    "http://localhost:4173/about",
+    "http://localhost:4173/contact",
+    "http://localhost:4173/help-us",
+    "http://localhost:4173/accessibility"
+  ]
+}

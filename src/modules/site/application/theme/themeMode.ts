@@ -6,6 +6,27 @@ export type AppliedThemeMode = Exclude<ThemeMode, 'auto'>
 
 const themeStorageKey = 'theme'
 const themePreferenceQuery = '(prefers-color-scheme: dark)'
+const themeColorMetaName = 'theme-color'
+const themeColorByMode: Record<AppliedThemeMode, string> = {
+  light: '#ffffff',
+  dark: '#13101b',
+}
+
+function updateThemeColorMeta(appliedThemeMode: AppliedThemeMode): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  let themeColorMeta = document.querySelector<HTMLMetaElement>(`meta[name="${themeColorMetaName}"]`)
+
+  if (!themeColorMeta) {
+    themeColorMeta = document.createElement('meta')
+    themeColorMeta.name = themeColorMetaName
+    document.head.appendChild(themeColorMeta)
+  }
+
+  themeColorMeta.content = themeColorByMode[appliedThemeMode]
+}
 
 function isThemeMode(value: string | null): value is ThemeMode {
   return value === 'light' || value === 'dark' || value === 'auto'
@@ -56,6 +77,7 @@ export function getAppliedThemeMode(themeMode: ThemeMode): AppliedThemeMode {
 export function applyThemeMode(themeMode: ThemeMode): AppliedThemeMode {
   const appliedThemeMode = getAppliedThemeMode(themeMode)
   globalThis.document.documentElement.dataset.bsTheme = appliedThemeMode
+  updateThemeColorMeta(appliedThemeMode)
 
   return appliedThemeMode
 }

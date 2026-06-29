@@ -2,6 +2,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
+import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
@@ -12,8 +15,10 @@ const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
 const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
 
 function ContactPage() {
+  useDocumentTitle(sitePageMeta[siteRoutes.contact].title)
+
   return (
-    <main className="py-5">
+    <main id="main-content" tabIndex={-1} className="py-5">
       <Container>
         <h1 className="h2 mb-4">Contact</h1>
 
@@ -40,13 +45,23 @@ function ContactPage() {
                   </p>
                   <ul className="mb-0">
                     <li>
-                      <a href={WEBAPP_DISCUSSIONS_URL} target="_blank" rel="noreferrer noopener">
+                      <a
+                        href={WEBAPP_DISCUSSIONS_URL}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={externalLinkAccessibleName('Webapp discussions')}
+                      >
                         Discussions
                       </a>{' '}
                       — usage questions and open-ended help
                     </li>
                     <li>
-                      <a href={WEBAPP_ISSUES_URL} target="_blank" rel="noreferrer noopener">
+                      <a
+                        href={WEBAPP_ISSUES_URL}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={externalLinkAccessibleName('Webapp issues')}
+                      >
                         Issues
                       </a>{' '}
                       — bugs, UI problems, and tracked work
@@ -66,13 +81,23 @@ function ContactPage() {
                   </p>
                   <ul className="mb-0">
                     <li>
-                      <a href={REGISTRY_DISCUSSIONS_URL} target="_blank" rel="noreferrer noopener">
+                      <a
+                        href={REGISTRY_DISCUSSIONS_URL}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={externalLinkAccessibleName('Registry discussions')}
+                      >
                         Discussions
                       </a>{' '}
                       — usage questions and package ideas
                     </li>
                     <li>
-                      <a href={REGISTRY_ISSUES_URL} target="_blank" rel="noreferrer noopener">
+                      <a
+                        href={REGISTRY_ISSUES_URL}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        aria-label={externalLinkAccessibleName('Registry issues')}
+                      >
                         Issues
                       </a>{' '}
                       — package submissions, catalog problems, and tracked work

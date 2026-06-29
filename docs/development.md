@@ -19,12 +19,18 @@ Run these checks before opening a pull request:
 npm run env:check
 npm run lint:all
 npm run test
+npm run test:a11y
 npm run typecheck
 npm run build:pages
 ```
 
+For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci` after `build:pages`.
+
 Use `npm run build` for a standard production build. Use `npm run build:pages`
 when validating the GitHub Pages output (adds `.nojekyll` and `404.html`).
+
+Accessibility expectations and validation details are documented in
+[accessibility.md](accessibility.md).
 
 Deployment and release details are documented in [deployment.md](deployment.md).
 

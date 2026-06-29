@@ -25,7 +25,11 @@ import {
   Stack,
 } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
+import { sitePageMeta } from '../../../site/application/accessibility/sitePageMeta'
+import { useDocumentTitle } from '../../../site/application/accessibility/useDocumentTitle'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
+import { siteRoutes } from '../../../site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
 import type { InstallTargetEntry, PackageStatus, RegistryCatalog, RegistryPackage } from '../../domain/package'
 import { getInstallTargetLabel } from '../../application/installTargets'
@@ -80,7 +84,6 @@ const renderPackageDownloadAction = (
       id={`download-actions-${pkg.id}`}
       className="d-inline-flex align-items-center justify-content-center"
       aria-label={`Download ${pkg.name}`}
-      title={`Download ${pkg.name}`}
     >
       <FontAwesomeIcon icon={faDownload} aria-hidden="true" className="me-1" />
     </Dropdown.Toggle>
@@ -187,11 +190,32 @@ const getCatalogAlertState = ({
   return null
 }
 
+const getCatalogResultsSummary = ({
+  catalog,
+  filteredCount,
+  isLoading,
+}: {
+  catalog: RegistryCatalog | null
+  filteredCount: number
+  isLoading: boolean
+}): string => {
+  if (catalog) {
+    return `Showing ${filteredCount} of ${catalog.packages.length} packages`
+  }
+
+  if (isLoading) {
+    return 'Loading registry catalog'
+  }
+
+  return 'No catalog data available'
+}
+
 function HomePage({
   setHeaderSearchSlot,
   registrySettingsVersion,
   onCatalogStatusNoteChange,
 }: HomePageProps) {
+  useDocumentTitle(sitePageMeta[siteRoutes.home].title)
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
   const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
@@ -282,6 +306,12 @@ function HomePage({
     return filterRegistryPackages(catalog, query)
   }, [catalog, query])
 
+  const catalogResultsSummary = getCatalogResultsSummary({
+    catalog,
+    filteredCount: filteredPackages.length,
+    isLoading: isCatalogLoading,
+  })
+
   const searchControl = useMemo(
     () => (
       <Form
@@ -290,20 +320,26 @@ function HomePage({
         className="w-100"
         onSubmit={(event) => event.preventDefault()}
       >
+        <Form.Label htmlFor="registry-package-search" className="visually-hidden">
+          Search registry packages
+        </Form.Label>
         <InputGroup size="sm" className="search-control">
           <InputGroup.Text className="bg-primary border-primary text-white">
             <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
             Search
           </InputGroup.Text>
           <Form.Control
+            id="registry-package-search"
             size="sm"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search by package, owner (@slug), description, or tag"
-            aria-label="Search registry packages"
             className="border-secondary search-input"
           />
         </InputGroup>
+        <button type="submit" className="visually-hidden">
+          Search
+        </button>
       </Form>
     ),
     [query],
@@ -318,7 +354,7 @@ function HomePage({
   }, [searchControl, setHeaderSearchSlot, stickySearch])
 
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
         <Container>
           <Row className="justify-content-center">
@@ -354,8 +390,8 @@ function HomePage({
                   </Badge>
                 ) : null}
               </h2>
-              <p className="text-body-secondary mb-0 small">
-                Showing {filteredPackages.length} of {catalog?.packages.length ?? 0}
+              <p className="text-body-secondary mb-0 small" aria-live="polite" aria-atomic="true">
+                {catalogResultsSummary}
               </p>
             </Col>
           </Row>
@@ -366,7 +402,12 @@ function HomePage({
               {canShowCatalogSourceLink ? (
                 <>
                   {' '}
-                  <a href={catalogSourceUrl} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={catalogSourceUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('Check configured index URL')}
+                  >
                     Check configured index URL
                   </a>.
                 </>
@@ -399,6 +440,7 @@ function HomePage({
                               as="button"
                               id={`owner-actions-${pkg.id}`}
                               className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline d-inline-flex align-items-center owner-dropdown-toggle"
+                              aria-label={`Actions for owner ${pkg.owner}`}
                             >
                               {pkg.owner}
                               <FontAwesomeIcon icon={faChevronDown} size="xs" className="ms-1" aria-hidden="true" />
@@ -462,7 +504,6 @@ function HomePage({
                           size="lg"
                           className="d-inline-flex align-items-center justify-content-center"
                           aria-label={`View ${pkg.name} on GitHub (opens in a new tab)`}
-                          title={`View ${pkg.name} on GitHub`}
                         >
                           <FontAwesomeIcon icon={faEye} aria-hidden="true" />
                         </Button>

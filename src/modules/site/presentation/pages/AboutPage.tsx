@@ -2,6 +2,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
+import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
@@ -10,8 +13,10 @@ const WEBAPP_REPO_URL = 'https://github.com/agents-repo/webapp'
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 
 function AboutPage() {
+  useDocumentTitle(sitePageMeta[siteRoutes.about].title)
+
   return (
-    <main className="py-5">
+    <main id="main-content" tabIndex={-1} className="py-5">
       <Container>
         <h1 className="h2 mb-4">About</h1>
 
@@ -100,13 +105,23 @@ function AboutPage() {
               </p>
               <ul className="mb-0">
                 <li>
-                  <a href={WEBAPP_REPO_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={WEBAPP_REPO_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('agents-repo/webapp repository')}
+                  >
                     agents-repo/webapp
                   </a>{' '}
                   — this web application
                 </li>
                 <li>
-                  <a href={REGISTRY_REPO_URL} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={REGISTRY_REPO_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                  >
                     agents-repo/registry
                   </a>{' '}
                   — agents, flows, and registry index
