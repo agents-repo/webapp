@@ -17,9 +17,8 @@ automated regression checks in pull request CI.
 2. **Patterns:** Centralize recurring behavior in `src/modules/site/application/accessibility/`
 3. **Enforcement layers:**
    - `eslint-plugin-jsx-a11y` during development
-   - `vitest-axe` component smoke tests
-   - Lighthouse CI accessibility category (minimum 0.95)
-   - `pa11y-ci` with `WCAG2AA` on all public routes after `build:pages`
+   - `vitest-axe` component smoke tests in PR baseline
+   - Lighthouse CI + `pa11y-ci` via `npm run a11y:ci` (local validation only)
 4. **Public transparency:** HTML Accessibility Conformance Report at `/accessibility`,
    linked from the footer Legal column only
 5. **SPA behavior:** Skip link, per-route `document.title`, route announcer with focus on `#main-content`
@@ -59,13 +58,14 @@ self-assessment that can be updated after external review.
 | --- | --- |
 | WCAG Level A only | Insufficient for a public product surface |
 | ESLint only | Misses runtime markup and contrast issues |
-| Playwright E2E a11y suite | Higher maintenance; Lighthouse + pa11y cover PR regression |
+| Playwright E2E a11y suite | Higher maintenance; Lighthouse + pa11y kept as local checks |
 | PDF VPAT download | HTML ACR is easier to keep in sync with the app |
 
 ## Consequences
 
 - UI contributors must follow `docs/accessibility.md`
-- PR baseline runtime increases due to Lighthouse and pa11y scans
+- PR authors should run `npm run a11y:ci` locally when changing UI accessibility;
+  it is not run in PR baseline CI due to runtime cost
 - `eslint-plugin-jsx-a11y` uses an npm `overrides` entry for ESLint 10 until upstream peer support lands
 - Home page CI scans may run against empty or error catalog states when registry fetch
   fails in CI; structural accessibility is still validated

@@ -65,9 +65,10 @@ npm run a11y:ci
 | --- | --- |
 | `npm run lint` | Includes `eslint-plugin-jsx-a11y` recommended rules |
 | `npm run test:a11y` | Vitest + axe smoke tests on key UI surfaces |
-| `npm run a11y:ci` | Lighthouse (min 0.9) + pa11y WCAG2AA on built `dist/` |
+| `npm run a11y:ci` | Lighthouse (min 0.9) + pa11y WCAG2AA on built `dist/` (local only) |
 
-CI runs `npm run a11y:ci` after `build:pages` in `.github/workflows/pr-baseline.yml`.
+Run `npm run a11y:ci` after `build:pages` when validating accessibility changes
+locally. It is not part of PR baseline CI due to runtime cost.
 
 ## Pull request checklist
 

@@ -57,5 +57,5 @@ export const accessibilityMeasures: readonly string[] = [
   'Consistent external-link labeling for new-tab navigation',
   'Light, dark, and system color modes with theme-color meta updates',
   'Reduced-motion support for non-essential transitions',
-  'eslint-plugin-jsx-a11y, vitest-axe component tests, Lighthouse CI, and pa11y scans in pull request checks',
+  'eslint-plugin-jsx-a11y, vitest-axe component tests, and local Lighthouse/pa11y scans via npm run a11y:ci',
 ] as const

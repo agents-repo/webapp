@@ -47,7 +47,7 @@ npm run build
 npm run build:pages
 ```
 
-Accessibility-focused checks:
+Accessibility-focused checks (local only, not in PR baseline CI):
 
 ```bash
 npm run test:a11y
@@ -211,8 +211,7 @@ rollback instructions.
 
 ## Automation
 
-- **PR Baseline Checks** — lint, typecheck, test, Pages build, and accessibility
-  scans (Lighthouse + pa11y) on pull requests.
+- **PR Baseline Checks** — lint, typecheck, test, and Pages build on pull requests.
 - **Release** — validation plus `semantic-release` on pushes to `main`.
 - **Pages Deploy** — builds and publishes `dist/` to `agents-repo.github.io` on
   each GitHub Release.

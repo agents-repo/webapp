@@ -106,8 +106,8 @@ function AccessibilityPage() {
               <h2 className="h4">Assessment approach</h2>
               <p className="text-body-secondary mb-0">
                 This report is based on a self-assessment using manual keyboard testing, automated
-                eslint-jsx-a11y linting, vitest-axe component smoke tests, Lighthouse accessibility
-                scoring, and pa11y WCAG2AA scans in continuous integration.
+                eslint-jsx-a11y linting, vitest-axe component smoke tests, and local
+                Lighthouse/pa11y scans via `npm run a11y:ci`.
               </p>
             </Card.Body>
           </Card>
