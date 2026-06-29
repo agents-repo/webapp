@@ -277,6 +277,171 @@ describe('loadRegistryCatalog', () => {
     expect(globalThis.fetch).not.toHaveBeenCalled()
   })
 
+  it('skips conditional headers for cross-origin catalog refresh', async () => {
+    const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
+    const staleCatalog: RegistryCatalog = {
+      schemaVersion: '1.2.0',
+      updatedAt: '2026-06-08T02:09:56.645Z',
+      packages: [
+        {
+          id: 'demo',
+          name: 'Demo',
+          description: 'Demo package',
+          owner: 'agents-repo',
+          latest: '1.0.0',
+          tags: [],
+          status: 'active',
+          category: 'assistant',
+          estimateOverallCost: { band: 'low' },
+        },
+      ],
+    }
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
+      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      runtimeBaseUrlOverride: null,
+      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0',
+      indexPath: 'packages/index.json',
+      indexUrl,
+      sourceMode: 'configured',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeGithubRepositoryUrlOverride: null,
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositorySourceMode: 'configured',
+      baseUrlRefResolution: { alias: 'v1.x', resolvedRef: 'v1.2.0' },
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue({
+      cacheVersion: 1,
+      cachedAt: Date.now(),
+      indexUrl,
+      catalog: staleCatalog,
+      etag: '"abc123"',
+    })
+
+    const locationDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'location')
+    Object.defineProperty(globalThis, 'location', {
+      configurable: true,
+      value: { origin: 'https://agents-repo.github.io' },
+    })
+
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(staleCatalog), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ETag: '"abc123"' },
+      }),
+    )
+
+    try {
+      const result = await loadRegistryCatalog()
+
+      expect(result.catalog).toEqual(staleCatalog)
+      expect(result.cacheState).toBe('none')
+      expect(fetchMock).toHaveBeenCalledWith(
+        indexUrl,
+        expect.objectContaining({
+          headers: { Accept: 'application/json' },
+        }),
+      )
+    } finally {
+      if (locationDescriptor) {
+        Object.defineProperty(globalThis, 'location', locationDescriptor)
+      } else {
+        Reflect.deleteProperty(globalThis, 'location')
+      }
+    }
+  })
+
+  it('sends conditional headers for same-origin catalog refresh', async () => {
+    const indexUrl = 'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0'
+    const staleCatalog: RegistryCatalog = {
+      schemaVersion: '1.2.0',
+      updatedAt: '2026-06-08T02:09:56.645Z',
+      packages: [
+        {
+          id: 'demo',
+          name: 'Demo',
+          description: 'Demo package',
+          owner: 'agents-repo',
+          latest: '1.0.0',
+          tags: [],
+          status: 'active',
+          category: 'assistant',
+          estimateOverallCost: { band: 'low' },
+        },
+      ],
+    }
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
+      sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
+      configuredBaseUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
+      runtimeBaseUrlOverride: null,
+      baseUrl: 'https://registry-proxy.example.workers.dev/?ref=v1.2.0',
+      indexPath: 'packages/index.json',
+      indexUrl,
+      sourceMode: 'configured',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeGithubRepositoryUrlOverride: null,
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositorySourceMode: 'configured',
+      baseUrlRefResolution: { alias: '1.x', resolvedRef: 'v1.2.0' },
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue({
+      cacheVersion: 1,
+      cachedAt: Date.now(),
+      indexUrl,
+      catalog: staleCatalog,
+      etag: '"abc123"',
+    })
+    vi.spyOn(registryCatalogCache, 'touchCatalogCache').mockImplementation(() => {})
+
+    const locationDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'location')
+    Object.defineProperty(globalThis, 'location', {
+      configurable: true,
+      value: { origin: 'https://registry-proxy.example.workers.dev' },
+    })
+
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 304 }))
+
+    try {
+      const result = await loadRegistryCatalog()
+
+      expect(result.catalog).toEqual(staleCatalog)
+      expect(result.cacheState).toBe('fresh')
+      expect(fetchMock).toHaveBeenCalledWith(
+        indexUrl,
+        expect.objectContaining({
+          headers: {
+            Accept: 'application/json',
+            'If-None-Match': '"abc123"',
+          },
+        }),
+      )
+    } finally {
+      if (locationDescriptor) {
+        Object.defineProperty(globalThis, 'location', locationDescriptor)
+      } else {
+        Reflect.deleteProperty(globalThis, 'location')
+      }
+    }
+  })
+
   it('returns stale fallback when network fetch fails and browse metadata rejects', async () => {
     const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
     const staleCatalog: RegistryCatalog = {

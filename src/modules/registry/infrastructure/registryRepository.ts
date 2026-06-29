@@ -145,9 +145,28 @@ const resolveBrowseCatalogLoadMetadata = async (options: {
   }
 }
 
+const isCrossOriginUrl = (url: string): boolean => {
+  try {
+    const pageOrigin = globalThis.location?.origin
+
+    if (!pageOrigin) {
+      return false
+    }
+
+    return new URL(url).origin !== pageOrigin
+  } catch {
+    return false
+  }
+}
+
 const buildConditionalHeaders = (
+  indexUrl: string,
   envelope: ReturnType<typeof readCatalogCacheEnvelope>,
 ): Record<string, string> => {
+  if (isCrossOriginUrl(indexUrl)) {
+    return {}
+  }
+
   const headers: Record<string, string> = {}
 
   if (envelope?.etag) {
@@ -291,7 +310,7 @@ export const loadRegistryCatalog = async (
   }
 
   const envelope = readCatalogCacheEnvelope(indexUrl)
-  const conditionalHeaders = buildConditionalHeaders(envelope)
+  const conditionalHeaders = buildConditionalHeaders(indexUrl, envelope)
   let browseMetadata: Awaited<ReturnType<typeof resolveRegistryBrowseSourceMetadata>> | undefined
 
   try {
