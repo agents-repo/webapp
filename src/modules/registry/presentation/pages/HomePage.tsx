@@ -336,10 +336,10 @@ function HomePage({
             placeholder="Search by package, owner (@slug), description, or tag"
             className="border-secondary search-input"
           />
-          <button type="submit" className="visually-hidden">
-            Search
-          </button>
         </InputGroup>
+        <button type="submit" className="visually-hidden">
+          Search
+        </button>
       </Form>
     ),
     [query],
