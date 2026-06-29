@@ -66,8 +66,7 @@ self-assessment that can be updated after external review.
 
 - UI contributors must follow `docs/accessibility.md`
 - PR baseline runtime increases due to Lighthouse and pa11y scans
-- `eslint-plugin-jsx-a11y` currently requires `--legacy-peer-deps` with ESLint 10 until
-  upstream peer support lands
+- `eslint-plugin-jsx-a11y` uses an npm `overrides` entry for ESLint 10 until upstream peer support lands
 - Home page CI scans may run against empty or error catalog states when registry fetch
   fails in CI; structural accessibility is still validated
 
