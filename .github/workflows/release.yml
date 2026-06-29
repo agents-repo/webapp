@@ -92,25 +92,17 @@ jobs:
         uses: ./.github/actions/setup-node-pinned-npm
 
       - name: Run semantic-release
+        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
-      - name: Set release outputs
-        id: release
-        run: |
-          if [ -f "$RUNNER_TEMP/release-tag.txt" ]; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "tag=$(tr -d '\n' < "$RUNNER_TEMP/release-tag.txt")" >> "$GITHUB_OUTPUT"
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-            echo "tag=" >> "$GITHUB_OUTPUT"
-          fi
-
   deploy-pages:
     name: Deploy to GitHub Pages
     needs: release-publish
-    if: needs.release-publish.outputs.published == 'true'
+    if: >-
+      needs.release-publish.outputs.published == 'true' &&
+      startsWith(needs.release-publish.outputs.tag, 'v')
     uses: ./.github/workflows/pages-deploy.yml
     with:
       tag: ${{ needs.release-publish.outputs.tag }}
