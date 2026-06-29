@@ -7,7 +7,7 @@ Use Corepack when possible so local npm matches CI.
 
 ```bash
 corepack enable
-corepack prepare npm@11.12.1 --activate
+corepack prepare npm@11.17.0 --activate
 npm install
 ```
 
