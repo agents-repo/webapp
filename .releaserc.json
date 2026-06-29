@@ -42,7 +42,7 @@
     [
       "@semantic-release/exec",
       {
-        "successCmd": "echo published=true >> $GITHUB_OUTPUT && echo tag=${nextRelease.gitTag} >> $GITHUB_OUTPUT"
+        "successCmd": "echo ${nextRelease.gitTag} > \"$RUNNER_TEMP/release-tag.txt\""
       }
     ]
   ]
