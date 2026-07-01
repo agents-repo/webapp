@@ -42,6 +42,7 @@ npm run dev
 npm run env:check
 npm run lint:all
 npm run test
+npm run test:watch
 npm run typecheck
 npm run build
 npm run build:pages
@@ -56,6 +57,9 @@ npm run a11y:ci
 
 See [docs/accessibility.md](docs/accessibility.md) for patterns and the public
 statement at `/accessibility`.
+
+See [docs/testing.md](docs/testing.md) for unit test conventions, coverage map,
+and the prioritized test backlog.
 
 ## Registry Source Configuration
 
@@ -199,6 +203,7 @@ rollback instructions.
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)
+- Testing guide: [docs/testing.md](docs/testing.md)
 - Deployment and Pages: [docs/deployment.md](docs/deployment.md)
 - AI collaboration guidance: [docs/ai-collaboration.md](docs/ai-collaboration.md)
 - Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
