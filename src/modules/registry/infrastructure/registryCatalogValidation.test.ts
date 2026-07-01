@@ -113,4 +113,71 @@ describe('isRegistryCatalog', () => {
     expect(isRegistryCatalog(payload)).toBe(false)
   })
 
+  it('rejects invalid updatedAt values', () => {
+    const payload = {
+      schemaVersion: '1.2.0',
+      updatedAt: 'not-a-date',
+      packages: [makeValidPackage()],
+    }
+
+    expect(isRegistryCatalog(payload)).toBe(false)
+  })
+
+  it('rejects estimatedCost values outside the supported integer range', () => {
+    const pkg = makeValidPackage()
+    pkg.estimateOverallCost = { estimatedCost: 0, band: 'low' }
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.2.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [pkg],
+      }),
+    ).toBe(false)
+
+    pkg.estimateOverallCost = { estimatedCost: 11, band: 'low' }
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.2.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [pkg],
+      }),
+    ).toBe(false)
+  })
+
+  it('rejects empty installTargets arrays and non-array packages', () => {
+    const pkg = makeValidPackage()
+    pkg.installTargets = []
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.2.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [pkg],
+      }),
+    ).toBe(false)
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.2.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: 'not-an-array',
+      }),
+    ).toBe(false)
+  })
+
+  it('rejects invalid quickstart types', () => {
+    const pkg = makeValidPackage()
+    pkg.quickstart = 42
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.2.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [pkg],
+      }),
+    ).toBe(false)
+  })
+
 })
