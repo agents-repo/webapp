@@ -70,6 +70,11 @@ npm run a11y:ci
 Run `npm run a11y:ci` after `build:pages` when validating accessibility changes
 locally. It is not part of PR baseline CI due to runtime cost.
 
+On Linux (including Linux Mint), `pa11y-ci` uses Puppeteer and needs a Chrome
+or Chromium binary. `npm run a11y:ci` auto-detects common paths such as
+`/usr/bin/google-chrome-stable`. To override, set `PUPPETEER_EXECUTABLE_PATH`
+or `CHROME_PATH` before running the command.
+
 ## Pull request checklist
 
 When changing UI:

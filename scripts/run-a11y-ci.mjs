@@ -1,15 +1,17 @@
 /* eslint-disable sonarjs/no-os-command-from-path */
 import { spawn } from 'node:child_process'
 import { setTimeout as delay } from 'node:timers/promises'
+import { resolveChromeExecutable } from './resolve-chrome-executable.mjs'
 
 const serverPort = 4173
 const serverReadyPattern = /Accepting connections/
 
-function runCommand(command, args) {
+function runCommand(command, args, env = process.env) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
       stdio: 'inherit',
       shell: process.platform === 'win32',
+      env,
     })
 
     child.on('error', reject)
@@ -63,12 +65,12 @@ async function stopServer(server) {
   }
 }
 
-async function runWithRetry(command, args, retries = 2) {
+async function runWithRetry(command, args, retries = 2, env = process.env) {
   let lastError
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
-      await runCommand(command, args)
+      await runCommand(command, args, env)
       return
     } catch (error) {
       lastError = error
@@ -82,6 +84,14 @@ async function runWithRetry(command, args, retries = 2) {
 }
 
 async function main() {
+  const chromeExecutable = resolveChromeExecutable()
+  const pa11yEnv = { ...process.env }
+
+  if (chromeExecutable) {
+    pa11yEnv.PUPPETEER_EXECUTABLE_PATH = chromeExecutable
+    pa11yEnv.CHROME_PATH = chromeExecutable
+  }
+
   const server = spawn('npx', ['serve', '-s', 'dist', '-l', String(serverPort)], {
     stdio: ['ignore', 'pipe', 'pipe'],
     shell: process.platform === 'win32',
@@ -90,7 +100,7 @@ async function main() {
   try {
     await waitForServerReady(server)
     await runWithRetry('npx', ['lhci', 'autorun'])
-    await runCommand('npx', ['pa11y-ci'])
+    await runCommand('npx', ['pa11y-ci'], pa11yEnv)
   } finally {
     await stopServer(server)
   }
