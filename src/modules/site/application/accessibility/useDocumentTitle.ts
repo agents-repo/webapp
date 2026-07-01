@@ -1,10 +1,7 @@
 import { useEffect } from 'react'
+import { formatDocumentTitle } from './documentTitleFormat.ts'
 
-const siteName = 'Agents Repo'
-
-export function formatDocumentTitle(pageTitle: string): string {
-  return `${pageTitle} — ${siteName}`
-}
+export { formatDocumentTitle } from './documentTitleFormat.ts'
 
 export function useDocumentTitle(pageTitle: string): void {
   useEffect(() => {

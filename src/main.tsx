@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import { BrowserRouter } from 'react-router-dom'
 import './styles/bootstrap-theme.scss'
 import './index.scss'
@@ -12,9 +13,11 @@ applyThemeMode(getInitialThemeMode())
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeModeProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </HelmetProvider>
     </ThemeModeProvider>
   </StrictMode>,
 )

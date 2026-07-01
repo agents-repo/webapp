@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
+import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
 import HomePage from './modules/registry/presentation/pages/HomePage'
 import Footer from './modules/site/presentation/layout/Footer'
@@ -23,6 +24,7 @@ function App() {
     <div className="app-shell">
       <SkipLink />
       <RouteAnnouncer />
+      <SiteHead />
       <Header
         searchSlot={headerSearchSlot}
         registryCatalogStatusNote={registryCatalogStatusNote}

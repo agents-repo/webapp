@@ -152,6 +152,7 @@ hard-coded locale strings.
 | Package search selectors | `registrySelectors.test.ts` |
 | URL safety | `urlSafety.test.ts` |
 | Site page meta | `sitePageMeta.test.ts` |
+| SEO head builder and meta | `buildRouteHead.test.ts`, `siteSeoMeta.test.ts`, `SiteHead.test.tsx` |
 | Theme mode persistence | `themeMode.test.ts` |
 | PWA install helpers | `pwaInstall.test.ts` |
 | External link accessible names | `externalLink.test.ts` |

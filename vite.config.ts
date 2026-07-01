@@ -34,6 +34,8 @@ export default defineConfig({
         'favicon.ico',
         'favicon.svg',
         'icons.svg',
+        'og-image.png',
+        'robots.txt',
         'site.webmanifest',
         'web-app-manifest-192x192.png',
         'web-app-manifest-512x512.png',

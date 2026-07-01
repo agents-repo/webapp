@@ -91,3 +91,4 @@ intentional exceptions.
 
 - [accessibility-decision.md](architecture/accessibility-decision.md)
 - [development.md](development.md)
+- [seo.md](seo.md) — search and social-preview metadata (additive to this guide)

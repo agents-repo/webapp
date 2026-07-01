@@ -98,6 +98,9 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Registry source configuration can be customized with Vite env vars:
    `VITE_REGISTRY_REPOSITORY_URL`, `VITE_REGISTRY_BASE_URL`,
    `VITE_REGISTRY_INDEX_PATH`, and `VITE_REGISTRY_GITHUB_REPOSITORY_URL`.
+- Optional `VITE_SITE_URL` sets the canonical and Open Graph origin for SEO
+   metadata during local `build:pages` previews (default:
+   `https://agents-repo.github.io`). See [seo.md](seo.md).
 - Registry source URLs may be GitHub repository URLs, raw URLs, or other base
    URLs, but the resolved source must still provide the expected registry
    structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`
