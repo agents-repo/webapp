@@ -1,4 +1,4 @@
-import { siteRoutes, type SiteRoutePath } from '../../presentation/routes/siteRoutes'
+import { siteRoutes, type SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
 
 export interface SitePageMeta {
   readonly title: string

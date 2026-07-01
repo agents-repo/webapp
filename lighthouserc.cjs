@@ -16,6 +16,7 @@ module.exports = {
     assert: {
       assertions: {
         'categories:accessibility': ['error', { minScore: 0.9 }],
+        'categories:seo': ['error', { minScore: 0.9 }],
       },
     },
     upload: {

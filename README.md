@@ -58,6 +58,8 @@ npm run a11y:ci
 See [docs/accessibility.md](docs/accessibility.md) for patterns and the public
 statement at `/accessibility`.
 
+See [docs/seo.md](docs/seo.md) for search and social-preview metadata patterns.
+
 See [docs/testing.md](docs/testing.md) for unit test conventions, coverage map,
 and the prioritized test backlog.
 
@@ -209,6 +211,7 @@ rollback instructions.
 - Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
 - Architecture and DDD decision: [docs/architecture/ddd-decision.md](docs/architecture/ddd-decision.md)
 - Accessibility guide: [docs/accessibility.md](docs/accessibility.md)
+- SEO guide: [docs/seo.md](docs/seo.md)
 - Public accessibility statement: `/accessibility` route in the deployed app
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - Copilot project instructions:
