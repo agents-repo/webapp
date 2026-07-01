@@ -117,7 +117,8 @@ extract it to a sibling module before testing.
 ### Component and hook tests
 
 - Use `renderWithProviders()` from `src/test/renderWithProviders.tsx` for
-  components that need routing or theme context.
+  components that need routing or theme context. Pass `initialEntries` when a
+  specific starting route is required.
 - Prefer `userEvent.setup()` over `fireEvent` for interactions.
 - Query priority: role → label → text → test id (last resort).
 
@@ -175,11 +176,10 @@ Track implementation in GitHub issues. Suggested priority:
 
 ### Tier 3 — hooks and edge cases
 
-- [ ] `usePwaInstall` — RTL with mocked `beforeinstallprompt` events
-- [ ] `RouteAnnouncer` — live region and focus behavior (extend
-  `renderWithProviders` with `initialEntries`)
-- [ ] `registryCatalogValidation.ts` — additional rejection cases
-- [ ] `registryTagResolver.ts` — GitHub `Link` header pagination
+- [x] #67 — `usePwaInstall` — RTL with mocked `beforeinstallprompt` events
+- [x] #67 — `RouteAnnouncer` — live region and focus behavior (`renderWithProviders` `initialEntries`)
+- [x] #67 — `registryCatalogValidation.ts` — additional rejection cases
+- [x] #67 — `registryTagResolver.ts` — GitHub `Link` header pagination
 
 ## When not to test
 

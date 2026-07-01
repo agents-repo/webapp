@@ -139,4 +139,34 @@ describe('registryTagResolver', () => {
       'No stable release tag found for major version line 1.x',
     )
   })
+
+  it('follows GitHub Link headers when paginating tag results', async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            Link: '<https://api.github.com/repos/agents-repo/registry/tags?per_page=100&page=2>; rel="next"',
+          },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify([{ name: 'v1.2.0' }]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
+
+    const tagNames = await fetchGitHubRepositoryTagNames('agents-repo', 'registry', {
+      bypassCache: true,
+    })
+
+    expect(tagNames).toEqual(['v1.0.0', 'v1.2.0'])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      'https://api.github.com/repos/agents-repo/registry/tags?per_page=100&page=2',
+    )
+  })
 })
