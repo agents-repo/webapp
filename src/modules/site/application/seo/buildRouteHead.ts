@@ -158,8 +158,23 @@ export function injectRouteHeadIntoHtml(
   siteOriginOverride?: string,
 ): string {
   const headFragment = buildRouteHead(pathname, siteOriginOverride)
+  return injectHeadFragmentIntoHtml(html, headFragment)
+}
+
+export function renderSpaFallbackHeadHtml(): string {
+  return [
+    `<title>${escapeHtml(formatDocumentTitle('Page not found'))}</title>`,
+    `<meta name="robots" content="noindex, nofollow" />`,
+  ].join('\n    ')
+}
+
+export function injectSpaFallbackHeadIntoHtml(html: string): string {
+  return injectHeadFragmentIntoHtml(html, renderSpaFallbackHeadHtml())
+}
+
+function injectHeadFragmentIntoHtml(html: string, headFragment: string): string {
   const withoutTitle = html.replace(/<title>[^<]*<\/title>\s*/i, '')
-  const withoutDescription = withoutTitle.replace(/<meta name="description"[^>]*>\s*/i, '')
+  const withoutDescription = withoutTitle.replace(/<meta\s+name="description"[\s\S]*?\/>\s*/i, '')
 
   return withoutDescription.replace('</head>', `    ${headFragment}\n  </head>`)
 }

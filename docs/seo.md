@@ -28,7 +28,9 @@ Reusable SEO helpers live in `src/modules/site/application/seo/`:
 between routes. It does **not** set `<title>`.
 
 **Build (GitHub Pages):** `scripts/prepare-pages-dist.mjs` injects route-specific
-head tags into `dist/**/index.html` and generates `dist/sitemap.xml`.
+head tags into `dist/**/index.html` and generates `dist/sitemap.xml`. It reads
+`VITE_SITE_URL` through Vite's `loadEnv` so `.env` values match the client
+bundle. `404.html` uses a separate `noindex` fallback head for unknown paths.
 
 **Crawl files:** `public/robots.txt` is copied to `dist/`. The sitemap is
 generated at build time from `siteRoutes`.
@@ -84,7 +86,8 @@ When adding a public route:
 Optional build-time override for preview or staging canonical/OG URLs:
 
 - `VITE_SITE_URL` — absolute origin without a trailing slash (for example
-  `https://agents-repo.github.io`)
+  `https://agents-repo.github.io`). Set in `.env` or the shell; `build:pages`
+  resolves it with Vite's env loading so static HTML matches the client bundle.
 
 When unset, production defaults to `https://agents-repo.github.io`.
 

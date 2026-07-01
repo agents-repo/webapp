@@ -4,6 +4,7 @@ import {
   buildRouteHead,
   getRouteHeadData,
   injectRouteHeadIntoHtml,
+  injectSpaFallbackHeadIntoHtml,
   renderRouteHeadHtml,
 } from './buildRouteHead'
 
@@ -56,5 +57,18 @@ describe('injectRouteHeadIntoHtml', () => {
     expect(result).toContain('<title>Help Us — Agents Repo</title>')
     expect(result).not.toContain('<title>Agents Repo</title>')
     expect(buildRouteHead(siteRoutes.helpUs)).toBeTruthy()
+  })
+})
+
+describe('injectSpaFallbackHeadIntoHtml', () => {
+  it('marks the SPA fallback as non-indexable without a canonical', () => {
+    const baseHtml = `<!doctype html><html><head><title>Agents Repo</title></head><body></body></html>`
+    const result = injectSpaFallbackHeadIntoHtml(baseHtml)
+
+    expect(result).toContain('<title>Page not found — Agents Repo</title>')
+    expect(result).toContain('name="robots" content="noindex, nofollow"')
+    expect(result).not.toContain('rel="canonical"')
+    expect(result).not.toContain('application/ld+json')
+    expect(result).not.toContain('name="description"')
   })
 })
