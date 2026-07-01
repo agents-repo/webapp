@@ -165,7 +165,7 @@ Track implementation in GitHub issues. Suggested priority:
 - [x] #57 — `themeMode.ts` — storage, `auto` mode, `matchMedia` resolution
 - [x] #58 — `validateRegistrySourceUrlForMajorVersionAlias` — settings save validation
 - [x] #59 — `registryCatalogCache.ts` — TTL expiry, LRU eviction, `touchCatalogCache`
-- [ ] #60 — `getRegistryBaseUrlFromIndexUrl` — inverse URL helper
+- [x] #60 — `getRegistryBaseUrlFromIndexUrl` — inverse URL helper
 
 ### Tier 2 — extract then test
 
