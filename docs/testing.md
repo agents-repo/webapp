@@ -151,6 +151,7 @@ hard-coded locale strings.
 | Package search selectors | `registrySelectors.test.ts` |
 | URL safety | `urlSafety.test.ts` |
 | Site page meta | `sitePageMeta.test.ts` |
+| Theme mode persistence | `themeMode.test.ts` |
 | PWA install helpers | `pwaInstall.test.ts` |
 | External link accessible names | `externalLink.test.ts` |
 | Key UI a11y smoke | `Header`, `HomePage`, `WebsiteSettingsControl`, `AccessibilityPage` |
@@ -161,7 +162,7 @@ Track implementation in GitHub issues. Suggested priority:
 
 ### Tier 1 — next unit test PRs
 
-- [ ] #57 — `themeMode.ts` — storage, `auto` mode, `matchMedia` resolution
+- [x] #57 — `themeMode.ts` — storage, `auto` mode, `matchMedia` resolution
 - [ ] #58 — `validateRegistrySourceUrlForMajorVersionAlias` — settings save validation
 - [ ] #59 — `registryCatalogCache.ts` — TTL expiry, LRU eviction, `touchCatalogCache`
 - [ ] #60 — `getRegistryBaseUrlFromIndexUrl` — inverse URL helper
