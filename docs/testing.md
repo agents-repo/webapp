@@ -143,7 +143,7 @@ hard-coded locale strings.
 | Registry URLs and cache identity | `registrySourceUrl.test.ts` |
 | Major-version refs and aliases | `registryMajorVersionRef.test.ts` |
 | Tag resolution | `registryTagResolver.test.ts` |
-| Source config | `registrySourceConfig.test.ts`, `resolve.test.ts` |
+| Source config | `registrySourceConfig.test.ts`, `resolve.test.ts`, `validateAlias.test.ts` |
 | Catalog validation | `registryCatalogValidation.test.ts` |
 | Catalog cache identity | `registryCatalogCache.test.ts` |
 | Repository loading | `registryRepository.test.ts`, cache integration |
@@ -163,7 +163,7 @@ Track implementation in GitHub issues. Suggested priority:
 ### Tier 1 — next unit test PRs
 
 - [x] #57 — `themeMode.ts` — storage, `auto` mode, `matchMedia` resolution
-- [ ] #58 — `validateRegistrySourceUrlForMajorVersionAlias` — settings save validation
+- [x] #58 — `validateRegistrySourceUrlForMajorVersionAlias` — settings save validation
 - [ ] #59 — `registryCatalogCache.ts` — TTL expiry, LRU eviction, `touchCatalogCache`
 - [ ] #60 — `getRegistryBaseUrlFromIndexUrl` — inverse URL helper
 
