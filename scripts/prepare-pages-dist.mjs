@@ -25,6 +25,10 @@ function buildSitemapXml(routePaths, origin) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
 
+function buildRobotsTxt(origin) {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
+}
+
 function assertKnownSiteRoute(routePath) {
   if (!getSiteRoutePaths().includes(routePath)) {
     throw new Error(`Unknown site route for dist output: ${routePath}`);
@@ -60,6 +64,7 @@ for (const routePath of getSiteRoutePaths()) {
 
 writeFileSync(resolve(distDir, '404.html'), injectSpaFallbackHeadIntoHtml(baseHtml));
 writeFileSync(resolve(distDir, '.nojekyll'), '');
+writeFileSync(resolve(distDir, 'robots.txt'), buildRobotsTxt(siteOrigin));
 writeFileSync(resolve(distDir, 'sitemap.xml'), buildSitemapXml(getSiteRoutePaths(), siteOrigin));
 
-console.log('Prepared dist/ for GitHub Pages (.nojekyll, 404.html, route HTML, sitemap.xml).');
+console.log('Prepared dist/ for GitHub Pages (.nojekyll, 404.html, robots.txt, route HTML, sitemap.xml).');

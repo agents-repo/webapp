@@ -33,8 +33,9 @@ and generates `dist/sitemap.xml`. It reads
 `VITE_SITE_URL` through Vite's `loadEnv` so `.env` values match the client
 bundle. `404.html` uses a separate `noindex` fallback head for unknown paths.
 
-**Crawl files:** `public/robots.txt` is copied to `dist/`. The sitemap is
-generated at build time from `siteRoutes`.
+**Crawl files:** `prepare-pages-dist.mjs` writes `dist/robots.txt` and
+`dist/sitemap.xml` using the same `VITE_SITE_URL` origin. `SiteHead` emits
+`noindex` for unknown paths at runtime (matching the `404.html` fallback).
 
 ## Shared accessibility wins
 
@@ -55,7 +56,7 @@ These patterns already help SEO and must stay in place:
 | OG image dimensions and alt | `og:image:width`, `og:image:height`, `og:image:alt` |
 | Twitter large image card | `twitter:card=summary_large_image` |
 | Meta description (~150–160 chars) | `siteSeoMeta` per route |
-| `robots.txt` allows crawl + sitemap | `public/robots.txt` |
+| `robots.txt` allows crawl + sitemap | Generated in `prepare-pages-dist.mjs` |
 | Sitemap with canonical URLs only | Generated in `prepare-pages-dist.mjs` |
 | JSON-LD `WebSite` + `Organization` | Home route only |
 | JSON-LD `WebPage` | All other public routes |

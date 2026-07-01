@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { siteRoutes } from '../../presentation/routes/siteRoutes'
-import { getSiteRoutePaths, siteSeoMeta } from './siteSeoMeta'
+import { getSiteRoutePaths, isKnownSiteRoute, siteSeoMeta } from './siteSeoMeta'
 
 describe('siteSeoMeta', () => {
   it('defines descriptions for every site route', () => {
@@ -21,5 +21,11 @@ describe('siteSeoMeta', () => {
         siteRoutes.accessibility,
       ]),
     )
+  })
+
+  it('distinguishes known routes from unknown paths', () => {
+    expect(isKnownSiteRoute(siteRoutes.about)).toBe(true)
+    expect(isKnownSiteRoute('/about/')).toBe(true)
+    expect(isKnownSiteRoute('/missing-page')).toBe(false)
   })
 })

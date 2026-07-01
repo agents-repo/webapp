@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import AboutPage from '../../presentation/pages/AboutPage'
 import SiteHead from './SiteHead'
 import { siteRoutes } from '../../presentation/routes/siteRoutes'
 
 describe('SiteHead', () => {
+  afterEach(() => {
+    document.head.innerHTML = ''
+  })
+
   it('updates SEO meta tags for the active route', () => {
     renderWithProviders(
       <>
@@ -40,5 +44,13 @@ describe('SiteHead', () => {
     )
 
     expect(document.title).toBe('About — Agents Repo')
+  })
+
+  it('marks unknown paths as non-indexable without home canonical', () => {
+    renderWithProviders(<SiteHead />, { initialEntries: ['/missing-page'] })
+
+    expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toBe('noindex, nofollow')
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull()
+    expect(document.querySelector('meta[name="description"]')).toBeNull()
   })
 })

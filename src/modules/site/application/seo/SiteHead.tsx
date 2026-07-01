@@ -1,9 +1,19 @@
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
-import { getRouteHeadData } from './buildRouteHead'
+import { isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
+import { getRouteHeadData } from './buildRouteHead.ts'
 
 function SiteHead() {
   const { pathname } = useLocation()
+
+  if (!isKnownSiteRoute(pathname)) {
+    return (
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+    )
+  }
+
   const head = getRouteHeadData(pathname)
 
   return (

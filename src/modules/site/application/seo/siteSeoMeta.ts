@@ -1,4 +1,12 @@
-import { siteRoutes, type SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
+import {
+  findSiteRoutePath,
+  normalizeSitePathname,
+  siteRoutes,
+  type SiteRoutePath,
+} from '../../presentation/routes/siteRoutes.ts'
+
+export type { SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
+export { getSiteRoutePaths, isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
 
 export interface SiteSeoMeta {
   readonly description: string
@@ -32,17 +40,12 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
 }
 
 export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
-  const normalizedPath = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
-  const routePaths = Object.values(siteRoutes) as SiteRoutePath[]
-  const matchedRoute = routePaths.find((routePath) => routePath === normalizedPath)
+  const normalizedPath = normalizeSitePathname(pathname)
+  const matchedRoute = findSiteRoutePath(normalizedPath)
 
   if (matchedRoute) {
     return siteSeoMeta[matchedRoute]
   }
 
   return siteSeoMeta[siteRoutes.home]
-}
-
-export function getSiteRoutePaths(): SiteRoutePath[] {
-  return Object.values(siteRoutes)
 }
