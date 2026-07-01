@@ -9,7 +9,7 @@ patterns. SEO work is additive and must not replace those mechanisms.
 
 | Concern | Owner | SEO layer |
 | --- | --- | --- |
-| Page title | `useDocumentTitle` (WCAG 2.4.2) | Build `<title>` + OG mirror in `SiteHead` |
+| Page title | `useDocumentTitle` | `buildRouteHead` for `<title>`; `SiteHead` for OG/Twitter |
 | Route labels | `sitePageMeta` | `siteSeoMeta` |
 | Semantic HTML | Page components | Shared wins — do not regress |
 
@@ -21,14 +21,15 @@ Reusable SEO helpers live in `src/modules/site/application/seo/`:
 | --- | --- |
 | `siteSeoMeta.ts` | Per-route descriptions and canonical paths |
 | `siteSeo.ts` | Site origin, OG image constants |
-| `buildRouteHead.ts` | Single source for crawler and runtime SEO head tags |
-| `SiteHead.tsx` | `react-helmet-async` updates for client-side route changes |
+| `buildRouteHead.ts` | Build-time `<title>` and crawler head tags; shared data for `SiteHead` |
+| `SiteHead.tsx` | Runtime SEO meta tags on client-side route changes (not `<title>`) |
 
 **Runtime (SPA navigation):** `SiteHead` updates meta tags when users move
 between routes. It does **not** set `<title>`.
 
 **Build (GitHub Pages):** `scripts/prepare-pages-dist.mjs` injects route-specific
-head tags into `dist/**/index.html` and generates `dist/sitemap.xml`. It reads
+head tags into `dist/**/index.html` (paths derived from `getSiteRoutePaths()`)
+and generates `dist/sitemap.xml`. It reads
 `VITE_SITE_URL` through Vite's `loadEnv` so `.env` values match the client
 bundle. `404.html` uses a separate `noindex` fallback head for unknown paths.
 
