@@ -17,6 +17,7 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
     "lint:all": "npm run lint:md && npm run lint",
     "test": "vitest run",
+    "test:watch": "vitest",
     "test:a11y": "vitest run \"**/*.a11y.test.tsx\"",
     "a11y:ci": "node scripts/run-a11y-ci.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",

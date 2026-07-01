@@ -32,6 +32,9 @@ when validating the GitHub Pages output (adds `.nojekyll` and `404.html`).
 Accessibility expectations and validation details are documented in
 [accessibility.md](accessibility.md).
 
+Unit test conventions, coverage map, and backlog are documented in
+[testing.md](testing.md).
+
 Deployment and release details are documented in [deployment.md](deployment.md).
 
 Pre-commit hooks run `npm run lint:all` automatically through Husky.
@@ -41,6 +44,7 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - `src/` contains the React application
 - `public/` contains static assets served directly by Vite
 - `docs/` contains contributor-facing documentation
+- `docs/testing.md` documents unit test conventions and the coverage backlog
 - `docs/architecture/` contains architecture decision records, including the DDD boundary note
 - `.github/` contains AI guidance, issue templates, and workflows
 - `.vscode/` contains recommended workspace defaults

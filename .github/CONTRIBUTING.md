@@ -121,6 +121,9 @@ For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:
 after `build:pages`. Browser scans are local-only, not PR baseline CI. See
 [docs/accessibility.md](../docs/accessibility.md).
 
+Unit test conventions and the coverage backlog are in
+[docs/testing.md](../docs/testing.md).
+
 This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
 
 Note: `LICENSE` is intentionally excluded from workspace markdownlint checks.

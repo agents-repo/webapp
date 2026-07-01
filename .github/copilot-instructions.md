@@ -18,6 +18,7 @@ Mandatory for all changes:
 
 - `README.md`
 - `docs/development.md`
+- `docs/testing.md`
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
@@ -75,8 +76,12 @@ Before handing off work, run the relevant subset of:
 
 1. `npm run env:check`
 2. `npm run lint:all`
-3. `npm run typecheck`
-4. `npm run build`
+3. `npm run test`
+4. `npm run typecheck`
+5. `npm run build`
+
+For UI or accessibility changes, also run `npm run test:a11y`. See
+`docs/testing.md` and `docs/accessibility.md`.
 
 If a command cannot be run, explicitly say why in the handoff.
 
