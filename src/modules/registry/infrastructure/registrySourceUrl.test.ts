@@ -4,6 +4,7 @@ import {
   buildRegistryArtifactUrl,
   buildRegistryIndexUrl,
   buildRegistryPackageBrowseUrl,
+  getRegistryBaseUrlFromIndexUrl,
   getRegistryIndexCacheLookupKey,
   getRegistrySourceCacheIdentity,
   normalizeRegistryBaseUrl,
@@ -74,6 +75,52 @@ describe('registrySourceUrl', () => {
     expect(
       buildRegistryIndexUrl('https://registry-proxy.example.workers.dev/catalog/?ref=release-2026-06', '/packages/index.json'),
     ).toBe('https://registry-proxy.example.workers.dev/catalog/packages/index.json?ref=release-2026-06')
+  })
+
+  it('reconstructs base URLs from index URLs built by buildRegistryIndexUrl', () => {
+    expect(
+      getRegistryBaseUrlFromIndexUrl(
+        buildRegistryIndexUrl('https://example.com/base/', 'packages/index.json'),
+        'packages/index.json',
+      ),
+    ).toBe('https://example.com/base')
+
+    expect(
+      getRegistryBaseUrlFromIndexUrl(
+        buildRegistryIndexUrl('https://registry-proxy.example.workers.dev?ref=main', 'packages/index.json'),
+        'packages/index.json',
+      ),
+    ).toBe('https://registry-proxy.example.workers.dev/?ref=main')
+
+    expect(
+      getRegistryBaseUrlFromIndexUrl(
+        buildRegistryIndexUrl('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0', 'packages/index.json'),
+        'packages/index.json',
+      ),
+    ).toBe('https://raw.githubusercontent.com/agents-repo/registry/v1.2.0')
+
+    expect(
+      getRegistryBaseUrlFromIndexUrl(
+        buildRegistryIndexUrl('https://registry.example.workers.dev/catalog/', 'custom/catalog.json'),
+        'custom/catalog.json',
+      ),
+    ).toBe('https://registry.example.workers.dev/catalog')
+  })
+
+  it('does not strip the index path when the index URL pathname has an extra trailing slash', () => {
+    expect(
+      getRegistryBaseUrlFromIndexUrl('https://example.com/base/packages/index.json/', 'packages/index.json'),
+    ).toBe('https://example.com/base/packages/index.json')
+  })
+
+  it('returns the full index URL when the index path suffix does not match', () => {
+    expect(
+      getRegistryBaseUrlFromIndexUrl('https://example.com/other/path.json', 'packages/index.json'),
+    ).toBe('https://example.com/other/path.json')
+  })
+
+  it('returns an empty string for malformed index URLs', () => {
+    expect(getRegistryBaseUrlFromIndexUrl('not-a-url', 'packages/index.json')).toBe('')
   })
 
   it('trims leading and trailing slashes', () => {
