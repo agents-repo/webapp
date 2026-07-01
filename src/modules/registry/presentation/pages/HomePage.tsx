@@ -31,46 +31,29 @@ import { useDocumentTitle } from '../../../site/application/accessibility/useDoc
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { siteRoutes } from '../../../site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
-import type { InstallTargetEntry, PackageStatus, RegistryCatalog, RegistryPackage } from '../../domain/package'
-import { getInstallTargetLabel } from '../../application/installTargets'
+import type { PackageStatus, RegistryCatalog, RegistryPackage } from '../../domain/package'
 import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
-import { buildRegistryArtifactUrl, buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
+import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
+import {
+  getCatalogAlertState,
+  getCatalogResultsSummary,
+  getCatalogStatusTag,
+  getPackageDownloadTargets,
+  type CatalogCacheState,
+  type PackageDownloadTarget,
+} from './homePageCatalogState'
 
 const STICKY_SEARCH_THRESHOLD = 180
-
-interface PackageDownloadTarget {
-  id: InstallTargetEntry['id']
-  status: InstallTargetEntry['status']
-  label: string
-  href: string
-}
 
 const PACKAGE_STATUS_BADGE: Record<PackageStatus, { bg: string; icon: typeof faCircleCheck }> = {
   active: { bg: 'success', icon: faCircleCheck },
   deprecated: { bg: 'warning', icon: faClock },
   archived: { bg: 'secondary', icon: faClock },
   yanked: { bg: 'danger', icon: faClock },
-}
-
-const getPackageDownloadTargets = (
-  pkg: RegistryPackage,
-  registryBaseUrl: string,
-): PackageDownloadTarget[] => {
-  if (!registryBaseUrl.trim()) {
-    return []
-  }
-
-  return (pkg.installTargets ?? [])
-    .map((target) => ({
-      ...target,
-      label: getInstallTargetLabel(target.id),
-      href: buildRegistryArtifactUrl(registryBaseUrl, pkg.id, pkg.latest, target.id),
-    }))
-    .filter((target) => isSafeExternalHttpUrl(target.href))
 }
 
 const renderPackageDownloadAction = (
@@ -112,102 +95,6 @@ interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
   readonly registrySettingsVersion: number
   readonly onCatalogStatusNoteChange: (note: RegistryCatalogStatusNote | null) => void
-}
-
-type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
-
-interface CatalogAlertState {
-  variant: 'warning' | 'danger'
-  message: string
-}
-
-const getCatalogStatusTag = ({
-  catalog,
-  cacheState,
-  isLoading,
-  errorMessage,
-}: {
-  catalog: RegistryCatalog | null
-  cacheState: CatalogCacheState
-  isLoading: boolean
-  errorMessage: string | null
-}): string => {
-  if (isLoading) {
-    return 'loading'
-  }
-
-  if (!catalog) {
-    return 'unavailable'
-  }
-
-  switch (cacheState) {
-    case 'fresh':
-      return errorMessage
-        ? 'cached catalog after source resolution failure'
-        : 'fresh cache'
-    case 'stale-fallback':
-      return 'stale cache after refresh failure'
-    default:
-      return errorMessage ? 'remote refresh failed' : 'remote source'
-  }
-}
-
-const getCatalogAlertState = ({
-  hasCatalog,
-  cacheState,
-  errorMessage,
-}: {
-  hasCatalog: boolean
-  cacheState: CatalogCacheState
-  errorMessage: string | null
-}): CatalogAlertState | null => {
-  if (!errorMessage) {
-    return null
-  }
-
-  if (!hasCatalog) {
-    return {
-      variant: 'danger',
-      message: 'Unable to load the registry index. No catalog data is available.',
-    }
-  }
-
-  if (cacheState === 'stale-fallback') {
-    return {
-      variant: 'warning',
-      message: 'Remote registry refresh failed. Displaying stale cached catalog while keeping the app available.',
-    }
-  }
-
-  if (cacheState === 'fresh') {
-    return {
-      variant: 'warning',
-      message:
-        'Registry source resolution failed. Displaying cached catalog while keeping the app available.',
-    }
-  }
-
-  return null
-}
-
-const getCatalogResultsSummary = ({
-  catalog,
-  filteredCount,
-  isLoading,
-}: {
-  catalog: RegistryCatalog | null
-  filteredCount: number
-  isLoading: boolean
-}): string => {
-  if (catalog) {
-    return `Showing ${filteredCount} of ${catalog.packages.length} packages`
-  }
-
-  if (isLoading) {
-    return 'Loading registry catalog'
-  }
-
-  return 'No catalog data available'
 }
 
 function HomePage({

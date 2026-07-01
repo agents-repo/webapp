@@ -169,9 +169,9 @@ Track implementation in GitHub issues. Suggested priority:
 
 ### Tier 2 — extract then test
 
-- [ ] `HomePage.tsx` — extract `homePageCatalogState.ts` for status helpers
-- [ ] `WebsiteSettingsControl.tsx` — integration tests with mocked `registrySource`
-- [ ] `formatDocumentTitle` in `useDocumentTitle.ts`
+- [x] #66 — `HomePage.tsx` — extract `homePageCatalogState.ts` for status helpers
+- [x] #66 — `WebsiteSettingsControl.tsx` — integration tests with mocked `registrySource`
+- [x] #66 — `formatDocumentTitle` in `useDocumentTitle.ts`
 
 ### Tier 3 — hooks and edge cases
 
