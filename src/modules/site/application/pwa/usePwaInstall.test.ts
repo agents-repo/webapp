@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { usePwaInstall } from './usePwaInstall'
 
 const { mockIsRunningAsInstalledPwa, mockRunPwaInstallPrompt } = vi.hoisted(() => ({
@@ -30,9 +30,15 @@ const createInstallPromptEvent = () => {
 }
 
 describe('usePwaInstall', () => {
+  beforeEach(() => {
+    mockRunPwaInstallPrompt.mockResolvedValue('unavailable')
+  })
+
   afterEach(() => {
     vi.clearAllMocks()
     mockIsRunningAsInstalledPwa.mockReturnValue(false)
+    mockRunPwaInstallPrompt.mockReset()
+    mockRunPwaInstallPrompt.mockResolvedValue('unavailable')
   })
 
   it('exposes install availability after beforeinstallprompt fires', async () => {

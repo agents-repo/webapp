@@ -76,20 +76,27 @@ describe('RouteAnnouncer', () => {
 
     const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
 
-    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+    try {
+      renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
 
-    skipLink.focus()
+      await waitFor(() => {
+        expect(navigateRef.current).not.toBeNull()
+      })
 
-    act(() => {
-      void navigateRef.current?.('/about')
-    })
+      skipLink.focus()
 
-    await waitFor(() => {
-      const liveRegion = document.querySelector('[aria-live="polite"]')
-      expect(liveRegion?.textContent).toBe('Navigated to About')
-    })
+      act(() => {
+        void navigateRef.current!('/about')
+      })
 
-    expect(document.getElementById('main-content')).not.toHaveFocus()
-    skipLink.remove()
+      await waitFor(() => {
+        const liveRegion = document.querySelector('[aria-live="polite"]')
+        expect(liveRegion?.textContent).toBe('Navigated to About')
+      })
+
+      expect(document.getElementById('main-content')).not.toHaveFocus()
+    } finally {
+      skipLink.remove()
+    }
   })
 })
