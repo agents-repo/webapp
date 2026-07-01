@@ -29,12 +29,11 @@ describe('filterRegistryPackages', () => {
 
 describe('formatCatalogUpdatedAt', () => {
   beforeEach(() => {
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date('2026-01-15T12:00:00.000Z'))
+    vi.stubEnv('TZ', 'UTC')
   })
 
   afterEach(() => {
-    vi.useRealTimers()
+    vi.unstubAllEnvs()
   })
 
   it('formats an ISO timestamp in en-US short date style', () => {
