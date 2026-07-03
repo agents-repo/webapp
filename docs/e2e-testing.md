@@ -97,7 +97,8 @@ Use `mockRegistryIndex(page, catalog, indexUrl)` when a spec needs a custom
 index URL (for example website settings override tests).
 
 Clear browser storage for persistence specs via `clearBrowserStorage(page)` in
-`beforeEach`. Relevant keys: `theme`, `registry.source.baseUrlOverride`,
+`beforeEach`. It clears on the first navigation only and skips later reloads.
+Relevant keys: `theme`, `registry.source.baseUrlOverride`,
 `registry.catalog.cache.v1`.
 
 ## Writing a new spec
