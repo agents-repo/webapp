@@ -5,6 +5,8 @@ export interface E2eInstallTargetEntry {
 
 export interface E2eRegistryPackage {
   readonly id: string
+  readonly namespace: string
+  readonly package: string
   readonly name: string
   readonly description: string
   readonly owner: string
@@ -21,6 +23,7 @@ export interface E2eRegistryPackage {
 export interface E2eRegistryCatalog {
   readonly schemaVersion: string
   readonly updatedAt: string
+  readonly aliases?: Readonly<Record<string, string>>
   readonly packages: readonly E2eRegistryPackage[]
 }
 
@@ -28,11 +31,18 @@ export interface E2eRegistryCatalog {
 export const E2E_REGISTRY_INDEX_URL = 'https://e2e.local/registry/packages/index.json'
 
 export const searchableCatalog: E2eRegistryCatalog = {
-  schemaVersion: '1.0.0',
+  schemaVersion: '1.3.0',
   updatedAt: '2026-01-01T00:00:00.000Z',
+  aliases: {
+    'sample-agent': 'agents-repo/sample-agent',
+    'demo-flow': 'agents-repo/demo-flow',
+    'legacy-tool': 'other-org/legacy-tool',
+  },
   packages: [
     {
-      id: 'sample-agent',
+      id: 'agents-repo/sample-agent',
+      namespace: 'agents-repo',
+      package: 'sample-agent',
       name: 'sample-agent',
       description: 'A sample agent package for E2E testing.',
       owner: 'agents-repo',
@@ -44,7 +54,9 @@ export const searchableCatalog: E2eRegistryCatalog = {
       installTargets: [{ id: 'cursor', status: 'supported' }],
     },
     {
-      id: 'demo-flow',
+      id: 'agents-repo/demo-flow',
+      namespace: 'agents-repo',
+      package: 'demo-flow',
       name: 'demo-flow',
       description: 'A demo flow package for search filtering.',
       owner: 'agents-repo',
@@ -56,7 +68,9 @@ export const searchableCatalog: E2eRegistryCatalog = {
       installTargets: [{ id: 'cursor', status: 'supported' }],
     },
     {
-      id: 'legacy-tool',
+      id: 'other-org/legacy-tool',
+      namespace: 'other-org',
+      package: 'legacy-tool',
       name: 'legacy-tool',
       description: 'Deprecated tooling package.',
       owner: 'other-org',
@@ -71,11 +85,13 @@ export const searchableCatalog: E2eRegistryCatalog = {
 }
 
 export const alternateOverrideCatalog: E2eRegistryCatalog = {
-  schemaVersion: '1.0.0',
+  schemaVersion: '1.3.0',
   updatedAt: '2026-02-01T00:00:00.000Z',
   packages: [
     {
-      id: 'override-agent',
+      id: 'e2e-org/override-agent',
+      namespace: 'e2e-org',
+      package: 'override-agent',
       name: 'override-agent',
       description: 'Loaded from a runtime registry URL override.',
       owner: 'e2e-org',

@@ -68,18 +68,18 @@ describe('registryCatalogCache source identity matching', () => {
 
   it('matches resolved major-line cache entries for the same alias', () => {
     writeCatalogCache(
-      'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
+      'https://raw.githubusercontent.com/agents-repo/registry/v2.0.0/packages/index.json',
       sampleCatalog,
     )
 
     const identity: RegistrySourceCacheIdentity = {
       lookupKey: 'https://raw.githubusercontent.com/agents-repo/registry/{ref}/packages/index.json',
       indexPath: 'packages/index.json',
-      sourceRef: 'v1.x',
+      sourceRef: 'v2.x',
     }
 
     expect(readFreshCatalogCacheEnvelopeForSourceIdentity(identity)?.indexUrl).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
+      'https://raw.githubusercontent.com/agents-repo/registry/v2.0.0/packages/index.json',
     )
   })
 
@@ -92,7 +92,7 @@ describe('registryCatalogCache source identity matching', () => {
     const identity: RegistrySourceCacheIdentity = {
       lookupKey: 'https://raw.githubusercontent.com/agents-repo/registry/{ref}/packages/index.json',
       indexPath: 'packages/index.json',
-      sourceRef: 'v1.x',
+      sourceRef: 'v2.x',
     }
 
     expect(readFreshCatalogCacheEnvelopeForSourceIdentity(identity)).toBeNull()

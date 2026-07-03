@@ -77,14 +77,14 @@ Build-time variables remain:
 
 - `VITE_REGISTRY_REPOSITORY_URL`: source URL input. This may be a GitHub
   repository URL or a direct source endpoint URL. Default:
-  `https://registry-proxy.maiconfz.workers.dev?ref=v1.x`
+  `https://registry-proxy.maiconfz.workers.dev?ref=v2.x`
 - `VITE_REGISTRY_BASE_URL`: optional direct base URL override for fetches.
   If omitted, the source URL is used as the base URL (GitHub URLs are normalized to raw content).
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
 - `VITE_REGISTRY_GITHUB_REPOSITORY_URL`: GitHub repository URL used for package
   browse links in package cards. Default:
-  `https://github.com/agents-repo/registry/tree/v1.x`
+  `https://github.com/agents-repo/registry/tree/v2.x`
 
 GitHub repository URLs and `/tree/<ref>` or `/blob/<ref>` URLs are normalized
 to `raw.githubusercontent.com`. When a tree/blob URL includes additional
@@ -92,11 +92,11 @@ repository path segments (for example `/tree/main/packages`), only the first
 ref segment is used for derivation. To use slash refs, provide an explicit ref
 form such as `/tree/refs/heads/feature/foo`.
 
-With defaults, the configured source uses the `v1.x` major-version line alias.
+With defaults, the configured source uses the `v2.x` major-version line alias.
 At catalog load time this resolves to the latest stable release tag (for example
-`v1.2.0`). Before resolution, the index URL is composed as:
+`v2.0.0`). Before resolution, the index URL is composed as:
 
-`https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.x`
+`https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.x`
 
 Query parameters on the source URL are preserved when composing the index URL,
 except when GitHub URLs are normalized to raw content URLs.
@@ -107,7 +107,7 @@ stable release tag from the registry repository using registry-proxy `GET /tags`
 when the fetch source is a proxy URL, or the GitHub tags API as a fallback for
 GitHub-only source URLs. Tag selection uses [`semver`](https://www.npmjs.com/package/semver).
 Resolved refs are shown in website settings and catalog status notes as
-`v1.x → v1.2.0`.
+`v2.x → v2.0.0`.
 
 At runtime, users can set custom registry URLs in the header settings modal:
 

@@ -17,7 +17,7 @@ describe('registryMajorVersionRef', () => {
   })
 
   it('extracts refs from GitHub tree URLs and proxy query params', () => {
-    expect(extractRegistryRef('https://github.com/agents-repo/registry')).toBe('v1.x')
+    expect(extractRegistryRef('https://github.com/agents-repo/registry')).toBe('v2.x')
     expect(extractRegistryRef('https://github.com/agents-repo/registry/tree/1.x')).toBe('1.x')
     expect(extractRegistryRef('https://registry-proxy.example.workers.dev?ref=1.x')).toBe('1.x')
     expect(extractRegistryRef('https://github.com/agents-repo/registry/tree/v1.2.0')).toBe('v1.2.0')
@@ -33,8 +33,8 @@ describe('registryMajorVersionRef', () => {
     expect(
       extractMajorVersionLineAliasFromSourceUrl('https://github.com/agents-repo/registry'),
     ).toEqual({
-      alias: 'v1.x',
-      major: 1,
+      alias: 'v2.x',
+      major: 2,
     })
     expect(
       extractMajorVersionLineAliasFromSourceUrl('https://registry-proxy.example.workers.dev?ref=1.x'),

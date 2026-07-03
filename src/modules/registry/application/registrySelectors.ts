@@ -2,7 +2,11 @@ import type { RegistryCatalog, RegistryPackage } from '../domain/package'
 
 const createSearchIndex = (pkg: RegistryPackage): string => {
   return [
+    pkg.id,
+    pkg.namespace,
+    `${pkg.namespace}/${pkg.package}`,
     pkg.name,
+    pkg.package,
     pkg.description,
     pkg.owner,
     `@${pkg.owner}`,

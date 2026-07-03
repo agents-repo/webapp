@@ -88,6 +88,8 @@ const isInstallTargets = (value: unknown): value is InstallTargetEntry[] => {
 const hasRegistryPackageStrings = (value: Record<string, unknown>): boolean => {
   return (
     typeof value.id === 'string' &&
+    typeof value.namespace === 'string' &&
+    typeof value.package === 'string' &&
     typeof value.name === 'string' &&
     typeof value.description === 'string' &&
     typeof value.owner === 'string' &&
@@ -128,6 +130,16 @@ const isRegistryPackage = (value: unknown): value is RegistryPackage => {
   return true
 }
 
+const isAliases = (value: unknown): value is Record<string, string> => {
+  if (!isRecord(value)) {
+    return false
+  }
+
+  return Object.entries(value).every(
+    ([key, aliasValue]) => typeof key === 'string' && typeof aliasValue === 'string',
+  )
+}
+
 export const isRegistryCatalog = (value: unknown): value is RegistryCatalog => {
   if (!isRecord(value)) {
     return false
@@ -138,6 +150,10 @@ export const isRegistryCatalog = (value: unknown): value is RegistryCatalog => {
     typeof value.updatedAt !== 'string' ||
     !isValidDateString(value.updatedAt)
   ) {
+    return false
+  }
+
+  if (value.aliases !== undefined && !isAliases(value.aliases)) {
     return false
   }
 

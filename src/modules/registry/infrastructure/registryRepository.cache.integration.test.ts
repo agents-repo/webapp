@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { RegistryCatalog } from '../domain/package'
+import type { RegistryCatalog, RegistryPackage } from '../domain/package'
 import { loadRegistryCatalog } from './registryRepository'
 import * as registrySourceConfig from './registrySourceConfig'
 import { writeCatalogCache, resetRegistryCatalogCacheForTests } from './registryCatalogCache'
@@ -32,6 +32,20 @@ class MemoryStorage implements Storage {
   }
 }
 
+const makeTestPackage = (id: string, name: string, description: string, latest: string): RegistryPackage => ({
+  id: `agents-repo/${id}`,
+  namespace: 'agents-repo',
+  package: id,
+  name,
+  description,
+  owner: 'agents-repo',
+  latest,
+  tags: [],
+  status: 'active',
+  category: 'assistant',
+  estimateOverallCost: { band: 'low' },
+})
+
 describe('loadRegistryCatalog cache integration', () => {
   beforeEach(() => {
     Object.defineProperty(globalThis, 'localStorage', {
@@ -49,21 +63,9 @@ describe('loadRegistryCatalog cache integration', () => {
 
   it('serves a fresh localStorage catalog when fetch source resolution fails', async () => {
     const cachedCatalog: RegistryCatalog = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
-      packages: [
-        {
-          id: 'demo',
-          name: 'Demo',
-          description: 'Demo package',
-          owner: 'agents-repo',
-          latest: '1.0.0',
-          tags: [],
-          status: 'active',
-          category: 'assistant',
-          estimateOverallCost: { band: 'low' },
-        },
-      ],
+      packages: [makeTestPackage('demo', 'Demo', 'Demo package', '1.0.0')],
     }
 
     writeCatalogCache(
@@ -77,22 +79,22 @@ describe('loadRegistryCatalog cache integration', () => {
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=1.x',
       indexPath: 'packages/index.json',
       indexUrl: 'https://registry-proxy.example.workers.dev/packages/index.json?ref=1.x',
       sourceMode: 'runtime-override',
-      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       runtimeGithubRepositoryUrlOverride: null,
-      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       githubRepositorySourceMode: 'configured',
       baseUrlRefResolution: null,
       githubRepositoryRefResolution: null,
     })
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
-      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       githubRepositoryRefResolution: null,
     })
 
@@ -108,25 +110,13 @@ describe('loadRegistryCatalog cache integration', () => {
 
   it('serves a fresh raw GitHub localStorage catalog when fetch source resolution fails', async () => {
     const cachedCatalog: RegistryCatalog = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
-      packages: [
-        {
-          id: 'demo',
-          name: 'Demo',
-          description: 'Demo package',
-          owner: 'agents-repo',
-          latest: '1.0.0',
-          tags: [],
-          status: 'active',
-          category: 'assistant',
-          estimateOverallCost: { band: 'low' },
-        },
-      ],
+      packages: [makeTestPackage('demo', 'Demo', 'Demo package', '1.0.0')],
     }
 
     writeCatalogCache(
-      'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
+      'https://raw.githubusercontent.com/agents-repo/registry/v2.0.0/packages/index.json',
       cachedCatalog,
     )
 
@@ -135,23 +125,23 @@ describe('loadRegistryCatalog cache integration', () => {
     )
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
-      sourceUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
-      configuredBaseUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      sourceUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
+      configuredBaseUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
+      baseUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v2.x',
       indexPath: 'packages/index.json',
-      indexUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v1.x/packages/index.json',
+      indexUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v2.x/packages/index.json',
       sourceMode: 'configured',
-      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       runtimeGithubRepositoryUrlOverride: null,
-      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       githubRepositorySourceMode: 'configured',
       baseUrlRefResolution: null,
       githubRepositoryRefResolution: null,
     })
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
-      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       githubRepositoryRefResolution: null,
     })
 
@@ -160,28 +150,16 @@ describe('loadRegistryCatalog cache integration', () => {
     expect(result.catalog).toEqual(cachedCatalog)
     expect(result.cacheState).toBe('fresh')
     expect(result.indexUrl).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/v1.2.0/packages/index.json',
+      'https://raw.githubusercontent.com/agents-repo/registry/v2.0.0/packages/index.json',
     )
-    expect(result.baseUrlRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
+    expect(result.baseUrlRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
   })
 
   it('does not serve a different-ref catalog when fetch source resolution fails', async () => {
     const mainCatalog: RegistryCatalog = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
-      packages: [
-        {
-          id: 'main-only',
-          name: 'Main Only',
-          description: 'Cached from main branch',
-          owner: 'agents-repo',
-          latest: '9.9.9',
-          tags: [],
-          status: 'active',
-          category: 'assistant',
-          estimateOverallCost: { band: 'low' },
-        },
-      ],
+      packages: [makeTestPackage('main-only', 'Main Only', 'Cached from main branch', '9.9.9')],
     }
 
     writeCatalogCache(
@@ -194,23 +172,23 @@ describe('loadRegistryCatalog cache integration', () => {
     )
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
-      sourceUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
-      configuredBaseUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      sourceUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
+      configuredBaseUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
+      baseUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v2.x',
       indexPath: 'packages/index.json',
-      indexUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v1.x/packages/index.json',
+      indexUrl: 'https://raw.githubusercontent.com/agents-repo/registry/v2.x/packages/index.json',
       sourceMode: 'configured',
-      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       runtimeGithubRepositoryUrlOverride: null,
-      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       githubRepositorySourceMode: 'configured',
       baseUrlRefResolution: null,
       githubRepositoryRefResolution: null,
     })
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata').mockResolvedValue({
-      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
       githubRepositoryRefResolution: null,
     })
 

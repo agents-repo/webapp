@@ -31,7 +31,7 @@ import { useDocumentTitle } from '../../../site/application/accessibility/useDoc
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { siteRoutes } from '../../../site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
-import type { PackageStatus, RegistryCatalog, RegistryPackage } from '../../domain/package'
+import { toPackageSlug, type PackageStatus, type RegistryCatalog, type RegistryPackage } from '../../domain/package'
 import {
   filterRegistryPackages,
   formatCatalogUpdatedAt,
@@ -306,14 +306,19 @@ function HomePage({
           <Row xs={1} md={2} xl={3} className="g-3">
             {filteredPackages.map((pkg) => {
               const statusBadge = PACKAGE_STATUS_BADGE[pkg.status]
+              const packageSlug = toPackageSlug(pkg.namespace, pkg.package)
               const downloadTargets = getPackageDownloadTargets(pkg, registryBaseUrl)
-              const packageBrowseUrl = buildRegistryPackageBrowseUrl(githubRepositoryUrl, pkg.id)
+              const packageBrowseUrl = buildRegistryPackageBrowseUrl(
+                githubRepositoryUrl,
+                pkg.namespace,
+                pkg.package,
+              )
               const safeBrowseUrl =
                 packageBrowseUrl && isSafeExternalHttpUrl(packageBrowseUrl) ? packageBrowseUrl : null
 
               return (
-              <Col key={pkg.id}>
-                <Card className="h-100 d-flex flex-column border-secondary-subtle package-card">
+              <Col key={packageSlug}>
+                <Card id={`package-card-${packageSlug}`} className="h-100 d-flex flex-column border-secondary-subtle package-card">
                   <Card.Header className="p-3 p-lg-4">
                     <Stack direction="horizontal" className="justify-content-between align-items-start">
                       <div className="me-2">
@@ -321,11 +326,14 @@ function HomePage({
                           {pkg.name}
                         </Card.Title>
                         <Card.Subtitle as="div" className="small text-body-secondary mb-0 mt-1">
+                          <Badge bg="light" text="dark" className="me-2 fw-normal">
+                            {pkg.namespace}
+                          </Badge>
                           by{' '}
                           <Dropdown as="div" align="end" className="d-inline-block">
                             <Dropdown.Toggle
                               as="button"
-                              id={`owner-actions-${pkg.id}`}
+                              id={`owner-actions-${packageSlug}`}
                               className="btn btn-link btn-sm p-0 text-body-secondary text-decoration-underline d-inline-flex align-items-center owner-dropdown-toggle"
                               aria-label={`Actions for owner ${pkg.owner}`}
                             >

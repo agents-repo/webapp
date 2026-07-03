@@ -72,7 +72,7 @@ Vitest tests stay co-located under `src/`. The top-level `e2e/` directory is the
 
 ## Registry mocking contract
 
-The production default registry URL uses a `v1.x` alias that triggers GitHub tag
+The production default registry URL uses a `v2.x` alias that triggers GitHub tag
 resolution. E2E builds avoid this by setting alias-free URLs in `.env.e2e`:
 
 ```env
