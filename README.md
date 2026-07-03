@@ -43,6 +43,7 @@ npm run env:check
 npm run lint:all
 npm run test
 npm run test:watch
+npm run test:e2e
 npm run typecheck
 npm run build
 npm run build:pages
@@ -61,7 +62,8 @@ statement at `/accessibility`.
 See [docs/seo.md](docs/seo.md) for search and social-preview metadata patterns.
 
 See [docs/testing.md](docs/testing.md) for unit test conventions, coverage map,
-and the prioritized test backlog.
+and the prioritized test backlog. Playwright E2E (local-only) is documented in
+[docs/e2e-testing.md](docs/e2e-testing.md).
 
 ## Registry Source Configuration
 

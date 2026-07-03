@@ -27,6 +27,7 @@ scale, not monorepo ceremony.
 | `npm run test` | Full suite — **same as PR baseline CI** |
 | `npm run test:a11y` | UI or accessibility changes only — faster feedback |
 | `npm run test:watch` | Local TDD while writing tests |
+| `npm run test:e2e` | Playwright browser specs — **local only** |
 | `npm run a11y:ci` | Post-build Lighthouse and pa11y scans — **local only** |
 
 `npm run test` includes accessibility smoke tests (`*.a11y.test.tsx`). The
@@ -47,7 +48,7 @@ Install `@vitest/coverage-v8` if coverage reporting is needed locally.
 | Static unit | Pure functions, validators, formatters | `registrySourceUrl`, selectors |
 | Integration | Multi-module flows with mocked I/O | `registryRepository.cache.integration` |
 | A11y smoke | Key UI surfaces via vitest-axe | `Header.a11y.test.tsx`, `HomePage.a11y.test.tsx` |
-| E2E browser | Full user journeys | Not present today |
+| E2E browser | Full user journeys in a real browser | Playwright specs in `e2e/` — see [e2e-testing.md](e2e-testing.md) |
 
 Prefer static unit tests for logic that can run without rendering. Use
 integration tests when several modules must cooperate. Reserve component tests
@@ -60,6 +61,7 @@ for behavior that depends on React lifecycle, routing, or user interaction.
 | `*.test.ts` | Unit tests for pure logic or infrastructure |
 | `*.integration.test.ts` | Multi-module flows with mocked fetch or storage |
 | `*.a11y.test.tsx` | Component accessibility smoke tests (vitest-axe) |
+| `e2e/*.spec.ts` | Playwright E2E browser tests (local only) |
 
 Use `describe` / `it` with explicit imports from `vitest` (no globals).
 
@@ -85,8 +87,12 @@ src/
 │           └── layout/            # source + *.a11y.test.tsx
 ```
 
-Do **not** move tests to a top-level `tests/` folder. That would break module
-boundaries documented in [architecture/ddd-decision.md](architecture/ddd-decision.md).
+Do **not** move Vitest tests to a top-level `tests/` folder. That would break
+module boundaries documented in
+[architecture/ddd-decision.md](architecture/ddd-decision.md).
+
+Playwright E2E specs live in the top-level `e2e/` directory — that is the
+intentional exception for browser tests. See [e2e-testing.md](e2e-testing.md).
 
 When logic is trapped in private page helpers (for example inside `HomePage.tsx`),
 extract it to a sibling module before testing.
@@ -195,10 +201,10 @@ Skip unit tests for:
 
 These may be reconsidered if the test suite grows significantly:
 
-- Top-level `tests/` mirror tree
 - MSW for fetch mocking (current `vi.spyOn` on `fetch` is sufficient today)
 - Vitest projects split (`test:unit` / `test:integration`)
 - CI coverage gates
+- Playwright E2E in GitHub Actions (currently local-only; see [e2e-testing.md](e2e-testing.md))
 
 Trigger for Vitest projects split: integration suite noticeably slows PR feedback.
 
@@ -212,4 +218,5 @@ npm run test
 npm run typecheck
 ```
 
-For UI changes, also run `npm run test:a11y`.
+For UI changes, also run `npm run test:a11y` and, when changing flows or
+routing, `npm run test:e2e` (local only — see [e2e-testing.md](e2e-testing.md)).

@@ -24,7 +24,10 @@ npm run typecheck
 npm run build:pages
 ```
 
-For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci` after `build:pages`.
+For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci`
+after `build:pages`. For routing, registry integration, or modal flows, also run
+`npm run test:e2e` locally (requires `npx playwright install chromium` once per
+machine). E2E is not part of PR baseline CI — see [e2e-testing.md](e2e-testing.md).
 
 Use `npm run build` for a standard production build. Use `npm run build:pages`
 when validating the GitHub Pages output (adds `.nojekyll` and `404.html`).
@@ -32,8 +35,8 @@ when validating the GitHub Pages output (adds `.nojekyll` and `404.html`).
 Accessibility expectations and validation details are documented in
 [accessibility.md](accessibility.md).
 
-Unit test conventions, coverage map, and backlog are documented in
-[testing.md](testing.md).
+Unit test conventions, coverage map, and the coverage backlog are documented in
+[testing.md](testing.md). Playwright E2E conventions are in [e2e-testing.md](e2e-testing.md).
 
 Deployment and release details are documented in [deployment.md](deployment.md).
 
