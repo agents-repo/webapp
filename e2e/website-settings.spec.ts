@@ -1,9 +1,8 @@
-import { test, expect } from './fixtures/registry-mock'
+import { test, expect, mockRegistryIndex } from './fixtures/registry-mock'
 import {
   alternateOverrideCatalog,
   E2E_OVERRIDE_INDEX_URL,
 } from './fixtures/catalog'
-import { mockRegistryIndex } from './fixtures/registry-mock'
 import { clearBrowserStorage } from './fixtures/storage'
 
 test.describe('Website settings', () => {
