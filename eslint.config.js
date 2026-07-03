@@ -9,7 +9,25 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'playwright-report', 'test-results']),
+  {
+    files: ['playwright.config.ts', 'e2e/**/*.ts'],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      sonarjs.configs.recommended,
+    ],
+    languageOptions: {
+      globals: globals.node,
+      parser: tseslint.parser,
+    },
+    rules: {
+      complexity: ['warn', 12],
+      'max-depth': ['warn', 4],
+      'no-empty-pattern': 'off',
+      'sonarjs/cognitive-complexity': ['warn', 12],
+    },
+  },
   {
     files: ['**/*.{js,mjs,cjs}'],
     extends: [js.configs.recommended, sonarjs.configs.recommended],
@@ -30,6 +48,7 @@ export default defineConfig([
   },
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['e2e/**', 'playwright.config.ts'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommendedTypeChecked,

@@ -121,8 +121,13 @@ For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:
 after `build:pages`. Browser scans are local-only, not PR baseline CI. See
 [docs/accessibility.md](../docs/accessibility.md).
 
+For routing, registry integration, or modal flows, also run `npm run test:e2e`
+locally (requires `npx playwright install chromium` once per machine). E2E is
+local-only, not PR baseline CI. See [docs/e2e-testing.md](../docs/e2e-testing.md).
+
 Unit test conventions and the coverage backlog are in
-[docs/testing.md](../docs/testing.md).
+[docs/testing.md](../docs/testing.md). Playwright E2E conventions are in
+[docs/e2e-testing.md](../docs/e2e-testing.md).
 
 This repository uses a Husky pre-commit hook that runs `npm run lint:all`.
 

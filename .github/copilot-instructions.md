@@ -25,6 +25,7 @@ Mandatory for all changes:
 Mandatory for UI and accessibility changes:
 
 - `docs/accessibility.md`
+- `docs/e2e-testing.md` (when changing UI flows, routing, or registry integration)
 
 Mandatory before structural, architectural, styling, or technology stack
 changes:
