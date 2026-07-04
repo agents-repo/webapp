@@ -1,11 +1,17 @@
 import type { RegistryCatalog } from '../../modules/registry/domain/package'
 
 export const sampleRegistryCatalog: RegistryCatalog = {
-  schemaVersion: '1.0.0',
+  schemaVersion: '1.3.0',
   updatedAt: '2026-01-01T00:00:00.000Z',
+  aliases: {
+    'sample-agent': 'agents-repo/sample-agent',
+  },
   packages: [
     {
-      id: 'sample-agent',
+      id: 'agents-repo/sample-agent',
+      namespace: 'agents-repo',
+      package: 'sample-agent',
+      path: 'packages/agents-repo/sample-agent',
       name: 'sample-agent',
       description: 'A sample agent package for accessibility testing.',
       owner: 'agents-repo',

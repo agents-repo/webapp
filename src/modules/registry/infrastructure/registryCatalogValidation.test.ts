@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { isRegistryCatalog } from './registryCatalogValidation'
 
 const makeValidPackage = (): Record<string, unknown> => ({
-  id: 'hello-agent',
+  id: 'agents-repo/hello-agent',
+  namespace: 'agents-repo',
+  package: 'hello-agent',
   name: 'hello-agent',
   description: 'Hello Agent package',
   owner: 'agents-repo',
@@ -23,7 +25,7 @@ const makeValidPackage = (): Record<string, unknown> => ({
 describe('isRegistryCatalog', () => {
   it('accepts a catalog with installTargets and registry-aligned enums', () => {
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [makeValidPackage()],
     }
@@ -36,7 +38,7 @@ describe('isRegistryCatalog', () => {
     delete pkg.installTargets
 
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [pkg],
     }
@@ -50,7 +52,7 @@ describe('isRegistryCatalog', () => {
     delete (pkg.estimateOverallCost as Record<string, unknown>).estimatedCost
 
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [pkg],
     }
@@ -63,7 +65,7 @@ describe('isRegistryCatalog', () => {
     pkg.status = 'inactive'
 
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [pkg],
     }
@@ -76,7 +78,7 @@ describe('isRegistryCatalog', () => {
     pkg.installTargets = [{ id: 'vscode', status: 'supported' }]
 
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [pkg],
     }
@@ -92,7 +94,7 @@ describe('isRegistryCatalog', () => {
     ]
 
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [pkg],
     }
@@ -105,7 +107,7 @@ describe('isRegistryCatalog', () => {
     pkg.installTargets = [{ id: 'cursor', status: 'planned' }]
 
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [pkg],
     }
@@ -115,7 +117,7 @@ describe('isRegistryCatalog', () => {
 
   it('rejects invalid updatedAt values', () => {
     const payload = {
-      schemaVersion: '1.2.0',
+      schemaVersion: '1.3.0',
       updatedAt: 'not-a-date',
       packages: [makeValidPackage()],
     }
@@ -129,7 +131,7 @@ describe('isRegistryCatalog', () => {
 
     expect(
       isRegistryCatalog({
-        schemaVersion: '1.2.0',
+        schemaVersion: '1.3.0',
         updatedAt: '2026-06-08T02:09:56.645Z',
         packages: [pkg],
       }),
@@ -139,7 +141,7 @@ describe('isRegistryCatalog', () => {
 
     expect(
       isRegistryCatalog({
-        schemaVersion: '1.2.0',
+        schemaVersion: '1.3.0',
         updatedAt: '2026-06-08T02:09:56.645Z',
         packages: [pkg],
       }),
@@ -152,7 +154,7 @@ describe('isRegistryCatalog', () => {
 
     expect(
       isRegistryCatalog({
-        schemaVersion: '1.2.0',
+        schemaVersion: '1.3.0',
         updatedAt: '2026-06-08T02:09:56.645Z',
         packages: [pkg],
       }),
@@ -160,7 +162,7 @@ describe('isRegistryCatalog', () => {
 
     expect(
       isRegistryCatalog({
-        schemaVersion: '1.2.0',
+        schemaVersion: '1.3.0',
         updatedAt: '2026-06-08T02:09:56.645Z',
         packages: 'not-an-array',
       }),
@@ -173,7 +175,7 @@ describe('isRegistryCatalog', () => {
 
     expect(
       isRegistryCatalog({
-        schemaVersion: '1.2.0',
+        schemaVersion: '1.3.0',
         updatedAt: '2026-06-08T02:09:56.645Z',
         packages: [pkg],
       }),

@@ -59,15 +59,15 @@ describe('registrySourceConfig', () => {
 
     expect(source.sourceMode).toBe('configured')
     expect(source.runtimeBaseUrlOverride).toBeNull()
-    expect(source.configuredBaseUrl).toBe('https://registry-proxy.maiconfz.workers.dev?ref=v1.x')
+    expect(source.configuredBaseUrl).toBe('https://registry-proxy.maiconfz.workers.dev?ref=v2.x')
     expect(source.baseUrl).toBe(configuredSource.baseUrl)
-    expect(source.baseUrl).toBe('https://registry-proxy.maiconfz.workers.dev?ref=v1.x')
+    expect(source.baseUrl).toBe('https://registry-proxy.maiconfz.workers.dev?ref=v2.x')
     expect(source.baseUrl).toBe(source.configuredBaseUrl)
     expect(source.indexUrl).toBe(configuredSource.indexUrl)
-    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.x')
+    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.x')
     expect(source.githubRepositorySourceMode).toBe('configured')
     expect(source.runtimeGithubRepositoryUrlOverride).toBeNull()
-    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.x')
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.x')
     expect(source.githubRepositoryUrl).toBe(source.configuredGithubRepositoryUrl)
   })
 
@@ -136,6 +136,6 @@ describe('registrySourceConfig', () => {
 
     expect(source.sourceMode).toBe('runtime-override')
     expect(source.githubRepositorySourceMode).toBe('configured')
-    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v1.x')
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.x')
   })
 })

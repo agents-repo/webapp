@@ -22,6 +22,9 @@ export interface InstallTargetEntry {
 
 export interface RegistryPackage {
   id: string
+  namespace: string
+  package: string
+  path?: string
   name: string
   description: string
   owner: string
@@ -40,5 +43,41 @@ export interface RegistryPackage {
 export interface RegistryCatalog {
   schemaVersion: string
   updatedAt: string
+  aliases?: Record<string, string>
   packages: RegistryPackage[]
+}
+
+const isSlugChar = (char: string): boolean => {
+  const code = char.charCodeAt(0)
+  return (code >= 97 && code <= 122) || (code >= 48 && code <= 57) || char === '-'
+}
+
+const encodeSlugSegment = (value: string): string => {
+  let encoded = ''
+  for (const char of value.trim().toLowerCase()) {
+    if (isSlugChar(char)) {
+      encoded += char
+      continue
+    }
+
+    encoded += `_${char.charCodeAt(0).toString(16)}_`
+  }
+
+  return encoded.length > 0 ? encoded : 'unknown'
+}
+
+export const toPackageSlug = (namespace: string, packageId: string): string => {
+  return `${encodeSlugSegment(namespace)}--${encodeSlugSegment(packageId)}`
+}
+
+export const resolvePackageRef = (
+  idOrLeaf: string,
+  aliases?: Record<string, string>,
+): string => {
+  const trimmed = idOrLeaf.trim()
+  if (trimmed.includes('/')) {
+    return trimmed
+  }
+
+  return aliases?.[trimmed] ?? trimmed
 }

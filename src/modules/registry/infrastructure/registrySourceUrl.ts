@@ -1,5 +1,5 @@
 
-export const DEFAULT_REGISTRY_REF = 'v1.x'
+export const DEFAULT_REGISTRY_REF = 'v2.x'
 export const DEFAULT_REGISTRY_SOURCE_URL = `https://registry-proxy.maiconfz.workers.dev?ref=${DEFAULT_REGISTRY_REF}`
 export const DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL =
   `https://github.com/agents-repo/registry/tree/${DEFAULT_REGISTRY_REF}`
@@ -50,6 +50,8 @@ export const trimTrailingSlashes = (value: string): string => {
 
   return output
 }
+
+const encodePathSegment = (value: string): string => encodeURIComponent(value.trim())
 
 export const trimLeadingSlashes = (value: string): string => {
   let output = value
@@ -162,17 +164,31 @@ export const buildRegistryIndexUrl = (baseUrl: string, indexPath: string): strin
 }
 
 export const buildRegistryArtifactPath = (
+  namespace: string,
   packageId: string,
   version: string,
   targetId: string,
-): string => `packages/${packageId}/versions/${version}/${version}-${targetId}.zip`
+): string => {
+  const encodedVersion = encodePathSegment(version)
+  const encodedTargetId = encodePathSegment(targetId)
+
+  return [
+    'packages',
+    encodePathSegment(namespace),
+    encodePathSegment(packageId),
+    'versions',
+    encodedVersion,
+    `${encodedVersion}-${encodedTargetId}.zip`,
+  ].join('/')
+}
 
 export const buildRegistryArtifactUrl = (
   baseUrl: string,
+  namespace: string,
   packageId: string,
   version: string,
   targetId: string,
-): string => buildRegistryIndexUrl(baseUrl, buildRegistryArtifactPath(packageId, version, targetId))
+): string => buildRegistryIndexUrl(baseUrl, buildRegistryArtifactPath(namespace, packageId, version, targetId))
 
 const isGitHubHostname = (hostname: string): boolean => {
   return hostname === GITHUB_HOSTNAME || hostname === GITHUB_WWW_HOSTNAME
@@ -180,11 +196,13 @@ const isGitHubHostname = (hostname: string): boolean => {
 
 export const buildRegistryPackageBrowseUrl = (
   githubRepositoryUrl: string,
+  namespace: string,
   packageId: string,
 ): string | null => {
+  const normalizedNamespace = namespace.trim()
   const normalizedPackageId = packageId.trim()
 
-  if (normalizedPackageId.length === 0) {
+  if (normalizedNamespace.length === 0 || normalizedPackageId.length === 0) {
     return null
   }
 
@@ -200,7 +218,7 @@ export const buildRegistryPackageBrowseUrl = (
     const repository = stripGitRepositorySuffix(segments[1])
     const branch = getGitHubRefFromSegments(segments)
 
-    return `https://github.com/${owner}/${repository}/tree/${branch}/packages/${normalizedPackageId}`
+    return `https://github.com/${owner}/${repository}/tree/${branch}/packages/${encodePathSegment(normalizedNamespace)}/${encodePathSegment(normalizedPackageId)}`
   } catch {
     return null
   }

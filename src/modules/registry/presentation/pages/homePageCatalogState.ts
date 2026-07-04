@@ -29,7 +29,7 @@ export const getPackageDownloadTargets = (
     .map((target) => ({
       ...target,
       label: getInstallTargetLabel(target.id),
-      href: buildRegistryArtifactUrl(registryBaseUrl, pkg.id, pkg.latest, target.id),
+      href: buildRegistryArtifactUrl(registryBaseUrl, pkg.namespace, pkg.package, pkg.latest, target.id),
     }))
     .filter((target) => isSafeExternalHttpUrl(target.href))
 }

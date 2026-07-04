@@ -130,7 +130,7 @@ describe('WebsiteSettingsControl save flow', () => {
     await user.click(screen.getByRole('button', { name: 'Open website settings' }))
     await user.type(
       screen.getByLabelText('Registry base URL override'),
-      'https://github.com/agents-repo/registry/tree/v1.x',
+      'https://github.com/agents-repo/registry/tree/v2.x',
     )
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
 

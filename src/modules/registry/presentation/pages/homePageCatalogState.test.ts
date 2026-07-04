@@ -145,7 +145,7 @@ describe('getPackageDownloadTargets', () => {
 
     expect(targets).toHaveLength(1)
     expect(targets[0]?.id).toBe('cursor')
-    expect(targets[0]?.href).toContain('sample-agent')
+    expect(targets[0]?.href).toContain('packages/agents-repo/sample-agent')
     expect(targets[0]?.href.startsWith('https://')).toBe(true)
   })
 

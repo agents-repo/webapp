@@ -15,7 +15,7 @@ import {
 describe('registrySourceUrl', () => {
   it('normalizes GitHub repository URLs to the default registry ref when no tree ref is present', () => {
     expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry')).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
+      'https://raw.githubusercontent.com/agents-repo/registry/v2.x',
     )
   })
 
@@ -54,7 +54,7 @@ describe('registrySourceUrl', () => {
 
   it('strips .git suffix on GitHub repository URLs', () => {
     expect(normalizeRegistryBaseUrl('https://github.com/agents-repo/registry.git')).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/v1.x',
+      'https://raw.githubusercontent.com/agents-repo/registry/v2.x',
     )
   })
 
@@ -128,9 +128,18 @@ describe('registrySourceUrl', () => {
     expect(trimLeadingSlashes('///packages/index.json')).toBe('packages/index.json')
   })
 
-  it('builds artifact path with version and target id', () => {
-    expect(buildRegistryArtifactPath('hello-agent', '1.0.0', 'cursor')).toBe(
-      'packages/hello-agent/versions/1.0.0/1.0.0-cursor.zip',
+  it('builds artifact path with namespace, version and target id', () => {
+    expect(buildRegistryArtifactPath('agents-repo', 'hello-agent', '1.0.0', 'cursor')).toBe(
+      'packages/agents-repo/hello-agent/versions/1.0.0/1.0.0-cursor.zip',
+    )
+  })
+
+  it('encodes path segments to prevent traversal in artifact paths', () => {
+    expect(buildRegistryArtifactPath('agents-repo', '../evil', '1.0.0', 'cursor')).toBe(
+      'packages/agents-repo/..%2Fevil/versions/1.0.0/1.0.0-cursor.zip',
+    )
+    expect(buildRegistryArtifactPath('agents-repo', 'hello/agent', '1.0.0', 'cursor')).toBe(
+      'packages/agents-repo/hello%2Fagent/versions/1.0.0/1.0.0-cursor.zip',
     )
   })
 
@@ -138,12 +147,13 @@ describe('registrySourceUrl', () => {
     expect(
       buildRegistryArtifactUrl(
         'https://registry-proxy.example.workers.dev?ref=main',
+        'agents-repo',
         'hello-agent',
         '1.0.0',
         'github-copilot',
       ),
     ).toBe(
-      'https://registry-proxy.example.workers.dev/packages/hello-agent/versions/1.0.0/1.0.0-github-copilot.zip?ref=main',
+      'https://registry-proxy.example.workers.dev/packages/agents-repo/hello-agent/versions/1.0.0/1.0.0-github-copilot.zip?ref=main',
     )
   })
 
@@ -151,42 +161,50 @@ describe('registrySourceUrl', () => {
     expect(
       buildRegistryArtifactUrl(
         'https://raw.githubusercontent.com/agents-repo/registry/main',
+        'agents-repo',
         'hello-agent',
         '1.1.0',
         'claude-code',
       ),
     ).toBe(
-      'https://raw.githubusercontent.com/agents-repo/registry/main/packages/hello-agent/versions/1.1.0/1.1.0-claude-code.zip',
+      'https://raw.githubusercontent.com/agents-repo/registry/main/packages/agents-repo/hello-agent/versions/1.1.0/1.1.0-claude-code.zip',
     )
   })
 
   it('builds package browse URL from GitHub repository root', () => {
-    expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', 'hello-agent')).toBe(
-      'https://github.com/agents-repo/registry/tree/v1.x/packages/hello-agent',
-    )
+    expect(
+      buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', 'agents-repo', 'hello-agent'),
+    ).toBe('https://github.com/agents-repo/registry/tree/v2.x/packages/agents-repo/hello-agent')
   })
 
   it('builds package browse URL from GitHub tree ref URLs', () => {
-    expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry/tree/v1.1.0', 'hello-agent')).toBe(
-      'https://github.com/agents-repo/registry/tree/v1.1.0/packages/hello-agent',
-    )
+    expect(
+      buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry/tree/v1.1.0', 'agents-repo', 'hello-agent'),
+    ).toBe('https://github.com/agents-repo/registry/tree/v1.1.0/packages/agents-repo/hello-agent')
   })
 
   it('builds package browse URL from explicit slash refs in tree URLs', () => {
     expect(
       buildRegistryPackageBrowseUrl(
         'https://github.com/agents-repo/registry/tree/refs/heads/feature/foo',
+        'agents-repo',
         'hello-agent',
       ),
-    ).toBe('https://github.com/agents-repo/registry/tree/feature/foo/packages/hello-agent')
+    ).toBe('https://github.com/agents-repo/registry/tree/feature/foo/packages/agents-repo/hello-agent')
   })
 
   it('returns null for non-GitHub browse source URLs', () => {
     expect(
-      buildRegistryPackageBrowseUrl('https://registry-proxy.example.workers.dev?ref=main', 'hello-agent'),
+      buildRegistryPackageBrowseUrl('https://registry-proxy.example.workers.dev?ref=main', 'agents-repo', 'hello-agent'),
     ).toBeNull()
-    expect(buildRegistryPackageBrowseUrl('not-a-url', 'hello-agent')).toBeNull()
-    expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', '   ')).toBeNull()
+    expect(buildRegistryPackageBrowseUrl('not-a-url', 'agents-repo', 'hello-agent')).toBeNull()
+    expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', '   ', 'hello-agent')).toBeNull()
+  })
+
+  it('encodes browse path segments for malformed catalog values', () => {
+    expect(
+      buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', 'agents-repo', 'hello/agent'),
+    ).toBe('https://github.com/agents-repo/registry/tree/v2.x/packages/agents-repo/hello%2Fagent')
   })
 
   it('builds cache lookup keys that ignore query-string refs', () => {

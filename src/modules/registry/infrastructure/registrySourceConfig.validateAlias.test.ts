@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { validateRegistrySourceUrlForMajorVersionAlias } from './registrySourceConfig'
 
-const DEFAULT_FALLBACK_REPOSITORY_URL = 'https://github.com/agents-repo/registry/tree/v1.x'
+const DEFAULT_FALLBACK_REPOSITORY_URL = 'https://github.com/agents-repo/registry/tree/v2.x'
 
 describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
   it('returns null when alias resolution succeeds', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
       Promise.resolve(
-        new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
+        new Response(JSON.stringify([{ name: 'v2.0.0' }, { name: 'v2.1.0' }]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         }),
@@ -40,7 +40,7 @@ describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
 
     await expect(
       validateRegistrySourceUrlForMajorVersionAlias(
-        'https://github.com/agents-repo/registry/tree/v1.x',
+        'https://github.com/agents-repo/registry/tree/v2.x',
         DEFAULT_FALLBACK_REPOSITORY_URL,
       ),
     ).resolves.toBeNull()
@@ -79,7 +79,7 @@ describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
     )
 
     const result = await validateRegistrySourceUrlForMajorVersionAlias(
-      'https://github.com/agents-repo/registry/tree/v1.x',
+      'https://github.com/agents-repo/registry/tree/v2.x',
       DEFAULT_FALLBACK_REPOSITORY_URL,
     )
 
@@ -89,7 +89,7 @@ describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
   it('returns a user-facing error when no stable tag exists for the major line', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
       Promise.resolve(
-        new Response(JSON.stringify([{ name: 'v2.0.0' }, { name: 'v2.1.0' }]), {
+        new Response(JSON.stringify([]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         }),
@@ -97,10 +97,10 @@ describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
     )
 
     const result = await validateRegistrySourceUrlForMajorVersionAlias(
-      'https://github.com/agents-repo/registry/tree/v1.x',
+      'https://github.com/agents-repo/registry/tree/v2.x',
       DEFAULT_FALLBACK_REPOSITORY_URL,
     )
 
-    expect(result).toBe('No stable release tag found for major version line 1.x in agents-repo/registry')
+    expect(result).toBe('No stable release tag found for major version line 2.x in agents-repo/registry')
   })
 })
