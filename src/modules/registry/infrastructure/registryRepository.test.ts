@@ -113,23 +113,7 @@ describe('loadRegistryCatalog', () => {
 
   it('returns a cached catalog with fresh cache state when only a stale identity-matched envelope exists after fetch source resolution fails', async () => {
     const cachedIndexUrl = 'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0'
-    const cachedCatalog: RegistryCatalog = {
-      schemaVersion: '1.2.0',
-      updatedAt: '2026-06-08T02:09:56.645Z',
-      packages: [
-        {
-          id: 'demo',
-          name: 'Demo',
-          description: 'Demo package',
-          owner: 'agents-repo',
-          latest: '1.0.0',
-          tags: [],
-          status: 'active',
-          category: 'assistant',
-          estimateOverallCost: { band: 'low' },
-        },
-      ],
-    }
+    const cachedCatalog = makeTestCatalog('1.2.0')
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockRejectedValue(
       new Error('Registry tag listing failed (503 Service Unavailable)'),
@@ -178,23 +162,7 @@ describe('loadRegistryCatalog', () => {
 
   it('returns a fresh cached catalog when fetch source resolution fails', async () => {
     const cachedIndexUrl = 'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0'
-    const cachedCatalog: RegistryCatalog = {
-      schemaVersion: '1.2.0',
-      updatedAt: '2026-06-08T02:09:56.645Z',
-      packages: [
-        {
-          id: 'demo',
-          name: 'Demo',
-          description: 'Demo package',
-          owner: 'agents-repo',
-          latest: '1.0.0',
-          tags: [],
-          status: 'active',
-          category: 'assistant',
-          estimateOverallCost: { band: 'low' },
-        },
-      ],
-    }
+    const cachedCatalog = makeTestCatalog('1.2.0')
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockRejectedValue(
       new Error('Registry tag listing failed (503 Service Unavailable)'),
@@ -244,23 +212,7 @@ describe('loadRegistryCatalog', () => {
 
   it('returns a fresh cached catalog when browse resolution fails', async () => {
     const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
-    const cachedCatalog: RegistryCatalog = {
-      schemaVersion: '1.2.0',
-      updatedAt: '2026-06-08T02:09:56.645Z',
-      packages: [
-        {
-          id: 'demo',
-          name: 'Demo',
-          description: 'Demo package',
-          owner: 'agents-repo',
-          latest: '1.0.0',
-          tags: [],
-          status: 'active',
-          category: 'assistant',
-          estimateOverallCost: { band: 'low' },
-        },
-      ],
-    }
+    const cachedCatalog = makeTestCatalog('1.2.0')
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
       sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
