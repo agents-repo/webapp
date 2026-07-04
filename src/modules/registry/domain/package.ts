@@ -52,29 +52,22 @@ const isSlugChar = (char: string): boolean => {
   return (code >= 97 && code <= 122) || (code >= 48 && code <= 57) || char === '-'
 }
 
-const sanitizeSlugSegment = (value: string): string => {
-  const collapsed: string[] = []
+const encodeSlugSegment = (value: string): string => {
+  let encoded = ''
   for (const char of value.trim().toLowerCase()) {
-    const next = isSlugChar(char) ? char : '-'
-    if (next === '-' && collapsed[collapsed.length - 1] === '-') {
+    if (isSlugChar(char)) {
+      encoded += char
       continue
     }
-    collapsed.push(next)
+
+    encoded += `_${char.charCodeAt(0).toString(16)}_`
   }
 
-  while (collapsed[0] === '-') {
-    collapsed.shift()
-  }
-  while (collapsed[collapsed.length - 1] === '-') {
-    collapsed.pop()
-  }
-
-  const normalized = collapsed.join('')
-  return normalized.length > 0 ? normalized : 'unknown'
+  return encoded.length > 0 ? encoded : 'unknown'
 }
 
 export const toPackageSlug = (namespace: string, packageId: string): string => {
-  return `${sanitizeSlugSegment(namespace)}--${sanitizeSlugSegment(packageId)}`
+  return `${encodeSlugSegment(namespace)}--${encodeSlugSegment(packageId)}`
 }
 
 export const resolvePackageRef = (
