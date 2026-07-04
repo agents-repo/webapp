@@ -134,6 +134,15 @@ describe('registrySourceUrl', () => {
     )
   })
 
+  it('encodes path segments to prevent traversal in artifact paths', () => {
+    expect(buildRegistryArtifactPath('agents-repo', '../evil', '1.0.0', 'cursor')).toBe(
+      'packages/agents-repo/..%2Fevil/versions/1.0.0/1.0.0-cursor.zip',
+    )
+    expect(buildRegistryArtifactPath('agents-repo', 'hello/agent', '1.0.0', 'cursor')).toBe(
+      'packages/agents-repo/hello%2Fagent/versions/1.0.0/1.0.0-cursor.zip',
+    )
+  })
+
   it('builds artifact URL while preserving query parameters', () => {
     expect(
       buildRegistryArtifactUrl(
@@ -190,6 +199,12 @@ describe('registrySourceUrl', () => {
     ).toBeNull()
     expect(buildRegistryPackageBrowseUrl('not-a-url', 'agents-repo', 'hello-agent')).toBeNull()
     expect(buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', '   ', 'hello-agent')).toBeNull()
+  })
+
+  it('encodes browse path segments for malformed catalog values', () => {
+    expect(
+      buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', 'agents-repo', 'hello/agent'),
+    ).toBe('https://github.com/agents-repo/registry/tree/v2.x/packages/agents-repo/hello%2Fagent')
   })
 
   it('builds cache lookup keys that ignore query-string refs', () => {

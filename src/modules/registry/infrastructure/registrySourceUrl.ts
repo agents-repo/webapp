@@ -51,6 +51,8 @@ export const trimTrailingSlashes = (value: string): string => {
   return output
 }
 
+const encodePathSegment = (value: string): string => encodeURIComponent(value.trim())
+
 export const trimLeadingSlashes = (value: string): string => {
   let output = value
 
@@ -166,7 +168,19 @@ export const buildRegistryArtifactPath = (
   packageId: string,
   version: string,
   targetId: string,
-): string => `packages/${namespace}/${packageId}/versions/${version}/${version}-${targetId}.zip`
+): string => {
+  const encodedVersion = encodePathSegment(version)
+  const encodedTargetId = encodePathSegment(targetId)
+
+  return [
+    'packages',
+    encodePathSegment(namespace),
+    encodePathSegment(packageId),
+    'versions',
+    encodedVersion,
+    `${encodedVersion}-${encodedTargetId}.zip`,
+  ].join('/')
+}
 
 export const buildRegistryArtifactUrl = (
   baseUrl: string,
@@ -204,7 +218,7 @@ export const buildRegistryPackageBrowseUrl = (
     const repository = stripGitRepositorySuffix(segments[1])
     const branch = getGitHubRefFromSegments(segments)
 
-    return `https://github.com/${owner}/${repository}/tree/${branch}/packages/${normalizedNamespace}/${normalizedPackageId}`
+    return `https://github.com/${owner}/${repository}/tree/${branch}/packages/${encodePathSegment(normalizedNamespace)}/${encodePathSegment(normalizedPackageId)}`
   } catch {
     return null
   }

@@ -58,13 +58,14 @@ const PACKAGE_STATUS_BADGE: Record<PackageStatus, { bg: string; icon: typeof faC
 
 const renderPackageDownloadAction = (
   pkg: RegistryPackage,
+  packageSlug: string,
   downloadTargets: PackageDownloadTarget[],
 ): ReactNode => (
   <Dropdown align="end">
     <Dropdown.Toggle
       variant="outline-primary"
       size="lg"
-      id={`download-actions-${pkg.id}`}
+      id={`download-actions-${packageSlug}`}
       className="d-inline-flex align-items-center justify-content-center"
       aria-label={`Download ${pkg.name}`}
     >
@@ -388,7 +389,7 @@ function HomePage({
 
                   {downloadTargets.length > 0 || safeBrowseUrl ? (
                     <Card.Footer className="d-flex justify-content-center gap-2">
-                      {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, downloadTargets) : null}
+                      {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, packageSlug, downloadTargets) : null}
                       {safeBrowseUrl ? (
                         <Button
                           as="a"
