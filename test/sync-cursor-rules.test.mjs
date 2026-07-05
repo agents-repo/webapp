@@ -48,6 +48,61 @@ describe('sync-cursor-rules', () => {
     assert.match(output, /# Webapp Project Guidelines/);
   });
 
+  it('rewrites relative markdown links for the mirror directory depth', async () => {
+    const repo = makeTempRepo();
+    tempRepos.push(repo);
+    const source = [
+      '# Webapp Project Guidelines',
+      '',
+      '1. Read [../README.md](../README.md).',
+      '2. Read [CONTRIBUTING.md](CONTRIBUTING.md).',
+      '',
+    ].join('\n');
+    fs.writeFileSync(path.join(repo, '.github', 'copilot-instructions.md'), source, 'utf-8');
+
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const execFileAsync = promisify(execFile);
+    await execFileAsync('node', ['scripts/sync-cursor-rules.mjs'], { cwd: repo });
+
+    const output = fs.readFileSync(
+      path.join(repo, '.cursor', 'rules', 'agents-webapp.mdc'),
+      'utf-8',
+    );
+    assert.match(output, /\[(\.\.\/){2}README\.md\]\((\.\.\/){2}README\.md\)/);
+    assert.match(
+      output,
+      /\[(\.\.\/){2}\.github\/CONTRIBUTING\.md\]\((\.\.\/){2}\.github\/CONTRIBUTING\.md\)/,
+    );
+  });
+
+  it('removes stale generated sibling rules on sync', async () => {
+    const repo = makeTempRepo();
+    tempRepos.push(repo);
+    fs.writeFileSync(
+      path.join(repo, '.github', 'copilot-instructions.md'),
+      '# Source\n',
+      'utf-8',
+    );
+
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const execFileAsync = promisify(execFile);
+    await execFileAsync('node', ['scripts/sync-cursor-rules.mjs'], { cwd: repo });
+
+    const rulesDir = path.join(repo, '.cursor', 'rules');
+    fs.writeFileSync(
+      path.join(rulesDir, 'old-generated.mdc'),
+      '<!-- Generated from .github/copilot-instructions.md — do not edit; run npm run sync:cursor-rules -->\nstale\n',
+      'utf-8',
+    );
+
+    await execFileAsync('node', ['scripts/sync-cursor-rules.mjs'], { cwd: repo });
+
+    assert.equal(fs.existsSync(path.join(rulesDir, 'old-generated.mdc')), false);
+    assert.equal(fs.existsSync(path.join(rulesDir, 'agents-webapp.mdc')), true);
+  });
+
   it('exits non-zero on drift when --check', async () => {
     const repo = makeTempRepo();
     tempRepos.push(repo);
