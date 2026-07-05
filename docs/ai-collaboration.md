@@ -77,11 +77,13 @@ implementation:
 1. Open a tracking issue (matching issue form).
 2. Create a branch named `<prefix>/<issue-number>-<slug>`.
 3. Push the branch and open a draft pull request with `Closes #<issue-number>`
-   before implementation commits.
-4. Hand off for human maintainer review and merge.
+   before implementation commits (`gh pr create --draft`).
+4. After validation passes, the developer manually marks the pull request ready
+   for review. Agents must not mark pull requests ready for review.
+5. Hand off for human maintainer review and merge.
 
 Agents must not merge to or push directly to `main`, and must not mark pull
-requests ready without maintainer direction. See
+requests ready for review. See
 `## Required Workflow (Task Start)` and
 `## Default Branch Integration (Agents)` in `.github/copilot-instructions.md`.
 

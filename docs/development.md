@@ -8,7 +8,9 @@ Workflow**:
 1. Open a tracking issue from `.github/ISSUE_TEMPLATE/`.
 2. Create a branch named `<prefix>/<issue-number>-<slug>` from latest `main`.
 3. Push the branch and open a draft pull request with `Closes #<issue-number>`
-   before implementation commits.
+   before implementation commits (`gh pr create --draft`).
+4. After validation passes, the developer manually marks the pull request ready
+   for review. Agents must not mark pull requests ready for review.
 
 See the organization
 [Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
@@ -27,7 +29,7 @@ npm install
 
 ## Local Validation
 
-Run these checks before opening a pull request:
+Run these checks before marking the pull request ready for review:
 
 ```bash
 npm run env:check
