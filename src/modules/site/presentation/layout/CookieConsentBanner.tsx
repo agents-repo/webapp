@@ -62,12 +62,18 @@ function CookieConsentBanner() {
   }, [location.pathname, location.search])
 
   const handleAccept = () => {
+    const wasAlreadyAccepted = getStoredAnalyticsConsent() === 'accepted'
+
     persistAnalyticsConsent('accepted')
-    grantAnalyticsConsent()
-    pushConsentUpdateEvent('granted')
-    loadGoogleTagManager()
-    pushAnalyticsPageView(location.pathname, location.search)
-    hasBootstrappedAnalyticsRef.current = true
+
+    if (!wasAlreadyAccepted) {
+      grantAnalyticsConsent()
+      pushConsentUpdateEvent('granted')
+      loadGoogleTagManager()
+      pushAnalyticsPageView(location.pathname, location.search)
+      hasBootstrappedAnalyticsRef.current = true
+    }
+
     bumpConsentSnapshot()
     closeCookiePreferences()
   }

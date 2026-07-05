@@ -143,4 +143,26 @@ describe('CookieConsentBanner', () => {
 
     expect(consentSpy).not.toHaveBeenCalled()
   })
+
+  it('does not duplicate analytics when accepting again from cookie preferences', () => {
+    persistAnalyticsConsent('accepted')
+    const pushSpy = vi.spyOn(analyticsPageView, 'pushAnalyticsPageView').mockImplementation(() => {})
+    const consentSpy = vi.spyOn(googleConsentMode, 'pushConsentUpdateEvent').mockImplementation(() => {})
+
+    renderWithProviders(
+      <>
+        <CookieConsentBanner />
+        <OpenPreferencesButton />
+      </>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open preferences' }))
+    pushSpy.mockClear()
+    consentSpy.mockClear()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Accept analytics' }))
+
+    expect(pushSpy).not.toHaveBeenCalled()
+    expect(consentSpy).not.toHaveBeenCalled()
+  })
 })

@@ -4,9 +4,9 @@ const analyticsConsentStorageKey = 'analytics-consent'
 
 test.describe('Cookie consent', () => {
   test('shows banner and both privacy links before a decision', async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.removeItem('analytics-consent')
-    })
+    await page.addInitScript((key) => {
+      localStorage.removeItem(key)
+    }, analyticsConsentStorageKey)
 
     await page.goto('/')
 
@@ -20,9 +20,9 @@ test.describe('Cookie consent', () => {
   })
 
   test('persists reject decision and hides banner', async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.removeItem('analytics-consent')
-    })
+    await page.addInitScript((key) => {
+      localStorage.removeItem(key)
+    }, analyticsConsentStorageKey)
 
     await page.goto('/')
     await page.getByRole('button', { name: 'Reject analytics' }).click()
@@ -37,9 +37,9 @@ test.describe('Cookie consent', () => {
   })
 
   test('persists accept decision and hides banner', async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.removeItem('analytics-consent')
-    })
+    await page.addInitScript((key) => {
+      localStorage.removeItem(key)
+    }, analyticsConsentStorageKey)
 
     await page.goto('/')
     await page.getByRole('button', { name: 'Accept analytics' }).click()
