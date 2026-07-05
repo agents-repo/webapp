@@ -59,8 +59,21 @@ request.
 The main contributor instructions live in:
 
 - `.github/copilot-instructions.md`
+- `.cursor/rules/agents-webapp.mdc` (generated from copilot instructions)
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
+
+After editing `copilot-instructions.md`, regenerate the Cursor rule:
+
+```bash
+npm run sync:cursor-rules
+```
+
+## Default branch integration
+
+Agents must not merge to or push directly to `main`. Open draft pull requests
+and hand off for human maintainer review. See `## Default Branch Integration
+(Agents)` in `.github/copilot-instructions.md`.
 
 Project-specific decision records live in:
 

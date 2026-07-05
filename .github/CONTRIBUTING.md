@@ -47,6 +47,9 @@ Recommended flow:
    naming rules in this guide.
 3. Open a draft pull request to `main` with the required template sections:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
+4. Hand off for human review. Agents MUST NOT merge pull requests into `main`,
+   push directly to `main`, or mark PRs ready to merge without maintainer
+   direction.
 
 For long issue/PR descriptions, use `--body-file` to avoid shell escaping and
 truncation issues.
@@ -103,7 +106,8 @@ Published releases deploy the built webapp to
 for PAT setup and redeploy instructions.
 
 When merging release-automation work, use a squash-merge title with `feat:` if
-the merge should trigger the first GitHub Release.
+the merge should trigger the first GitHub Release. That merge step is
+maintainer-only; agents must not merge to `main`.
 
 ## Local Validation
 
@@ -144,6 +148,20 @@ GitHub license detection and compliance tooling.
 5. List the validation commands you ran.
 6. Call out any documentation or workflow impact.
 7. If the PR template cannot be applied, include the same required sections manually.
+
+## IDE deployment mirrors
+
+| Path | Source |
+| --- | --- |
+| `.cursor/rules/agents-webapp.mdc` | `.github/copilot-instructions.md` |
+
+Regenerate after editing `copilot-instructions.md`:
+
+```bash
+npm run sync:cursor-rules
+```
+
+Do not edit `.cursor/rules/` directly.
 
 ## AI Collaboration
 

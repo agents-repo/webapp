@@ -17,6 +17,8 @@
     "lint": "eslint .",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
     "lint:all": "npm run lint:md && npm run lint",
+    "sync:cursor-rules": "node scripts/sync-cursor-rules.mjs",
+    "test:sync": "node --test test/sync-cursor-rules.test.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",

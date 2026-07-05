@@ -6,11 +6,14 @@ The webapp is published to GitHub Pages at:
 - <https://agents-repo.github.io/> (legacy; client redirect to custom domain after deploy)
 
 Each GitHub Release in `agents-repo/webapp` triggers a build and deploy of the
-static `dist/` output to `agents-repo/agents-repo.github.io`.
+static `dist/` output to `agents-repo/agents-repo.github.io`. Site content
+changes belong in this repository; `agents-repo.github.io` is the automated
+deployment target only.
 
 ## How deployment works
 
-1. A releasable conventional commit is merged to `main`.
+1. A maintainer merges a releasable conventional commit to `main` (agents must
+   not perform this step).
 2. The **Release** workflow runs validation and `semantic-release`, creating a
    `v<MAJOR>.<MINOR>.<PATCH>` tag and GitHub Release when applicable.
 3. When semantic-release publishes a new release, the **Release** workflow
