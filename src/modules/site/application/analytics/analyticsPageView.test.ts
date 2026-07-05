@@ -4,6 +4,12 @@ import { pushAnalyticsPageView } from './analyticsPageView.ts'
 import { persistAnalyticsConsent, clearAnalyticsConsent } from './cookieConsent.ts'
 import { clearTestStorage } from '../../../../test/testUtils.ts'
 
+function flushMicrotasks(): Promise<void> {
+  return new Promise((resolve) => {
+    queueMicrotask(resolve)
+  })
+}
+
 describe('pushAnalyticsPageView', () => {
   beforeEach(() => {
     clearTestStorage()
@@ -36,8 +42,9 @@ describe('pushAnalyticsPageView', () => {
     expect(window.dataLayer).toHaveLength(0)
   })
 
-  it('pushes page_view payload for known routes', () => {
+  it('pushes page_view payload for known routes', async () => {
     pushAnalyticsPageView(siteRoutes.about, '?tab=1')
+    await flushMicrotasks()
 
     expect(window.dataLayer).toContainEqual({
       event: 'page_view',

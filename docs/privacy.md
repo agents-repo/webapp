@@ -19,8 +19,16 @@ Presentation:
   cross-link to `/privacy`
 - `PrivacyPolicyView.tsx` — shared card/table layout
 
-Shared types live in `privacyPolicyContent.types.ts`. Both locales export the
-same section structure (`privacyPolicyLastUpdated`, `privacyPolicySections`).
+Shared types live in `privacyPolicyContent.types.ts` (`PrivacyPolicyContent`,
+`PrivacyPolicySection`, and related interfaces). Locale modules export:
+
+- `privacyPolicyContentEn` — English (`privacyPolicyContent.en.ts`)
+- `privacyPolicyContentPtBr` — Portuguese (`privacyPolicyContent.pt-BR.ts`)
+- `privacyPolicyLastUpdated` — defined in the English module; imported by pt-BR
+
+Each locale object includes `sections`, `cookieTableHeaders`, and page chrome
+fields (`pageTitle`, `languageLinkLabel`, and so on). Section `id` values are
+shared across locales for structural parity.
 
 ## Jurisdiction mapping
 
@@ -88,8 +96,9 @@ GTM is injected at runtime after consent — it is **not** in static HTML.
 When updating policy copy:
 
 1. Edit **both** `privacyPolicyContent.en.ts` and `privacyPolicyContent.pt-BR.ts`.
-2. Keep section keys and legal coverage aligned — do not shorten PT sections.
-3. Update `privacyPolicyLastUpdated` in both files.
+2. Keep section `id` values and legal coverage aligned — do not shorten PT sections.
+3. Update `privacyPolicyLastUpdated` in `privacyPolicyContent.en.ts` only (pt-BR
+   imports it).
 4. Run locale content tests and page/a11y tests for both routes.
 5. Coordinate legal review for EN and LGPD-fluent PT review for `/privacidade`.
 

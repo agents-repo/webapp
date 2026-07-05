@@ -19,11 +19,13 @@ export function pushAnalyticsPageView(pathname: string, search = ''): void {
     return
   }
 
-  globalThis.window.dataLayer = globalThis.window.dataLayer ?? []
-  globalThis.window.dataLayer.push({
-    event: 'page_view',
-    page_path: pathname,
-    page_location: `${globalThis.window.location.origin}${pathname}${search}`,
-    page_title: document.title,
+  queueMicrotask(() => {
+    globalThis.window.dataLayer = globalThis.window.dataLayer ?? []
+    globalThis.window.dataLayer.push({
+      event: 'page_view',
+      page_path: pathname,
+      page_location: `${globalThis.window.location.origin}${pathname}${search}`,
+      page_title: document.title,
+    })
   })
 }
