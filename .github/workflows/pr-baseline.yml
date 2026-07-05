@@ -20,6 +20,9 @@ jobs:
       - name: Run Markdown and code lint
         run: npm run lint:all
 
+      - name: Check Cursor rule mirror
+        run: npm run sync:cursor-rules -- --check
+
       - name: Typecheck
         run: npm run typecheck
 
