@@ -37,6 +37,8 @@ List affected paths or areas:
 - [ ] `Related Issues` includes `Closes #<issue-number>` for the issue this PR closes.
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
+- [ ] Merge to `main` is for human maintainers only; agents and automation
+  must not merge this PR or push directly to `main`.
 
 ## Risk and Rollback
 

@@ -207,6 +207,24 @@ Published releases deploy the built webapp to:
 See [docs/deployment.md](docs/deployment.md) for PAT setup, redeploy, and
 rollback instructions.
 
+## IDE Setup
+
+This repository commits a generated Cursor rule mirror so agent instructions
+are available on clone without manual setup.
+
+| IDE | Project guidelines |
+| --- | --- |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+| Cursor | `.cursor/rules/agents-webapp.mdc` |
+
+Regenerate after editing `copilot-instructions.md`:
+
+```bash
+npm run sync:cursor-rules
+```
+
+Do not edit `.cursor/rules/agents-webapp.mdc` directly.
+
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)

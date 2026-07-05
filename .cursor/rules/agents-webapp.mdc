@@ -1,3 +1,10 @@
+---
+description: Webapp project guidelines (mirrors copilot-instructions.md)
+alwaysApply: true
+---
+
+<!-- Generated from .github/copilot-instructions.md — do not edit; run npm run sync:cursor-rules -->
+
 # Webapp Project Guidelines
 
 ## Project Purpose
