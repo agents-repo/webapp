@@ -19,7 +19,7 @@
     "lint:all": "npm run lint:md && npm run lint",
     "sync:cursor-rules": "node scripts/sync-cursor-rules.mjs",
     "test:sync": "node --test test/sync-cursor-rules.test.mjs",
-    "test": "vitest run",
+    "test": "npm run test:sync && vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
