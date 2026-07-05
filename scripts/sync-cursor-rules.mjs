@@ -28,7 +28,8 @@ const SOURCE_DIR = path.posix.dirname(CONFIG.SOURCE);
 const TARGET_DIR = path.posix.dirname(CONFIG.TARGET);
 
 function rewriteMarkdownTarget(url) {
-  const titleMatch = url.match(/^(\S+)(\s+"(?:[^"\\]|\\.)*")$/);
+  const titlePattern = /^(\S+)(\s+"(?:[^"\\]|\\.)*")$/;
+  const titleMatch = titlePattern.exec(url);
   const pathPart = titleMatch ? titleMatch[1] : url.trim();
   const titleSuffix = titleMatch ? titleMatch[2] : '';
 
@@ -50,10 +51,10 @@ function rewriteRelativeLinks(body) {
       return match;
     }
 
-    const pathPart = url.match(/^(\S+)/)?.[1] ?? url;
-    const rewrittenText = text === url || text === pathPart
-      ? (rewrittenUrl.match(/^(\S+)/)?.[1] ?? rewrittenUrl)
-      : text;
+    const pathPattern = /^(\S+)/;
+    const pathPart = pathPattern.exec(url)?.[1] ?? url;
+    const rewrittenPath = pathPattern.exec(rewrittenUrl)?.[1] ?? rewrittenUrl;
+    const rewrittenText = text === url || text === pathPart ? rewrittenPath : text;
     return `[${rewrittenText}](${rewrittenUrl})`;
   });
 }
