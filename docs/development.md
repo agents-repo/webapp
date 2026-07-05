@@ -1,5 +1,19 @@
 # Development Workflow
 
+## Required Workflow
+
+Before local implementation, follow `.github/CONTRIBUTING.md` **Required
+Workflow**:
+
+1. Open a tracking issue from `.github/ISSUE_TEMPLATE/`.
+2. Create a branch named `<prefix>/<issue-number>-<slug>` from latest `main`.
+3. Push the branch and open a draft pull request with `Closes #<issue-number>`
+   before implementation commits.
+
+See the organization
+[Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
+for shared norms.
+
 ## Toolchain
 
 This project follows the pinned runtime declared in `.nvmrc` and `package.json`.
@@ -185,14 +199,12 @@ Keep changes scoped and document any UI or workflow impact clearly.
 
 Before opening a PR:
 
-1. Create an issue from the matching form in `.github/ISSUE_TEMPLATE/`.
+1. Complete the Required Workflow steps above (issue, branch, push, draft PR).
 2. Choose the matching category: bug/inconsistency, spec change, feature
    proposal, or task/chore.
 3. Documentation-only work uses the task/chore issue category and the `docs/`
    branch prefix.
-4. Create a non-`main` branch from the latest `main` using
-   `<prefix>/<issue-number>-<slug>`.
-5. Use the prefix that matches the work category:
+4. Use the prefix that matches the work category:
 
    - `fix/` for bug or inconsistency
    - `spec/` for spec change
@@ -200,5 +212,5 @@ Before opening a PR:
    - `chore/` for task or chore
    - `docs/` for documentation-only work
 
-6. In `## Related Issues`, include `Closes #<issue-number>`.
-7. Every PR targeting `main` must close a tracking issue.
+5. In `## Related Issues`, include `Closes #<issue-number>`.
+6. Every PR targeting `main` must close a tracking issue.

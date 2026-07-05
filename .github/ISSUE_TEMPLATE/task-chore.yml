@@ -7,8 +7,16 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this form for task/chore work. Documentation-only work should
-        use this issue form and a `docs/<issue-number>-<slug>` branch.
+        Use this form for task/chore work. Documentation-only work should use
+        this issue form and a `docs/<issue-number>-<slug>` branch.
+
+        **Branch name:** `chore/<issue-number>-<short-slug>`
+        **Example:** `chore/31-sync-workflow-docs`
+
+        Create this issue first to obtain the issue number, then open the branch.
+
+        You MUST open a draft pull request targeting `main` before implementation
+        commits. Include `Closes #<issue-number>` in `## Related Issues`.
   - type: textarea
     id: goal
     attributes:

@@ -16,8 +16,10 @@ docs in the same pull request.
 1. Confirm the task scope and expected outcome.
 2. Open an issue using the matching form in
    `.github/ISSUE_TEMPLATE/` before starting implementation.
-3. Create a non-`main` branch from the latest `main` and keep it focused on one change set.
-4. Identify the commands needed to validate the work.
+3. Create a non-`main` branch from the latest `main` using the naming rules in
+   this guide.
+4. Push the branch and open a draft pull request before implementation commits.
+5. Identify the commands needed to validate the work.
 
 Issue form selection MUST match one of these categories:
 
@@ -34,22 +36,36 @@ branch prefix.
 If template application is not possible, manually include equivalent sections
 in the issue body.
 
-## GitHub Communication Method (Preferred)
+## Required Workflow
 
-Contributors and agents SHOULD use `gh` CLI as the preferred method to
-communicate with GitHub for issues and pull requests.
-
-Recommended flow:
+Contributors and agents MUST follow this lifecycle before implementation:
 
 1. Inspect and confirm issue scope:
    `gh issue view <number> --repo agents-repo/webapp`
 2. Create and switch to a non-`main` branch from the latest `main` using the
    naming rules in this guide.
-3. Open a draft pull request to `main` with the required template sections:
+3. Push the branch to the remote repository.
+4. Open a draft pull request to `main` with the required template sections
+   before implementation commits:
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
-4. Hand off for human review. Agents MUST NOT merge pull requests into `main`,
+5. Hand off for human review. Agents MUST NOT merge pull requests into `main`,
    push directly to `main`, or mark PRs ready to merge without maintainer
    direction.
+
+All contributors MUST integrate changes to `main` only through merged pull
+requests. Direct commits or pushes to `main` MUST NOT be used.
+
+GitHub requires a pushed remote branch before opening a pull request. An empty
+branch push is acceptable when opening the draft PR before implementation
+commits.
+
+See the organization [Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
+for shared norms and exceptions.
+
+## GitHub Communication Method (Preferred)
+
+Contributors and agents SHOULD use `gh` CLI as the preferred method to
+communicate with GitHub for issues and pull requests.
 
 For long issue/PR descriptions, use `--body-file` to avoid shell escaping and
 truncation issues.
@@ -81,8 +97,8 @@ Use conventional-style summaries when possible:
 
 - Release versions use Semantic Versioning `MAJOR.MINOR.PATCH` sourced from
   <https://semver.org>.
-- Pushes to `main` run release validation checks and then execute
-  `semantic-release`.
+- Pushes to `main` (post-merge integration via pull request, not direct push)
+  run release validation checks and then execute `semantic-release`.
 - A release is published only when commit history includes releasable changes
   per the commit-to-version mapping below.
 - `workflow_dispatch` remains available for operational checks.

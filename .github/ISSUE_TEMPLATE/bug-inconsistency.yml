@@ -4,6 +4,16 @@ title: "fix: "
 labels:
   - bug
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Branch name:** `fix/<issue-number>-<short-slug>`
+        **Example:** `fix/42-related-issues-checklist`
+
+        Create this issue first to obtain the issue number, then open the branch.
+
+        You MUST open a draft pull request targeting `main` before implementation
+        commits. Include `Closes #<issue-number>` in `## Related Issues`.
   - type: textarea
     id: summary
     attributes:

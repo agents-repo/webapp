@@ -71,10 +71,19 @@ npm run sync:cursor-rules
 
 ## Default branch integration
 
-Agents must not merge to or push directly to `main`. Open draft pull requests
-and hand off for human maintainer review. See the
-`## Default Branch Integration (Agents)` section in
-`.github/copilot-instructions.md`.
+Every task MUST follow the organization Required Workflow before
+implementation:
+
+1. Open a tracking issue (matching issue form).
+2. Create a branch named `<prefix>/<issue-number>-<slug>`.
+3. Push the branch and open a draft pull request with `Closes #<issue-number>`
+   before implementation commits.
+4. Hand off for human maintainer review and merge.
+
+Agents must not merge to or push directly to `main`, and must not mark pull
+requests ready without maintainer direction. See
+`## Required Workflow (Task Start)` and
+`## Default Branch Integration (Agents)` in `.github/copilot-instructions.md`.
 
 Project-specific decision records live in:
 

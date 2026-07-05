@@ -4,6 +4,16 @@ title: "feat: "
 labels:
   - enhancement
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Branch name:** `feat/<issue-number>-<short-slug>`
+        **Example:** `feat/89-search-refinement`
+
+        Create this issue first to obtain the issue number, then open the branch.
+
+        You MUST open a draft pull request targeting `main` before implementation
+        commits. Include `Closes #<issue-number>` in `## Related Issues`.
   - type: textarea
     id: problem
     attributes:

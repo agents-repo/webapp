@@ -33,12 +33,17 @@ List affected paths or areas:
 - [ ] `npm run lint:all`
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
-- [ ] Matching issue template was used, or equivalent required context is included.
+- [ ] A tracking issue was opened before implementation.
+- [ ] The branch name follows `<prefix>/<issue-number>-<slug>`.
+- [ ] This draft PR was opened before implementation commits (or documents
+  why not).
 - [ ] `Related Issues` includes `Closes #<issue-number>` for the issue this PR closes.
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
 - [ ] Merge to `main` is for human maintainers only; agents and automation
   must not merge this PR or push directly to `main`.
+- [ ] Agents have not marked this PR ready for review without maintainer
+  direction.
 
 ## Risk and Rollback
 

@@ -4,6 +4,16 @@ title: "spec: "
 labels:
   - documentation
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Branch name:** `spec/<issue-number>-<short-slug>`
+        **Example:** `spec/57-pr-policy-clarity`
+
+        Create this issue first to obtain the issue number, then open the branch.
+
+        You MUST open a draft pull request targeting `main` before implementation
+        commits. Include `Closes #<issue-number>` in `## Related Issues`.
   - type: textarea
     id: motivation
     attributes:
