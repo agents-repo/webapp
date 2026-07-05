@@ -61,8 +61,20 @@ GitHub requires a pushed remote branch before opening a pull request. An empty
 branch push is acceptable when opening the draft PR before implementation
 commits.
 
-See the organization [Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
+See the organization
+[Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
 for shared norms and exceptions.
+
+## Workflow exceptions
+
+1. **Security vulnerabilities** — Follow the private advisory flow. In
+   `## Related Issues`, use `Closes #<issue-number>` when maintainers provide
+   a linked private or advisory tracking issue. Otherwise, reference the
+   private security advisory identifier in the PR body.
+2. **Package submission** — Open a draft PR early, author package source, then
+   run `package:build` and `package:validate-artifacts` before marking ready
+   for review. See registry `.github/CONTRIBUTING.md` Package Submission
+   Expectations.
 
 ## GitHub Communication Method (Preferred)
 

@@ -10,8 +10,9 @@ body:
         Use this form for task/chore work. Documentation-only work should use
         this issue form and a `docs/<issue-number>-<slug>` branch.
 
-        **Branch name:** `chore/<issue-number>-<short-slug>`
-        **Example:** `chore/31-sync-workflow-docs`
+        **Branch name:** `chore/<issue-number>-<short-slug>` (or
+        `docs/<issue-number>-<short-slug>` for documentation-only work)
+        **Example:** `chore/31-sync-workflow-docs` or `docs/88-update-pr-guidance`
 
         Create this issue first to obtain the issue number, then open the branch.
 

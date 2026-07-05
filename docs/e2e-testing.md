@@ -120,7 +120,8 @@ in Playwright — use unit tests for GTM injection logic instead.
 2. Query priority: role → label → text (no new `data-testid` unless necessary).
 3. Bootstrap dropdowns: click the toggle first, then the menu item.
 4. One behavior per `test` block; follow Arrange-Act-Assert.
-5. Run `npm run test:e2e` locally before opening a PR that touches UI flows.
+5. Run `npm run test:e2e` locally before marking ready for review on a PR that
+   touches UI flows.
 
 ### Checklist
 
