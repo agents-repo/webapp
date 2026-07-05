@@ -27,18 +27,34 @@ Sync ${CONFIG.SOURCE} -> ${CONFIG.TARGET}
 const SOURCE_DIR = path.posix.dirname(CONFIG.SOURCE);
 const TARGET_DIR = path.posix.dirname(CONFIG.TARGET);
 
+function rewriteMarkdownTarget(url) {
+  const titleMatch = url.match(/^(\S+)(\s+"(?:[^"\\]|\\.)*")$/);
+  const pathPart = titleMatch ? titleMatch[1] : url.trim();
+  const titleSuffix = titleMatch ? titleMatch[2] : '';
+
+  if (/^(?:[a-z][a-z0-9+.-]*:|#)/i.test(pathPart)) {
+    return url;
+  }
+
+  const resolvedFromRoot = path.posix.normalize(path.posix.join(SOURCE_DIR, pathPart));
+  const rewritten = path.posix.relative(TARGET_DIR, resolvedFromRoot);
+  return `${rewritten}${titleSuffix}`;
+}
+
 function rewriteRelativeLinks(body) {
   // Copilot instructions use simple inline markdown links only.
   // eslint-disable-next-line sonarjs/slow-regex -- bounded repo-owned input
   return body.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (match, text, url) => {
-    if (/^(?:[a-z][a-z0-9+.-]*:|#)/i.test(url)) {
+    const rewrittenUrl = rewriteMarkdownTarget(url);
+    if (rewrittenUrl === url) {
       return match;
     }
 
-    const resolvedFromRoot = path.posix.normalize(path.posix.join(SOURCE_DIR, url));
-    const rewritten = path.posix.relative(TARGET_DIR, resolvedFromRoot);
-    const rewrittenText = text === url ? rewritten : text;
-    return `[${rewrittenText}](${rewritten})`;
+    const pathPart = url.match(/^(\S+)/)?.[1] ?? url;
+    const rewrittenText = text === url || text === pathPart
+      ? (rewrittenUrl.match(/^(\S+)/)?.[1] ?? rewrittenUrl)
+      : text;
+    return `[${rewrittenText}](${rewrittenUrl})`;
   });
 }
 
