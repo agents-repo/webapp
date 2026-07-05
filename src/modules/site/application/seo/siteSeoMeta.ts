@@ -37,6 +37,16 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
       'Accessibility statement and conformance report for Agents Repo, targeting WCAG 2.2 Level AA.',
     canonicalPath: siteRoutes.accessibility,
   },
+  [siteRoutes.privacy]: {
+    description:
+      'Privacy policy for Agents Repo: data collection, cookies, analytics consent, and your rights in the EU, US, and Brazil.',
+    canonicalPath: siteRoutes.privacy,
+  },
+  [siteRoutes.privacyPtBr]: {
+    description:
+      'Política de privacidade do Agents Repo: coleta de dados, cookies, consentimento de analytics e seus direitos.',
+    canonicalPath: siteRoutes.privacyPtBr,
+  },
 }
 
 export function getSiteSeoMeta(pathname: string): SiteSeoMeta {

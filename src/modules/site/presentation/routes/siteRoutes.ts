@@ -4,6 +4,8 @@ export const siteRoutes = {
   contact: '/contact',
   helpUs: '/help-us',
   accessibility: '/accessibility',
+  privacy: '/privacy',
+  privacyPtBr: '/privacidade',
 } as const
 
 export type SiteRoutePath = (typeof siteRoutes)[keyof typeof siteRoutes]

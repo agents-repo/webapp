@@ -88,10 +88,20 @@ Actions variables or build-time `VITE_*` environment variables:
 
 No secrets are required for the default public Pages deployment.
 
+Optional production analytics:
+
+- `VITE_GTM_ID` — GTM container ID (default in `.env.production`)
+- Consent Mode v2 default-deny is baked into `index.html` at build time
+- The GTM script loads at **runtime** only after the user accepts analytics
+  cookies (`MODE === 'production'`). Static `dist/index.html` must contain the
+  consent stub but must **not** contain the GTM container snippet or ID.
+
+See [privacy.md](privacy.md) and [seo.md](seo.md) for verification steps.
+
 ## Smoke checks after deploy
 
 1. Open <https://agents-repo.org/>.
-2. Verify deep links: `/about`, `/contact`, `/help-us`.
+2. Verify deep links: `/about`, `/contact`, `/help-us`, `/privacy`, `/privacidade`.
 3. Confirm the registry catalog loads (default proxy source).
 4. Open <https://agents-repo.github.io/> and confirm the browser redirects to
    `https://agents-repo.org/` with the same path.

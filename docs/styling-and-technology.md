@@ -59,6 +59,19 @@ lets users choose light, dark, or auto. The selected mode is persisted.
 Header chrome is intentionally fixed to a dark surface for consistency, while
 page content surfaces (including cards) follow the selected color mode.
 
+## Analytics and third-party scripts
+
+The approved stack for optional production analytics:
+
+- **Google Consent Mode v2** — default-deny stub in `index.html` (all environments)
+- **Google Tag Manager** — runtime injection after explicit consent (`MODE === 'production'` only)
+- **Cookie consent banner** — `CookieConsentBanner` + `CookieConsentProvider`;
+  styles in `App.scss` (`.cookie-consent-banner`)
+
+GTM is not added via a Vite HTML transform or static snippet. SPA pageviews use
+React `dataLayer` pushes (`AnalyticsRouteTracker`), not full page reloads. See
+[privacy.md](privacy.md) and [seo.md](seo.md).
+
 ## Why This Split Exists
 
 This split keeps Bootstrap customization centralized and makes the right
