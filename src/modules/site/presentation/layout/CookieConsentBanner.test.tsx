@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest'
 import { cleanup, fireEvent, screen } from '@testing-library/react'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/renderWithProviders.tsx'
 import CookieConsentBanner from './CookieConsentBanner.tsx'
 import { siteRoutes } from '../routes/siteRoutes.ts'
@@ -16,6 +17,21 @@ function OpenPreferencesButton() {
   return (
     <button type="button" onClick={openCookiePreferences}>
       Open preferences
+    </button>
+  )
+}
+
+function NavigationTrigger() {
+  const navigate = useNavigate()
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        void navigate(siteRoutes.about)
+      }}
+    >
+      Go to about
     </button>
   )
 }
@@ -100,5 +116,31 @@ describe('CookieConsentBanner', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Open preferences' }))
 
     expect(screen.getByRole('region', { name: 'Cookie preferences' })).toBeInTheDocument()
+  })
+
+  it('does not re-bootstrap analytics after accept on route change', () => {
+    const consentSpy = vi.spyOn(googleConsentMode, 'pushConsentUpdateEvent').mockImplementation(() => {})
+    vi.spyOn(googleTagManager, 'loadGoogleTagManager').mockImplementation(() => {})
+    vi.spyOn(analyticsPageView, 'pushAnalyticsPageView').mockImplementation(() => {})
+
+    renderWithProviders(
+      <>
+        <CookieConsentBanner />
+        <NavigationTrigger />
+        <Routes>
+          <Route path={siteRoutes.home} element={<div>Home</div>} />
+          <Route path={siteRoutes.about} element={<div>About</div>} />
+        </Routes>
+      </>,
+      { initialEntries: [siteRoutes.home] },
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Accept analytics' }))
+    expect(consentSpy).toHaveBeenCalledTimes(1)
+
+    consentSpy.mockClear()
+    fireEvent.click(screen.getByRole('button', { name: 'Go to about' }))
+
+    expect(consentSpy).not.toHaveBeenCalled()
   })
 })

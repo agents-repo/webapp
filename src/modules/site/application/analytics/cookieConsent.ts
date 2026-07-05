@@ -20,8 +20,12 @@ export function getStoredAnalyticsConsent(): AnalyticsConsent | null {
     return null
   }
 
-  const storedValue = storage.getItem(analyticsConsentStorageKey)
-  return isAnalyticsConsent(storedValue) ? storedValue : null
+  try {
+    const storedValue = storage.getItem(analyticsConsentStorageKey)
+    return isAnalyticsConsent(storedValue) ? storedValue : null
+  } catch {
+    return null
+  }
 }
 
 export function persistAnalyticsConsent(value: AnalyticsConsent): void {
@@ -30,7 +34,11 @@ export function persistAnalyticsConsent(value: AnalyticsConsent): void {
     return
   }
 
-  storage.setItem(analyticsConsentStorageKey, value)
+  try {
+    storage.setItem(analyticsConsentStorageKey, value)
+  } catch {
+    // Ignore storage failures; persistence is best-effort.
+  }
 }
 
 export function clearAnalyticsConsent(): void {
@@ -39,7 +47,11 @@ export function clearAnalyticsConsent(): void {
     return
   }
 
-  storage.removeItem(analyticsConsentStorageKey)
+  try {
+    storage.removeItem(analyticsConsentStorageKey)
+  } catch {
+    // Ignore storage failures; persistence is best-effort.
+  }
 }
 
 export function hasAnalyticsConsentDecision(): boolean {

@@ -67,6 +67,7 @@ function CookieConsentBanner() {
     pushConsentUpdateEvent('granted')
     loadGoogleTagManager()
     pushAnalyticsPageView(location.pathname, location.search)
+    hasBootstrappedAnalyticsRef.current = true
     bumpConsentSnapshot()
     closeCookiePreferences()
   }
