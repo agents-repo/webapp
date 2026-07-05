@@ -53,4 +53,12 @@ describe('pushAnalyticsPageView', () => {
       page_title: 'Agents Repo',
     })
   })
+
+  it('no-ops when consent is revoked before the microtask runs', async () => {
+    pushAnalyticsPageView(siteRoutes.about)
+    clearAnalyticsConsent()
+    await flushMicrotasks()
+
+    expect(window.dataLayer).toHaveLength(0)
+  })
 })

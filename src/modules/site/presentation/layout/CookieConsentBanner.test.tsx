@@ -5,7 +5,20 @@ import CookieConsentBanner from './CookieConsentBanner.tsx'
 import { siteRoutes } from '../routes/siteRoutes.ts'
 import { clearTestStorage } from '../../../../test/testUtils.ts'
 import * as googleTagManager from '../../application/analytics/googleTagManager.ts'
+import * as googleConsentMode from '../../application/analytics/googleConsentMode.ts'
 import * as analyticsPageView from '../../application/analytics/analyticsPageView.ts'
+import { persistAnalyticsConsent } from '../../application/analytics/cookieConsent.ts'
+import { useCookieConsent } from '../../application/analytics/cookieConsentContext.ts'
+
+function OpenPreferencesButton() {
+  const { openCookiePreferences } = useCookieConsent()
+
+  return (
+    <button type="button" onClick={openCookiePreferences}>
+      Open preferences
+    </button>
+  )
+}
 
 describe('CookieConsentBanner', () => {
   beforeEach(() => {
@@ -59,5 +72,33 @@ describe('CookieConsentBanner', () => {
 
     expect(loadSpy).not.toHaveBeenCalled()
     expect(screen.queryByRole('region', { name: 'Cookie preferences' })).not.toBeInTheDocument()
+  })
+
+  it('bootstraps analytics for return visitors', () => {
+    persistAnalyticsConsent('accepted')
+    const loadSpy = vi.spyOn(googleTagManager, 'loadGoogleTagManager').mockImplementation(() => {})
+    const consentSpy = vi.spyOn(googleConsentMode, 'pushConsentUpdateEvent').mockImplementation(() => {})
+
+    renderWithProviders(<CookieConsentBanner />)
+
+    expect(loadSpy).toHaveBeenCalled()
+    expect(consentSpy).toHaveBeenCalledWith('granted')
+  })
+
+  it('reopens banner from cookie preferences', () => {
+    persistAnalyticsConsent('rejected')
+
+    renderWithProviders(
+      <>
+        <CookieConsentBanner />
+        <OpenPreferencesButton />
+      </>,
+    )
+
+    expect(screen.queryByRole('region', { name: 'Cookie preferences' })).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open preferences' }))
+
+    expect(screen.getByRole('region', { name: 'Cookie preferences' })).toBeInTheDocument()
   })
 })

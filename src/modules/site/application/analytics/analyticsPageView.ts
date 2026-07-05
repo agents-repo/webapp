@@ -20,6 +20,10 @@ export function pushAnalyticsPageView(pathname: string, search = ''): void {
   }
 
   queueMicrotask(() => {
+    if (getStoredAnalyticsConsent() !== 'accepted') {
+      return
+    }
+
     globalThis.window.dataLayer = globalThis.window.dataLayer ?? []
     globalThis.window.dataLayer.push({
       event: 'page_view',

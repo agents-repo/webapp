@@ -20,11 +20,11 @@ describe('resolveGtmContainerId', () => {
     expect(resolveGtmContainerId()).toBe(DEFAULT_GTM_CONTAINER_ID)
   })
 
-  it('falls back when env value is invalid', () => {
+  it('returns null when env value is invalid', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     vi.stubEnv('VITE_GTM_ID', 'invalid')
 
-    expect(resolveGtmContainerId()).toBe(DEFAULT_GTM_CONTAINER_ID)
+    expect(resolveGtmContainerId()).toBeNull()
     expect(errorSpy).toHaveBeenCalled()
 
     errorSpy.mockRestore()
@@ -58,5 +58,15 @@ describe('loadGoogleTagManager', () => {
 
     loadGoogleTagManager('GTM-TEST1234')
     expect(document.querySelectorAll('script[data-gtm-id="GTM-TEST1234"]')).toHaveLength(1)
+  })
+
+  it('does not load when VITE_GTM_ID is invalid', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.stubEnv('VITE_GTM_ID', 'invalid')
+
+    loadGoogleTagManager()
+
+    expect(document.querySelector('script[data-gtm-id]')).toBeNull()
+    errorSpy.mockRestore()
   })
 })

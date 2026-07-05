@@ -107,8 +107,9 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Optional `VITE_GTM_ID` sets the Google Tag Manager container ID for
    production analytics (default `GTM-57FJBZ7P` in `.env.production`). GTM
    loads only when `MODE === 'production'` **and** the user accepts analytics
-   cookies — not in `npm run dev` or e2e builds (`MODE=e2e`). See
-   [privacy.md](privacy.md) and [seo.md](seo.md).
+   cookies — not in `npm run dev` or e2e builds (`MODE=e2e`). An invalid
+   explicit `VITE_GTM_ID` disables analytics loading (no fallback container).
+   See [privacy.md](privacy.md) and [seo.md](seo.md).
 - Registry source URLs may be GitHub repository URLs, raw URLs, or other base
    URLs, but the resolved source must still provide the expected registry
    structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`

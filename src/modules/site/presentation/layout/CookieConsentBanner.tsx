@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap'
 import { NavLink, useLocation } from 'react-router-dom'
 import { pushAnalyticsPageView } from '../../application/analytics/analyticsPageView.ts'
 import {
+  analyticsConsentStorageKeyForDocs,
   getStoredAnalyticsConsent,
   hasAnalyticsConsentDecision,
   persistAnalyticsConsent,
@@ -20,9 +21,29 @@ function CookieConsentBanner() {
   const headingId = useId()
   const location = useLocation()
   const { isPreferencesOpen, closeCookiePreferences } = useCookieConsent()
-  const [hasChosen, setHasChosen] = useState(() => hasAnalyticsConsentDecision())
+  const [, setConsentRenderGeneration] = useState(0)
+  const hasChosen = hasAnalyticsConsentDecision()
   const isVisible = isPreferencesOpen || !hasChosen
   const hasBootstrappedAnalyticsRef = useRef(false)
+
+  const bumpConsentSnapshot = () => {
+    setConsentRenderGeneration((currentValue) => currentValue + 1)
+  }
+
+  useEffect(() => {
+    const syncConsentChoice = (event: StorageEvent) => {
+      if (event.key !== null && event.key !== analyticsConsentStorageKeyForDocs) {
+        return
+      }
+
+      setConsentRenderGeneration((currentValue) => currentValue + 1)
+    }
+
+    globalThis.addEventListener('storage', syncConsentChoice)
+    return () => {
+      globalThis.removeEventListener('storage', syncConsentChoice)
+    }
+  }, [])
 
   useEffect(() => {
     if (hasBootstrappedAnalyticsRef.current) {
@@ -35,6 +56,7 @@ function CookieConsentBanner() {
 
     hasBootstrappedAnalyticsRef.current = true
     grantAnalyticsConsent()
+    pushConsentUpdateEvent('granted')
     loadGoogleTagManager()
     pushAnalyticsPageView(location.pathname, location.search)
   }, [location.pathname, location.search])
@@ -45,7 +67,7 @@ function CookieConsentBanner() {
     pushConsentUpdateEvent('granted')
     loadGoogleTagManager()
     pushAnalyticsPageView(location.pathname, location.search)
-    setHasChosen(true)
+    bumpConsentSnapshot()
     closeCookiePreferences()
   }
 
@@ -53,7 +75,7 @@ function CookieConsentBanner() {
     persistAnalyticsConsent('rejected')
     denyAllGoogleConsent()
     pushConsentUpdateEvent('denied')
-    setHasChosen(true)
+    bumpConsentSnapshot()
     closeCookiePreferences()
   }
 
@@ -84,7 +106,7 @@ function CookieConsentBanner() {
           for details, including your rights in Europe, the United States, and Brazil.
         </p>
         <div className="d-flex flex-wrap gap-2">
-          <Button variant="primary" size="sm" onClick={handleAccept}>
+          <Button variant="outline-primary" size="sm" onClick={handleAccept}>
             Accept analytics
           </Button>
           <Button variant="outline-primary" size="sm" onClick={handleReject}>

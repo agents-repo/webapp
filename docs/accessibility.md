@@ -49,7 +49,8 @@ The analytics consent banner (`CookieConsentBanner.tsx`) must:
 
 - Use `role="region"` with `aria-labelledby` pointing at the banner heading
 - Link to both `/privacy` and `/privacidade` before Accept/Reject controls
-- Present Accept and Reject with equal visual prominence (same button sizing)
+- Present Accept and Reject with equal visual prominence (same button variant
+  and sizing)
 - Stay visible until the user makes an explicit choice (no dismiss-without-choice)
 - Re-open from footer **Cookie preferences** via `openCookiePreferences()`
 
