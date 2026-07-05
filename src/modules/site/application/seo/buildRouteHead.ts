@@ -15,6 +15,21 @@ import {
 } from './siteSeo.ts'
 import { getSiteSeoMeta } from './siteSeoMeta.ts'
 
+const legacyGithubPagesHost = 'agents-repo.github.io'
+const customSiteOrigin = 'https://agents-repo.org'
+
+export function injectLegacyDomainRedirectIntoHtml(html: string): string {
+  const script = [
+    '<script>',
+    `if (location.hostname === '${legacyGithubPagesHost}') {`,
+    `  location.replace('${customSiteOrigin}' + location.pathname + location.search + location.hash);`,
+    '}',
+    '</script>',
+  ].join('\n    ')
+
+  return html.replace(/<head([^>]*)>/i, `<head$1>\n    ${script}`)
+}
+
 export interface RouteHeadData {
   readonly documentTitle: string
   readonly description: string

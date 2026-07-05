@@ -286,7 +286,7 @@ describe('loadRegistryCatalog', () => {
     const locationDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'location')
     Object.defineProperty(globalThis, 'location', {
       configurable: true,
-      value: { origin: 'https://agents-repo.github.io' },
+      value: { origin: 'https://agents-repo.org' },
     })
 
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(

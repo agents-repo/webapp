@@ -3,6 +3,7 @@ import { siteRoutes } from '../../presentation/routes/siteRoutes'
 import {
   buildRouteHead,
   getRouteHeadData,
+  injectLegacyDomainRedirectIntoHtml,
   injectRouteHeadIntoHtml,
   injectSpaFallbackHeadIntoHtml,
   renderRouteHeadHtml,
@@ -10,11 +11,11 @@ import {
 
 describe('getRouteHeadData', () => {
   it('uses absolute canonical and OG image URLs', () => {
-    const head = getRouteHeadData(siteRoutes.about, 'https://agents-repo.github.io')
+    const head = getRouteHeadData(siteRoutes.about, 'https://agents-repo.org')
 
-    expect(head.canonicalUrl).toBe('https://agents-repo.github.io/about')
+    expect(head.canonicalUrl).toBe('https://agents-repo.org/about')
     expect(head.ogUrl).toBe(head.canonicalUrl)
-    expect(head.ogImage).toBe('https://agents-repo.github.io/og-image.png')
+    expect(head.ogImage).toBe('https://agents-repo.org/og-image.png')
     expect(head.ogImage).toMatch(/^https:\/\//)
   })
 
@@ -57,6 +58,17 @@ describe('injectRouteHeadIntoHtml', () => {
     expect(result).toContain('<title>Help Us — Agents Repo</title>')
     expect(result).not.toContain('<title>Agents Repo</title>')
     expect(buildRouteHead(siteRoutes.helpUs)).toBeTruthy()
+  })
+})
+
+describe('injectLegacyDomainRedirectIntoHtml', () => {
+  it('injects an early redirect from github.io to the custom domain', () => {
+    const baseHtml = `<!doctype html><html><head><title>Agents Repo</title></head><body></body></html>`
+    const result = injectLegacyDomainRedirectIntoHtml(baseHtml)
+
+    expect(result).toContain("location.hostname === 'agents-repo.github.io'")
+    expect(result).toContain("location.replace('https://agents-repo.org'")
+    expect(result.indexOf('<script>')).toBeLessThan(result.indexOf('<title>'))
   })
 })
 

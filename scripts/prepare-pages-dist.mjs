@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import {
   injectRouteHeadIntoHtml,
   injectSpaFallbackHeadIntoHtml,
+  injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
 import { getSiteOrigin } from '../src/modules/site/application/seo/siteSeo.ts';
 import { getSiteRoutePaths } from '../src/modules/site/application/seo/siteSeoMeta.ts';
@@ -58,11 +59,16 @@ function writeRouteDistHtml(routePath, html) {
 }
 
 for (const routePath of getSiteRoutePaths()) {
-  const html = injectRouteHeadIntoHtml(baseHtml, routePath, siteOrigin);
+  const html = injectLegacyDomainRedirectIntoHtml(
+    injectRouteHeadIntoHtml(baseHtml, routePath, siteOrigin),
+  );
   writeRouteDistHtml(routePath, html);
 }
 
-writeFileSync(resolve(distDir, '404.html'), injectSpaFallbackHeadIntoHtml(baseHtml));
+writeFileSync(
+  resolve(distDir, '404.html'),
+  injectLegacyDomainRedirectIntoHtml(injectSpaFallbackHeadIntoHtml(baseHtml)),
+);
 writeFileSync(resolve(distDir, '.nojekyll'), '');
 writeFileSync(resolve(distDir, 'robots.txt'), buildRobotsTxt(siteOrigin));
 writeFileSync(resolve(distDir, 'sitemap.xml'), buildSitemapXml(getSiteRoutePaths(), siteOrigin));

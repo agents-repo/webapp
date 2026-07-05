@@ -99,7 +99,7 @@ Commit-to-version mapping for automated releases:
 Commit types not listed above do not trigger an automated release.
 
 Published releases deploy the built webapp to
-<https://agents-repo.github.io/>. See [docs/deployment.md](../docs/deployment.md)
+<https://agents-repo.org/>. See [docs/deployment.md](../docs/deployment.md)
 for PAT setup and redeploy instructions.
 
 When merging release-automation work, use a squash-merge title with `feat:` if

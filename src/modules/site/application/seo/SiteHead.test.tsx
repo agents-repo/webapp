@@ -22,7 +22,7 @@ describe('SiteHead', () => {
       'Learn about Agents Repo',
     )
     expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      'https://agents-repo.github.io/about',
+      'https://agents-repo.org/about',
     )
   })
 
