@@ -7,6 +7,8 @@ module.exports = {
         'http://localhost:4173/contact',
         'http://localhost:4173/help-us',
         'http://localhost:4173/accessibility',
+        'http://localhost:4173/privacy',
+        'http://localhost:4173/privacidade',
       ],
       numberOfRuns: 1,
       settings: {

@@ -6,6 +6,8 @@ const routeHeadings = [
   { path: '/contact', heading: 'Contact' },
   { path: '/help-us', heading: 'Help Us' },
   { path: '/accessibility', heading: 'Accessibility statement' },
+  { path: '/privacy', heading: 'Privacy policy' },
+  { path: '/privacidade', heading: 'Política de privacidade' },
 ] as const
 
 test.describe('Navigation', () => {

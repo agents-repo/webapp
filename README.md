@@ -59,6 +59,9 @@ npm run a11y:ci
 See [docs/accessibility.md](docs/accessibility.md) for patterns and the public
 statement at `/accessibility`.
 
+Public privacy notices: `/privacy` (English) and `/privacidade` (Portuguese).
+See [docs/privacy.md](docs/privacy.md) for consent, GTM, and contributor guidance.
+
 See [docs/seo.md](docs/seo.md) for search and social-preview metadata patterns.
 
 See [docs/testing.md](docs/testing.md) for unit test conventions, coverage map,
@@ -213,8 +216,10 @@ rollback instructions.
 - Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
 - Architecture and DDD decision: [docs/architecture/ddd-decision.md](docs/architecture/ddd-decision.md)
 - Accessibility guide: [docs/accessibility.md](docs/accessibility.md)
+- Privacy and analytics guide: [docs/privacy.md](docs/privacy.md)
 - SEO guide: [docs/seo.md](docs/seo.md)
 - Public accessibility statement: `/accessibility` route in the deployed app
+- Public privacy policies: `/privacy` (EN) and `/privacidade` (pt-BR)
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - Copilot project instructions:
   [.github/copilot-instructions.md](.github/copilot-instructions.md)

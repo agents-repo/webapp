@@ -7,13 +7,17 @@ import {
   faHouse,
   faScaleBalanced,
   faUniversalAccess,
+  faUserShield,
 } from '@fortawesome/free-solid-svg-icons'
 import { Col, Container, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { siteRoutes } from '../routes/siteRoutes'
+import { useCookieConsent } from '../../application/analytics/cookieConsentContext'
 
 function Footer() {
+  const { openCookiePreferences } = useCookieConsent()
+
   return (
     <footer className="border-top border-secondary-subtle py-4 py-lg-5 site-footer bg-body-tertiary">
       <Container>
@@ -58,6 +62,17 @@ function Footer() {
                   <FontAwesomeIcon icon={faUniversalAccess} className="me-2" aria-hidden="true" />
                   Accessibility
                 </NavLink>
+                <NavLink to={siteRoutes.privacy} className="footer-link">
+                  <FontAwesomeIcon icon={faUserShield} className="me-2" aria-hidden="true" />
+                  Privacy
+                </NavLink>
+                <NavLink to={siteRoutes.privacyPt} className="footer-link">
+                  <FontAwesomeIcon icon={faUserShield} className="me-2" aria-hidden="true" />
+                  Privacidade
+                </NavLink>
+                <button type="button" className="btn btn-link footer-link text-start p-0 border-0" onClick={openCookiePreferences}>
+                  Cookie preferences
+                </button>
               </div>
               <p className="mb-0 small text-body-secondary footer-note">
                 <FontAwesomeIcon icon={faScaleBalanced} className="me-2" aria-hidden="true" />

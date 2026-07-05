@@ -60,6 +60,7 @@ e2e/
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
 ├── navigation.spec.ts
+├── cookie-consent.spec.ts
 ├── theme-mode.spec.ts
 ├── website-settings.spec.ts
 └── catalog-error.spec.ts
@@ -99,7 +100,18 @@ index URL (for example website settings override tests).
 Clear browser storage for persistence specs via `clearBrowserStorage(page)` in
 `beforeEach`. It clears on the first navigation only and skips later reloads.
 Relevant keys: `theme`, `registry.source.baseUrlOverride`,
-`registry.catalog.cache.v1`.
+`registry.catalog.cache.v1`, `analytics-consent`.
+
+### Analytics consent in E2E
+
+E2E builds use `vite build --mode e2e` (`MODE=e2e`). Analytics and GTM are
+disabled by the `isProductionAnalyticsEnabled()` guard even when
+`import.meta.env.PROD` is `true`.
+
+The shared storage fixture pre-seeds `analytics-consent: rejected` so the
+cookie banner does not block unrelated specs. Cookie consent behavior is
+covered in `e2e/cookie-consent.spec.ts`. Do not assert `gtm.js` network loads
+in Playwright — use unit tests for GTM injection logic instead.
 
 ## Writing a new spec
 

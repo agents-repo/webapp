@@ -26,6 +26,14 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
     title: 'Accessibility',
     routeLabel: 'Accessibility statement',
   },
+  [siteRoutes.privacy]: {
+    title: 'Privacy',
+    routeLabel: 'Privacy policy',
+  },
+  [siteRoutes.privacyPt]: {
+    title: 'Privacidade',
+    routeLabel: 'Política de privacidade',
+  },
 }
 
 export function getSitePageMeta(pathname: string): SitePageMeta {

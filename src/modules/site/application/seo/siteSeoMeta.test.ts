@@ -19,6 +19,8 @@ describe('siteSeoMeta', () => {
         siteRoutes.contact,
         siteRoutes.helpUs,
         siteRoutes.accessibility,
+        siteRoutes.privacy,
+        siteRoutes.privacyPt,
       ]),
     )
   })

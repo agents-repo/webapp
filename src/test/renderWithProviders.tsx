@@ -3,6 +3,7 @@ import { render, type RenderOptions } from '@testing-library/react'
 import { HelmetProvider } from 'react-helmet-async'
 import { MemoryRouter } from 'react-router-dom'
 import ThemeModeProvider from '../modules/site/application/theme/ThemeModeProvider'
+import CookieConsentProvider from '../modules/site/presentation/layout/CookieConsentProvider'
 
 export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: string[]
@@ -15,9 +16,11 @@ export function renderWithProviders(
   function Wrapper({ children }: { readonly children: ReactNode }) {
     return (
       <ThemeModeProvider>
-        <HelmetProvider>
-          <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
-        </HelmetProvider>
+        <CookieConsentProvider>
+          <HelmetProvider>
+            <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+          </HelmetProvider>
+        </CookieConsentProvider>
       </ThemeModeProvider>
     )
   }

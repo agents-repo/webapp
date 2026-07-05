@@ -93,6 +93,73 @@ Optional build-time override for preview or staging canonical/OG URLs:
 
 When unset, production defaults to `https://agents-repo.org`.
 
+### Analytics and GTM
+
+- `VITE_GTM_ID` — Google Tag Manager container ID (default `GTM-57FJBZ7P` in
+  `.env.production`). Controls **which** container loads, not **when**.
+- Analytics loads only when `import.meta.env.MODE === 'production'` **and** the
+  user has accepted analytics cookies. See [privacy.md](privacy.md).
+
+The GTM snippet is **not** embedded in static HTML. `index.html` includes only
+the Consent Mode v2 default-deny stub. GTM injects at runtime after consent.
+
+## Analytics pageviews (SPA)
+
+React Router navigations do not reload the page. GA4 needs explicit signals for
+virtual pageviews.
+
+### Primary approach: React `dataLayer` pushes
+
+`pushAnalyticsPageView()` (in `analyticsPageView.ts`) pushes:
+
+```ts
+{
+  event: 'page_view',
+  page_path: pathname,
+  page_location: `${origin}${pathname}${search}`,
+  page_title: document.title,
+}
+```
+
+Guards: `isProductionAnalyticsEnabled()`, consent `accepted`, known site routes
+only.
+
+`AnalyticsRouteTracker` calls this on `location` changes but **skips the initial
+mount** (Accept handler and return-visitor bootstrap cover the first hit).
+
+| Scenario | Who records the pageview |
+| --- | --- |
+| User Accepts on current page | Accept handler after `loadGoogleTagManager()` |
+| Return visitor (consent accepted) | Bootstrap after GTM load |
+| Client-side navigation | `AnalyticsRouteTracker` |
+
+### GTM container configuration (maintainer checklist)
+
+1. Enable consent overview in GTM.
+2. GA4 tags require `analytics_storage`.
+3. **Do not deploy ad tags** — this site has no advertising.
+4. **Default — React pushes:** GA4 Event tag on Custom Event trigger `page_view`.
+   Do not also enable History Change + auto `page_view` on load (duplicate hits).
+5. **Alternative — History Change only:** GA4 tag on GTM's built-in History
+   Change trigger (`pushState` / `popstate`). If you switch to this approach,
+   remove `AnalyticsRouteTracker` from `App.tsx` and disable the Custom Event
+   `page_view` tag — never use both.
+6. Container ID matches `VITE_GTM_ID` in production env.
+7. Verify in Tag Assistant: `consent default` → user choice → `consent update`
+   → `gtm.js` → `page_view` on navigation.
+
+### Verification commands
+
+After `npm run build:pages`:
+
+```bash
+# Consent stub present in shell HTML
+grep "consent', 'default'" dist/index.html
+
+# GTM ID must NOT appear in static HTML (runtime injection only)
+grep GTM-57FJBZ7P dist/index.html && echo "unexpected" || echo "ok"
+```
+
 ## Validation
 
 Run before opening or updating a pull request that touches SEO:
