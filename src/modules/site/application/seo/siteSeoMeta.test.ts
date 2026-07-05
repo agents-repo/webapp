@@ -20,7 +20,7 @@ describe('siteSeoMeta', () => {
         siteRoutes.helpUs,
         siteRoutes.accessibility,
         siteRoutes.privacy,
-        siteRoutes.privacyPt,
+        siteRoutes.privacyPtBr,
       ]),
     )
   })

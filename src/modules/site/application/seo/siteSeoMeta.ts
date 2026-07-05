@@ -42,10 +42,10 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
       'Privacy policy for Agents Repo: data collection, cookies, analytics consent, and your rights in the EU, US, and Brazil.',
     canonicalPath: siteRoutes.privacy,
   },
-  [siteRoutes.privacyPt]: {
+  [siteRoutes.privacyPtBr]: {
     description:
       'Política de privacidade do Agents Repo: coleta de dados, cookies, consentimento de analytics e seus direitos.',
-    canonicalPath: siteRoutes.privacyPt,
+    canonicalPath: siteRoutes.privacyPtBr,
   },
 }
 

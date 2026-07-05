@@ -66,7 +66,7 @@ function Footer() {
                   <FontAwesomeIcon icon={faUserShield} className="me-2" aria-hidden="true" />
                   Privacy
                 </NavLink>
-                <NavLink to={siteRoutes.privacyPt} className="footer-link">
+                <NavLink to={siteRoutes.privacyPtBr} className="footer-link">
                   <FontAwesomeIcon icon={faUserShield} className="me-2" aria-hidden="true" />
                   Privacidade
                 </NavLink>

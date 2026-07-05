@@ -107,7 +107,7 @@ function CookieConsentBanner() {
             Privacy policy
           </NavLink>{' '}
           or{' '}
-          <NavLink to={siteRoutes.privacyPt} className="footer-link">
+          <NavLink to={siteRoutes.privacyPtBr} className="footer-link">
             Política de privacidade
           </NavLink>{' '}
           for details, including your rights in Europe, the United States, and Brazil.

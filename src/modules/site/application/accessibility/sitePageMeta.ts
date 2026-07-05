@@ -30,7 +30,7 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
     title: 'Privacy',
     routeLabel: 'Privacy policy',
   },
-  [siteRoutes.privacyPt]: {
+  [siteRoutes.privacyPtBr]: {
     title: 'Privacidade',
     routeLabel: 'Política de privacidade',
   },

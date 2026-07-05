@@ -5,7 +5,7 @@ import { siteRoutes } from '../routes/siteRoutes'
 import PrivacyPolicyView from './PrivacyPolicyView'
 
 function PrivacidadePage() {
-  useDocumentTitle(sitePageMeta[siteRoutes.privacyPt].title)
+  useDocumentTitle(sitePageMeta[siteRoutes.privacyPtBr].title)
 
   return (
     <div lang="pt-BR">

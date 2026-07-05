@@ -11,7 +11,7 @@ describe('PrivacyPage', () => {
     expect(screen.getByRole('heading', { name: 'Privacy policy', level: 1 })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Versão em português (Brasil)' })).toHaveAttribute(
       'href',
-      siteRoutes.privacyPt,
+      siteRoutes.privacyPtBr,
     )
     expect(screen.getByRole('link', { name: 'Contact' })).toHaveAttribute('href', siteRoutes.contact)
     expect(screen.getByRole('table')).toBeInTheDocument()

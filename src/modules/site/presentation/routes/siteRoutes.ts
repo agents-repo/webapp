@@ -5,7 +5,7 @@ export const siteRoutes = {
   helpUs: '/help-us',
   accessibility: '/accessibility',
   privacy: '/privacy',
-  privacyPt: '/privacidade',
+  privacyPtBr: '/privacidade',
 } as const
 
 export type SiteRoutePath = (typeof siteRoutes)[keyof typeof siteRoutes]

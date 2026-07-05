@@ -6,7 +6,7 @@ import { siteRoutes } from '../routes/siteRoutes.ts'
 
 describe('PrivacidadePage', () => {
   it('renders policy heading, contact link, and language cross-link', () => {
-    renderWithProviders(<PrivacidadePage />, { initialEntries: [siteRoutes.privacyPt] })
+    renderWithProviders(<PrivacidadePage />, { initialEntries: [siteRoutes.privacyPtBr] })
 
     expect(screen.getByRole('heading', { name: 'Política de privacidade', level: 1 })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'English version' })).toHaveAttribute('href', siteRoutes.privacy)

@@ -58,7 +58,7 @@ function App() {
         <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
         <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
         <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
-        <Route path={siteRoutes.privacyPt} element={<PrivacidadePage />} />
+        <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
         <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
       </Routes>
 

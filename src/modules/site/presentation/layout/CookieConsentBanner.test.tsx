@@ -62,7 +62,7 @@ describe('CookieConsentBanner', () => {
     expect(screen.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', siteRoutes.privacy)
     expect(screen.getByRole('link', { name: 'Política de privacidade' })).toHaveAttribute(
       'href',
-      siteRoutes.privacyPt,
+      siteRoutes.privacyPtBr,
     )
   })
 
