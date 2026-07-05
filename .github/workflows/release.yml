@@ -119,4 +119,5 @@ jobs:
           publish_branch: main
           publish_dir: ./dist
           keep_files: true
+          cname: agents-repo.org
           commit_message: "deploy: webapp ${{ steps.release.outputs.tag }}"

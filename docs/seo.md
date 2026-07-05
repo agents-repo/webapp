@@ -88,10 +88,10 @@ When adding a public route:
 Optional build-time override for preview or staging canonical/OG URLs:
 
 - `VITE_SITE_URL` — absolute origin without a trailing slash (for example
-  `https://agents-repo.github.io`). Set in `.env` or the shell; `build:pages`
+  `https://agents-repo.org`). Set in `.env` or the shell; `build:pages`
   resolves it with Vite's env loading so static HTML matches the client bundle.
 
-When unset, production defaults to `https://agents-repo.github.io`.
+When unset, production defaults to `https://agents-repo.org`.
 
 ## Validation
 

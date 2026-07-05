@@ -1,6 +1,6 @@
 import { siteName } from '../accessibility/documentTitleFormat.ts'
 
-const defaultSiteOrigin = 'https://agents-repo.github.io'
+const defaultSiteOrigin = 'https://agents-repo.org'
 
 export { siteName }
 

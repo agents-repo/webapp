@@ -2,7 +2,8 @@
 
 The webapp is published to GitHub Pages at:
 
-- <https://agents-repo.github.io/>
+- <https://agents-repo.org/> (custom domain)
+- <https://agents-repo.github.io/> (legacy; client redirect to custom domain after deploy)
 
 Each GitHub Release in `agents-repo/webapp` triggers a build and deploy of the
 static `dist/` output to `agents-repo/agents-repo.github.io`.
@@ -86,9 +87,15 @@ No secrets are required for the default public Pages deployment.
 
 ## Smoke checks after deploy
 
-1. Open <https://agents-repo.github.io/>.
+1. Open <https://agents-repo.org/>.
 2. Verify deep links: `/about`, `/contact`, `/help-us`.
 3. Confirm the registry catalog loads (default proxy source).
+4. Open <https://agents-repo.github.io/> and confirm the browser redirects to
+   `https://agents-repo.org/` with the same path.
+5. View page source on the custom domain and confirm canonical URLs use
+   `https://agents-repo.org`.
+6. Check <https://agents-repo.org/robots.txt> and `sitemap.xml` for
+   `agents-repo.org` URLs.
 
 ## Rollback
 
