@@ -69,4 +69,14 @@ describe('loadGoogleTagManager', () => {
     expect(document.querySelector('script[data-gtm-id]')).toBeNull()
     errorSpy.mockRestore()
   })
+
+  it('does not load when an invalid container ID is passed directly', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    loadGoogleTagManager('not-a-gtm-id')
+
+    expect(document.querySelector('script[data-gtm-id]')).toBeNull()
+    expect(errorSpy).toHaveBeenCalled()
+    errorSpy.mockRestore()
+  })
 })

@@ -3,12 +3,17 @@ import { isProductionAnalyticsEnabled } from './analyticsEnvironment.ts'
 export const DEFAULT_GTM_CONTAINER_ID = 'GTM-57FJBZ7P'
 
 const gtmScriptMarkerAttribute = 'data-gtm-id'
+const gtmContainerIdPattern = /^GTM-[A-Z0-9]+$/
+
+export function isValidGtmContainerId(id: string): boolean {
+  return gtmContainerIdPattern.test(id)
+}
 
 export function resolveGtmContainerId(): string | null {
   const fromEnv = import.meta.env.VITE_GTM_ID?.trim()
   const id = fromEnv || DEFAULT_GTM_CONTAINER_ID
 
-  if (!/^GTM-[A-Z0-9]+$/.test(id)) {
+  if (!isValidGtmContainerId(id)) {
     console.error(`[analytics] Invalid VITE_GTM_ID: ${fromEnv ?? id}`)
     return null
   }
@@ -33,7 +38,17 @@ export function loadGoogleTagManager(containerId?: string): void {
     return
   }
 
-  const resolvedContainerId = containerId ?? resolveGtmContainerId()
+  let resolvedContainerId: string | null
+
+  if (containerId === undefined) {
+    resolvedContainerId = resolveGtmContainerId()
+  } else if (!isValidGtmContainerId(containerId)) {
+    console.error(`[analytics] Invalid GTM container ID: ${containerId}`)
+    return
+  } else {
+    resolvedContainerId = containerId
+  }
+
   if (!resolvedContainerId) {
     return
   }
