@@ -7,8 +7,11 @@ Workflow**:
 
 1. Open a tracking issue from `.github/ISSUE_TEMPLATE/`.
 2. Create a branch named `<prefix>/<issue-number>-<slug>` from latest `main`.
-3. Push the branch and open a draft pull request with `Closes #<issue-number>`
-   before implementation commits (`gh pr create --draft`).
+3. Push a scaffolding commit if needed, then open a draft pull request before
+   implementation commits (`gh pr create --draft`). In `## Related Issues`,
+   include `Closes #<issue-number>` for standard tasks, or follow the
+   security-advisory format in `.github/CONTRIBUTING.md` **Workflow exceptions**
+   when applicable.
 4. After validation passes, the developer manually marks the pull request ready
    for review. Agents must not mark pull requests ready for review.
 
@@ -214,5 +217,7 @@ Before opening a PR:
    - `chore/` for task or chore
    - `docs/` for documentation-only work
 
-5. In `## Related Issues`, include `Closes #<issue-number>`.
-6. Every PR targeting `main` must close a tracking issue.
+5. In `## Related Issues`, include a tracking reference: `Closes #<issue-number>`
+   for standard tasks, or the security-advisory format in
+   `.github/CONTRIBUTING.md` **Workflow exceptions** when applicable.
+6. Every PR targeting `main` must include a tracking reference.

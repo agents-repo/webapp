@@ -7,18 +7,21 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this form for task/chore work. Documentation-only work should use
-        this issue form and a `docs/<issue-number>-<slug>` branch.
+        **Workflow:** Submit this issue first. After GitHub assigns a number,
+        create your branch and draft PR—do not edit this issue body to add the
+        number.
 
-        **Branch name:** `chore/<issue-number>-<short-slug>` (or
-        `docs/<issue-number>-<short-slug>` for documentation-only work)
+        Use this form for task/chore work. Documentation-only work should use
+        a `docs/<issue-number>-<slug>` branch.
+
+        **Branch pattern:** `chore/<issue-number>-<slug>` (or
+        `docs/<issue-number>-<slug>` for documentation-only work)
+
         **Example:** `chore/31-sync-workflow-docs` or `docs/88-update-pr-guidance`
 
-        Create this issue first to obtain the issue number, then open the branch.
-
-        You MUST open a draft pull request targeting `main` before implementation
-        commits (`gh pr create --draft`). The developer manually marks the PR
-        ready for review after validation. Include `Closes #<issue-number>` in `## Related Issues`.
+        **Draft PR:** Open with `gh pr create --draft` before implementation
+        commits. Put the tracking reference in the PR `## Related Issues` section
+        (not in this issue).
   - type: textarea
     id: goal
     attributes:

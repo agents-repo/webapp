@@ -76,8 +76,11 @@ implementation:
 
 1. Open a tracking issue (matching issue form).
 2. Create a branch named `<prefix>/<issue-number>-<slug>`.
-3. Push the branch and open a draft pull request with `Closes #<issue-number>`
-   before implementation commits (`gh pr create --draft`).
+3. Push a scaffolding commit if needed, then open a draft pull request before
+   implementation commits (`gh pr create --draft`). In `## Related Issues`,
+   include `Closes #<issue-number>` for standard tasks, or follow the
+   security-advisory format in `.github/CONTRIBUTING.md` **Workflow exceptions**
+   when applicable.
 4. After validation passes, the developer manually marks the pull request ready
    for review. Agents must not mark pull requests ready for review.
 5. Hand off for human maintainer review and merge.

@@ -38,7 +38,9 @@ in the issue body.
 
 ## Required Workflow
 
-Contributors and agents MUST follow this lifecycle before implementation:
+Contributors and agents MUST follow this full lifecycle.
+
+### Task setup (before implementation)
 
 1. Inspect and confirm issue scope:
    `gh issue view <number> --repo agents-repo/webapp`
@@ -49,7 +51,10 @@ Contributors and agents MUST follow this lifecycle before implementation:
    before implementation commits. Pull requests MUST be created as drafts
    (`gh pr create --repo agents-repo/webapp --draft`):
    `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
-5. Implement, validate, then hand off. After validation passes, the developer
+
+### Delivery (after draft PR)
+
+1. Implement, validate, then hand off. After validation passes, the developer
    manually marks the pull request ready for review in GitHub. Agents MUST NOT
    merge pull requests into `main`, push directly to `main`, or mark pull
    requests ready for review.
@@ -57,9 +62,11 @@ Contributors and agents MUST follow this lifecycle before implementation:
 All contributors MUST integrate changes to `main` only through merged pull
 requests. Direct commits or pushes to `main` MUST NOT be used.
 
-GitHub requires a pushed remote branch before opening a pull request. An empty
-branch push is acceptable when opening the draft PR before implementation
-commits.
+GitHub cannot open a pull request when the head and base branches are
+identical. Before `gh pr create --draft`, push at least one commit on the task
+branch that creates a diff (for example an empty scaffolding commit:
+`git commit --allow-empty -m "chore: scaffold draft PR for #<issue-number>"`).
+Implementation commits may follow on the same branch.
 
 See the organization
 [Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
@@ -71,10 +78,6 @@ for shared norms and exceptions.
    `## Related Issues`, use `Closes #<issue-number>` when maintainers provide
    a linked private or advisory tracking issue. Otherwise, reference the
    private security advisory identifier in the PR body.
-2. **Package submission** — Open a draft PR early, author package source, then
-   run `package:build` and `package:validate-artifacts` before marking ready
-   for review. See registry `.github/CONTRIBUTING.md` Package Submission
-   Expectations.
 
 ## GitHub Communication Method (Preferred)
 
@@ -173,8 +176,11 @@ GitHub license detection and compliance tooling.
 
 1. Keep PRs reviewable and scoped.
 2. Use `.github/pull_request_template.md`.
-3. In `## Related Issues`, include `Closes #<issue-number>`.
-4. Every PR targeting `main` must close a tracking issue.
+3. In `## Related Issues`, include a tracking reference: `Closes #<issue-number>`
+   for standard tasks, or the security-advisory format in **Workflow exceptions**
+   when applicable.
+4. Every PR targeting `main` must include a tracking reference in
+   `## Related Issues`.
 5. List the validation commands you ran.
 6. Call out any documentation or workflow impact.
 7. If the PR template cannot be applied, include the same required sections manually.

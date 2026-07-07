@@ -6,8 +6,14 @@ Describe the change and why it is needed.
 
 ## Related Issues
 
-Include `Closes #<issue-number>` for the issue this PR closes.
-Every PR targeting `main` must close a tracking issue.
+Closes #
+
+For standard tasks, use `Closes #<issue-number>`. For security vulnerabilities
+without a public tracking issue, reference the advisory identifier (for example
+`GHSA-...`) and coordinate linkage with maintainers per
+`.github/CONTRIBUTING.md` **Workflow exceptions**.
+
+Every PR targeting `main` must include a tracking reference.
 
 ## Change Type
 
@@ -37,9 +43,10 @@ List affected paths or areas:
 - [ ] The branch name follows `<prefix>/<issue-number>-<slug>`.
 - [ ] This pull request was created as a draft (`gh pr create --draft` or UI
   draft option).
-- [ ] This draft PR was opened before implementation commits (or documents
+- [ ] This draft PR was opened before implementation commits (or it documents
   why not).
-- [ ] `Related Issues` includes `Closes #<issue-number>` for the issue this PR closes.
+- [ ] `## Related Issues` includes a tracking reference (`Closes #<issue-number>`
+  or a security-advisory identifier per `.github/CONTRIBUTING.md`).
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
 - [ ] Merge to `main` is for human maintainers only; agents and automation
