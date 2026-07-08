@@ -165,9 +165,3 @@ quoted text to avoid shell escaping and truncation issues.
 
 If `gh` is unavailable in a task environment, agents MAY use the available
 tooling path, but MUST explicitly note that limitation in the handoff summary.
-
-## Cursor skills
-
-| Skill | Path | When |
-| --- | --- | --- |
-| `pr-comment-triage` | `.cursor/skills/pr-comment-triage/SKILL.md` | PR review comment triage |
