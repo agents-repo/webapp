@@ -8,6 +8,9 @@ Describe the change and why it is needed.
 
 `Closes #<issue-number>`
 
+Replace this line with an unbackticked `Closes #<number>` so GitHub links the
+issue.
+
 For standard tasks, use `Closes #<issue-number>`. For security vulnerabilities
 without a public tracking issue, reference the advisory identifier (for example
 `GHSA-...`) and coordinate linkage with maintainers per the **Workflow

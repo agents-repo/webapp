@@ -74,7 +74,8 @@ npm run sync:cursor-rules
 Every task MUST follow the organization Required Workflow before
 implementation:
 
-1. Open a tracking issue (matching issue form).
+1. Open a tracking issue (matching issue form; except security vulnerabilities
+   — see **Workflow exceptions** in `.github/CONTRIBUTING.md`).
 2. Create a branch named `<prefix>/<issue-number>-<slug>`.
 3. Push a scaffolding commit if needed, then open a draft pull request before
    implementation commits (`gh pr create --draft`). In `## Related Issues`,

@@ -5,7 +5,8 @@
 Before local implementation, follow `.github/CONTRIBUTING.md` **Required
 Workflow**:
 
-1. Open a tracking issue from `.github/ISSUE_TEMPLATE/`.
+1. Open a tracking issue from `.github/ISSUE_TEMPLATE/` (except security
+   vulnerabilities — see **Workflow exceptions** in `.github/CONTRIBUTING.md`).
 2. Create a branch named `<prefix>/<issue-number>-<slug>` from latest `main`.
 3. Push a scaffolding commit if needed, then open a draft pull request before
    implementation commits (`gh pr create --draft`). In `## Related Issues`,
