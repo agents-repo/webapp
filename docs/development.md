@@ -10,8 +10,8 @@ Workflow**:
 3. Push a scaffolding commit if needed, then open a draft pull request before
    implementation commits (`gh pr create --draft`). In `## Related Issues`,
    include `Closes #<issue-number>` for standard tasks, or follow the
-   security-advisory format in `.github/CONTRIBUTING.md` **Workflow exceptions**
-   when applicable.
+   security-advisory format defined in the **Workflow exceptions** section of
+   `.github/CONTRIBUTING.md` when applicable.
 4. After validation passes, the developer manually marks the pull request ready
    for review. Agents must not mark pull requests ready for review.
 
@@ -202,7 +202,7 @@ When debugging stale behavior, clear both layers before retesting:
 Use the pull request template in `.github/pull_request_template.md`.
 Keep changes scoped and document any UI or workflow impact clearly.
 
-Before opening a PR:
+Checklist when opening the draft PR and before requesting review:
 
 1. Complete the Required Workflow steps above (issue, branch, push, draft PR).
 2. Choose the matching category: bug/inconsistency, spec change, feature
@@ -218,6 +218,6 @@ Before opening a PR:
    - `docs/` for documentation-only work
 
 5. In `## Related Issues`, include a tracking reference: `Closes #<issue-number>`
-   for standard tasks, or the security-advisory format in
-   `.github/CONTRIBUTING.md` **Workflow exceptions** when applicable.
+   for standard tasks, or the security-advisory format defined in the
+   **Workflow exceptions** section of `.github/CONTRIBUTING.md` when applicable.
 6. Every PR targeting `main` must include a tracking reference.
