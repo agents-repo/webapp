@@ -14,12 +14,10 @@ docs in the same pull request.
 ## Before You Start
 
 1. Confirm the task scope and expected outcome.
-2. Open an issue using the matching form in
-   `.github/ISSUE_TEMPLATE/` before starting implementation.
-3. Create a non-`main` branch from the latest `main` using the naming rules in
-   this guide.
-4. Push the branch and open a draft pull request before implementation commits.
-5. Identify the commands needed to validate the work.
+2. Open an issue using the matching form in `.github/ISSUE_TEMPLATE/`.
+3. Identify the commands needed to validate the work.
+
+Then follow **Required Workflow** below for branch, push, and draft PR setup.
 
 Issue form selection MUST match one of these categories:
 
@@ -80,6 +78,9 @@ for shared norms and exceptions.
    a linked private or advisory tracking issue. Otherwise, reference the
    private security advisory identifier (for example `GHSA-...`) in
    `## Related Issues` and coordinate linkage with maintainers.
+2. **Maintainer emergency hotfix** — Work on a hotfix branch only with prior
+   maintainer approval documented in an issue or advisory. Delivery to `main`
+   is still via merged pull request (no direct push).
 
 ## GitHub Communication Method (Preferred)
 
@@ -91,7 +92,7 @@ truncation issues.
 
 ## Branch Naming
 
-Branch names must follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
+Branch names MUST follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
 short lowercase kebab-case.
 
 | Work type | Prefix | Example |

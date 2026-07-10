@@ -221,4 +221,4 @@ Checklist when opening the draft PR and before requesting review:
 5. In `## Related Issues`, include a tracking reference: `Closes #<issue-number>`
    for standard tasks, or the security-advisory format defined in the
    **Workflow exceptions** section of `.github/CONTRIBUTING.md` when applicable.
-6. Every PR targeting `main` must include a tracking reference.
+6. Every PR targeting `main` MUST include a tracking reference.

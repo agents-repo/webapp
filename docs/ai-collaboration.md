@@ -83,10 +83,10 @@ implementation:
    security-advisory format defined in the **Workflow exceptions** section of
    `.github/CONTRIBUTING.md` when applicable.
 4. After validation passes, the developer manually marks the pull request ready
-   for review. Agents must not mark pull requests ready for review.
+   for review. Agents MUST NOT mark pull requests ready for review.
 5. Hand off for human maintainer review and merge.
 
-Agents must not merge to or push directly to `main`, and must not mark pull
+Agents MUST NOT merge to or push directly to `main`, and MUST NOT mark pull
 requests ready for review. See
 `## Required Workflow (Task Start)` and
 `## Default Branch Integration (Agents)` in `.github/copilot-instructions.md`.
