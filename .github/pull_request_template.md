@@ -14,7 +14,7 @@ issue.
 For standard tasks, use `Closes #<issue-number>`. For security vulnerabilities
 without a public tracking issue, reference the advisory identifier (for example
 `GHSA-...`) and coordinate linkage with maintainers per the
-[Workflow exceptions](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#workflow-exceptions)
+[Workflow exceptions][org-wf-ex]
 section of the organization CONTRIBUTING guide.
 
 Every PR targeting `main` MUST include a tracking reference.
@@ -29,7 +29,7 @@ Every PR targeting `main` MUST include a tracking reference.
   why not).
 - [ ] `## Related Issues` includes a tracking reference (`Closes #<issue-number>`
   or a security-advisory identifier per the
-  [Workflow exceptions](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#workflow-exceptions)
+  [Workflow exceptions][org-wf-ex]
   section of the organization CONTRIBUTING guide).
 - [ ] Merge to `main` is for human maintainers only; agents and automation
   must not merge this PR or push directly to `main`.
@@ -67,3 +67,5 @@ List affected paths or areas:
 
 - Risk level: low / medium / high
 - Rollback plan:
+
+[org-wf-ex]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#workflow-exceptions

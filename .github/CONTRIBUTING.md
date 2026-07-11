@@ -67,9 +67,7 @@ branch so its head differs from `main` (for example
 An empty commit is sufficient when no file changes are needed yet.
 Implementation commits may follow on the same branch.
 
-See the organization
-[Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)
-for shared norms and exceptions.
+See the organization [Required Workflow][org-rw] for shared norms and exceptions.
 
 ## Workflow exceptions
 
@@ -208,3 +206,5 @@ Do not edit `.cursor/rules/` directly.
 AI agents should not rely on implicit project knowledge. If a change introduces
 a new expectation for setup, validation, architecture, or contribution flow,
 document it in `README.md`, `docs/`, or `.github/` in the same change.
+
+[org-rw]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow
