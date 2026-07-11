@@ -73,11 +73,12 @@ for shared norms and exceptions.
 
 ## Workflow exceptions
 
-1. **Security vulnerabilities** — Follow the private advisory flow. In
-   `## Related Issues`, use `Closes #<issue-number>` when maintainers provide
-   a linked private or advisory tracking issue. Otherwise, reference the
-   private security advisory identifier (for example `GHSA-...`) in
-   `## Related Issues` and coordinate linkage with maintainers.
+1. **Security vulnerabilities** — Follow the private advisory flow; no public
+   tracking issue. Branch and draft pull request are still required before merge
+   to `main`. In `## Related Issues`, use `Closes #<issue-number>` when
+   maintainers provide a linked private or advisory tracking issue. Otherwise,
+   reference the private security advisory identifier (for example `GHSA-...`)
+   in `## Related Issues` and coordinate linkage with maintainers.
 2. **Maintainer emergency hotfix** — Work on a hotfix branch only with prior
    maintainer approval documented in an issue or advisory. Delivery to `main`
    is still via merged pull request (no direct push).
@@ -143,7 +144,7 @@ for PAT setup and redeploy instructions.
 
 When merging release-automation work, use a squash-merge title with `feat:` if
 the merge should trigger the first GitHub Release. That merge step is
-maintainer-only; agents must not merge to `main`.
+maintainer-only; agents MUST NOT merge to `main`.
 
 ## Local Validation
 
@@ -182,7 +183,7 @@ GitHub license detection and compliance tooling.
 3. In `## Related Issues`, include a tracking reference: `Closes #<issue-number>`
    for standard tasks, or the security-advisory format in **Workflow exceptions**
    when applicable.
-4. Every PR targeting `main` must include a tracking reference in
+4. Every PR targeting `main` MUST include a tracking reference in
    `## Related Issues`.
 5. List the validation commands you ran.
 6. Call out any documentation or workflow impact.

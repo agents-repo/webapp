@@ -14,7 +14,7 @@ Workflow**:
    security-advisory format defined in the **Workflow exceptions** section of
    `.github/CONTRIBUTING.md` when applicable.
 4. After validation passes, the developer manually marks the pull request ready
-   for review. Agents must not mark pull requests ready for review.
+   for review. Agents MUST NOT mark pull requests ready for review.
 
 See the organization
 [Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow)

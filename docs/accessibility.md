@@ -65,7 +65,7 @@ and accessible tables for the cookie/storage section.
 
 ## Validation commands
 
-Run before opening or updating a pull request:
+Run before marking the pull request ready for review:
 
 ```bash
 npm run lint:all
