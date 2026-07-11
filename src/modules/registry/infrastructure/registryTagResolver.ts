@@ -124,6 +124,8 @@ const writeTagListCache = (repositoryKey: string, tagNames: string[]): void => {
 }
 
 export const clearRegistryTagListCache = (): void => {
+  inFlightTagFetchesByRepositoryKey.clear()
+
   const storage = getLocalStorage()
 
   if (!storage) {
@@ -135,8 +137,6 @@ export const clearRegistryTagListCache = (): void => {
   } catch {
     // Ignore storage failures.
   }
-
-  inFlightTagFetchesByRepositoryKey.clear()
 }
 
 export const buildRegistryTagsUrl = (sourceUrl: string, fallbackRepositoryUrl: string): string => {

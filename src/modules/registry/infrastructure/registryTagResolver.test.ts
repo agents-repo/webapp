@@ -156,6 +156,53 @@ describe('registryTagResolver', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
+  it('clears in-flight tag fetches when localStorage is unavailable', async () => {
+    const resolvers: Array<(value: Response) => void> = []
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolvers.push(resolve)
+        }),
+    )
+
+    const tagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
+    const inFlightPromise = fetchRegistryRepositoryTagNames(tagsUrl)
+
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      get: () => {
+        throw new Error('localStorage blocked')
+      },
+    })
+
+    clearRegistryTagListCache()
+
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      writable: true,
+      value: new MemoryStorage(),
+    })
+
+    const bypassPromise = fetchRegistryRepositoryTagNames(tagsUrl, { bypassCache: true })
+
+    resolvers[0]?.(
+      new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+    resolvers[1]?.(
+      new Response(JSON.stringify([{ name: 'v1.1.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    await expect(inFlightPromise).resolves.toEqual(['v1.0.0'])
+    await expect(bypassPromise).resolves.toEqual(['v1.1.0'])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
   it('does not reuse a non-bypass in-flight tag fetch when bypassCache is requested', async () => {
     const resolvers: Array<(value: Response) => void> = []
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(

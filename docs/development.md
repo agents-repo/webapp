@@ -112,9 +112,10 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    (`owner/repo`) inside the envelope. Alias re-resolution runs when the
    24h catalog cache has expired or website settings change — not on every route
    navigation. Resolution uses the `semver` package.
-- The registry catalog loads once at app level via `RegistryCatalogProvider` and
-   is reused when returning to the home page; settings changes trigger a forced
-   reload that bypasses warm in-memory catalog cache and tag cache.
+- The registry catalog loads once at app level via
+   `RegistryCatalogProvider` (`presentation/catalog/`) and is reused when
+   returning to the home page; settings changes trigger a forced reload that
+   bypasses warm in-memory catalog cache and tag cache.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page

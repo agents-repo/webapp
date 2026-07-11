@@ -5,7 +5,7 @@ import AnalyticsRouteTracker from './modules/site/application/analytics/Analytic
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
 import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
-import RegistryCatalogProvider from './modules/registry/application/RegistryCatalogProvider'
+import RegistryCatalogProvider from './modules/registry/presentation/catalog/RegistryCatalogProvider'
 import HomePage from './modules/registry/presentation/pages/HomePage'
 import Footer from './modules/site/presentation/layout/Footer'
 import Header from './modules/site/presentation/layout/Header'

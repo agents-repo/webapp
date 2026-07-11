@@ -11,11 +11,11 @@ const axeOptions = {
   },
 }
 
-vi.mock('../../application/registryCatalogContext', () => ({
+vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
 }))
 
-import { useRegistryCatalog } from '../../application/registryCatalogContext'
+import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 
 const useRegistryCatalogMock = vi.mocked(useRegistryCatalog)
 

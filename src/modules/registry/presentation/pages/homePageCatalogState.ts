@@ -1,9 +1,10 @@
+import type { CatalogCacheState } from '../../application/catalogCacheState'
 import type { InstallTargetEntry, RegistryCatalog, RegistryPackage } from '../../domain/package'
 import { getInstallTargetLabel } from '../../application/installTargets'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { buildRegistryArtifactUrl } from '../../infrastructure/registrySourceUrl'
 
-export type CatalogCacheState = 'none' | 'fresh' | 'stale-fallback'
+export type { CatalogCacheState } from '../../application/catalogCacheState'
 
 export interface CatalogAlertState {
   variant: 'warning' | 'danger'

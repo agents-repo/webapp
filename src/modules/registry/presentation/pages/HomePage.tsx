@@ -34,7 +34,7 @@ import { toPackageSlug, type PackageStatus, type RegistryPackage } from '../../d
 import {
   filterRegistryPackages,
 } from '../../application/registrySelectors'
-import { useRegistryCatalog } from '../../application/registryCatalogContext'
+import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 import {
   getCatalogAlertState,
