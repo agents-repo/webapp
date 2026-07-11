@@ -378,16 +378,18 @@ export const fetchRegistryRepositoryTagNames = async (
       throw error instanceof Error ? error : new Error(String(error))
     })
 
-    return promise.finally(() => {
+    registerInFlightTagFetchForRepository(repositoryKey, promise)
+
+    const settledPromise = promise.finally(() => {
       const currentFetch = inFlightTagFetchesByTagsUrl.get(tagsUrl)
 
-      if (currentFetch?.promise === promise) {
+      if (currentFetch?.promise === settledPromise) {
         inFlightTagFetchesByTagsUrl.delete(tagsUrl)
       }
     })
-  })()
 
-  registerInFlightTagFetchForRepository(repositoryKey, fetchPromise)
+    return settledPromise
+  })()
 
   inFlightTagFetchesByTagsUrl.set(tagsUrl, {
     promise: fetchPromise,
