@@ -53,7 +53,7 @@ const applyCatalogLoadResult = (
     githubRepositoryRefResolution: result.githubRepositoryRefResolution ?? null,
   })
 
-  if (result.errorMessage) {
+  if (result.errorMessage && result.catalog) {
     console.warn('Registry catalog loading fallback triggered:', result.errorMessage)
   }
 }

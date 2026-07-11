@@ -168,9 +168,11 @@ const inferBrowseMetadataFromCachedRef = (
   }
 
   const browseRepositoryIdentity = parseGitHubRepositoryIdentity(githubRepositoryUrl)
+  const catalogSourceUrl =
+    configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
   const catalogRepositoryIdentity = inferRegistryRepositoryIdentity(
-    cachedIndexUrl,
-    configuredSource.githubRepositoryUrl,
+    catalogSourceUrl,
+    configuredSource.configuredGithubRepositoryUrl,
   )
 
   if (!repositoryIdentitiesMatch(browseRepositoryIdentity, catalogRepositoryIdentity)) {

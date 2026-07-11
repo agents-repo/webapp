@@ -22,10 +22,56 @@ const GITHUB_HOSTNAMES = new Set(['github.com', 'www.github.com', 'raw.githubuse
 
 const GITHUB_TAGS_API_PATH_PATTERN = /^\/repos\/([^/]+)\/([^/]+)\/tags\/?$/
 
-const inFlightTagFetchesByRepositoryKey = new Map<
+const inFlightTagFetchesByTagsUrl = new Map<
   string,
   { promise: Promise<string[]>; bypassCache: boolean }
 >()
+
+const inFlightTagFetchesByRepositoryKey = new Map<string, Set<Promise<string[]>>>()
+
+const registerInFlightTagFetchForRepository = (
+  repositoryKey: string,
+  promise: Promise<string[]>,
+): void => {
+  const peers = inFlightTagFetchesByRepositoryKey.get(repositoryKey) ?? new Set<Promise<string[]>>()
+  peers.add(promise)
+  inFlightTagFetchesByRepositoryKey.set(repositoryKey, peers)
+
+  void promise
+    .catch(() => undefined)
+    .finally(() => {
+      peers.delete(promise)
+
+      if (peers.size === 0) {
+        inFlightTagFetchesByRepositoryKey.delete(repositoryKey)
+      }
+    })
+}
+
+const recoverTagNamesFromPeerFetches = async (
+  repositoryKey: string,
+  failedPromise: Promise<string[]>,
+): Promise<string[] | null> => {
+  const peers = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
+
+  if (!peers) {
+    return null
+  }
+
+  for (const peer of peers) {
+    if (peer === failedPromise) {
+      continue
+    }
+
+    try {
+      return await peer
+    } catch {
+      continue
+    }
+  }
+
+  return null
+}
 
 export const buildRepositoryKey = (owner: string, repo: string): string => `${owner}/${repo}`
 
@@ -124,6 +170,7 @@ const writeTagListCache = (repositoryKey: string, tagNames: string[]): void => {
 }
 
 export const clearRegistryTagListCache = (): void => {
+  inFlightTagFetchesByTagsUrl.clear()
   inFlightTagFetchesByRepositoryKey.clear()
 
   const storage = getLocalStorage()
@@ -302,25 +349,47 @@ export const fetchRegistryRepositoryTagNames = async (
     }
   }
 
-  const inFlightFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
+  const inFlightFetch = inFlightTagFetchesByTagsUrl.get(tagsUrl)
 
   if (inFlightFetch && (!options.bypassCache || inFlightFetch.bypassCache)) {
     return attachCallerAbortSignal(inFlightFetch.promise, options.signal)
   }
 
-  const fetchPromise = fetchRegistryRepositoryTagNamesFromNetwork(
-    tagsUrl,
-    repositoryKey,
-    undefined,
-  ).finally(() => {
-    const currentFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
+  const fetchPromise = ((): Promise<string[]> => {
+    const promise = fetchRegistryRepositoryTagNamesFromNetwork(
+      tagsUrl,
+      repositoryKey,
+      undefined,
+    ).catch(async (error: unknown) => {
+      if (!options.bypassCache) {
+        const cachedTagNames = readTagListCache(repositoryKey)
 
-    if (currentFetch?.promise === fetchPromise) {
-      inFlightTagFetchesByRepositoryKey.delete(repositoryKey)
-    }
-  })
+        if (cachedTagNames) {
+          return cachedTagNames
+        }
 
-  inFlightTagFetchesByRepositoryKey.set(repositoryKey, {
+        const peerTagNames = await recoverTagNamesFromPeerFetches(repositoryKey, promise)
+
+        if (peerTagNames) {
+          return peerTagNames
+        }
+      }
+
+      throw error instanceof Error ? error : new Error(String(error))
+    })
+
+    return promise.finally(() => {
+      const currentFetch = inFlightTagFetchesByTagsUrl.get(tagsUrl)
+
+      if (currentFetch?.promise === promise) {
+        inFlightTagFetchesByTagsUrl.delete(tagsUrl)
+      }
+    })
+  })()
+
+  registerInFlightTagFetchForRepository(repositoryKey, fetchPromise)
+
+  inFlightTagFetchesByTagsUrl.set(tagsUrl, {
     promise: fetchPromise,
     bypassCache: options.bypassCache === true,
   })

@@ -234,6 +234,39 @@ describe('registryTagResolver', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it('does not dedupe concurrent tag fetches that use different tags URLs for the same repository', async () => {
+    const resolvers: Array<(value: Response) => void> = []
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolvers.push(resolve)
+        }),
+    )
+
+    const proxyTagsUrl = 'https://registry-proxy.example.workers.dev/tags'
+    const githubTagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
+    const repositoryKey = 'agents-repo/registry'
+    const proxyPromise = fetchRegistryRepositoryTagNames(proxyTagsUrl, { repositoryKey })
+    const githubPromise = fetchRegistryRepositoryTagNames(githubTagsUrl, { repositoryKey })
+
+    resolvers[0]?.(
+      new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+    resolvers[1]?.(
+      new Response(JSON.stringify([{ name: 'v1.1.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    await expect(proxyPromise).resolves.toEqual(['v1.0.0'])
+    await expect(githubPromise).resolves.toEqual(['v1.1.0'])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
   it('does not abort shared in-flight tag fetches when an earlier caller signal is aborted', async () => {
     const resolvers: Array<(value: Response) => void> = []
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(

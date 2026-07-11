@@ -168,21 +168,21 @@ describe('loadRegistryCatalog', () => {
       .spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata')
       .mockResolvedValue({
         githubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v1.2.0',
-        githubRepositoryRefResolution: { alias: 'v2.x', resolvedRef: 'v1.2.0' },
+        githubRepositoryRefResolution: { alias: 'v1.x', resolvedRef: 'v1.2.0' },
       })
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=v1.2.0',
       indexPath: 'packages/index.json',
       indexUrl: cachedIndexUrl,
       sourceMode: 'runtime-override',
-      configuredGithubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v2.x',
-      runtimeGithubRepositoryUrlOverride: null,
-      githubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v2.x',
-      githubRepositorySourceMode: 'configured',
+      configuredGithubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v1.x',
+      runtimeGithubRepositoryUrlOverride: 'https://github.com/other-org/other-repo/tree/v1.x',
+      githubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v1.x',
+      githubRepositorySourceMode: 'runtime-override',
       baseUrlRefResolution: null,
       githubRepositoryRefResolution: null,
     })
@@ -202,7 +202,7 @@ describe('loadRegistryCatalog', () => {
     expect(result.catalog).toEqual(cachedCatalog)
     expect(result.cacheState).toBe('fresh')
     expect(result.githubRepositoryUrl).toBe('https://github.com/other-org/other-repo/tree/v1.2.0')
-    expect(result.githubRepositoryRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v1.2.0' })
+    expect(result.githubRepositoryRefResolution).toEqual({ alias: 'v1.x', resolvedRef: 'v1.2.0' })
     expect(globalThis.fetch).not.toHaveBeenCalled()
   })
 

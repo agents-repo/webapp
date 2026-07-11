@@ -113,6 +113,7 @@ describe('RegistryCatalogProvider', () => {
   })
 
   it('clears loading state and surfaces an error when catalog load rejects', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     loadRegistryCatalogMock.mockRejectedValueOnce(new Error('simulated load failure'))
 
     function LoadingConsumer() {
@@ -144,5 +145,8 @@ describe('RegistryCatalogProvider', () => {
         sourceUrl: '',
       }),
     )
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy).toHaveBeenCalledWith('Registry catalog load failed:', expect.any(Error))
+    warnSpy.mockRestore()
   })
 })
