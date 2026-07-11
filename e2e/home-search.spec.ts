@@ -1,8 +1,10 @@
 import { test, expect } from './fixtures/registry-mock'
+import { waitForCatalogSettled } from './fixtures/catalog-load'
 
 test.describe('Home search', () => {
   test('filters packages by query', async ({ page }) => {
     await page.goto('/')
+    await waitForCatalogSettled(page)
 
     const searchInput = page.getByRole('textbox', { name: 'Search registry packages' })
     await expect(searchInput).toBeVisible()

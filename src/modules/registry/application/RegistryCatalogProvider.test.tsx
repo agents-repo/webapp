@@ -111,4 +111,27 @@ describe('RegistryCatalogProvider', () => {
 
     expect(loadRegistryCatalogMock.mock.calls.length).toBe(callsAfterMount)
   })
+
+  it('clears loading state when catalog load rejects', async () => {
+    loadRegistryCatalogMock.mockRejectedValueOnce(new Error('simulated load failure'))
+
+    function LoadingConsumer() {
+      const { isLoading } = useRegistryCatalog()
+
+      return <p>{isLoading ? 'loading' : 'settled'}</p>
+    }
+
+    render(
+      <RegistryCatalogProvider
+        registrySettingsVersion={0}
+        onCatalogStatusNoteChange={onCatalogStatusNoteChange}
+      >
+        <LoadingConsumer />
+      </RegistryCatalogProvider>,
+    )
+
+    await screen.findByText('settled')
+
+    expect(screen.queryByText('loading')).not.toBeInTheDocument()
+  })
 })

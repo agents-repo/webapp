@@ -80,31 +80,42 @@ function RegistryCatalogProvider({
     const loadCatalog = async (): Promise<void> => {
       setIsLoading(true)
 
-      const isSettingsReload = registrySettingsVersion > 0
-      const result = await loadRegistryCatalog({
-        signal: abortController.signal,
-        ...(isSettingsReload
-          ? { forceSourceResolution: true, bypassTagCache: true }
-          : {}),
-      })
+      try {
+        const isSettingsReload = registrySettingsVersion > 0
+        const result = await loadRegistryCatalog({
+          signal: abortController.signal,
+          ...(isSettingsReload
+            ? { forceSourceResolution: true, bypassTagCache: true }
+            : {}),
+        })
 
-      if (!isActive) {
-        return
+        if (!isActive) {
+          return
+        }
+
+        applyCatalogLoadResult(
+          result,
+          {
+            setCatalog,
+            setCacheState,
+            setIndexUrl,
+            setRegistryBaseUrl,
+            setGithubRepositoryUrl,
+            setErrorMessage,
+          },
+          onCatalogStatusNoteChange,
+        )
+      } catch (error) {
+        if (!isActive) {
+          return
+        }
+
+        console.warn('Registry catalog load failed:', error)
+      } finally {
+        if (isActive) {
+          setIsLoading(false)
+        }
       }
-
-      applyCatalogLoadResult(
-        result,
-        {
-          setCatalog,
-          setCacheState,
-          setIndexUrl,
-          setRegistryBaseUrl,
-          setGithubRepositoryUrl,
-          setErrorMessage,
-        },
-        onCatalogStatusNoteChange,
-      )
-      setIsLoading(false)
     }
 
     void loadCatalog()
