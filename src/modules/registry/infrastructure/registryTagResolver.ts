@@ -247,7 +247,10 @@ export const fetchRegistryRepositoryTagNames = async (
   const repositoryKey = resolveRepositoryKey(tagsUrl, options.repositoryKey)
 
   if (!repositoryKey) {
-    throw new Error('Could not resolve a repository key for tag list caching.')
+    throw new Error(
+      `Could not resolve a repository key for tag list caching (tags URL: ${tagsUrl}). ` +
+        'Pass repositoryKey (owner/repo) when the tags URL is not a GitHub API /repos/{owner}/{repo}/tags endpoint.',
+    )
   }
 
   if (!options.bypassCache) {
