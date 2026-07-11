@@ -22,7 +22,10 @@ const GITHUB_HOSTNAMES = new Set(['github.com', 'www.github.com', 'raw.githubuse
 
 const GITHUB_TAGS_API_PATH_PATTERN = /^\/repos\/([^/]+)\/([^/]+)\/tags\/?$/
 
-const inFlightTagFetchesByRepositoryKey = new Map<string, Promise<string[]>>()
+const inFlightTagFetchesByRepositoryKey = new Map<
+  string,
+  { promise: Promise<string[]>; bypassCache: boolean }
+>()
 
 export const buildRepositoryKey = (owner: string, repo: string): string => `${owner}/${repo}`
 
@@ -257,8 +260,8 @@ export const fetchRegistryRepositoryTagNames = async (
 
   const inFlightFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
 
-  if (inFlightFetch) {
-    return inFlightFetch
+  if (inFlightFetch && (!options.bypassCache || inFlightFetch.bypassCache)) {
+    return inFlightFetch.promise
   }
 
   const fetchPromise = fetchRegistryRepositoryTagNamesFromNetwork(
@@ -266,12 +269,17 @@ export const fetchRegistryRepositoryTagNames = async (
     repositoryKey,
     options.signal,
   ).finally(() => {
-    if (inFlightTagFetchesByRepositoryKey.get(repositoryKey) === fetchPromise) {
+    const currentFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
+
+    if (currentFetch?.promise === fetchPromise) {
       inFlightTagFetchesByRepositoryKey.delete(repositoryKey)
     }
   })
 
-  inFlightTagFetchesByRepositoryKey.set(repositoryKey, fetchPromise)
+  inFlightTagFetchesByRepositoryKey.set(repositoryKey, {
+    promise: fetchPromise,
+    bypassCache: options.bypassCache === true,
+  })
 
   return fetchPromise
 }

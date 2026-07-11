@@ -112,13 +112,18 @@ describe('RegistryCatalogProvider', () => {
     expect(loadRegistryCatalogMock.mock.calls.length).toBe(callsAfterMount)
   })
 
-  it('clears loading state when catalog load rejects', async () => {
+  it('clears loading state and surfaces an error when catalog load rejects', async () => {
     loadRegistryCatalogMock.mockRejectedValueOnce(new Error('simulated load failure'))
 
     function LoadingConsumer() {
-      const { isLoading } = useRegistryCatalog()
+      const { isLoading, errorMessage } = useRegistryCatalog()
 
-      return <p>{isLoading ? 'loading' : 'settled'}</p>
+      return (
+        <p>
+          {isLoading ? 'loading' : 'settled'}
+          {errorMessage ? `:${errorMessage}` : ''}
+        </p>
+      )
     }
 
     render(
@@ -130,8 +135,14 @@ describe('RegistryCatalogProvider', () => {
       </RegistryCatalogProvider>,
     )
 
-    await screen.findByText('settled')
+    await screen.findByText('settled:simulated load failure')
 
     expect(screen.queryByText('loading')).not.toBeInTheDocument()
+    expect(onCatalogStatusNoteChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        summaryText: 'Registry catalog unavailable from ',
+        sourceUrl: '',
+      }),
+    )
   })
 })

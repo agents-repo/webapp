@@ -110,6 +110,27 @@ function RegistryCatalogProvider({
           return
         }
 
+        const failureMessage =
+          error instanceof Error ? error.message : 'Unknown registry catalog loading error'
+
+        applyCatalogLoadResult(
+          {
+            catalog: null,
+            indexUrl: '',
+            registryBaseUrl: '',
+            cacheState: 'none',
+            errorMessage: failureMessage,
+          },
+          {
+            setCatalog,
+            setCacheState,
+            setIndexUrl,
+            setRegistryBaseUrl,
+            setGithubRepositoryUrl,
+            setErrorMessage,
+          },
+          onCatalogStatusNoteChange,
+        )
         console.warn('Registry catalog load failed:', error)
       } finally {
         if (isActive) {

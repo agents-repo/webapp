@@ -339,7 +339,7 @@ const buildCatalogLoadResultOnSourceResolutionFailure = async (
         staleEnvelope,
         configuredSource,
         browseMetadata,
-        'fresh',
+        'stale-fallback',
         errorMessage,
       )
     }
@@ -378,7 +378,7 @@ const loadRegistryCatalogFromNetwork = async (
   options: LoadRegistryCatalogOptions,
 ): Promise<RegistryCatalogLoadResult> => {
   const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig
-  const cachedCatalog = readFreshCatalogCache(indexUrl)
+  const cachedCatalog = options.forceSourceResolution ? null : readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
     return {

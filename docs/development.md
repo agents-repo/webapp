@@ -113,7 +113,7 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
    navigation. Resolution uses the `semver` package.
 - The registry catalog loads once at app level via `RegistryCatalogProvider` and
    is reused when returning to the home page; settings changes trigger a forced
-   reload.
+   reload that bypasses warm in-memory catalog cache and tag cache.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page
