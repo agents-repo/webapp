@@ -5,6 +5,7 @@ import AnalyticsRouteTracker from './modules/site/application/analytics/Analytic
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
 import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
+import RegistryCatalogProvider from './modules/registry/presentation/catalog/RegistryCatalogProvider'
 import HomePage from './modules/registry/presentation/pages/HomePage'
 import Footer from './modules/site/presentation/layout/Footer'
 import Header from './modules/site/presentation/layout/Header'
@@ -27,43 +28,42 @@ function App() {
 
   return (
     <CookieConsentProvider>
-      <div className="app-shell">
-        <SkipLink />
-        <RouteAnnouncer />
-        <AnalyticsRouteTracker />
-        <SiteHead />
-        <CookieConsentBanner />
-        <Header
-        searchSlot={headerSearchSlot}
-        registryCatalogStatusNote={registryCatalogStatusNote}
-        onRegistrySettingsSaved={() => {
-          setRegistryCatalogStatusNote(null)
-          setRegistrySettingsVersion((currentValue) => currentValue + 1)
-        }}
-      />
+      <RegistryCatalogProvider
+        registrySettingsVersion={registrySettingsVersion}
+        onCatalogStatusNoteChange={setRegistryCatalogStatusNote}
+      >
+        <div className="app-shell">
+          <SkipLink />
+          <RouteAnnouncer />
+          <AnalyticsRouteTracker />
+          <SiteHead />
+          <CookieConsentBanner />
+          <Header
+            searchSlot={headerSearchSlot}
+            registryCatalogStatusNote={registryCatalogStatusNote}
+            onRegistrySettingsSaved={() => {
+              setRegistryCatalogStatusNote(null)
+              setRegistrySettingsVersion((currentValue) => currentValue + 1)
+            }}
+          />
 
-      <Routes>
-        <Route
-          path={siteRoutes.home}
-          element={
-            <HomePage
-              setHeaderSearchSlot={setHeaderSearchSlot}
-              registrySettingsVersion={registrySettingsVersion}
-              onCatalogStatusNoteChange={setRegistryCatalogStatusNote}
+          <Routes>
+            <Route
+              path={siteRoutes.home}
+              element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
             />
-          }
-        />
-        <Route path={siteRoutes.about} element={<AboutPage />} />
-        <Route path={siteRoutes.contact} element={<ContactPage />} />
-        <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
-        <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
-        <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
-        <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
-        <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
-      </Routes>
+            <Route path={siteRoutes.about} element={<AboutPage />} />
+            <Route path={siteRoutes.contact} element={<ContactPage />} />
+            <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
+            <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
+            <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
+            <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
+            <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
+          </Routes>
 
-      <Footer />
-      </div>
+          <Footer />
+        </div>
+      </RegistryCatalogProvider>
     </CookieConsentProvider>
   )
 }

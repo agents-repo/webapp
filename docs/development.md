@@ -107,9 +107,15 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Major-version line refs (`1.x`, `v1.x`) in either override resolve to the
    latest stable registry release tag. Tag lists are fetched from registry-proxy
    `GET /tags` when the fetch source is a proxy URL, or from the GitHub tags API
-   as a fallback for GitHub-only source URLs. Tag lists are cached for 1 hour in
-   localStorage; catalog loading re-resolves aliases before using the 24h catalog
-   cache. Resolution uses the `semver` package.
+   as a fallback for GitHub-only source URLs. Tag lists are cached for 1 hour in a
+   single localStorage entry (`registry.tags.cache.v1`) keyed by repository identity
+   (`owner/repo`) inside the envelope. Alias re-resolution runs when the
+   24h catalog cache has expired or website settings change — not on every route
+   navigation. Resolution uses the `semver` package.
+- The registry catalog loads once at app level via
+   `RegistryCatalogProvider` (`presentation/catalog/`) and is reused when
+   returning to the home page; settings changes trigger a forced reload that
+   bypasses warm in-memory catalog cache and tag cache.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page
@@ -142,11 +148,13 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Website settings modal shows catalog source status details, including updated
    date, package count, source URL, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional
-   GET revalidation. After the TTL expires the app sends `If-None-Match` and/or
-   `If-Modified-Since` request headers. A `304 Not Modified` response resets the
-   TTL with zero body downloaded; a `200` response stores the new payload and
-   the updated `ETag`/`Last-Modified` headers. Service worker runtime caching is
-   focused to same-origin static assets only.
+   GET revalidation. While the catalog cache is still fresh, tag resolution and
+   catalog network requests are skipped; resolved refs are inferred from the
+   cached index URL. After the TTL expires the app re-resolves aliases, then
+   sends `If-None-Match` and/or `If-Modified-Since` request headers. A `304 Not
+   Modified` response resets the TTL with zero body downloaded; a `200` response
+   stores the new payload and the updated `ETag`/`Last-Modified` headers.
+   Service worker runtime caching is focused to same-origin static assets only.
 - The styling and architecture decisions are documented in
    `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
 

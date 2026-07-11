@@ -30,20 +30,16 @@ import { sitePageMeta } from '../../../site/application/accessibility/sitePageMe
 import { useDocumentTitle } from '../../../site/application/accessibility/useDocumentTitle'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { siteRoutes } from '../../../site/presentation/routes/siteRoutes'
-import type { RegistryCatalogStatusNote } from '../../../site/application/websiteSettings/registryCatalogStatusNote'
-import { toPackageSlug, type PackageStatus, type RegistryCatalog, type RegistryPackage } from '../../domain/package'
+import { toPackageSlug, type PackageStatus, type RegistryPackage } from '../../domain/package'
 import {
   filterRegistryPackages,
-  formatCatalogUpdatedAt,
 } from '../../application/registrySelectors'
-import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
+import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 import {
   getCatalogAlertState,
   getCatalogResultsSummary,
-  getCatalogStatusTag,
   getPackageDownloadTargets,
-  type CatalogCacheState,
   type PackageDownloadTarget,
 } from './homePageCatalogState'
 
@@ -94,25 +90,21 @@ const renderPackageDownloadAction = (
 
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
-  readonly registrySettingsVersion: number
-  readonly onCatalogStatusNoteChange: (note: RegistryCatalogStatusNote | null) => void
 }
 
-function HomePage({
-  setHeaderSearchSlot,
-  registrySettingsVersion,
-  onCatalogStatusNoteChange,
-}: HomePageProps) {
+function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   useDocumentTitle(sitePageMeta[siteRoutes.home].title)
+  const {
+    catalog,
+    cacheState: catalogCacheState,
+    indexUrl: catalogSourceUrl,
+    registryBaseUrl,
+    githubRepositoryUrl,
+    errorMessage: catalogErrorMessage,
+    isLoading: isCatalogLoading,
+  } = useRegistryCatalog()
   const [query, setQuery] = useState('')
   const [stickySearch, setStickySearch] = useState(false)
-  const [catalog, setCatalog] = useState<RegistryCatalog | null>(null)
-  const [catalogCacheState, setCatalogCacheState] = useState<CatalogCacheState>('none')
-  const [catalogSourceUrl, setCatalogSourceUrl] = useState('')
-  const [registryBaseUrl, setRegistryBaseUrl] = useState('')
-  const [githubRepositoryUrl, setGithubRepositoryUrl] = useState('')
-  const [catalogErrorMessage, setCatalogErrorMessage] = useState<string | null>(null)
-  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
   const trimmedQuery = query.trim()
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
@@ -120,57 +112,6 @@ function HomePage({
     errorMessage: catalogErrorMessage,
   })
   const canShowCatalogSourceLink = isSafeExternalHttpUrl(catalogSourceUrl)
-
-  useEffect(() => {
-    const abortController = new AbortController()
-    let isActive = true
-
-    const loadCatalog = async (): Promise<void> => {
-      setIsCatalogLoading(true)
-      const result = await loadRegistryCatalog({ signal: abortController.signal })
-
-      if (!isActive) {
-        return
-      }
-
-      setCatalog(result.catalog)
-      setCatalogCacheState(result.cacheState)
-      setCatalogSourceUrl(result.indexUrl)
-      setRegistryBaseUrl(result.registryBaseUrl)
-      setGithubRepositoryUrl(result.githubRepositoryUrl ?? '')
-      setCatalogErrorMessage(result.errorMessage ?? null)
-
-      const noteStatusTag = getCatalogStatusTag({
-        catalog: result.catalog,
-        cacheState: result.cacheState,
-        isLoading: false,
-        errorMessage: result.errorMessage ?? null,
-      })
-
-      onCatalogStatusNoteChange({
-        summaryText: result.catalog
-          ? `Updated ${formatCatalogUpdatedAt(result.catalog.updatedAt)} with ${result.catalog.packages.length} packages from `
-          : 'Registry catalog unavailable from ',
-        sourceUrl: result.indexUrl,
-        statusTag: noteStatusTag,
-        baseUrlRefResolution: result.baseUrlRefResolution ?? null,
-        githubRepositoryRefResolution: result.githubRepositoryRefResolution ?? null,
-      })
-
-      if (result.errorMessage) {
-        console.warn('Registry catalog loading fallback triggered:', result.errorMessage)
-      }
-
-      setIsCatalogLoading(false)
-    }
-
-    void loadCatalog()
-
-    return () => {
-      isActive = false
-      abortController.abort()
-    }
-  }, [onCatalogStatusNoteChange, registrySettingsVersion])
 
   useEffect(() => {
     const updateStickyState = (): void => {

@@ -1,14 +1,50 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { clearRegistryTagListCache } from './registryTagResolver'
 import { validateRegistrySourceUrlForMajorVersionAlias } from './registrySourceConfig'
 
 const DEFAULT_FALLBACK_REPOSITORY_URL = 'https://github.com/agents-repo/registry/tree/v2.x'
 
+class MemoryStorage implements Storage {
+  private readonly data = new Map<string, string>()
+
+  get length(): number {
+    return this.data.size
+  }
+
+  clear(): void {
+    this.data.clear()
+  }
+
+  getItem(key: string): string | null {
+    return this.data.get(key) ?? null
+  }
+
+  key(index: number): string | null {
+    const keys = [...this.data.keys()]
+    return keys[index] ?? null
+  }
+
+  removeItem(key: string): void {
+    this.data.delete(key)
+  }
+
+  setItem(key: string, value: string): void {
+    this.data.set(key, value)
+  }
+}
+
 describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
   beforeEach(() => {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      writable: true,
+      value: new MemoryStorage(),
+    })
     vi.restoreAllMocks()
   })
 
   afterEach(() => {
+    clearRegistryTagListCache()
     vi.restoreAllMocks()
   })
 

@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, unlinkSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   injectRouteHeadIntoHtml,
@@ -10,6 +10,12 @@ import { getSiteRoutePaths } from '../src/modules/site/application/seo/siteSeoMe
 import { resolveViteSiteUrl } from './load-vite-env.mjs';
 
 const distDir = resolve(process.cwd(), 'dist');
+const e2eBuildMarkerPath = resolve(distDir, 'e2e-build-marker.json');
+
+if (existsSync(e2eBuildMarkerPath)) {
+  unlinkSync(e2eBuildMarkerPath);
+}
+
 const siteOrigin = getSiteOrigin(resolveViteSiteUrl());
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
 

@@ -46,8 +46,10 @@ not found error.
 loads [`.env.e2e`](../.env.e2e) for alias-free registry URLs.
 
 Do **not** run `npm run test:e2e` and `npm run a11y:ci` at the same time — both
-use port 4173. `reuseExistingServer` in `playwright.config.ts` reuses an
-existing preview when one is already running.
+use port 4173. By default Playwright starts a fresh e2e preview and does **not**
+reuse an existing server. Set `PLAYWRIGHT_REUSE_SERVER=true` only when you
+intentionally started `npm run build:pages:e2e && npm run preview` for faster
+iteration.
 
 ## Directory layout
 
@@ -55,8 +57,10 @@ existing preview when one is already running.
 e2e/
 ├── fixtures/
 │   ├── catalog.ts          # Typed catalog JSON (mirrors src/test/fixtures shape)
+│   ├── catalog-load.ts     # waitForCatalogSettled helper
 │   ├── registry-mock.ts    # page.route helpers + extended test fixture
 │   └── storage.ts          # localStorage/sessionStorage isolation
+├── e2e-build-guard.setup.ts # Fails fast when port 4173 is not an e2e build
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
 ├── navigation.spec.ts
@@ -132,6 +136,18 @@ in Playwright — use unit tests for GTM injection logic instead.
 
 ## Debugging failures
 
+- **Wrong preview on port 4173:** If catalog specs time out looking for
+  `sample-agent` but the page shows real registry packages (for example
+  `hello-agent`), port 4173 is serving a **production** preview, not the e2e
+  build. Stop `npm run preview` / `a11y:ci` on 4173 and rerun
+  `npm run test:e2e`, or start the correct server with
+  `npm run build:pages:e2e && npm run preview` and set
+  `PLAYWRIGHT_REUSE_SERVER=true`. The `e2e-guard` setup project checks for
+  `dist/e2e-build-marker.json` and fails with an actionable message when the
+  marker is missing.
+- **Stale catalog cache:** `clearBrowserStorage(page)` clears
+  `registry.catalog.cache.v1` (and other keys) on the first navigation only.
+  Specs that need a clean slate should call it in `beforeEach`.
 - **HTML report:** `npm run test:e2e:report` after a failed run
 - **UI mode:** `npm run test:e2e:ui` for step-through debugging
 - **Traces:** retained on failure (`trace: 'retain-on-failure'` in config)
