@@ -162,7 +162,7 @@ grep GTM-57FJBZ7P dist/index.html && echo "unexpected" || echo "ok"
 
 ## Validation
 
-Run before opening or updating a pull request that touches SEO:
+Run before marking the pull request ready for review when the change touches SEO:
 
 ```bash
 npm run lint:all

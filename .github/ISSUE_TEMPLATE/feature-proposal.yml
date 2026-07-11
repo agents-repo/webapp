@@ -4,6 +4,21 @@ title: "feat: "
 labels:
   - enhancement
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Workflow:** Submit this issue first. After GitHub assigns a number,
+        create your branch and draft PR—do not edit this issue body to add the
+        number.
+
+        **Branch pattern:** `feat/<issue-number>-<slug>` (use the assigned number
+        and a short lowercase kebab-case slug from the title)
+
+        **Example:** `feat/89-search-refinement`
+
+        **Draft PR:** Open with `gh pr create --draft` before implementation
+        commits. Put the tracking reference in the PR `## Related Issues` section
+        (not in this issue).
   - type: textarea
     id: problem
     attributes:

@@ -1,5 +1,23 @@
 # Development Workflow
 
+## Required Workflow
+
+Before local implementation, follow `.github/CONTRIBUTING.md` **Required
+Workflow**:
+
+1. Open a tracking issue from `.github/ISSUE_TEMPLATE/` (except security
+   vulnerabilities — see **Workflow exceptions** in `.github/CONTRIBUTING.md`).
+2. Create a branch named `<prefix>/<issue-number>-<slug>` from latest `main`.
+3. Push a scaffolding commit if needed, then open a draft pull request before
+   implementation commits (`gh pr create --draft`). In `## Related Issues`,
+   include `Closes #<issue-number>` for standard tasks, or follow the
+   security-advisory format defined in the **Workflow exceptions** section of
+   `.github/CONTRIBUTING.md` when applicable.
+4. After validation passes, the developer manually marks the pull request ready
+   for review. Agents MUST NOT mark pull requests ready for review.
+
+See the organization [Required Workflow][org-rw] for shared norms.
+
 ## Toolchain
 
 This project follows the pinned runtime declared in `.nvmrc` and `package.json`.
@@ -13,7 +31,7 @@ npm install
 
 ## Local Validation
 
-Run these checks before opening a pull request:
+Run these checks before marking the pull request ready for review:
 
 ```bash
 npm run env:check
@@ -183,16 +201,14 @@ When debugging stale behavior, clear both layers before retesting:
 Use the pull request template in `.github/pull_request_template.md`.
 Keep changes scoped and document any UI or workflow impact clearly.
 
-Before opening a PR:
+Checklist when opening the draft PR and before requesting review:
 
-1. Create an issue from the matching form in `.github/ISSUE_TEMPLATE/`.
+1. Complete the Required Workflow steps above (issue, branch, push, draft PR).
 2. Choose the matching category: bug/inconsistency, spec change, feature
    proposal, or task/chore.
 3. Documentation-only work uses the task/chore issue category and the `docs/`
    branch prefix.
-4. Create a non-`main` branch from the latest `main` using
-   `<prefix>/<issue-number>-<slug>`.
-5. Use the prefix that matches the work category:
+4. Use the prefix that matches the work category:
 
    - `fix/` for bug or inconsistency
    - `spec/` for spec change
@@ -200,5 +216,9 @@ Before opening a PR:
    - `chore/` for task or chore
    - `docs/` for documentation-only work
 
-6. In `## Related Issues`, include `Closes #<issue-number>`.
-7. Every PR targeting `main` must close a tracking issue.
+5. In `## Related Issues`, include a tracking reference: `Closes #<issue-number>`
+   for standard tasks, or the security-advisory format defined in the
+   **Workflow exceptions** section of `.github/CONTRIBUTING.md` when applicable.
+6. Every PR targeting `main` MUST include a tracking reference.
+
+[org-rw]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow

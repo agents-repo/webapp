@@ -6,8 +6,35 @@ Describe the change and why it is needed.
 
 ## Related Issues
 
-Include `Closes #<issue-number>` for the issue this PR closes.
-Every PR targeting `main` must close a tracking issue.
+`Closes #<issue-number>`
+
+Replace this line with an unbackticked `Closes #<number>` so GitHub links the
+issue.
+
+For standard tasks, use `Closes #<issue-number>`. For security vulnerabilities
+without a public tracking issue, reference the advisory identifier (for example
+`GHSA-...`) and coordinate linkage with maintainers per the
+[Workflow exceptions][org-wf-ex]
+section of the organization CONTRIBUTING guide.
+
+Every PR targeting `main` MUST include a tracking reference.
+
+## Workflow Checklist
+
+- [ ] A tracking issue was opened before implementation.
+- [ ] The branch name follows `<prefix>/<issue-number>-<slug>`.
+- [ ] This pull request was created as a draft (`gh pr create --draft` or UI
+  draft option).
+- [ ] This draft PR was opened before implementation commits (or it documents
+  why not).
+- [ ] `## Related Issues` includes a tracking reference (`Closes #<issue-number>`
+  or a security-advisory identifier per the
+  [Workflow exceptions][org-wf-ex]
+  section of the organization CONTRIBUTING guide).
+- [ ] Merge to `main` is for human maintainers only; agents and automation
+  must not merge this PR or push directly to `main`.
+- [ ] A human developer marked this PR ready for review after validation (not
+  agents or automation).
 
 ## Change Type
 
@@ -33,18 +60,12 @@ List affected paths or areas:
 - [ ] `npm run lint:all`
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
-- [ ] Matching issue template was used, or equivalent required context is included.
-- [ ] `Related Issues` includes `Closes #<issue-number>` for the issue this PR closes.
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] This PR follows the repository contributor guidance.
-- [ ] Merge to `main` is for human maintainers only; agents and automation
-  must not merge this PR or push directly to `main`.
 
 ## Risk and Rollback
 
 - Risk level: low / medium / high
 - Rollback plan:
 
-## Related Context
-
-Include issue links, related tasks, or follow-up notes.
+[org-wf-ex]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#workflow-exceptions
