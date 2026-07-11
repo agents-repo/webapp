@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
+import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import HomePage from './HomePage'
 import { sampleCatalogLoadResult } from './homePageA11yTestFixtures'
 
@@ -14,8 +15,6 @@ const axeOptions = {
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
 }))
-
-import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 
 const useRegistryCatalogMock = vi.mocked(useRegistryCatalog)
 
