@@ -111,7 +111,7 @@ describe('loadRegistryCatalog', () => {
     expect(result.githubRepositoryRefResolution).toBeNull()
   })
 
-  it('returns a cached catalog with stale-fallback cache state when only a stale identity-matched envelope exists after fetch source resolution fails', async () => {
+  it('returns a cached catalog with fresh cache state when only a stale identity-matched envelope exists after fetch source resolution fails', async () => {
     const cachedIndexUrl = 'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0'
     const cachedCatalog = makeTestCatalog('1.2.0')
 
@@ -153,10 +153,56 @@ describe('loadRegistryCatalog', () => {
     const result = await loadRegistryCatalog()
 
     expect(result.catalog).toEqual(cachedCatalog)
-    expect(result.cacheState).toBe('stale-fallback')
+    expect(result.cacheState).toBe('fresh')
     expect(result.indexUrl).toBe(cachedIndexUrl)
     expect(result.errorMessage).toBe('Registry tag listing failed (503 Service Unavailable)')
     expect(result.baseUrlRefResolution).toEqual({ alias: '1.x', resolvedRef: 'v1.2.0' })
+    expect(globalThis.fetch).not.toHaveBeenCalled()
+  })
+
+  it('does not infer browse ref from cached catalog when browse repository differs from catalog source', async () => {
+    const cachedIndexUrl = 'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0'
+    const cachedCatalog = makeTestCatalog('1.2.0')
+
+    const resolveBrowseSourceMetadata = vi
+      .spyOn(registrySourceConfig, 'resolveRegistryBrowseSourceMetadata')
+      .mockResolvedValue({
+        githubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v1.2.0',
+        githubRepositoryRefResolution: { alias: 'v2.x', resolvedRef: 'v1.2.0' },
+      })
+
+    vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
+      sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
+      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
+      baseUrl: 'https://registry-proxy.example.workers.dev/?ref=v1.2.0',
+      indexPath: 'packages/index.json',
+      indexUrl: cachedIndexUrl,
+      sourceMode: 'runtime-override',
+      configuredGithubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v2.x',
+      runtimeGithubRepositoryUrlOverride: null,
+      githubRepositoryUrl: 'https://github.com/other-org/other-repo/tree/v2.x',
+      githubRepositorySourceMode: 'configured',
+      baseUrlRefResolution: null,
+      githubRepositoryRefResolution: null,
+    })
+
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue({
+      cacheVersion: 1,
+      cachedAt: Date.now(),
+      indexUrl: cachedIndexUrl,
+      catalog: cachedCatalog,
+    })
+
+    vi.spyOn(globalThis, 'fetch')
+
+    const result = await loadRegistryCatalog()
+
+    expect(resolveBrowseSourceMetadata).toHaveBeenCalled()
+    expect(result.catalog).toEqual(cachedCatalog)
+    expect(result.cacheState).toBe('fresh')
+    expect(result.githubRepositoryUrl).toBe('https://github.com/other-org/other-repo/tree/v1.2.0')
+    expect(result.githubRepositoryRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v1.2.0' })
     expect(globalThis.fetch).not.toHaveBeenCalled()
   })
 

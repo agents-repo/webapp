@@ -240,6 +240,47 @@ const fetchRegistryRepositoryTagNamesFromNetwork = async (
   return tagNames
 }
 
+const toAbortError = (signal: AbortSignal): Error => {
+  const reason: unknown = signal.reason
+
+  if (reason instanceof Error) {
+    return reason
+  }
+
+  return new DOMException('Aborted', 'AbortError')
+}
+
+const attachCallerAbortSignal = <T>(
+  sharedPromise: Promise<T>,
+  signal: AbortSignal | undefined,
+): Promise<T> => {
+  if (!signal) {
+    return sharedPromise
+  }
+
+  if (signal.aborted) {
+    return Promise.reject(toAbortError(signal))
+  }
+
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => {
+      reject(toAbortError(signal))
+    }
+
+    signal.addEventListener('abort', onAbort, { once: true })
+    sharedPromise.then(
+      (value) => {
+        signal.removeEventListener('abort', onAbort)
+        resolve(value)
+      },
+      (error: unknown) => {
+        signal.removeEventListener('abort', onAbort)
+        reject(error instanceof Error ? error : new Error(String(error)))
+      },
+    )
+  })
+}
+
 export const fetchRegistryRepositoryTagNames = async (
   tagsUrl: string,
   options: { signal?: AbortSignal; bypassCache?: boolean; repositoryKey?: string } = {},
@@ -264,13 +305,13 @@ export const fetchRegistryRepositoryTagNames = async (
   const inFlightFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
 
   if (inFlightFetch && (!options.bypassCache || inFlightFetch.bypassCache)) {
-    return inFlightFetch.promise
+    return attachCallerAbortSignal(inFlightFetch.promise, options.signal)
   }
 
   const fetchPromise = fetchRegistryRepositoryTagNamesFromNetwork(
     tagsUrl,
     repositoryKey,
-    options.signal,
+    undefined,
   ).finally(() => {
     const currentFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
 
@@ -284,7 +325,7 @@ export const fetchRegistryRepositoryTagNames = async (
     bypassCache: options.bypassCache === true,
   })
 
-  return fetchPromise
+  return attachCallerAbortSignal(fetchPromise, options.signal)
 }
 
 export const fetchGitHubRepositoryTagNames = async (

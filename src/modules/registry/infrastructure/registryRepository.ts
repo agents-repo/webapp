@@ -14,6 +14,8 @@ import {
 import {
   extractMajorVersionLineAliasFromSourceUrl,
   extractRegistryRef,
+  inferRegistryRepositoryIdentity,
+  parseGitHubRepositoryIdentity,
   substituteRegistryRef,
 } from './registryMajorVersionRef'
 import {
@@ -138,6 +140,13 @@ const getMajorVersionFromConcreteRef = (ref: string): number | null => {
   return semver.major(version)
 }
 
+const repositoryIdentitiesMatch = (
+  left: ReturnType<typeof parseGitHubRepositoryIdentity>,
+  right: ReturnType<typeof parseGitHubRepositoryIdentity>,
+): boolean => {
+  return left !== null && right !== null && left.owner === right.owner && left.repo === right.repo
+}
+
 const inferBrowseMetadataFromCachedRef = (
   configuredSource: ReturnType<typeof getRegistrySourceConfig>,
   cachedIndexUrl: string,
@@ -155,6 +164,16 @@ const inferBrowseMetadataFromCachedRef = (
   const baseUrlRefResolution = inferBaseUrlRefResolutionFromCachedIndexUrl(configuredSource, cachedIndexUrl)
 
   if (!baseUrlRefResolution) {
+    return null
+  }
+
+  const browseRepositoryIdentity = parseGitHubRepositoryIdentity(githubRepositoryUrl)
+  const catalogRepositoryIdentity = inferRegistryRepositoryIdentity(
+    cachedIndexUrl,
+    configuredSource.githubRepositoryUrl,
+  )
+
+  if (!repositoryIdentitiesMatch(browseRepositoryIdentity, catalogRepositoryIdentity)) {
     return null
   }
 
@@ -339,7 +358,7 @@ const buildCatalogLoadResultOnSourceResolutionFailure = async (
         staleEnvelope,
         configuredSource,
         browseMetadata,
-        'stale-fallback',
+        'fresh',
         errorMessage,
       )
     }

@@ -234,6 +234,42 @@ describe('registryTagResolver', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it('does not abort shared in-flight tag fetches when an earlier caller signal is aborted', async () => {
+    const resolvers: Array<(value: Response) => void> = []
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolvers.push(resolve)
+        }),
+    )
+
+    const tagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
+    const abortedController = new AbortController()
+    const firstPromise = fetchRegistryRepositoryTagNames(tagsUrl, {
+      signal: abortedController.signal,
+    })
+    const firstExpectation = expect(firstPromise).rejects.toThrow()
+    const secondPromise = fetchRegistryRepositoryTagNames(tagsUrl)
+
+    abortedController.abort()
+
+    await firstExpectation
+
+    resolvers[0]?.(
+      new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    await expect(secondPromise).resolves.toEqual(['v1.0.0'])
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledWith(
+      tagsUrl,
+      expect.objectContaining({ signal: undefined }),
+    )
+  })
+
   it('resolves the latest stable tag using registry-proxy tags when source is proxy', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }, { name: 'v2.0.0' }]), {
