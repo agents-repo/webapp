@@ -1,8 +1,7 @@
 import { screen } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
-import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 import HomePage from './HomePage'
 import { sampleCatalogLoadResult } from './homePageA11yTestFixtures'
 
@@ -12,25 +11,27 @@ const axeOptions = {
   },
 }
 
-vi.mock('../../infrastructure/registryRepository', () => ({
-  loadRegistryCatalog: vi.fn(),
+vi.mock('../../application/registryCatalogContext', () => ({
+  useRegistryCatalog: vi.fn(),
 }))
 
-const loadRegistryCatalogMock = vi.mocked(loadRegistryCatalog)
+import { useRegistryCatalog } from '../../application/registryCatalogContext'
+
+const useRegistryCatalogMock = vi.mocked(useRegistryCatalog)
 
 describe('HomePage accessibility', () => {
-  beforeEach(() => {
-    loadRegistryCatalogMock.mockResolvedValue(sampleCatalogLoadResult)
-  })
-
   it('has no detectable accessibility violations with catalog data', async () => {
-    const { container } = renderWithProviders(
-      <HomePage
-        setHeaderSearchSlot={() => {}}
-        registrySettingsVersion={0}
-        onCatalogStatusNoteChange={() => {}}
-      />,
-    )
+    useRegistryCatalogMock.mockReturnValue({
+      catalog: sampleCatalogLoadResult.catalog,
+      cacheState: sampleCatalogLoadResult.cacheState,
+      indexUrl: sampleCatalogLoadResult.indexUrl,
+      registryBaseUrl: sampleCatalogLoadResult.registryBaseUrl,
+      githubRepositoryUrl: sampleCatalogLoadResult.githubRepositoryUrl ?? '',
+      errorMessage: sampleCatalogLoadResult.errorMessage ?? null,
+      isLoading: false,
+    })
+
+    const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
     await screen.findByRole('heading', { name: 'sample-agent' })
 

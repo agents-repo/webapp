@@ -86,8 +86,9 @@ describe('registryTagResolver', () => {
     )
 
     const tagsUrl = 'https://registry-proxy.example.workers.dev/tags'
-    const firstFetch = await fetchRegistryRepositoryTagNames(tagsUrl)
-    const secondFetch = await fetchRegistryRepositoryTagNames(tagsUrl)
+    const repositoryKey = 'agents-repo/registry'
+    const firstFetch = await fetchRegistryRepositoryTagNames(tagsUrl, { repositoryKey })
+    const secondFetch = await fetchRegistryRepositoryTagNames(tagsUrl, { repositoryKey })
 
     expect(firstFetch).toEqual(['v1.0.0', 'v1.2.0'])
     expect(secondFetch).toEqual(['v1.0.0', 'v1.2.0'])
@@ -108,6 +109,50 @@ describe('registryTagResolver', () => {
 
     expect(firstFetch).toEqual(['v1.0.0', 'v1.2.0'])
     expect(secondFetch).toEqual(['v1.0.0', 'v1.2.0'])
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('shares tag cache between registry-proxy and GitHub API URLs for the same repository', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    const proxyTagsUrl = 'https://registry-proxy.example.workers.dev/tags'
+    const githubTagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
+    const repositoryKey = 'agents-repo/registry'
+
+    await fetchRegistryRepositoryTagNames(proxyTagsUrl, { repositoryKey })
+    await fetchRegistryRepositoryTagNames(githubTagsUrl, { repositoryKey })
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledWith(proxyTagsUrl, { headers: {}, signal: undefined })
+  })
+
+  it('dedupes concurrent tag fetches for the same repository', async () => {
+    let resolveFetch: ((value: Response) => void) | undefined
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveFetch = resolve
+        }),
+    )
+
+    const tagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
+    const firstPromise = fetchRegistryRepositoryTagNames(tagsUrl)
+    const secondPromise = fetchRegistryRepositoryTagNames(tagsUrl)
+
+    resolveFetch?.(
+      new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+
+    await expect(firstPromise).resolves.toEqual(['v1.0.0'])
+    await expect(secondPromise).resolves.toEqual(['v1.0.0'])
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 

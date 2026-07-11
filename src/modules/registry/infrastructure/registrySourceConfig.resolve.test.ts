@@ -121,7 +121,7 @@ describe('resolveRegistrySourceConfig', () => {
     expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.0.0')
   })
 
-  it('keeps unresolved GitHub browse metadata when browse tag resolution fails', async () => {
+  it('reuses fetch-path tag results when browse tag listing fails', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const url = getFetchInputUrl(input)
 
@@ -141,8 +141,8 @@ describe('resolveRegistrySourceConfig', () => {
 
     expect(source.baseUrlRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
     expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.0.0')
-    expect(source.githubRepositoryRefResolution).toBeNull()
-    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.x')
+    expect(source.githubRepositoryRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
+    expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.0.0')
   })
 
   it('resolves major-version line refs for bare GitHub repository base URL overrides', async () => {

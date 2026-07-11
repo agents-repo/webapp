@@ -12,13 +12,19 @@ interface GitHubTagPayload {
 interface TagListCacheEnvelope {
   readonly cacheVersion: number
   readonly cachedAt: number
-  readonly tagsUrl: string
+  readonly repositoryKey: string
   readonly tagNames: string[]
 }
 
-const TAG_LIST_CACHE_VERSION = 2
+const TAG_LIST_CACHE_VERSION = 3
 
 const GITHUB_HOSTNAMES = new Set(['github.com', 'www.github.com', 'raw.githubusercontent.com'])
+
+const GITHUB_TAGS_API_PATH_PATTERN = /^\/repos\/([^/]+)\/([^/]+)\/tags\/?$/
+
+const inFlightTagFetchesByRepositoryKey = new Map<string, Promise<string[]>>()
+
+export const buildRepositoryKey = (owner: string, repo: string): string => `${owner}/${repo}`
 
 const getLocalStorage = (): Storage | null => {
   try {
@@ -28,7 +34,38 @@ const getLocalStorage = (): Storage | null => {
   }
 }
 
-const readTagListCache = (tagsUrl: string): string[] | null => {
+const parseRepositoryKeyFromTagsUrl = (tagsUrl: string): string | null => {
+  try {
+    const parsedUrl = new URL(tagsUrl)
+
+    if (parsedUrl.hostname !== 'api.github.com') {
+      return null
+    }
+
+    const match = GITHUB_TAGS_API_PATH_PATTERN.exec(parsedUrl.pathname)
+
+    if (!match) {
+      return null
+    }
+
+    return buildRepositoryKey(match[1], match[2])
+  } catch {
+    return null
+  }
+}
+
+const resolveRepositoryKey = (
+  tagsUrl: string,
+  repositoryKey: string | undefined,
+): string | null => {
+  if (repositoryKey && repositoryKey.trim().length > 0) {
+    return repositoryKey
+  }
+
+  return parseRepositoryKeyFromTagsUrl(tagsUrl)
+}
+
+const readTagListCache = (repositoryKey: string): string[] | null => {
   const storage = getLocalStorage()
 
   if (!storage) {
@@ -46,7 +83,7 @@ const readTagListCache = (tagsUrl: string): string[] | null => {
 
     if (
       envelope.cacheVersion !== TAG_LIST_CACHE_VERSION ||
-      envelope.tagsUrl !== tagsUrl ||
+      envelope.repositoryKey !== repositoryKey ||
       !Array.isArray(envelope.tagNames)
     ) {
       return null
@@ -62,7 +99,7 @@ const readTagListCache = (tagsUrl: string): string[] | null => {
   }
 }
 
-const writeTagListCache = (tagsUrl: string, tagNames: string[]): void => {
+const writeTagListCache = (repositoryKey: string, tagNames: string[]): void => {
   const storage = getLocalStorage()
 
   if (!storage) {
@@ -72,7 +109,7 @@ const writeTagListCache = (tagsUrl: string, tagNames: string[]): void => {
   const envelope: TagListCacheEnvelope = {
     cacheVersion: TAG_LIST_CACHE_VERSION,
     cachedAt: Date.now(),
-    tagsUrl,
+    repositoryKey,
     tagNames,
   }
 
@@ -95,6 +132,8 @@ export const clearRegistryTagListCache = (): void => {
   } catch {
     // Ignore storage failures.
   }
+
+  inFlightTagFetchesByRepositoryKey.clear()
 }
 
 export const buildRegistryTagsUrl = (sourceUrl: string, fallbackRepositoryUrl: string): string => {
@@ -179,30 +218,62 @@ const fetchRegistryTagNamesPage = async (
   }
 }
 
+const fetchRegistryRepositoryTagNamesFromNetwork = async (
+  tagsUrl: string,
+  repositoryKey: string,
+  signal: AbortSignal | undefined,
+): Promise<string[]> => {
+  const tagNames: string[] = []
+  let nextUrl: string | null = tagsUrl
+
+  while (nextUrl) {
+    const pageResult = await fetchRegistryTagNamesPage(nextUrl, signal)
+    tagNames.push(...pageResult.tagNames)
+    nextUrl = pageResult.nextUrl
+  }
+
+  writeTagListCache(repositoryKey, tagNames)
+
+  return tagNames
+}
+
 export const fetchRegistryRepositoryTagNames = async (
   tagsUrl: string,
-  options: { signal?: AbortSignal; bypassCache?: boolean } = {},
+  options: { signal?: AbortSignal; bypassCache?: boolean; repositoryKey?: string } = {},
 ): Promise<string[]> => {
+  const repositoryKey = resolveRepositoryKey(tagsUrl, options.repositoryKey)
+
+  if (!repositoryKey) {
+    throw new Error('Could not resolve a repository key for tag list caching.')
+  }
+
   if (!options.bypassCache) {
-    const cachedTagNames = readTagListCache(tagsUrl)
+    const cachedTagNames = readTagListCache(repositoryKey)
 
     if (cachedTagNames) {
       return cachedTagNames
     }
   }
 
-  const tagNames: string[] = []
-  let nextUrl: string | null = tagsUrl
+  const inFlightFetch = inFlightTagFetchesByRepositoryKey.get(repositoryKey)
 
-  while (nextUrl) {
-    const pageResult = await fetchRegistryTagNamesPage(nextUrl, options.signal)
-    tagNames.push(...pageResult.tagNames)
-    nextUrl = pageResult.nextUrl
+  if (inFlightFetch) {
+    return inFlightFetch
   }
 
-  writeTagListCache(tagsUrl, tagNames)
+  const fetchPromise = fetchRegistryRepositoryTagNamesFromNetwork(
+    tagsUrl,
+    repositoryKey,
+    options.signal,
+  ).finally(() => {
+    if (inFlightTagFetchesByRepositoryKey.get(repositoryKey) === fetchPromise) {
+      inFlightTagFetchesByRepositoryKey.delete(repositoryKey)
+    }
+  })
 
-  return tagNames
+  inFlightTagFetchesByRepositoryKey.set(repositoryKey, fetchPromise)
+
+  return fetchPromise
 }
 
 export const fetchGitHubRepositoryTagNames = async (
@@ -212,7 +283,10 @@ export const fetchGitHubRepositoryTagNames = async (
 ): Promise<string[]> => {
   return fetchRegistryRepositoryTagNames(
     `https://api.github.com/repos/${owner}/${repo}/tags?per_page=100`,
-    options,
+    {
+      ...options,
+      repositoryKey: buildRepositoryKey(owner, repo),
+    },
   )
 }
 
@@ -250,12 +324,16 @@ export const resolveLatestStableTagForMajorVersion = async (
     fallbackRepositoryUrl?: string
   } = {},
 ): Promise<string> => {
+  const repositoryKey = buildRepositoryKey(owner, repo)
   const tagsUrl =
     options.sourceUrl && options.fallbackRepositoryUrl
       ? buildRegistryTagsUrl(options.sourceUrl, options.fallbackRepositoryUrl)
       : `https://api.github.com/repos/${owner}/${repo}/tags?per_page=100`
 
-  const tagNames = await fetchRegistryRepositoryTagNames(tagsUrl, options)
+  const tagNames = await fetchRegistryRepositoryTagNames(tagsUrl, {
+    ...options,
+    repositoryKey,
+  })
   const resolvedTag = pickLatestStableTagForMajorVersion(tagNames, major)
 
   if (!resolvedTag) {
