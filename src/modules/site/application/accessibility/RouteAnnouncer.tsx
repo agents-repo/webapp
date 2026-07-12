@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { getSitePageMeta } from './sitePageMeta'
-import { isMainRouteContentReady } from './routeContentReady'
+import { getRouteAnnouncementMessage, isMainRouteContentReady } from './routeContentReady'
 
 function RouteAnnouncer() {
   const location = useLocation()
@@ -23,7 +23,10 @@ function RouteAnnouncer() {
       }
 
       if (announcementRef.current) {
-        announcementRef.current.textContent = `Navigated to ${pageMeta.routeLabel}`
+        announcementRef.current.textContent = getRouteAnnouncementMessage(
+          pageMeta.routeLabel,
+          mainContent,
+        )
       }
 
       const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')

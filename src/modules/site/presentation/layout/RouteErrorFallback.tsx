@@ -8,7 +8,7 @@ interface RouteErrorFallbackProps {
 
 function RouteErrorFallback({ onRetry }: RouteErrorFallbackProps) {
   return (
-    <div className="py-5" role="alert">
+    <div className="py-5" role="alert" data-route-load-error>
       <Container>
         <h1 className="h2 mb-3">Page failed to load</h1>
         <p className="text-body-secondary mb-4">
