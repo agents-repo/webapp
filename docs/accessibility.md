@@ -83,7 +83,7 @@ npm run a11y:ci
 | Command | Purpose |
 | --- | --- |
 | `npm run lint` | Includes `eslint-plugin-jsx-a11y` recommended rules |
-| `npm run test:a11y` | Vitest + axe smoke tests on key UI surfaces |
+| `npm run test:a11y` | Vitest + axe smoke tests (`*.a11y.test.tsx` via `vitest.a11y.config.ts`) |
 | `npm run a11y:ci` | Lighthouse (min 0.9) + pa11y WCAG2AA on built `dist/` (local only) |
 
 Run `npm run a11y:ci` after `build:pages` when validating accessibility changes

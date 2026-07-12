@@ -24,7 +24,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
-    "test:a11y": "npm run test:sync && vitest run a11y.test",
+    "test:a11y": "npm run test:sync && vitest run --config vitest.a11y.config.ts",
     "a11y:ci": "node scripts/run-a11y-ci.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.e2e.json",
     "preview": "vite preview",
