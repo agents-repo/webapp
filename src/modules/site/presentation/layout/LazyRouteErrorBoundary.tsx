@@ -3,6 +3,8 @@ import RouteErrorFallback from './RouteErrorFallback'
 
 interface LazyRouteErrorBoundaryProps {
   readonly children: ReactNode
+  readonly resetKey: string
+  readonly onLazyRetry?: () => void
 }
 
 interface LazyRouteErrorBoundaryState {
@@ -23,11 +25,22 @@ class LazyRouteErrorBoundary extends Component<
     return { hasError: true }
   }
 
+  componentDidUpdate(previousProps: LazyRouteErrorBoundaryProps): void {
+    if (this.props.resetKey !== previousProps.resetKey && this.state.hasError) {
+      this.props.onLazyRetry?.()
+      this.setState((currentState) => ({
+        hasError: false,
+        retryKey: currentState.retryKey + 1,
+      }))
+    }
+  }
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('Lazy route failed to render:', error, errorInfo)
   }
 
   private handleRetry = (): void => {
+    this.props.onLazyRetry?.()
     this.setState((currentState) => ({
       hasError: false,
       retryKey: currentState.retryKey + 1,

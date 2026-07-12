@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import RouteDocumentTitle from '../../application/accessibility/RouteDocumentTitle'
 import LazyRouteErrorBoundary from '../layout/LazyRouteErrorBoundary'
 import RouteLoadingFallback from '../layout/RouteLoadingFallback'
@@ -16,11 +16,13 @@ const axeOptions = {
 }
 
 function RouteShellHarness() {
+  const location = useLocation()
+
   return (
     <>
       <RouteDocumentTitle />
       <main id="main-content" tabIndex={-1}>
-        <LazyRouteErrorBoundary>
+        <LazyRouteErrorBoundary resetKey={location.pathname}>
           <Suspense fallback={<RouteLoadingFallback />}>
             <Routes>
               <Route path="/about" element={<LazyAboutPage />} />

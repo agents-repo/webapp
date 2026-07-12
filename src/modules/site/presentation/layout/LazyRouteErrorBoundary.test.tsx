@@ -22,7 +22,7 @@ describe('LazyRouteErrorBoundary', () => {
 
     render(
       <MemoryRouter>
-        <LazyRouteErrorBoundary>
+        <LazyRouteErrorBoundary resetKey="/">
           <ThrowingChild shouldThrow />
         </LazyRouteErrorBoundary>
       </MemoryRouter>,
@@ -42,7 +42,7 @@ describe('LazyRouteErrorBoundary', () => {
 
     render(
       <MemoryRouter>
-        <LazyRouteErrorBoundary>
+        <LazyRouteErrorBoundary resetKey="/">
           <ConditionalChild />
         </LazyRouteErrorBoundary>
       </MemoryRouter>,
@@ -52,5 +52,48 @@ describe('LazyRouteErrorBoundary', () => {
     screen.getByRole('button', { name: 'Try again' }).click()
 
     expect(await screen.findByText('Loaded page')).toBeInTheDocument()
+  })
+
+  it('calls onLazyRetry when Try again is clicked', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const onLazyRetry = vi.fn()
+
+    render(
+      <MemoryRouter>
+        <LazyRouteErrorBoundary resetKey="/" onLazyRetry={onLazyRetry}>
+          <ThrowingChild shouldThrow />
+        </LazyRouteErrorBoundary>
+      </MemoryRouter>,
+    )
+
+    screen.getByRole('button', { name: 'Try again' }).click()
+
+    expect(onLazyRetry).toHaveBeenCalledTimes(1)
+  })
+
+  it('clears the error state when resetKey changes', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const onLazyRetry = vi.fn()
+
+    const { rerender } = render(
+      <MemoryRouter initialEntries={['/error']}>
+        <LazyRouteErrorBoundary resetKey="/error" onLazyRetry={onLazyRetry}>
+          <ThrowingChild shouldThrow />
+        </LazyRouteErrorBoundary>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+
+    rerender(
+      <MemoryRouter initialEntries={['/home']}>
+        <LazyRouteErrorBoundary resetKey="/home" onLazyRetry={onLazyRetry}>
+          <div>Home page</div>
+        </LazyRouteErrorBoundary>
+      </MemoryRouter>,
+    )
+
+    expect(onLazyRetry).toHaveBeenCalledTimes(1)
+    expect(screen.getByText('Home page')).toBeInTheDocument()
   })
 })

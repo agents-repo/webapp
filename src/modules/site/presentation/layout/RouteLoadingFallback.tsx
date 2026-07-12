@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Spinner } from 'react-bootstrap'
 
 function RouteLoadingFallback() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     const mainContent = document.getElementById('main-content')
     mainContent?.setAttribute('aria-busy', 'true')
 
