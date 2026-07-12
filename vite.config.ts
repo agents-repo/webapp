@@ -17,6 +17,24 @@ interface RuntimeCachingUrlMatchContext {
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'vendor-react',
+              test: /node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//,
+            },
+            {
+              name: 'vendor-ui',
+              test: /node_modules\/(react-bootstrap|bootstrap|@popperjs|@restart|classnames|prop-types|invariant|warning|dom-helpers|uncontrollable)\//,
+            },
+          ],
+        },
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
