@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import AboutPage from '../../presentation/pages/AboutPage'
+import RouteDocumentTitle from '../accessibility/RouteDocumentTitle'
 import SiteHead from './SiteHead'
 import { siteRoutes } from '../../presentation/routes/siteRoutes'
 
@@ -34,10 +35,11 @@ describe('SiteHead', () => {
     expect(document.title).toBe('Initial title')
   })
 
-  it('works alongside useDocumentTitle on routed pages', () => {
+  it('works alongside RouteDocumentTitle on routed pages', () => {
     renderWithProviders(
       <>
         <SiteHead />
+        <RouteDocumentTitle />
         <AboutPage />
       </>,
       { initialEntries: [siteRoutes.about] },

@@ -99,4 +99,97 @@ describe('RouteAnnouncer', () => {
       skipLink.remove()
     }
   })
+
+  it('defers announcement until route content is ready', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    const main = document.getElementById('main-content')
+    main?.setAttribute('aria-busy', 'true')
+
+    act(() => {
+      void navigateRef.current!('/about')
+    })
+
+    const liveRegion = document.querySelector('[aria-live="polite"]')
+    expect(liveRegion?.textContent).toBe('')
+
+    act(() => {
+      main?.removeAttribute('aria-busy')
+    })
+
+    await waitFor(() => {
+      expect(liveRegion?.textContent).toBe('Navigated to About')
+    })
+  })
+
+  it('does not announce a stale route when navigation changes during loading', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    const main = document.getElementById('main-content')
+    const liveRegion = document.querySelector('[aria-live="polite"]')
+
+    main?.setAttribute('aria-busy', 'true')
+
+    act(() => {
+      void navigateRef.current!('/about')
+    })
+
+    expect(liveRegion?.textContent).toBe('')
+
+    act(() => {
+      void navigateRef.current!('/')
+    })
+
+    expect(liveRegion?.textContent).toBe('')
+
+    act(() => {
+      main?.removeAttribute('aria-busy')
+    })
+
+    await waitFor(() => {
+      expect(liveRegion?.textContent).toBe('Navigated to Home')
+    })
+  })
+
+  it('announces load failure when route error fallback is shown', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    const main = document.getElementById('main-content')
+    main?.setAttribute('aria-busy', 'true')
+
+    act(() => {
+      void navigateRef.current!('/about')
+    })
+
+    const liveRegion = document.querySelector('[aria-live="polite"]')
+    const errorFallback = document.createElement('div')
+    errorFallback.setAttribute('data-route-load-error', '')
+    main?.append(errorFallback)
+
+    act(() => {
+      main?.removeAttribute('aria-busy')
+    })
+
+    await waitFor(() => {
+      expect(liveRegion?.textContent).toBe('Failed to load About')
+    })
+  })
 })

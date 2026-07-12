@@ -1,8 +1,6 @@
 import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
-import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
@@ -15,10 +13,8 @@ const WEBAPP_CONTRIBUTING_URL =
 const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 
 function HelpUsPage() {
-  useDocumentTitle(sitePageMeta[siteRoutes.helpUs].title)
-
   return (
-    <main id="main-content" tabIndex={-1} className="py-5">
+    <div className="py-5">
       <Container>
         <h1 className="h2 mb-4">Help Us</h1>
 
@@ -181,7 +177,7 @@ function HelpUsPage() {
           </Card>
         </Stack>
       </Container>
-    </main>
+    </div>
   )
 }
 

@@ -1,7 +1,5 @@
 import { Card, Container, Stack, Table } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
-import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
-import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
 import {
   accessibilityConformanceSummary,
   accessibilityKnownLimitations,
@@ -12,10 +10,8 @@ import {
 import { siteRoutes } from '../routes/siteRoutes'
 
 function AccessibilityPage() {
-  useDocumentTitle(sitePageMeta[siteRoutes.accessibility].title)
-
   return (
-    <main id="main-content" tabIndex={-1} className="py-5">
+    <div className="py-5">
       <Container>
         <h1 className="h2 mb-4">Accessibility statement</h1>
 
@@ -124,7 +120,7 @@ function AccessibilityPage() {
           </Card>
         </Stack>
       </Container>
-    </main>
+    </div>
   )
 }
 

@@ -59,6 +59,30 @@ lets users choose light, dark, or auto. The selected mode is persisted.
 Header chrome is intentionally fixed to a dark surface for consistency, while
 page content surfaces (including cards) follow the selected color mode.
 
+## Code splitting
+
+Production bundles use two complementary strategies to keep individual JavaScript
+chunks below Vite's 500 kB warning threshold:
+
+- **Route-level lazy loading** — the home route (`/`) stays in the initial
+  bundle because it is the primary entry path. Secondary routes (`/about`,
+  `/contact`, `/help-us`, `/accessibility`, `/privacy`, `/privacidade`) load
+  on demand via `React.lazy` and `Suspense` in `src/App.tsx`.
+- **Vendor chunk groups** — `vite.config.ts` uses Rolldown
+  `build.rolldownOptions.output.codeSplitting` to split React and UI library
+  dependencies into separate hashed chunks (`vendor-react`, `vendor-ui`).
+
+`RouteLoadingFallback` provides a `role="status"` loading message while async route
+chunks fetch and marks the app-shell `main` with `aria-busy` during loading.
+`RouteAnnouncer` defers navigation announcements until route content is ready. A
+persistent `main#main-content` in `src/App.tsx` wraps routed content so focus
+management and the skip link stay stable during lazy loads. `RouteDocumentTitle`
+updates the browser tab title on pathname change before lazy chunks resolve.
+`LazyRouteErrorBoundary` shows a recoverable fallback when a lazy chunk fails to
+load. The service worker caches same-origin
+script assets with `StaleWhileRevalidate`; additional hashed chunks are expected
+and remain within the configured runtime cache entry limit.
+
 ## Analytics and third-party scripts
 
 The approved stack for optional production analytics:
