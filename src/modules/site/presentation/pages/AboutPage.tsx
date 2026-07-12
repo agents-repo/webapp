@@ -3,8 +3,6 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
-import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
@@ -13,8 +11,6 @@ const WEBAPP_REPO_URL = 'https://github.com/agents-repo/webapp'
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 
 function AboutPage() {
-  useDocumentTitle(sitePageMeta[siteRoutes.about].title)
-
   return (
     <div className="py-5">
       <Container>

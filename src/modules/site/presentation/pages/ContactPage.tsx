@@ -3,8 +3,6 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
-import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
@@ -15,8 +13,6 @@ const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
 const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
 
 function ContactPage() {
-  useDocumentTitle(sitePageMeta[siteRoutes.contact].title)
-
   return (
     <div className="py-5">
       <Container>

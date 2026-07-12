@@ -26,10 +26,7 @@ import {
 } from 'react-bootstrap'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
-import { sitePageMeta } from '../../../site/application/accessibility/sitePageMeta'
-import { useDocumentTitle } from '../../../site/application/accessibility/useDocumentTitle'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
-import { siteRoutes } from '../../../site/presentation/routes/siteRoutes'
 import { toPackageSlug, type PackageStatus, type RegistryPackage } from '../../domain/package'
 import {
   filterRegistryPackages,
@@ -93,7 +90,6 @@ interface HomePageProps {
 }
 
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
-  useDocumentTitle(sitePageMeta[siteRoutes.home].title)
   const {
     catalog,
     cacheState: catalogCacheState,

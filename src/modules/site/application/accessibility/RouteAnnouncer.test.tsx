@@ -99,4 +99,32 @@ describe('RouteAnnouncer', () => {
       skipLink.remove()
     }
   })
+
+  it('defers announcement until route content is ready', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    const main = document.getElementById('main-content')
+    main?.setAttribute('aria-busy', 'true')
+
+    act(() => {
+      void navigateRef.current!('/about')
+    })
+
+    const liveRegion = document.querySelector('[aria-live="polite"]')
+    expect(liveRegion?.textContent).toBe('')
+
+    act(() => {
+      main?.removeAttribute('aria-busy')
+    })
+
+    await waitFor(() => {
+      expect(liveRegion?.textContent).toBe('Navigated to About')
+    })
+  })
 })

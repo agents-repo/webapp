@@ -13,6 +13,7 @@ import Header from './modules/site/presentation/layout/Header'
 import CookieConsentBanner from './modules/site/presentation/layout/CookieConsentBanner'
 import CookieConsentProvider from './modules/site/presentation/layout/CookieConsentProvider'
 import RouteLoadingFallback from './modules/site/presentation/layout/RouteLoadingFallback'
+import LazyRouteErrorBoundary from './modules/site/presentation/layout/LazyRouteErrorBoundary'
 import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from './modules/site/application/websiteSettings/registryCatalogStatusNote'
 import './App.scss'
@@ -54,21 +55,23 @@ function App() {
           />
 
           <main id="main-content" tabIndex={-1}>
-            <Suspense fallback={<RouteLoadingFallback />}>
-              <Routes>
-                <Route
-                  path={siteRoutes.home}
-                  element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
-                />
-                <Route path={siteRoutes.about} element={<AboutPage />} />
-                <Route path={siteRoutes.contact} element={<ContactPage />} />
-                <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
-                <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
-                <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
-                <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
-                <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
-              </Routes>
-            </Suspense>
+            <LazyRouteErrorBoundary>
+              <Suspense fallback={<RouteLoadingFallback />}>
+                <Routes>
+                  <Route
+                    path={siteRoutes.home}
+                    element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
+                  />
+                  <Route path={siteRoutes.about} element={<AboutPage />} />
+                  <Route path={siteRoutes.contact} element={<ContactPage />} />
+                  <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
+                  <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
+                  <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
+                  <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
+                  <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
+                </Routes>
+              </Suspense>
+            </LazyRouteErrorBoundary>
           </main>
 
           <Footer />

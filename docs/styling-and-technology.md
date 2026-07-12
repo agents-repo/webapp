@@ -73,10 +73,13 @@ chunks below Vite's 500 kB warning threshold:
   dependencies into separate hashed chunks (`vendor-react`, `vendor-ui`).
 
 `RouteLoadingFallback` provides a `role="status"` loading message while async route
-chunks fetch. A persistent `main#main-content` in `src/App.tsx` wraps routed
-content so focus management and the skip link stay stable during lazy loads.
-`RouteDocumentTitle` updates the browser tab title on pathname change before
-lazy chunks resolve. The service worker caches same-origin
+chunks fetch and marks the app-shell `main` with `aria-busy` during loading.
+`RouteAnnouncer` defers navigation announcements until route content is ready. A
+persistent `main#main-content` in `src/App.tsx` wraps routed content so focus
+management and the skip link stay stable during lazy loads. `RouteDocumentTitle`
+updates the browser tab title on pathname change before lazy chunks resolve.
+`LazyRouteErrorBoundary` shows a recoverable fallback when a lazy chunk fails to
+load. The service worker caches same-origin
 script assets with `StaleWhileRevalidate`; additional hashed chunks are expected
 and remain within the configured runtime cache entry limit.
 

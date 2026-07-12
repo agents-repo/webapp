@@ -9,7 +9,7 @@ patterns. SEO work is additive and must not replace those mechanisms.
 
 | Concern | Owner | SEO layer |
 | --- | --- | --- |
-| Page title | `useDocumentTitle` | `buildRouteHead` for `<title>`; `SiteHead` for OG/Twitter |
+| Page title | `RouteDocumentTitle` | `buildRouteHead`; `SiteHead` for OG/Twitter |
 | Route labels | `sitePageMeta` | `siteSeoMeta` |
 | Semantic HTML | Page components | Shared wins — do not regress |
 
@@ -42,7 +42,7 @@ bundle. `404.html` uses a separate `noindex` fallback head for unknown paths.
 These patterns already help SEO and must stay in place:
 
 - `lang="en"` on `<html>`
-- One `<h1>` per page and semantic `<main id="main-content">`
+- One `<h1>` per page and a single semantic `<main id="main-content">` in `src/App.tsx`
 - Header and footer internal links to all public routes
 - Skip link and route announcer (accessibility-first; no SEO-specific changes)
 

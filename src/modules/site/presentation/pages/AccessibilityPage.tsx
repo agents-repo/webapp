@@ -1,7 +1,5 @@
 import { Card, Container, Stack, Table } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
-import { useDocumentTitle } from '../../application/accessibility/useDocumentTitle'
-import { sitePageMeta } from '../../application/accessibility/sitePageMeta'
 import {
   accessibilityConformanceSummary,
   accessibilityKnownLimitations,
@@ -12,8 +10,6 @@ import {
 import { siteRoutes } from '../routes/siteRoutes'
 
 function AccessibilityPage() {
-  useDocumentTitle(sitePageMeta[siteRoutes.accessibility].title)
-
   return (
     <div className="py-5">
       <Container>

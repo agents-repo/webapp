@@ -16,7 +16,8 @@ Reusable helpers live in `src/modules/site/application/accessibility/`:
 | --- | --- |
 | `SkipLink.tsx` | App shell; first keyboard focus target |
 | `RouteAnnouncer.tsx` | Announces route changes and focuses `#main-content` |
-| `useDocumentTitle.ts` | Every page route needs a unique document title |
+| `RouteDocumentTitle.tsx` | Sets `document.title` on pathname change for all routes |
+| `useDocumentTitle.ts` | Optional title helper for isolated views or tests |
 | `sitePageMeta.ts` | Route titles and announcement labels |
 | `externalLink.ts` | Any `target="_blank"` link needs a new-tab cue |
 | `accessibilityStatementContent.ts` | Source copy for the public ACR page |
@@ -25,8 +26,11 @@ Reusable helpers live in `src/modules/site/application/accessibility/`:
 
 Every routed page should:
 
-1. Call `useDocumentTitle(sitePageMeta[siteRoutes.<route>].title)`
-2. Render `<main id="main-content" tabIndex={-1}>`
+1. Rely on `RouteDocumentTitle` in `src/App.tsx` for the browser tab title (do not
+   call `useDocumentTitle` in page components unless the view is rendered outside
+   the app shell).
+2. Render page content inside the app-shell `main#main-content` provided by
+   `src/App.tsx` (page components use a wrapper `div`, not their own `main`).
 3. Use semantic headings in order (`h1` once per page)
 4. Mark decorative icons with `aria-hidden="true"`
 5. Label icon-only controls with `aria-label`

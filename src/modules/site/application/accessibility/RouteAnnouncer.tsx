@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { getSitePageMeta } from './sitePageMeta'
+import { isMainRouteContentReady } from './routeContentReady'
 
 function RouteAnnouncer() {
   const location = useLocation()
@@ -9,20 +10,54 @@ function RouteAnnouncer() {
 
   useEffect(() => {
     const pageMeta = getSitePageMeta(location.pathname)
-    const mainContent = document.getElementById('main-content')
 
     if (isInitialRenderRef.current) {
       isInitialRenderRef.current = false
       return
     }
 
-    if (announcementRef.current) {
-      announcementRef.current.textContent = `Navigated to ${pageMeta.routeLabel}`
+    const announceAndFocus = (): boolean => {
+      const mainContent = document.getElementById('main-content')
+      if (!isMainRouteContentReady(mainContent)) {
+        return false
+      }
+
+      if (announcementRef.current) {
+        announcementRef.current.textContent = `Navigated to ${pageMeta.routeLabel}`
+      }
+
+      const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
+      if (!skipLinkWasUsed && mainContent) {
+        mainContent.focus({ preventScroll: false })
+      }
+
+      return true
     }
 
-    const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
-    if (!skipLinkWasUsed && mainContent) {
-      mainContent.focus({ preventScroll: false })
+    if (announceAndFocus()) {
+      return
+    }
+
+    const mainContent = document.getElementById('main-content')
+    if (!mainContent) {
+      return
+    }
+
+    const observer = new MutationObserver(() => {
+      if (announceAndFocus()) {
+        observer.disconnect()
+      }
+    })
+
+    observer.observe(mainContent, {
+      attributes: true,
+      attributeFilter: ['aria-busy'],
+      childList: true,
+      subtree: true,
+    })
+
+    return () => {
+      observer.disconnect()
     }
   }, [location.pathname])
 
