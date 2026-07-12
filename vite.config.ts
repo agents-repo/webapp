@@ -24,11 +24,11 @@ export default defineConfig({
           groups: [
             {
               name: 'vendor-react',
-              test: /node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//,
+              test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/,
             },
             {
               name: 'vendor-ui',
-              test: /node_modules\/(react-bootstrap|bootstrap|@popperjs|@restart|classnames|prop-types|invariant|warning|dom-helpers|uncontrollable)\//,
+              test: /node_modules[\\/](react-bootstrap|bootstrap|@popperjs|@restart|classnames|prop-types|invariant|warning|dom-helpers|uncontrollable)[\\/]/,
             },
           ],
         },

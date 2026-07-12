@@ -18,7 +18,7 @@ function HelpUsPage() {
   useDocumentTitle(sitePageMeta[siteRoutes.helpUs].title)
 
   return (
-    <main id="main-content" tabIndex={-1} className="py-5">
+    <div className="py-5">
       <Container>
         <h1 className="h2 mb-4">Help Us</h1>
 
@@ -181,7 +181,7 @@ function HelpUsPage() {
           </Card>
         </Stack>
       </Container>
-    </main>
+    </div>
   )
 }
 

@@ -7,13 +7,11 @@ describe('RouteLoadingFallback', () => {
     cleanup()
   })
 
-  it('renders an accessible loading main landmark', () => {
+  it('renders an accessible loading status message', () => {
     render(<RouteLoadingFallback />)
 
-    const mainContent = document.getElementById('main-content')
-    expect(mainContent).toBeInTheDocument()
-    expect(mainContent).toHaveAttribute('aria-busy', 'true')
-    expect(mainContent).toHaveAttribute('tabindex', '-1')
+    const status = screen.getByRole('status')
+    expect(status).toBeInTheDocument()
     expect(screen.getByText('Loading page content')).toHaveClass('visually-hidden')
   })
 })

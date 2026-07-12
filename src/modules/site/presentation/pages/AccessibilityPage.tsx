@@ -15,7 +15,7 @@ function AccessibilityPage() {
   useDocumentTitle(sitePageMeta[siteRoutes.accessibility].title)
 
   return (
-    <main id="main-content" tabIndex={-1} className="py-5">
+    <div className="py-5">
       <Container>
         <h1 className="h2 mb-4">Accessibility statement</h1>
 
@@ -124,7 +124,7 @@ function AccessibilityPage() {
           </Card>
         </Stack>
       </Container>
-    </main>
+    </div>
   )
 }
 

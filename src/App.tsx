@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AnalyticsRouteTracker from './modules/site/application/analytics/AnalyticsRouteTracker'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
+import RouteDocumentTitle from './modules/site/application/accessibility/RouteDocumentTitle'
 import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
 import RegistryCatalogProvider from './modules/registry/presentation/catalog/RegistryCatalogProvider'
@@ -39,6 +40,7 @@ function App() {
         <div className="app-shell">
           <SkipLink />
           <RouteAnnouncer />
+          <RouteDocumentTitle />
           <AnalyticsRouteTracker />
           <SiteHead />
           <CookieConsentBanner />
@@ -51,21 +53,23 @@ function App() {
             }}
           />
 
-          <Suspense fallback={<RouteLoadingFallback />}>
-            <Routes>
-              <Route
-                path={siteRoutes.home}
-                element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
-              />
-              <Route path={siteRoutes.about} element={<AboutPage />} />
-              <Route path={siteRoutes.contact} element={<ContactPage />} />
-              <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
-              <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
-              <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
-              <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
-              <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
-            </Routes>
-          </Suspense>
+          <main id="main-content" tabIndex={-1}>
+            <Suspense fallback={<RouteLoadingFallback />}>
+              <Routes>
+                <Route
+                  path={siteRoutes.home}
+                  element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
+                />
+                <Route path={siteRoutes.about} element={<AboutPage />} />
+                <Route path={siteRoutes.contact} element={<ContactPage />} />
+                <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
+                <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
+                <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
+                <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
+                <Route path="*" element={<Navigate to={siteRoutes.home} replace />} />
+              </Routes>
+            </Suspense>
+          </main>
 
           <Footer />
         </div>

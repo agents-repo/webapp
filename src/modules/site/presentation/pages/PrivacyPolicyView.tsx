@@ -9,7 +9,7 @@ interface PrivacyPolicyViewProps {
 
 function PrivacyPolicyView({ content }: PrivacyPolicyViewProps) {
   return (
-    <main id="main-content" tabIndex={-1} className="py-5">
+    <div className="py-5">
       <Container>
         <p className="mb-3">
           <NavLink to={content.languageLinkPath} className="footer-link">
@@ -75,7 +75,7 @@ function PrivacyPolicyView({ content }: PrivacyPolicyViewProps) {
           ))}
         </Stack>
       </Container>
-    </main>
+    </div>
   )
 }
 

@@ -183,7 +183,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   }, [searchControl, setHeaderSearchSlot, stickySearch])
 
   return (
-    <main id="main-content" tabIndex={-1}>
+    <>
       <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
         <Container>
           <Row className="justify-content-center">
@@ -365,7 +365,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
         </Container>
       </section>
-    </main>
+    </>
   )
 }
 

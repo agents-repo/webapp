@@ -18,7 +18,7 @@ function ContactPage() {
   useDocumentTitle(sitePageMeta[siteRoutes.contact].title)
 
   return (
-    <main id="main-content" tabIndex={-1} className="py-5">
+    <div className="py-5">
       <Container>
         <h1 className="h2 mb-4">Contact</h1>
 
@@ -165,7 +165,7 @@ function ContactPage() {
           </Card>
         </Stack>
       </Container>
-    </main>
+    </div>
   )
 }
 
