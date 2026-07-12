@@ -109,7 +109,7 @@ describe('RegistryCatalogProvider', () => {
 
     await screen.findByText('sample-agent')
 
-    expect(loadRegistryCatalogMock.mock.calls.length).toBe(callsAfterMount)
+    expect(loadRegistryCatalogMock.mock.calls).toHaveLength(callsAfterMount)
   })
 
   it('clears loading state and surfaces an error when catalog load rejects', async () => {

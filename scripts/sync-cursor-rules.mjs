@@ -44,7 +44,7 @@ function rewriteMarkdownTarget(url) {
 
 function rewriteRelativeLinks(body) {
   // Copilot instructions use simple inline markdown links only.
-  // eslint-disable-next-line sonarjs/slow-regex -- bounded repo-owned input
+  // eslint-disable-next-line sonarjs/super-linear-regex -- bounded repo-owned input
   return body.replace(/\[([^\]]*)\]\(([^)]+)\)/g, (match, text, url) => {
     const rewrittenUrl = rewriteMarkdownTarget(url);
     if (rewrittenUrl === url) {
