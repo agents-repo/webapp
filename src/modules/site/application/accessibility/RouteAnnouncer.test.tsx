@@ -128,6 +128,41 @@ describe('RouteAnnouncer', () => {
     })
   })
 
+  it('does not announce a stale route when navigation changes during loading', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    const main = document.getElementById('main-content')
+    const liveRegion = document.querySelector('[aria-live="polite"]')
+
+    main?.setAttribute('aria-busy', 'true')
+
+    act(() => {
+      void navigateRef.current!('/about')
+    })
+
+    expect(liveRegion?.textContent).toBe('')
+
+    act(() => {
+      void navigateRef.current!('/')
+    })
+
+    expect(liveRegion?.textContent).toBe('')
+
+    act(() => {
+      main?.removeAttribute('aria-busy')
+    })
+
+    await waitFor(() => {
+      expect(liveRegion?.textContent).toBe('Navigated to Home')
+    })
+  })
+
   it('announces load failure when route error fallback is shown', async () => {
     const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
 

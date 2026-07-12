@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { getSitePageMeta } from './sitePageMeta'
 import { getRouteAnnouncementMessage, isMainRouteContentReady } from './routeContentReady'
@@ -7,9 +7,14 @@ function RouteAnnouncer() {
   const location = useLocation()
   const announcementRef = useRef<HTMLDivElement>(null)
   const isInitialRenderRef = useRef(true)
+  const pathnameRef = useRef(location.pathname)
+
+  useLayoutEffect(() => {
+    pathnameRef.current = location.pathname
+  }, [location.pathname])
 
   useEffect(() => {
-    const pageMeta = getSitePageMeta(location.pathname)
+    const announcedPathname = location.pathname
 
     if (isInitialRenderRef.current) {
       isInitialRenderRef.current = false
@@ -17,10 +22,16 @@ function RouteAnnouncer() {
     }
 
     const announceAndFocus = (): boolean => {
+      if (pathnameRef.current !== announcedPathname) {
+        return true
+      }
+
       const mainContent = document.getElementById('main-content')
       if (!isMainRouteContentReady(mainContent)) {
         return false
       }
+
+      const pageMeta = getSitePageMeta(announcedPathname)
 
       if (announcementRef.current) {
         announcementRef.current.textContent = getRouteAnnouncementMessage(
