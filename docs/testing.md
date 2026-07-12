@@ -31,7 +31,11 @@ scale, not monorepo ceremony.
 | `npm run a11y:ci` | Post-build Lighthouse and pa11y scans — **local only** |
 
 `npm run test` includes accessibility smoke tests (`*.a11y.test.tsx`). The
-`test:a11y` script is a filter for contributors working on UI surfaces.
+`test:a11y` script runs the same files via [`vitest.a11y.config.ts`](../vitest.a11y.config.ts)
+(`include: **/*.a11y.test.tsx`) so the file glob stays stable on Vitest 4.x.
+
+For dependency or router changes, also run `npm run test:e2e` locally (Playwright;
+not part of PR baseline CI).
 
 Optional local coverage (not enforced in CI):
 

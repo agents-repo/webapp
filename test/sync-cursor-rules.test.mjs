@@ -187,7 +187,9 @@ describe('sync-cursor-rules', () => {
       'utf-8',
     );
 
-    await execFileAsync('node', ['scripts/sync-cursor-rules.mjs', '--check'], { cwd: repo });
+    await assert.doesNotReject(
+      execFileAsync('node', ['scripts/sync-cursor-rules.mjs', '--check'], { cwd: repo }),
+    );
   });
 
   it('treats CRLF mirror content as in sync when logically identical', async () => {
@@ -208,6 +210,8 @@ describe('sync-cursor-rules', () => {
     const content = fs.readFileSync(mirrorPath, 'utf-8');
     fs.writeFileSync(mirrorPath, content.replace(/\n/g, '\r\n'), 'utf-8');
 
-    await execFileAsync('node', ['scripts/sync-cursor-rules.mjs', '--check'], { cwd: repo });
+    await assert.doesNotReject(
+      execFileAsync('node', ['scripts/sync-cursor-rules.mjs', '--check'], { cwd: repo }),
+    );
   });
 });
