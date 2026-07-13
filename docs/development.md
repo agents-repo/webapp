@@ -24,7 +24,7 @@ This project follows the pinned runtime declared in `.nvmrc` and `package.json`.
 Use Corepack when possible so local npm matches CI.
 
 ```bash
-corepack enable
+corepack enable npm
 corepack prepare npm@12.0.1 --activate
 npm install
 ```

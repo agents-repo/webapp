@@ -91,5 +91,9 @@
     "eslint-plugin-jsx-a11y": {
       "eslint": "$eslint"
     }
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.6": true,
+    "puppeteer@24.43.1": true
   }
 }
