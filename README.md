@@ -27,7 +27,7 @@ AI-first contributor workflow.
 Use the pinned toolchain where possible:
 
 - Node.js 24.x, with `.nvmrc` pinned to `24.18.0`
-- npm 11.x, with `packageManager` pinned to `npm@11.17.0`
+- npm 12.x, with `packageManager` pinned to `npm@12.0.1`
 
 Install dependencies and start the app:
 

@@ -24,10 +24,25 @@ This project follows the pinned runtime declared in `.nvmrc` and `package.json`.
 Use Corepack when possible so local npm matches CI.
 
 ```bash
-corepack enable
-corepack prepare npm@11.17.0 --activate
+corepack enable npm
+corepack prepare npm@12.0.1 --activate
 npm install
 ```
+
+### Install script approvals (npm 12)
+
+npm 12 requires explicit approval for dependency install scripts. Approved
+packages are listed in `package.json` `allowScripts`. CI verifies no unreviewed
+scripts remain after `npm ci`.
+
+When a dependency introduces install scripts:
+
+```bash
+npm install-scripts ls
+npm install-scripts approve <name>@<version>
+```
+
+Commit the resulting `allowScripts` update with your dependency change.
 
 ## Local Validation
 
