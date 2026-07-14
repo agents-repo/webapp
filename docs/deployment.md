@@ -123,7 +123,8 @@ gh workflow run pages-deploy.yml --repo agents-repo/webapp -f tag=v1.0.0
 ## PWA and service worker notes
 
 The production build includes a service worker for same-origin static assets.
-`/sitemap.xml` is excluded from the navigation fallback (`navigateFallbackDenylist`)
-so browser requests receive the XML file instead of the SPA shell. Hashed asset
+`/sitemap.xml` and `/robots.txt` are excluded from the navigation fallback
+(`navigateFallbackDenylist`) so browser requests receive the static crawl files
+instead of the SPA shell. Hashed asset
 filenames provide cache busting on new releases. For local service worker
 debugging steps, see [development.md](development.md).

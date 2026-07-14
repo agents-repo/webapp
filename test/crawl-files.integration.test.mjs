@@ -4,41 +4,71 @@ import { execSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { before, describe, it } from 'node:test'
-import { getSiteOrigin } from '../src/modules/site/application/seo/siteSeo.ts'
+import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
 
 const distDir = resolve(process.cwd(), 'dist')
-const siteOrigin = getSiteOrigin('https://agents-repo.org')
+
+function parseSitemapEntries(xml) {
+  return [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => ({
+    loc: match[1].match(/<loc>(.*?)<\/loc>/)?.[1],
+    priority: match[1].match(/<priority>(.*?)<\/priority>/)?.[1],
+    changefreq: match[1].match(/<changefreq>(.*?)<\/changefreq>/)?.[1],
+  }))
+}
+
+function assertCrawlFilesMatchOrigin(origin) {
+  const xml = readFileSync(resolve(distDir, 'sitemap.xml'), 'utf8')
+  const robots = readFileSync(resolve(distDir, 'robots.txt'), 'utf8')
+  const routes = getSiteRoutePaths()
+  const entries = parseSitemapEntries(xml)
+
+  assert.equal(entries.length, routes.length)
+
+  for (const route of routes) {
+    const loc = route === '/' ? `${origin}/` : `${origin}${route}`
+    const entry = entries.find((item) => item.loc === loc)
+    assert.ok(entry, `missing sitemap entry for ${loc}`)
+    assert.equal(entry.changefreq, 'monthly')
+    assert.equal(entry.priority, route === '/' ? '1.0' : '0.8')
+  }
+
+  assert.ok(robots.includes('User-agent: *'))
+  assert.ok(robots.includes('Allow: /'))
+  assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`))
+}
 
 describe('crawl files integration', () => {
   before(() => {
     execSync('npm run build:pages', {
       cwd: process.cwd(),
       stdio: 'pipe',
-      env: { ...process.env, FORCE_COLOR: '0' },
+      env: { ...process.env, MODE: 'production', FORCE_COLOR: '0' },
     })
   })
 
-  it('writes sitemap.xml with all public routes', () => {
-    const xml = readFileSync(resolve(distDir, 'sitemap.xml'), 'utf8')
-    const routes = getSiteRoutePaths()
+  it('writes sitemap.xml and robots.txt for the default production origin', () => {
+    assertCrawlFilesMatchOrigin(resolveBuildSiteOrigin('production'))
+  })
+})
 
-    for (const route of routes) {
-      const loc = route === '/' ? `${siteOrigin}/` : `${siteOrigin}${route}`
-      assert.ok(xml.includes(`<loc>${loc}</loc>`))
-    }
+describe('crawl files integration with custom VITE_SITE_URL', () => {
+  const customOrigin = 'https://preview.example.test'
 
-    assert.equal(xml.match(/<url>/g)?.length, routes.length)
-    assert.ok(xml.includes('<priority>1.0</priority>'))
-    assert.ok(xml.includes('<priority>0.8</priority>'))
-    assert.ok(xml.includes('<changefreq>monthly</changefreq>'))
+  before(() => {
+    execSync('npm run build', {
+      cwd: process.cwd(),
+      stdio: 'pipe',
+      env: {
+        ...process.env,
+        MODE: 'production',
+        VITE_SITE_URL: customOrigin,
+        FORCE_COLOR: '0',
+      },
+    })
   })
 
-  it('writes robots.txt with sitemap reference', () => {
-    const robots = readFileSync(resolve(distDir, 'robots.txt'), 'utf8')
-
-    assert.ok(robots.includes('User-agent: *'))
-    assert.ok(robots.includes('Allow: /'))
-    assert.ok(robots.includes(`Sitemap: ${siteOrigin}/sitemap.xml`))
+  it('writes crawl files using VITE_SITE_URL from the shell', () => {
+    assertCrawlFilesMatchOrigin(customOrigin)
   })
 })

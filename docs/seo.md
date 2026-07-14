@@ -34,15 +34,19 @@ head tags into `dist/**/index.html` (paths derived from `getSiteRoutePaths()`).
 **Crawl files:** `vite-plugin-sitemap` in `vite.config.ts` generates
 `dist/sitemap.xml` and `dist/robots.txt` at the end of `vite build`. Routes come
 from `getSiteRoutePaths()` via `dynamicRoutes`; `hostname` uses `VITE_SITE_URL`
-through `scripts/seo-build-config.ts` so `.env` values match the client bundle.
+through `scripts/seo-build-config.ts` (shared with `prepare-pages-dist.mjs`) so
+`.env` values match the client bundle.
 The plugin also injects `<link rel="sitemap" href="/sitemap.xml">` into
 `index.html`. `SiteHead` emits `noindex` for unknown paths at runtime (matching
 the `404.html` fallback).
 
-**Browser access:** The PWA service worker excludes `/sitemap.xml` from
-`navigateFallback` (`navigateFallbackDenylist` in `vite.config.ts`) so browser
-navigation serves the XML file instead of the SPA shell. `npm run dev` does not
-generate a sitemap; use `npm run build:pages && npm run preview` to test locally.
+**Browser access:** The PWA service worker excludes `/sitemap.xml` and
+`/robots.txt` from `navigateFallback` (`navigateFallbackDenylist` in
+`vite.config.ts`) so browser navigation serves the static crawl files instead of
+the SPA shell. These files are generated after the service worker manifest is
+built, so they are not precached via `includeAssets`. `npm run dev` does not
+generate crawl files; use `npm run build:pages && npm run preview` to test
+locally.
 
 ## Shared accessibility wins
 

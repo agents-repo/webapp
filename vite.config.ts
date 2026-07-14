@@ -60,15 +60,16 @@ export default defineConfig(({ mode }) => {
           'favicon.svg',
           'icons.svg',
           'og-image.png',
-          'robots.txt',
-          'sitemap.xml',
           'site.webmanifest',
           'web-app-manifest-192x192.png',
           'web-app-manifest-512x512.png',
         ],
         includeManifestIcons: false,
         workbox: {
-          navigateFallbackDenylist: [/^\/sitemap\.xml$/],
+          // sitemap.xml and robots.txt are generated post-build; precache cannot
+          // include them via includeAssets. Denylist keeps browser navigations on
+          // the real static files instead of the SPA shell.
+          navigateFallbackDenylist: [/^\/sitemap\.xml$/, /^\/robots\.txt$/],
           runtimeCaching: [
             {
               urlPattern: ({ request, url, sameOrigin }: RuntimeCachingUrlMatchContext) => {

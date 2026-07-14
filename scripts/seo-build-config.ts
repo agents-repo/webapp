@@ -3,9 +3,16 @@ import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteR
 
 const defaultSiteOrigin = 'https://agents-repo.org'
 
-export function resolveBuildSiteOrigin(mode = process.env.MODE ?? 'production'): string {
+export function resolveViteSiteUrl(mode = process.env.MODE ?? 'production'): string | undefined {
   const env = loadEnv(mode, process.cwd(), 'VITE_')
-  const fromEnv = env.VITE_SITE_URL?.trim()
+  const fromEnvFile = env.VITE_SITE_URL?.trim()
+  const fromProcess = process.env.VITE_SITE_URL?.trim()
+
+  return fromEnvFile || fromProcess
+}
+
+export function resolveBuildSiteOrigin(mode = process.env.MODE ?? 'production'): string {
+  const fromEnv = resolveViteSiteUrl(mode)
   return fromEnv && fromEnv.length > 0 ? fromEnv.replace(/\/$/, '') : defaultSiteOrigin
 }
 

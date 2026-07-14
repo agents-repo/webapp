@@ -5,9 +5,8 @@ import {
   injectSpaFallbackHeadIntoHtml,
   injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
-import { getSiteOrigin } from '../src/modules/site/application/seo/siteSeo.ts';
+import { resolveBuildSiteOrigin } from './seo-build-config.ts';
 import { getSiteRoutePaths } from '../src/modules/site/application/seo/siteSeoMeta.ts';
-import { resolveViteSiteUrl } from './load-vite-env.mjs';
 
 const distDir = resolve(process.cwd(), 'dist');
 const e2eBuildMarkerPath = resolve(distDir, 'e2e-build-marker.json');
@@ -16,7 +15,7 @@ if (existsSync(e2eBuildMarkerPath)) {
   unlinkSync(e2eBuildMarkerPath);
 }
 
-const siteOrigin = getSiteOrigin(resolveViteSiteUrl());
+const siteOrigin = resolveBuildSiteOrigin();
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
 
 function assertKnownSiteRoute(routePath) {
