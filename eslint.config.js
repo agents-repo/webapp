@@ -46,6 +46,14 @@ export default defineConfig([
       'sonarjs/cognitive-complexity': ['warn', 12],
     },
   },
+  // Tests use dynamic paths from temp dirs; scripts keep the rule unless explicitly
+  // disabled with a documented reason (user-derived paths need validation, not silence).
+  {
+    files: ['test/**/*.{js,mjs,cjs}'],
+    rules: {
+      'security/detect-non-literal-fs-filename': 'off',
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     ignores: ['e2e/**', 'playwright.config.ts'],
