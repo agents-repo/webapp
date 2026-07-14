@@ -46,6 +46,13 @@ export default defineConfig([
       'sonarjs/cognitive-complexity': ['warn', 12],
     },
   },
+  // Repo-owned scripts/tests use dynamic paths from fixed roots or temp dirs.
+  {
+    files: ['scripts/**/*.{js,mjs,cjs}', 'test/**/*.{js,mjs,cjs}'],
+    rules: {
+      'security/detect-non-literal-fs-filename': 'off',
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     ignores: ['e2e/**', 'playwright.config.ts'],
