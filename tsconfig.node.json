@@ -21,5 +21,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts", "vitest.a11y.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "vitest.a11y.config.ts",
+    "scripts/seo-build-config.ts",
+    "src/modules/site/presentation/routes/siteRoutes.ts"
+  ]
 }

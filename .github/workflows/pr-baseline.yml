@@ -31,3 +31,6 @@ jobs:
 
       - name: Build for Pages
         run: npm run build:pages
+
+      - name: Verify crawl files
+        run: npm run test:crawl-files

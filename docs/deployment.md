@@ -108,7 +108,8 @@ See [privacy.md](privacy.md) and [seo.md](seo.md) for verification steps.
 5. View page source on the custom domain and confirm canonical URLs use
    `https://agents-repo.org`.
 6. Check <https://agents-repo.org/robots.txt> and `sitemap.xml` for
-   `agents-repo.org` URLs.
+   `agents-repo.org` URLs. Open `sitemap.xml` in a normal browser tab (with the
+   PWA service worker active) and confirm XML is shown, not a redirect to home.
 
 ## Rollback
 
@@ -122,5 +123,8 @@ gh workflow run pages-deploy.yml --repo agents-repo/webapp -f tag=v1.0.0
 ## PWA and service worker notes
 
 The production build includes a service worker for same-origin static assets.
-Hashed asset filenames provide cache busting on new releases. For local
-service worker debugging steps, see [development.md](development.md).
+`/sitemap.xml` and `/robots.txt` are excluded from the navigation fallback
+(`navigateFallbackDenylist`) so browser requests receive the static crawl files
+instead of the SPA shell. Hashed asset
+filenames provide cache busting on new releases. For local service worker
+debugging steps, see [development.md](development.md).

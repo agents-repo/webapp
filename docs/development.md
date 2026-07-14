@@ -62,8 +62,10 @@ after `build:pages`. For routing, registry integration, or modal flows, also run
 `npm run test:e2e` locally (requires `npx playwright install chromium` once per
 machine). E2E is not part of PR baseline CI — see [e2e-testing.md](e2e-testing.md).
 
-Use `npm run build` for a standard production build. Use `npm run build:pages`
-when validating the GitHub Pages output (adds `.nojekyll` and `404.html`).
+Use `npm run build` for a standard production build (includes `sitemap.xml` and
+`robots.txt` via `vite-plugin-sitemap`). Use `npm run build:pages` when
+validating the GitHub Pages output (adds per-route HTML injection, `.nojekyll`,
+and `404.html`).
 
 Accessibility expectations and validation details are documented in
 [accessibility.md](accessibility.md).
