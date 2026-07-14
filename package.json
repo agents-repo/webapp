@@ -11,6 +11,7 @@
     "dev": "vite",
     "env:check": "node scripts/validate-env.mjs",
     "build": "tsc -b && vite build && node scripts/remove-e2e-build-marker.mjs",
+    "build:vite": "vite build && node scripts/remove-e2e-build-marker.mjs",
     "build:pages": "npm run build && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode production",
     "build:pages:e2e": "tsc -b && vite build --mode e2e && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode e2e && node scripts/write-e2e-build-marker.mjs",
     "release:dry-run": "semantic-release --dry-run",

@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build for custom origin */
+/* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build:vite for custom origin */
 import assert from 'node:assert/strict'
 import { execSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
@@ -38,28 +38,28 @@ function assertCrawlFilesMatchOrigin(origin) {
   assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`))
 }
 
-describe('crawl files integration', () => {
+describe('crawl files integration', { concurrency: 1 }, () => {
   it('writes sitemap.xml and robots.txt for the default production origin', () => {
     assertCrawlFilesMatchOrigin(resolveBuildSiteOrigin('production'))
   })
-})
 
-describe('crawl files integration with custom VITE_SITE_URL', () => {
-  const customOrigin = 'https://preview.example.test'
+  describe('with custom VITE_SITE_URL', () => {
+    const customOrigin = 'https://preview.example.test'
 
-  before(() => {
-    execSync('npm run build', {
-      cwd: process.cwd(),
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        VITE_SITE_URL: customOrigin,
-        FORCE_COLOR: '0',
-      },
+    before(() => {
+      execSync('npm run build:vite', {
+        cwd: process.cwd(),
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          VITE_SITE_URL: customOrigin,
+          FORCE_COLOR: '0',
+        },
+      })
     })
-  })
 
-  it('writes crawl files using VITE_SITE_URL from the shell', () => {
-    assertCrawlFilesMatchOrigin(customOrigin)
+    it('writes crawl files using VITE_SITE_URL from the shell', () => {
+      assertCrawlFilesMatchOrigin(customOrigin)
+    })
   })
 })
