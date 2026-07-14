@@ -8,6 +8,20 @@ import {
 import { resolveBuildSiteOrigin } from './seo-build-config.ts';
 import { getSiteRoutePaths } from '../src/modules/site/application/seo/siteSeoMeta.ts';
 
+function parseModeArg() {
+  const modeIndex = process.argv.indexOf('--mode');
+  if (modeIndex === -1) {
+    return process.env.MODE ?? 'production';
+  }
+
+  const mode = process.argv[modeIndex + 1];
+  if (!mode) {
+    throw new Error('Missing value for --mode');
+  }
+
+  return mode;
+}
+
 const distDir = resolve(process.cwd(), 'dist');
 const e2eBuildMarkerPath = resolve(distDir, 'e2e-build-marker.json');
 
@@ -15,7 +29,7 @@ if (existsSync(e2eBuildMarkerPath)) {
   unlinkSync(e2eBuildMarkerPath);
 }
 
-const siteOrigin = resolveBuildSiteOrigin();
+const siteOrigin = resolveBuildSiteOrigin(parseModeArg());
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
 
 function assertKnownSiteRoute(routePath) {

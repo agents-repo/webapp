@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build:pages */
+/* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build for custom origin */
 import assert from 'node:assert/strict'
 import { execSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
@@ -39,14 +39,6 @@ function assertCrawlFilesMatchOrigin(origin) {
 }
 
 describe('crawl files integration', () => {
-  before(() => {
-    execSync('npm run build:pages', {
-      cwd: process.cwd(),
-      stdio: 'pipe',
-      env: { ...process.env, MODE: 'production', FORCE_COLOR: '0' },
-    })
-  })
-
   it('writes sitemap.xml and robots.txt for the default production origin', () => {
     assertCrawlFilesMatchOrigin(resolveBuildSiteOrigin('production'))
   })
@@ -58,10 +50,9 @@ describe('crawl files integration with custom VITE_SITE_URL', () => {
   before(() => {
     execSync('npm run build', {
       cwd: process.cwd(),
-      stdio: 'pipe',
+      stdio: 'inherit',
       env: {
         ...process.env,
-        MODE: 'production',
         VITE_SITE_URL: customOrigin,
         FORCE_COLOR: '0',
       },

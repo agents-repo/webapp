@@ -185,7 +185,7 @@ npm run a11y:ci
 
 | Command | Purpose |
 | --- | --- |
-| `npm run test` | Unit tests for SEO helpers and crawl-file output |
+| `npm run test` | Unit tests for SEO helpers (`npm run test:crawl-files` after `build:pages`) |
 | `npm run build:pages` | Route HTML injection plus `vite-plugin-sitemap` crawl files |
 | `npm run a11y:ci` | Lighthouse accessibility **and SEO** (min 0.9 each) + pa11y |
 
