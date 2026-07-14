@@ -1,5 +1,6 @@
+/* eslint-disable sonarjs/no-os-command-from-path -- invokes repo-local eslint via execFileSync */
 import assert from 'node:assert/strict'
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import { readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, it } from 'node:test'
@@ -9,9 +10,15 @@ const repoRoot = resolve(import.meta.dirname, '..')
 
 function runEslint(paths, { json = false } = {}) {
   const configPath = resolve(repoRoot, 'eslint.config.js')
-  const formatFlag = json ? ' --format json' : ''
-  const targetPaths = paths.map((entry) => `"${entry}"`).join(' ')
-  return execSync(`npx eslint --config "${configPath}"${formatFlag} ${targetPaths}`, {
+  const args = ['--no-install', 'eslint', '--config', configPath]
+
+  if (json) {
+    args.push('--format', 'json')
+  }
+
+  args.push(...paths)
+
+  return execFileSync('npx', args, {
     cwd: repoRoot,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
