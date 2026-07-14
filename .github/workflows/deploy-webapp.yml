@@ -1,0 +1,64 @@
+name: Deploy Webapp
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'tsconfig*.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.env.production'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-publish
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node and pinned npm
+        uses: ./.github/actions/setup-node-pinned-npm
+
+      - name: Validate runtime
+        run: npm run env:check
+
+      - name: Run Markdown and code lint
+        run: npm run lint:all
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Build for Pages
+        run: npm run build:pages
+
+      - name: Verify crawl files
+        run: npm run test:crawl-files
+
+      - name: Deploy to agents-repo.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          external_repository: agents-repo/agents-repo.github.io
+          publish_branch: main
+          publish_dir: ./dist
+          keep_files: true
+          cname: agents-repo.org
+          commit_message: "deploy: webapp ${{ github.sha }}"
