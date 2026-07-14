@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build:vite for custom origin */
 import assert from 'node:assert/strict'
 import { execSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { before, describe, it } from 'node:test'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
@@ -17,7 +17,20 @@ function parseSitemapEntries(xml) {
   }))
 }
 
+function requireCrawlFiles() {
+  const missing = ['sitemap.xml', 'robots.txt'].filter(
+    (name) => !existsSync(resolve(distDir, name)),
+  )
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing dist crawl file(s): ${missing.join(', ')}. Run npm run build:pages before npm run test:crawl-files.`,
+    )
+  }
+}
+
 function assertCrawlFilesMatchOrigin(origin) {
+  requireCrawlFiles()
   const xml = readFileSync(resolve(distDir, 'sitemap.xml'), 'utf8')
   const robots = readFileSync(resolve(distDir, 'robots.txt'), 'utf8')
   const routes = getSiteRoutePaths()
