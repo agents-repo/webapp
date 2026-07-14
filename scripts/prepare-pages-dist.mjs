@@ -19,23 +19,6 @@ if (existsSync(e2eBuildMarkerPath)) {
 const siteOrigin = getSiteOrigin(resolveViteSiteUrl());
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
 
-function buildSitemapXml(routePaths, origin) {
-  const urls = routePaths
-    .map((routePath) => {
-      const loc = routePath === '/' ? `${origin}/` : `${origin}${routePath}`;
-      const priority = routePath === '/' ? '1.0' : '0.8';
-
-      return `  <url>\n    <loc>${loc}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
-    })
-    .join('\n');
-
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
-}
-
-function buildRobotsTxt(origin) {
-  return `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
-}
-
 function assertKnownSiteRoute(routePath) {
   if (!getSiteRoutePaths().includes(routePath)) {
     throw new Error(`Unknown site route for dist output: ${routePath}`);
@@ -76,7 +59,5 @@ writeFileSync(
   injectLegacyDomainRedirectIntoHtml(injectSpaFallbackHeadIntoHtml(baseHtml)),
 );
 writeFileSync(resolve(distDir, '.nojekyll'), '');
-writeFileSync(resolve(distDir, 'robots.txt'), buildRobotsTxt(siteOrigin));
-writeFileSync(resolve(distDir, 'sitemap.xml'), buildSitemapXml(getSiteRoutePaths(), siteOrigin));
 
-console.log('Prepared dist/ for GitHub Pages (.nojekyll, 404.html, robots.txt, route HTML, sitemap.xml).');
+console.log('Prepared dist/ for GitHub Pages (.nojekyll, 404.html, route HTML).');
