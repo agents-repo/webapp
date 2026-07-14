@@ -42,11 +42,25 @@ function filePatterns(block) {
   return Array.isArray(block.files) ? block.files : [block.files]
 }
 
-function targetsPathPrefix(block, prefix) {
-  return filePatterns(block).some(
-    (pattern) => typeof pattern === 'string' && pattern.startsWith(prefix),
+function patternTargetsDirectory(pattern, directory) {
+  if (typeof pattern !== 'string') {
+    return false
+  }
+
+  const normalized = pattern.replace(/^\.\//, '')
+  return (
+    normalized === directory ||
+    normalized.startsWith(`${directory}/`) ||
+    normalized.includes(`/${directory}/`)
   )
 }
+
+function targetsDirectory(block, directory) {
+  return filePatterns(block).some((pattern) => patternTargetsDirectory(pattern, directory))
+}
+
+const DOCUMENTED_FS_FILENAME_DISABLE =
+  /eslint-disable(?:-next-line)? security\/detect-non-literal-fs-filename -- .+/
 
 function fsFilenameRuleSetting(block) {
   return block.rules?.[FS_FILENAME_RULE]
@@ -95,15 +109,15 @@ describe('eslint fs-filename rule policy', () => {
     const pagesScript = readFileSync(resolve(repoRoot, 'scripts/prepare-pages-dist.mjs'), 'utf8')
 
     const testOverride = eslintConfig.some(
-      (block) => targetsPathPrefix(block, 'test/') && fsFilenameRuleSetting(block) === 'off',
+      (block) => targetsDirectory(block, 'test') && fsFilenameRuleSetting(block) === 'off',
     )
     const scriptsOverride = eslintConfig.some(
-      (block) => targetsPathPrefix(block, 'scripts/') && fsFilenameRuleSetting(block) === 'off',
+      (block) => targetsDirectory(block, 'scripts') && fsFilenameRuleSetting(block) === 'off',
     )
 
     assert.equal(testOverride, true, 'expected test/** fs-filename override')
     assert.equal(scriptsOverride, false, 'scripts/** must not disable fs-filename via config')
-    assert.match(syncScript, /eslint-disable security\/detect-non-literal-fs-filename/)
-    assert.match(pagesScript, /eslint-disable-next-line security\/detect-non-literal-fs-filename/)
+    assert.match(syncScript, DOCUMENTED_FS_FILENAME_DISABLE)
+    assert.match(pagesScript, DOCUMENTED_FS_FILENAME_DISABLE)
   })
 })

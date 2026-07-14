@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable security/detect-non-literal-fs-filename -- paths from REPO_ROOT and fixed CONFIG constants */
+/* eslint-disable security/detect-non-literal-fs-filename -- paths from REPO_ROOT, CONFIG constants, and vetted .mdc filenames from readdirSync */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
