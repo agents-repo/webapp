@@ -1,17 +1,22 @@
-name: Pages Deploy
-
-# release: published does not fire for GITHUB_TOKEN semantic-release releases.
-# This trigger supports manually created releases and external automation only.
+name: Deploy Webapp
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'index.html'
+      - 'vite.config.ts'
+      - 'tsconfig*.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.env.production'
+      - '.nvmrc'
+      - 'eslint.config.js'
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Existing release tag to redeploy (e.g. v1.0.0)"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -23,25 +28,10 @@ concurrency:
 jobs:
   deploy:
     name: Deploy to GitHub Pages
-    if: >-
-      (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'v')) ||
-      (github.event_name == 'release' && startsWith(github.event.release.tag_name, 'v'))
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve release tag
-        id: release
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Checkout release tag
+      - name: Checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ steps.release.outputs.tag }}
-          fetch-depth: 1
 
       - name: Setup Node and pinned npm
         uses: ./.github/actions/setup-node-pinned-npm
@@ -64,6 +54,10 @@ jobs:
       - name: Verify crawl files
         run: npm run test:crawl-files
 
+      - name: Set deploy revision
+        id: revision
+        run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to agents-repo.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -73,4 +67,4 @@ jobs:
           publish_dir: ./dist
           keep_files: true
           cname: agents-repo.org
-          commit_message: "deploy: webapp ${{ steps.release.outputs.tag }}"
+          commit_message: "deploy: webapp ${{ steps.revision.outputs.short_sha }}"

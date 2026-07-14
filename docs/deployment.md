@@ -5,31 +5,57 @@ The webapp is published to GitHub Pages at:
 - <https://agents-repo.org/> (custom domain)
 - <https://agents-repo.github.io/> (legacy; client redirect to custom domain after deploy)
 
-Each GitHub Release in `agents-repo/webapp` triggers a build and deploy of the
-static `dist/` output to `agents-repo/agents-repo.github.io`. Site content
-changes belong in this repository; `agents-repo.github.io` is the automated
-deployment target only.
+Merges to `main` that change app source files trigger an automated build and
+deploy of the static `dist/` output to `agents-repo/agents-repo.github.io`.
+Site content changes belong in this repository; `agents-repo.github.io` is the
+automated deployment target only.
+
+Semantic versioning (GitHub Releases and `v*` tags) is handled separately by
+the **Release** workflow and is not required for production deploys.
 
 ## How deployment works
 
-1. A maintainer merges a releasable conventional commit to `main` (agents must
-   not perform this step).
-2. The **Release** workflow runs validation and `semantic-release`, creating a
-   `v<MAJOR>.<MINOR>.<PATCH>` tag and GitHub Release when applicable.
-3. When semantic-release publishes a new release, the **Release** workflow
-   `release-publish` job fetches tags (`git fetch --tags`), detects the tag on
-   HEAD (`git tag --points-at HEAD`), and runs `npm run build:pages` plus
-   `peaceiris/actions-gh-pages` as conditional steps in the same job.
+1. A maintainer merges to `main` (agents must not perform this step).
+2. When changed files match the **Deploy Webapp** path filter (see below), the
+   workflow runs lint, typecheck, tests, `npm run build:pages`, and publishes
+   `dist/` via `peaceiris/actions-gh-pages`.
+3. The **Release** workflow runs validation and `semantic-release` on every
+   `main` push. When commit history includes releasable changes, it creates a
+   `v<MAJOR>.<MINOR>.<PATCH>` tag and GitHub Release only — it does not deploy.
 
-Automated releases use `GITHUB_TOKEN`, which does not trigger `release:
-published` in separate workflows. Inline deploy in the Release workflow avoids
-that GitHub Actions limitation. Use the **Pages Deploy** workflow for manual
-redeploy of an existing tag.
+Deploy and release are independent: a `chore:` commit that touches `src/` can
+deploy without creating a new GitHub Release; a `feat:` merge can both deploy
+and create a release in the same push.
+
+### Deploy Webapp path filter
+
+The **Deploy Webapp** workflow runs on `push` to `main` when any of these
+paths change:
+
+- `src/**`, `public/**`, `scripts/**`
+- `index.html`, `vite.config.ts`, `tsconfig*.json`
+- `package.json`, `package-lock.json`, `.env.production`
+- `.nvmrc`, `eslint.config.js`
+
+Docs-only or workflow-only merges do not trigger a redeploy. After merging
+workflow changes without app-source edits, run **Deploy Webapp** manually once
+to verify the deploy path (see [Manual deploy](#manual-deploy)).
+
+### Concurrency
+
+**Deploy Webapp** and **Pages Deploy** share the `pages-publish` concurrency
+group so only one `peaceiris` push runs at a time. Deploy runs queue behind any
+in-flight publish (including rollbacks) because both workflows use
+`cancel-in-progress: false`.
 
 The `build:pages` script adds GitHub Pages SPA support:
 
 - `404.html` copied from `index.html` for client-side routing
 - `.nojekyll` to disable Jekyll processing
+
+Automated semantic-release uses `GITHUB_TOKEN`, which does not trigger
+`release: published` in separate workflows. **Pages Deploy** remains available
+for tag-based rollback and for releases created outside the Release workflow.
 
 ## Required secret: `PAGES_DEPLOY_TOKEN`
 
@@ -49,9 +75,8 @@ Use a fine-grained PAT (recommended) or classic PAT with:
 2. Go to **Secrets and variables** → **Actions**.
 3. Add `PAGES_DEPLOY_TOKEN` with the PAT value.
 
-The Pages Deploy workflow passes this secret to
-`peaceiris/actions-gh-pages@v4` as the `personal_token` input (required for
-cross-repo pushes).
+Deploy workflows pass this secret to `peaceiris/actions-gh-pages@v4` as the
+`personal_token` input (required for cross-repo pushes).
 
 Deploy commits appear under the PAT owner's GitHub account, not
 `github-actions[bot]`.
@@ -64,7 +89,18 @@ Deploy commits appear under the PAT owner's GitHub account, not
 3. If Pages deploy fails because the secret was missing, redeploy manually (see
    below) — no new release is required.
 
-## Manual redeploy
+## Manual deploy
+
+| Goal | Workflow | Command |
+| --- | --- | --- |
+| Deploy current `main` HEAD | **Deploy Webapp** | See below |
+| Redeploy or roll back to a `v*` tag | **Pages Deploy** | See below |
+
+To deploy the current `main` branch (for example after a workflow-only merge):
+
+```bash
+gh workflow run deploy-webapp.yml --repo agents-repo/webapp
+```
 
 To redeploy an existing release tag without creating a new release:
 
@@ -113,12 +149,14 @@ See [privacy.md](privacy.md) and [seo.md](seo.md) for verification steps.
 
 ## Rollback
 
-Redeploy a prior `v*` tag using the manual redeploy workflow. For example, to
-roll back from `v1.1.0` to `v1.0.0`:
+Redeploy a prior `v*` tag using **Pages Deploy**. For example, to roll back from
+`v1.1.0` to `v1.0.0`:
 
 ```bash
 gh workflow run pages-deploy.yml --repo agents-repo/webapp -f tag=v1.0.0
 ```
+
+Avoid merging to `main` until the rollback workflow completes.
 
 ## PWA and service worker notes
 

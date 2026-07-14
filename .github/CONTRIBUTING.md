@@ -136,9 +136,11 @@ Commit-to-version mapping for automated releases:
 
 Commit types not listed above do not trigger an automated release.
 
-Published releases deploy the built webapp to
-<https://agents-repo.org/>. See [docs/deployment.md](../docs/deployment.md)
-for PAT setup and redeploy instructions.
+App-source merges to `main` deploy the built webapp to
+<https://agents-repo.org/> via the **Deploy Webapp** workflow. The **Release**
+workflow creates GitHub Releases and `v*` tags only. See
+[docs/deployment.md](../docs/deployment.md) for PAT setup, manual deploy, and
+rollback instructions.
 
 When merging release-automation work, use a squash-merge title with `feat:` if
 the merge should trigger the first GitHub Release. That merge step is

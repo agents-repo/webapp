@@ -45,6 +45,9 @@ jobs:
       - name: Build for Pages
         run: npm run build:pages
 
+      - name: Verify crawl files
+        run: npm run test:crawl-files
+
   release-dry-run:
     name: Release Dry Run
     if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true && github.ref == 'refs/heads/main'
@@ -92,32 +95,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-
-      - name: Set release outputs
-        id: release
-        run: |
-          git fetch --tags origin
-          TAG=$(git tag -l 'v*' --points-at HEAD | sort -V | tail -1)
-          if [ -n "$TAG" ]; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          else
-            echo "published=false" >> "$GITHUB_OUTPUT"
-            echo "tag=" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build for Pages
-        if: steps.release.outputs.published == 'true'
-        run: npm run build:pages
-
-      - name: Deploy to agents-repo.github.io
-        if: steps.release.outputs.published == 'true'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          personal_token: ${{ secrets.PAGES_DEPLOY_TOKEN }}
-          external_repository: agents-repo/agents-repo.github.io
-          publish_branch: main
-          publish_dir: ./dist
-          keep_files: true
-          cname: agents-repo.org
-          commit_message: "deploy: webapp ${{ steps.release.outputs.tag }}"

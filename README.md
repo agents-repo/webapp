@@ -203,12 +203,14 @@ Commit types not listed above do not trigger an automated release.
 
 ### GitHub Pages
 
-Published releases deploy the built webapp to:
+App-source merges to `main` deploy the built webapp to:
 
 - <https://agents-repo.org/>
 
-See [docs/deployment.md](docs/deployment.md) for PAT setup, redeploy, and
-rollback instructions.
+The **Deploy Webapp** workflow publishes production builds. The **Release**
+workflow handles SemVer tags and GitHub Releases only. See
+[docs/deployment.md](docs/deployment.md) for PAT setup, redeploy, and rollback
+instructions.
 
 ## IDE Setup
 
@@ -248,6 +250,8 @@ Do not edit `.cursor/rules/agents-webapp.mdc` directly.
 ## Automation
 
 - **PR Baseline Checks** — lint, typecheck, test, and Pages build on pull requests.
-- **Release** — validation plus `semantic-release` on pushes to `main`.
-- **Pages Deploy** — builds and publishes `dist/` to `agents-repo.github.io` on
-  each GitHub Release.
+- **Deploy Webapp** — lint, test, build, and publish `dist/` to
+  `agents-repo.github.io` on app-source pushes to `main`.
+- **Release** — validation plus `semantic-release` on pushes to `main`
+  (versioning only; no Pages deploy).
+- **Pages Deploy** — manual redeploy or rollback of a specific `v*` release tag.
