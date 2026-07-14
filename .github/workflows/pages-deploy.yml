@@ -1,5 +1,8 @@
 name: Pages Deploy
 
+# release: published does not fire for GITHUB_TOKEN semantic-release releases.
+# This trigger supports manually created releases and external automation only.
+
 on:
   release:
     types: [published]
@@ -43,8 +46,23 @@ jobs:
       - name: Setup Node and pinned npm
         uses: ./.github/actions/setup-node-pinned-npm
 
+      - name: Validate runtime
+        run: npm run env:check
+
+      - name: Run Markdown and code lint
+        run: npm run lint:all
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm run test
+
       - name: Build for Pages
         run: npm run build:pages
+
+      - name: Verify crawl files
+        run: npm run test:crawl-files
 
       - name: Deploy to agents-repo.github.io
         uses: peaceiris/actions-gh-pages@v4

@@ -45,6 +45,9 @@ jobs:
       - name: Build for Pages
         run: npm run build:pages
 
+      - name: Verify crawl files
+        run: npm run test:crawl-files
+
   release-dry-run:
     name: Release Dry Run
     if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true && github.ref == 'refs/heads/main'

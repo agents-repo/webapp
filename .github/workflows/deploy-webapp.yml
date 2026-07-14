@@ -14,6 +14,8 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - '.env.production'
+      - '.nvmrc'
+      - 'eslint.config.js'
   workflow_dispatch:
 
 permissions:
@@ -21,7 +23,7 @@ permissions:
 
 concurrency:
   group: pages-publish
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -52,6 +54,10 @@ jobs:
       - name: Verify crawl files
         run: npm run test:crawl-files
 
+      - name: Set deploy revision
+        id: revision
+        run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to agents-repo.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -61,4 +67,4 @@ jobs:
           publish_dir: ./dist
           keep_files: true
           cname: agents-repo.org
-          commit_message: "deploy: webapp ${{ github.sha }}"
+          commit_message: "deploy: webapp ${{ steps.revision.outputs.short_sha }}"

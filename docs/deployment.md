@@ -35,6 +35,7 @@ paths change:
 - `src/**`, `public/**`, `scripts/**`
 - `index.html`, `vite.config.ts`, `tsconfig*.json`
 - `package.json`, `package-lock.json`, `.env.production`
+- `.nvmrc`, `eslint.config.js`
 
 Docs-only or workflow-only merges do not trigger a redeploy. After merging
 workflow changes without app-source edits, run **Deploy Webapp** manually once
@@ -43,11 +44,9 @@ to verify the deploy path (see [Manual deploy](#manual-deploy)).
 ### Concurrency
 
 **Deploy Webapp** and **Pages Deploy** share the `pages-publish` concurrency
-group so only one `peaceiris` push runs at a time. Push-triggered deploys use
-`cancel-in-progress` so rapid merges deploy the latest SHA.
-
-During an active **Pages Deploy** rollback, avoid merging to `main` until the
-rollback completes — an incoming push deploy may cancel an in-flight rollback.
+group so only one `peaceiris` push runs at a time. Deploy runs queue behind any
+in-flight publish (including rollbacks) because both workflows use
+`cancel-in-progress: false`.
 
 The `build:pages` script adds GitHub Pages SPA support:
 
