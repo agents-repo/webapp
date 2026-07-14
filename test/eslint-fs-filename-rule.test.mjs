@@ -21,8 +21,28 @@ function runEslint(paths, { json = false } = {}) {
 function fsFilenameWarningsFromJson(output) {
   const results = JSON.parse(output)
   return results.flatMap((result) =>
-    result.messages.filter((message) => message.ruleId === FS_FILENAME_RULE),
+    result.messages
+      .filter((message) => message.ruleId === FS_FILENAME_RULE)
+      .map((message) => ({ ...message, filePath: result.filePath })),
   )
+}
+
+function filePatterns(block) {
+  if (!block.files) {
+    return []
+  }
+
+  return Array.isArray(block.files) ? block.files : [block.files]
+}
+
+function targetsPathPrefix(block, prefix) {
+  return filePatterns(block).some(
+    (pattern) => typeof pattern === 'string' && pattern.startsWith(prefix),
+  )
+}
+
+function fsFilenameRuleSetting(block) {
+  return block.rules?.[FS_FILENAME_RULE]
 }
 
 function formatWarningLocations(warnings) {
@@ -62,13 +82,20 @@ describe('eslint fs-filename rule policy', () => {
     }
   })
 
-  it('uses test/ override and documented per-script disables', () => {
-    const config = readFileSync(resolve(repoRoot, 'eslint.config.js'), 'utf8')
+  it('uses test/ override and documented per-script disables', async () => {
+    const { default: eslintConfig } = await import('../eslint.config.js')
     const syncScript = readFileSync(resolve(repoRoot, 'scripts/sync-cursor-rules.mjs'), 'utf8')
     const pagesScript = readFileSync(resolve(repoRoot, 'scripts/prepare-pages-dist.mjs'), 'utf8')
 
-    assert.match(config, /files:\s*\[\s*'test\/\*\*\/\*\.\{js,mjs,cjs\}'\s*\]/)
-    assert.doesNotMatch(config, /files:\s*\[\s*'scripts\/\*\*\/\*\.\{js,mjs,cjs\}'/)
+    const testOverride = eslintConfig.some(
+      (block) => targetsPathPrefix(block, 'test/') && fsFilenameRuleSetting(block) === 'off',
+    )
+    const scriptsOverride = eslintConfig.some(
+      (block) => targetsPathPrefix(block, 'scripts/') && fsFilenameRuleSetting(block) === 'off',
+    )
+
+    assert.equal(testOverride, true, 'expected test/** fs-filename override')
+    assert.equal(scriptsOverride, false, 'scripts/** must not disable fs-filename via config')
     assert.match(syncScript, /eslint-disable security\/detect-non-literal-fs-filename/)
     assert.match(pagesScript, /eslint-disable-next-line security\/detect-non-literal-fs-filename/)
   })
