@@ -66,6 +66,23 @@ function fsFilenameRuleSetting(block) {
   return block.rules?.[FS_FILENAME_RULE]
 }
 
+function isRuleDisabled(setting) {
+  if (setting === 'off' || setting === 0) {
+    return true
+  }
+
+  if (Array.isArray(setting)) {
+    const [severity] = setting
+    return severity === 'off' || severity === 0
+  }
+
+  return false
+}
+
+function isFsFilenameRuleDisabled(block) {
+  return isRuleDisabled(fsFilenameRuleSetting(block))
+}
+
 function formatWarningLocations(warnings) {
   return warnings.map((warning) => `${warning.filePath}:${warning.line}`).join(', ')
 }
@@ -98,6 +115,10 @@ describe('eslint fs-filename rule policy', () => {
         warnings.length > 0,
         `expected ${FS_FILENAME_RULE} warning for root-level dynamic fs fixture`,
       )
+      assert.ok(
+        warnings.every((warning) => warning.severity === 1),
+        `expected ${FS_FILENAME_RULE} at warning severity 1, got: ${warnings.map((warning) => warning.severity).join(', ')}`,
+      )
     } finally {
       unlinkSync(fixturePath)
     }
@@ -109,10 +130,10 @@ describe('eslint fs-filename rule policy', () => {
     const pagesScript = readFileSync(resolve(repoRoot, 'scripts/prepare-pages-dist.mjs'), 'utf8')
 
     const testOverride = eslintConfig.some(
-      (block) => targetsDirectory(block, 'test') && fsFilenameRuleSetting(block) === 'off',
+      (block) => targetsDirectory(block, 'test') && isFsFilenameRuleDisabled(block),
     )
     const scriptsOverride = eslintConfig.some(
-      (block) => targetsDirectory(block, 'scripts') && fsFilenameRuleSetting(block) === 'off',
+      (block) => targetsDirectory(block, 'scripts') && isFsFilenameRuleDisabled(block),
     )
 
     assert.equal(testOverride, true, 'expected test/** fs-filename override')
