@@ -30,16 +30,8 @@ function formatWarningLocations(warnings) {
 }
 
 describe('eslint fs-filename rule policy', () => {
-  it('reports no fs-filename warnings for scripts and tests', () => {
-    const paths = [
-      'scripts/sync-cursor-rules.mjs',
-      'scripts/prepare-pages-dist.mjs',
-      'test/sync-cursor-rules.test.mjs',
-      'test/crawl-files.integration.test.mjs',
-      'test/eslint-fs-filename-rule.test.mjs',
-    ]
-
-    const output = runEslint(paths, { json: true })
+  it('reports no fs-filename warnings under scripts/ and test/', () => {
+    const output = runEslint(['scripts', 'test'], { json: true })
     const warnings = fsFilenameWarningsFromJson(output)
 
     assert.equal(
@@ -70,10 +62,14 @@ describe('eslint fs-filename rule policy', () => {
     }
   })
 
-  it('documents per-script disables instead of a blanket scripts/ override', () => {
+  it('uses test/ override and documented per-script disables', () => {
     const config = readFileSync(resolve(repoRoot, 'eslint.config.js'), 'utf8')
+    const syncScript = readFileSync(resolve(repoRoot, 'scripts/sync-cursor-rules.mjs'), 'utf8')
+    const pagesScript = readFileSync(resolve(repoRoot, 'scripts/prepare-pages-dist.mjs'), 'utf8')
 
     assert.match(config, /files:\s*\[\s*'test\/\*\*\/\*\.\{js,mjs,cjs\}'\s*\]/)
     assert.doesNotMatch(config, /files:\s*\[\s*'scripts\/\*\*\/\*\.\{js,mjs,cjs\}'/)
+    assert.match(syncScript, /eslint-disable security\/detect-non-literal-fs-filename/)
+    assert.match(pagesScript, /eslint-disable-next-line security\/detect-non-literal-fs-filename/)
   })
 })
