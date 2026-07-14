@@ -46,9 +46,10 @@ export default defineConfig([
       'sonarjs/cognitive-complexity': ['warn', 12],
     },
   },
-  // Repo-owned scripts/tests use dynamic paths from fixed roots or temp dirs.
+  // Tests use dynamic paths from temp dirs; scripts keep the rule unless explicitly
+  // disabled with a documented reason (user-derived paths need validation, not silence).
   {
-    files: ['scripts/**/*.{js,mjs,cjs}', 'test/**/*.{js,mjs,cjs}'],
+    files: ['test/**/*.{js,mjs,cjs}'],
     rules: {
       'security/detect-non-literal-fs-filename': 'off',
     },

@@ -54,7 +54,9 @@ function writeRouteDistHtml(routePath, html) {
   const distSegmentDir = `dist/${segment}`;
   const distSegmentFile = `${distSegmentDir}/index.html`;
 
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- segment validated against siteRoutes
   mkdirSync(distSegmentDir, { recursive: true });
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- segment validated against siteRoutes
   writeFileSync(distSegmentFile, html);
 }
 
