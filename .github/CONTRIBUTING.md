@@ -156,6 +156,7 @@ npm run lint:all
 npm run test
 npm run typecheck
 npm run build:pages
+npm run test:crawl-files
 ```
 
 For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci`

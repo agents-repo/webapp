@@ -48,6 +48,13 @@ built, so they are not precached via `includeAssets`. `npm run dev` does not
 generate crawl files; use `npm run build:pages && npm run preview` to test
 locally.
 
+**Validation:** `npm run test:crawl-files` verifies `dist/sitemap.xml` and
+`dist/robots.txt` after `npm run build:pages`. It is read-only against `./dist`
+and must not run `vite build` or otherwise mutate build output. Origin resolution
+for `VITE_SITE_URL` is covered by `test/seo-build-config.test.mjs` in
+`npm run test`. Deploy workflows also grep `dist/` for the production origin
+before publish.
+
 ## Shared accessibility wins
 
 These patterns already help SEO and must stay in place:
@@ -185,7 +192,8 @@ npm run a11y:ci
 
 | Command | Purpose |
 | --- | --- |
-| `npm run test` | Unit tests for SEO helpers (`npm run test:crawl-files` after `build:pages`) |
+| `npm run test` | Unit tests including `test/seo-build-config.test.mjs` (origin resolution) |
+| `npm run test:crawl-files` | Read-only crawl-file check in `dist/` after `build:pages` |
 | `npm run build:pages` | Route HTML injection plus `vite-plugin-sitemap` crawl files |
 | `npm run a11y:ci` | Lighthouse accessibility **and SEO** (min 0.9 each) + pa11y |
 

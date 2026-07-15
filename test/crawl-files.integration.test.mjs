@@ -1,13 +1,12 @@
-/* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build:vite for custom origin */
 import assert from 'node:assert/strict'
-import { execSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { before, describe, it } from 'node:test'
+import { describe, it } from 'node:test'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
 
 const distDir = resolve(process.cwd(), 'dist')
+const previewTestOrigin = 'https://preview.example.test'
 
 function parseSitemapEntries(xml) {
   return [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => ({
@@ -49,30 +48,14 @@ function assertCrawlFilesMatchOrigin(origin) {
   assert.ok(robots.includes('User-agent: *'))
   assert.ok(robots.includes('Allow: /'))
   assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`))
+  assert.ok(
+    !xml.includes(previewTestOrigin),
+    `sitemap.xml must not contain test-only origin ${previewTestOrigin}`,
+  )
 }
 
 describe('crawl files integration', { concurrency: 1 }, () => {
-  it('writes sitemap.xml and robots.txt for the default production origin', () => {
+  it('matches sitemap.xml and robots.txt for the production origin', () => {
     assertCrawlFilesMatchOrigin(resolveBuildSiteOrigin('production'))
-  })
-
-  describe('with custom VITE_SITE_URL', () => {
-    const customOrigin = 'https://preview.example.test'
-
-    before(() => {
-      execSync('npm run build:vite', {
-        cwd: process.cwd(),
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          VITE_SITE_URL: customOrigin,
-          FORCE_COLOR: '0',
-        },
-      })
-    })
-
-    it('writes crawl files using VITE_SITE_URL from the shell', () => {
-      assertCrawlFilesMatchOrigin(customOrigin)
-    })
   })
 })
