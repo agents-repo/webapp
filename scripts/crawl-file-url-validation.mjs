@@ -67,6 +67,15 @@ export function everyUrlHasOrigin(urlStrings, expectedOrigin) {
   return urlStrings.length > 0 && urlStrings.every((url) => urlHasOrigin(url, expectedOrigin))
 }
 
+export function everyRobotsSitemapUrlPointsToSitemap(urlStrings, expectedOrigin) {
+  const expectedUrl = new URL('/sitemap.xml', `${normalizeSiteOrigin(expectedOrigin)}/`).href
+
+  return (
+    urlStrings.length > 0 &&
+    urlStrings.every((urlString) => parseUrl(urlString)?.href === expectedUrl)
+  )
+}
+
 export function someUrlHasHostname(urlStrings, hostname) {
   return urlStrings.some((url) => urlHasHostname(url, hostname))
 }

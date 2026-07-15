@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import {
+  everyRobotsSitemapUrlPointsToSitemap,
   everyUrlHasOrigin,
   parseRobotsSitemapUrls,
   parseSitemapLocUrls,
@@ -45,6 +46,14 @@ describe('crawl-file-url-validation', () => {
     assert.equal(everyUrlHasOrigin(parseSitemapLocUrls(sitemap), productionOrigin), true)
     assert.equal(everyUrlHasOrigin(parseRobotsSitemapUrls(robots), productionOrigin), true)
     assert.equal(someUrlHasHostname(parseSitemapLocUrls(sitemap), previewTestHostname), false)
+  })
+
+  it('rejects robots sitemap URLs that use the correct origin but wrong path', () => {
+    const robots = `User-agent: *\nAllow: /\nSitemap: ${productionOrigin}/wrong.xml`
+    const robotsUrls = parseRobotsSitemapUrls(robots)
+
+    assert.equal(everyUrlHasOrigin(robotsUrls, productionOrigin), true)
+    assert.equal(everyRobotsSitemapUrlPointsToSitemap(robotsUrls, productionOrigin), false)
   })
 
   it('parses pretty-printed sitemap loc values', () => {

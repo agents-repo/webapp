@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, it } from 'node:test'
 import {
+  everyRobotsSitemapUrlPointsToSitemap,
   everyUrlHasOrigin,
   parseRobotsSitemapUrls,
   parseSitemapLocUrls,
@@ -61,6 +62,10 @@ function assertCrawlFilesMatchOrigin(origin) {
   assert.ok(robots.includes('Allow: /'))
   assertCrawlFileUrlsUseOnlyOrigin(sitemapUrls, 'sitemap.xml', origin)
   assertCrawlFileUrlsUseOnlyOrigin(robotsUrls, 'robots.txt', origin)
+  assert.ok(
+    everyRobotsSitemapUrlPointsToSitemap(robotsUrls, origin),
+    `robots.txt must reference ${origin}/sitemap.xml`,
+  )
 }
 
 describe('crawl files integration', { concurrency: 1 }, () => {

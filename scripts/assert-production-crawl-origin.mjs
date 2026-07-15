@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
+  everyRobotsSitemapUrlPointsToSitemap,
   everyUrlHasOrigin,
   parseRobotsSitemapUrls,
   parseSitemapLocUrls,
@@ -37,6 +38,10 @@ if (!everyUrlHasOrigin(sitemapUrls, origin)) {
 
 if (!everyUrlHasOrigin(robotsUrls, origin)) {
   fail(`dist/robots.txt must contain only Sitemap URLs with origin ${origin}`)
+}
+
+if (!everyRobotsSitemapUrlPointsToSitemap(robotsUrls, origin)) {
+  fail(`dist/robots.txt must reference ${origin}/sitemap.xml`)
 }
 
 if (someUrlHasHostname(sitemapUrls, previewTestHostname)) {
