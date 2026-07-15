@@ -2,9 +2,15 @@ import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, it } from 'node:test'
+import {
+  everyUrlHasOrigin,
+  parseRobotsSitemapUrls,
+  parseSitemapLocUrls,
+  someUrlHasHostname,
+} from '../scripts/crawl-file-url-validation.mjs'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
-import { previewTestOrigin } from './crawl-file-origins.mjs'
+import { previewTestHostname } from './crawl-file-origins.mjs'
 
 const distDir = resolve(process.cwd(), 'dist')
 
@@ -28,10 +34,14 @@ function requireCrawlFiles() {
   }
 }
 
-function assertCrawlFileMustNotContainTestOrigin(contents, fileName) {
+function assertCrawlFileUrlsUseOnlyOrigin(urlStrings, fileName, origin) {
   assert.ok(
-    !contents.includes(previewTestOrigin),
-    `${fileName} must not contain test-only origin ${previewTestOrigin}`,
+    everyUrlHasOrigin(urlStrings, origin),
+    `${fileName} must contain only URLs with origin ${origin}`,
+  )
+  assert.ok(
+    !someUrlHasHostname(urlStrings, previewTestHostname),
+    `${fileName} must not contain hostname ${previewTestHostname}`,
   )
 }
 
@@ -41,6 +51,8 @@ function assertCrawlFilesMatchOrigin(origin) {
   const robots = readFileSync(resolve(distDir, 'robots.txt'), 'utf8')
   const routes = getSiteRoutePaths()
   const entries = parseSitemapEntries(xml)
+  const sitemapUrls = parseSitemapLocUrls(xml)
+  const robotsUrls = parseRobotsSitemapUrls(robots)
 
   assert.equal(entries.length, routes.length)
 
@@ -54,9 +66,8 @@ function assertCrawlFilesMatchOrigin(origin) {
 
   assert.ok(robots.includes('User-agent: *'))
   assert.ok(robots.includes('Allow: /'))
-  assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`))
-  assertCrawlFileMustNotContainTestOrigin(xml, 'sitemap.xml')
-  assertCrawlFileMustNotContainTestOrigin(robots, 'robots.txt')
+  assertCrawlFileUrlsUseOnlyOrigin(sitemapUrls, 'sitemap.xml', origin)
+  assertCrawlFileUrlsUseOnlyOrigin(robotsUrls, 'robots.txt', origin)
 }
 
 describe('crawl files integration', { concurrency: 1 }, () => {
