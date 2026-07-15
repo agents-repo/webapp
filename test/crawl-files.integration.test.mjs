@@ -4,9 +4,9 @@ import { resolve } from 'node:path'
 import { describe, it } from 'node:test'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
+import { previewTestOrigin } from './crawl-file-origins.mjs'
 
 const distDir = resolve(process.cwd(), 'dist')
-const previewTestOrigin = 'https://preview.example.test'
 
 function parseSitemapEntries(xml) {
   return [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((match) => ({
@@ -26,6 +26,13 @@ function requireCrawlFiles() {
       `Missing dist crawl file(s): ${missing.join(', ')}. Run npm run build:pages before npm run test:crawl-files.`,
     )
   }
+}
+
+function assertCrawlFileMustNotContainTestOrigin(contents, fileName) {
+  assert.ok(
+    !contents.includes(previewTestOrigin),
+    `${fileName} must not contain test-only origin ${previewTestOrigin}`,
+  )
 }
 
 function assertCrawlFilesMatchOrigin(origin) {
@@ -48,10 +55,8 @@ function assertCrawlFilesMatchOrigin(origin) {
   assert.ok(robots.includes('User-agent: *'))
   assert.ok(robots.includes('Allow: /'))
   assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`))
-  assert.ok(
-    !xml.includes(previewTestOrigin),
-    `sitemap.xml must not contain test-only origin ${previewTestOrigin}`,
-  )
+  assertCrawlFileMustNotContainTestOrigin(xml, 'sitemap.xml')
+  assertCrawlFileMustNotContainTestOrigin(robots, 'robots.txt')
 }
 
 describe('crawl files integration', { concurrency: 1 }, () => {

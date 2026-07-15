@@ -52,7 +52,7 @@ locally.
 `dist/robots.txt` after `npm run build:pages`. It is read-only against `./dist`
 and must not run `vite build` or otherwise mutate build output. Origin resolution
 for `VITE_SITE_URL` is covered by `test/seo-build-config.test.mjs` in
-`npm run test`. Deploy workflows also grep `dist/` for the production origin
+`npm run test`. Deploy workflows run `npm run assert:production-crawl-origin`
 before publish.
 
 ## Shared accessibility wins

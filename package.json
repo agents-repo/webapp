@@ -21,6 +21,7 @@
     "sync:cursor-rules": "node scripts/sync-cursor-rules.mjs",
     "test:sync": "node --experimental-strip-types --test test/sync-cursor-rules.test.mjs test/eslint-fs-filename-rule.test.mjs test/seo-build-config.test.mjs",
     "test:crawl-files": "node --experimental-strip-types --test test/crawl-files.integration.test.mjs",
+    "assert:production-crawl-origin": "node --experimental-strip-types scripts/assert-production-crawl-origin.mjs",
     "test": "npm run test:sync && vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",

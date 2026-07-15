@@ -65,10 +65,7 @@ jobs:
         run: npm run test:crawl-files
 
       - name: Assert production crawl origin
-        run: |
-          grep -q 'https://agents-repo.org/' dist/sitemap.xml
-          grep -q 'Sitemap: https://agents-repo.org/sitemap.xml' dist/robots.txt
-          ! grep -q 'preview.example.test' dist/sitemap.xml
+        run: npm run assert:production-crawl-origin
 
       - name: Deploy to agents-repo.github.io
         uses: peaceiris/actions-gh-pages@v4
