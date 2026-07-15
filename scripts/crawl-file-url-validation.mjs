@@ -1,3 +1,22 @@
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+
+export function requireDistCrawlFiles(
+  distDir,
+  actionLabel = 'npm run build:pages',
+) {
+  const missing = ['sitemap.xml', 'robots.txt'].filter((name) => {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- distDir plus fixed crawl file names
+    return !existsSync(resolve(distDir, name))
+  })
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing dist crawl file(s): ${missing.join(', ')}. Run ${actionLabel} before validating crawl files.`,
+    )
+  }
+}
+
 export function parseSitemapLocUrls(xml) {
   return [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1].trim())
 }

@@ -4,6 +4,7 @@ import {
   everyUrlHasOrigin,
   parseRobotsSitemapUrls,
   parseSitemapLocUrls,
+  requireDistCrawlFiles,
   someUrlHasHostname,
 } from './crawl-file-url-validation.mjs'
 import { previewTestHostname } from '../test/crawl-file-origins.mjs'
@@ -14,15 +15,21 @@ const origin = resolveBuildSiteOrigin('production')
 const sitemapPath = resolve(distDir, 'sitemap.xml')
 const robotsPath = resolve(distDir, 'robots.txt')
 
-const sitemap = readFileSync(sitemapPath, 'utf8')
-const robots = readFileSync(robotsPath, 'utf8')
-const sitemapUrls = parseSitemapLocUrls(sitemap)
-const robotsUrls = parseRobotsSitemapUrls(robots)
-
 function fail(message) {
   console.error(message)
   process.exit(1)
 }
+
+try {
+  requireDistCrawlFiles(distDir, 'npm run build:pages')
+} catch (error) {
+  fail(error instanceof Error ? error.message : String(error))
+}
+
+const sitemap = readFileSync(sitemapPath, 'utf8')
+const robots = readFileSync(robotsPath, 'utf8')
+const sitemapUrls = parseSitemapLocUrls(sitemap)
+const robotsUrls = parseRobotsSitemapUrls(robots)
 
 if (!everyUrlHasOrigin(sitemapUrls, origin)) {
   fail(`dist/sitemap.xml must contain only URLs with origin ${origin}`)

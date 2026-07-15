@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict'
+import { mkdtempSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import {
   everyUrlHasOrigin,
   parseRobotsSitemapUrls,
   parseSitemapLocUrls,
+  requireDistCrawlFiles,
   someUrlHasHostname,
   urlHasHostname,
   urlHasOrigin,
@@ -41,5 +45,14 @@ describe('crawl-file-url-validation', () => {
     assert.equal(everyUrlHasOrigin(parseSitemapLocUrls(sitemap), productionOrigin), true)
     assert.equal(everyUrlHasOrigin(parseRobotsSitemapUrls(robots), productionOrigin), true)
     assert.equal(someUrlHasHostname(parseSitemapLocUrls(sitemap), previewTestHostname), false)
+  })
+
+  it('reports missing crawl files with an actionable error', () => {
+    const emptyDistDir = mkdtempSync(join(tmpdir(), 'webapp-crawl-files-'))
+
+    assert.throws(
+      () => requireDistCrawlFiles(emptyDistDir, 'npm run build:pages'),
+      /Missing dist crawl file\(s\): sitemap\.xml, robots\.txt/,
+    )
   })
 })

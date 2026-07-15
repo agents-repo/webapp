@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, it } from 'node:test'
 import {
   everyUrlHasOrigin,
   parseRobotsSitemapUrls,
   parseSitemapLocUrls,
+  requireDistCrawlFiles,
   someUrlHasHostname,
 } from '../scripts/crawl-file-url-validation.mjs'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
@@ -23,15 +24,7 @@ function parseSitemapEntries(xml) {
 }
 
 function requireCrawlFiles() {
-  const missing = ['sitemap.xml', 'robots.txt'].filter(
-    (name) => !existsSync(resolve(distDir, name)),
-  )
-
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing dist crawl file(s): ${missing.join(', ')}. Run npm run build:pages before npm run test:crawl-files.`,
-    )
-  }
+  requireDistCrawlFiles(distDir, 'npm run build:pages')
 }
 
 function assertCrawlFileUrlsUseOnlyOrigin(urlStrings, fileName, origin) {
