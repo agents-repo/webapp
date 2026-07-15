@@ -187,6 +187,7 @@ npm run lint:all
 npm run test
 npm run typecheck
 npm run build:pages
+npm run test:crawl-files
 npm run a11y:ci
 ```
 
