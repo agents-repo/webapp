@@ -8,7 +8,7 @@ export function resolveViteSiteUrl(mode = process.env.MODE ?? 'production'): str
   const fromEnvFile = env.VITE_SITE_URL?.trim()
   const fromProcess = process.env.VITE_SITE_URL?.trim()
 
-  return fromEnvFile || fromProcess
+  return fromProcess || fromEnvFile
 }
 
 export function resolveBuildSiteOrigin(mode = process.env.MODE ?? 'production'): string {

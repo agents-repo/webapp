@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdtempSync } from 'node:fs'
+import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
@@ -63,9 +63,13 @@ describe('crawl-file-url-validation', () => {
   it('reports missing crawl files with an actionable error', () => {
     const emptyDistDir = mkdtempSync(join(tmpdir(), 'webapp-crawl-files-'))
 
-    assert.throws(
-      () => requireDistCrawlFiles(emptyDistDir, 'npm run build:pages'),
-      /Missing dist crawl file\(s\): sitemap\.xml, robots\.txt/,
-    )
+    try {
+      assert.throws(
+        () => requireDistCrawlFiles(emptyDistDir, 'npm run build:pages'),
+        /Missing dist crawl file\(s\): sitemap\.xml, robots\.txt/,
+      )
+    } finally {
+      rmSync(emptyDistDir, { recursive: true, force: true })
+    }
   })
 })
