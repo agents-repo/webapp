@@ -98,6 +98,19 @@ module boundaries documented in
 Playwright E2E specs live in the top-level `e2e/` directory — that is the
 intentional exception for browser tests. See [e2e-testing.md](e2e-testing.md).
 
+The top-level `test/` directory holds `node:test` scripts that are not Vitest
+suites:
+
+| Pattern | Purpose |
+| --- | --- |
+| `test/*.test.mjs` | Repo tooling and build-config tests |
+| `test/*.integration.test.mjs` | Post-build, read-only `dist/` crawl checks |
+
+Build-artifact tests must not mutate `./dist`. Run `npm run build:pages` first,
+then `npm run test:crawl-files`. Deploy workflows publish the same `dist/`
+output; tests that rebuild into `./dist` would corrupt crawl files before
+deploy.
+
 When logic is trapped in private page helpers (for example inside `HomePage.tsx`),
 extract it to a sibling module before testing.
 

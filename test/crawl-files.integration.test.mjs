@@ -1,11 +1,18 @@
-/* eslint-disable sonarjs/no-os-command-from-path -- integration test shells out to npm run build:vite for custom origin */
 import assert from 'node:assert/strict'
-import { execSync } from 'node:child_process'
-import { existsSync, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { before, describe, it } from 'node:test'
+import { describe, it } from 'node:test'
+import {
+  everyRobotsSitemapUrlPointsToSitemap,
+  everyUrlHasOrigin,
+  parseRobotsSitemapUrls,
+  parseSitemapLocUrls,
+  requireDistCrawlFiles,
+  someUrlHasHostname,
+} from '../scripts/crawl-file-url-validation.mjs'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
+import { previewTestHostname } from '../scripts/crawl-file-origins.mjs'
 
 const distDir = resolve(process.cwd(), 'dist')
 
@@ -18,15 +25,18 @@ function parseSitemapEntries(xml) {
 }
 
 function requireCrawlFiles() {
-  const missing = ['sitemap.xml', 'robots.txt'].filter(
-    (name) => !existsSync(resolve(distDir, name)),
-  )
+  requireDistCrawlFiles(distDir, 'npm run build:pages')
+}
 
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing dist crawl file(s): ${missing.join(', ')}. Run npm run build:pages before npm run test:crawl-files.`,
-    )
-  }
+function assertCrawlFileUrlsUseOnlyOrigin(urlStrings, fileName, origin) {
+  assert.ok(
+    everyUrlHasOrigin(urlStrings, origin),
+    `${fileName} must contain only URLs with origin ${origin}`,
+  )
+  assert.ok(
+    !someUrlHasHostname(urlStrings, previewTestHostname),
+    `${fileName} must not contain hostname ${previewTestHostname}`,
+  )
 }
 
 function assertCrawlFilesMatchOrigin(origin) {
@@ -35,6 +45,8 @@ function assertCrawlFilesMatchOrigin(origin) {
   const robots = readFileSync(resolve(distDir, 'robots.txt'), 'utf8')
   const routes = getSiteRoutePaths()
   const entries = parseSitemapEntries(xml)
+  const sitemapUrls = parseSitemapLocUrls(xml)
+  const robotsUrls = parseRobotsSitemapUrls(robots)
 
   assert.equal(entries.length, routes.length)
 
@@ -48,31 +60,16 @@ function assertCrawlFilesMatchOrigin(origin) {
 
   assert.ok(robots.includes('User-agent: *'))
   assert.ok(robots.includes('Allow: /'))
-  assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`))
+  assertCrawlFileUrlsUseOnlyOrigin(sitemapUrls, 'sitemap.xml', origin)
+  assertCrawlFileUrlsUseOnlyOrigin(robotsUrls, 'robots.txt', origin)
+  assert.ok(
+    everyRobotsSitemapUrlPointsToSitemap(robotsUrls, origin),
+    `robots.txt must reference ${origin}/sitemap.xml`,
+  )
 }
 
 describe('crawl files integration', { concurrency: 1 }, () => {
-  it('writes sitemap.xml and robots.txt for the default production origin', () => {
+  it('matches sitemap.xml and robots.txt for the production origin', () => {
     assertCrawlFilesMatchOrigin(resolveBuildSiteOrigin('production'))
-  })
-
-  describe('with custom VITE_SITE_URL', () => {
-    const customOrigin = 'https://preview.example.test'
-
-    before(() => {
-      execSync('npm run build:vite', {
-        cwd: process.cwd(),
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          VITE_SITE_URL: customOrigin,
-          FORCE_COLOR: '0',
-        },
-      })
-    })
-
-    it('writes crawl files using VITE_SITE_URL from the shell', () => {
-      assertCrawlFilesMatchOrigin(customOrigin)
-    })
   })
 })

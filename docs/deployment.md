@@ -32,7 +32,7 @@ and create a release in the same push.
 The **Deploy Webapp** workflow runs on `push` to `main` when any of these
 paths change:
 
-- `src/**`, `public/**`, `scripts/**`
+- `src/**`, `public/**`, `scripts/**`, `test/**`
 - `index.html`, `vite.config.ts`, `tsconfig*.json`
 - `package.json`, `package-lock.json`, `.env.production`
 - `.nvmrc`, `eslint.config.js`
@@ -142,10 +142,14 @@ See [privacy.md](privacy.md) and [seo.md](seo.md) for verification steps.
 4. Open <https://agents-repo.github.io/> and confirm the browser redirects to
    `https://agents-repo.org/` with the same path.
 5. View page source on the custom domain and confirm canonical URLs use
-   `https://agents-repo.org`.
+   `https://agents-repo.org` on `/` and at least one deep route (for example
+   `/about`).
 6. Check <https://agents-repo.org/robots.txt> and `sitemap.xml` for
-   `agents-repo.org` URLs. Open `sitemap.xml` in a normal browser tab (with the
-   PWA service worker active) and confirm XML is shown, not a redirect to home.
+   `agents-repo.org` URLs only (no test or preview origins). Open `sitemap.xml`
+   in a normal browser tab (with the PWA service worker active) and confirm XML
+   is shown, not a redirect to home.
+7. If a fix changed tests or workflows without matching deploy path filters,
+   run **Deploy Webapp** manually via `workflow_dispatch` after merge.
 
 ## Rollback
 

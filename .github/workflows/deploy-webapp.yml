@@ -8,6 +8,7 @@ on:
       - 'src/**'
       - 'public/**'
       - 'scripts/**'
+      - 'test/**'
       - 'index.html'
       - 'vite.config.ts'
       - 'tsconfig*.json'
@@ -53,6 +54,9 @@ jobs:
 
       - name: Verify crawl files
         run: npm run test:crawl-files
+
+      - name: Assert production crawl origin
+        run: npm run assert:production-crawl-origin
 
       - name: Set deploy revision
         id: revision
