@@ -11,7 +11,7 @@ import {
 } from '../scripts/crawl-file-url-validation.mjs'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
-import { previewTestHostname } from './crawl-file-origins.mjs'
+import { previewTestHostname } from '../scripts/crawl-file-origins.mjs'
 
 const distDir = resolve(process.cwd(), 'dist')
 

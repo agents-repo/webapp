@@ -103,12 +103,13 @@ suites:
 
 | Pattern | Purpose |
 | --- | --- |
-| `test/*.test.mjs` | Repo tooling and build-config tests (cursor-rules sync, seo-build-config) |
-| `test/*.integration.test.mjs` | Post-build, read-only verification of `dist/` (crawl files) |
+| `test/*.test.mjs` | Repo tooling and build-config tests |
+| `test/*.integration.test.mjs` | Post-build, read-only `dist/` crawl checks |
 
 Build-artifact tests must not mutate `./dist`. Run `npm run build:pages` first,
 then `npm run test:crawl-files`. Deploy workflows publish the same `dist/`
-output; tests that rebuild into `./dist` would corrupt crawl files before deploy.
+output; tests that rebuild into `./dist` would corrupt crawl files before
+deploy.
 
 When logic is trapped in private page helpers (for example inside `HomePage.tsx`),
 extract it to a sibling module before testing.

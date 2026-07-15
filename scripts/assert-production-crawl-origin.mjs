@@ -7,7 +7,7 @@ import {
   requireDistCrawlFiles,
   someUrlHasHostname,
 } from './crawl-file-url-validation.mjs'
-import { previewTestHostname } from '../test/crawl-file-origins.mjs'
+import { previewTestHostname } from './crawl-file-origins.mjs'
 import { resolveBuildSiteOrigin } from './seo-build-config.ts'
 
 const distDir = resolve(process.cwd(), 'dist')

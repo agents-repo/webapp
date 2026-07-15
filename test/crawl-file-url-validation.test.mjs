@@ -12,7 +12,7 @@ import {
   urlHasHostname,
   urlHasOrigin,
 } from '../scripts/crawl-file-url-validation.mjs'
-import { previewTestHostname, previewTestOrigin } from './crawl-file-origins.mjs'
+import { previewTestHostname, previewTestOrigin } from '../scripts/crawl-file-origins.mjs'
 
 const productionOrigin = 'https://agents-repo.org'
 
@@ -45,6 +45,19 @@ describe('crawl-file-url-validation', () => {
     assert.equal(everyUrlHasOrigin(parseSitemapLocUrls(sitemap), productionOrigin), true)
     assert.equal(everyUrlHasOrigin(parseRobotsSitemapUrls(robots), productionOrigin), true)
     assert.equal(someUrlHasHostname(parseSitemapLocUrls(sitemap), previewTestHostname), false)
+  })
+
+  it('parses pretty-printed sitemap loc values', () => {
+    const sitemap = `<url><loc>\n  ${productionOrigin}/about\n</loc></url>`
+
+    assert.deepEqual(parseSitemapLocUrls(sitemap), [`${productionOrigin}/about`])
+  })
+
+  it('treats origins with extra trailing slashes as equivalent', () => {
+    assert.equal(
+      urlHasOrigin(`${productionOrigin}/about`, `${productionOrigin}///`),
+      true,
+    )
   })
 
   it('reports missing crawl files with an actionable error', () => {

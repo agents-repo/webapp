@@ -4,7 +4,7 @@ import {
   resolveBuildSiteOrigin,
   resolveViteSiteUrl,
 } from '../scripts/seo-build-config.ts'
-import { previewTestOrigin } from './crawl-file-origins.mjs'
+import { previewTestOrigin } from '../scripts/crawl-file-origins.mjs'
 
 const productionOrigin = 'https://agents-repo.org'
 

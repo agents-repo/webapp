@@ -18,7 +18,7 @@ export function requireDistCrawlFiles(
 }
 
 export function parseSitemapLocUrls(xml) {
-  return [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1].trim())
+  return [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/g)].map((match) => match[1].trim())
 }
 
 export function parseRobotsSitemapUrls(robots) {
@@ -38,7 +38,11 @@ function parseUrl(urlString) {
 }
 
 export function normalizeSiteOrigin(origin) {
-  return origin.replace(/\/$/, '')
+  let normalized = origin
+  while (normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1)
+  }
+  return normalized
 }
 
 export function urlHasOrigin(urlString, expectedOrigin) {
