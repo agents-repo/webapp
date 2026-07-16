@@ -119,7 +119,7 @@ extract it to a sibling module before testing.
 | Location | When to use |
 | --- | --- |
 | `src/test/fixtures/` | Data reused across multiple modules or test files |
-| Beside source | Single-consumer fixtures (e.g. `homePageA11yTestFixtures.ts`) |
+| Beside source | Single-consumer fixtures scoped to one module |
 
 ## Patterns
 

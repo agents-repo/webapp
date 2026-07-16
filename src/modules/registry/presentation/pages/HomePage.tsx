@@ -39,6 +39,7 @@ import {
   getPackageDownloadTargets,
   type PackageDownloadTarget,
 } from './homePageCatalogState'
+import { faDuotoneSpinner } from './catalogLoadingSpinnerIcon'
 
 const STICKY_SEARCH_THRESHOLD = 180
 
@@ -215,7 +216,12 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   </Badge>
                 ) : null}
               </h2>
-              <p className="text-body-secondary mb-0 small" aria-live="polite" aria-atomic="true">
+              <p
+                id="catalog-results-summary"
+                className="text-body-secondary mb-0 small"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {catalogResultsSummary}
               </p>
             </Col>
@@ -241,6 +247,23 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             </Alert>
           ) : null}
 
+          {isCatalogLoading && !catalog ? (
+            <div
+              className="py-5 d-flex justify-content-center"
+              role="region"
+              aria-busy="true"
+              aria-labelledby="catalog-results-summary"
+            >
+              <FontAwesomeIcon
+                icon={faDuotoneSpinner}
+                spinPulse
+                size="3x"
+                className="text-body-secondary catalog-loading-spinner"
+                aria-hidden="true"
+              />
+            </div>
+          ) : (
+            <>
           <Row xs={1} md={2} xl={3} className="g-3">
             {filteredPackages.map((pkg) => {
               const statusBadge = PACKAGE_STATUS_BADGE[pkg.status]
@@ -348,7 +371,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             )})}
           </Row>
 
-          {!isCatalogLoading && filteredPackages.length === 0 ? (
+          {filteredPackages.length === 0 ? (
             <Card className="mt-4 border-secondary-subtle">
               <Card.Body className="text-center py-4">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
@@ -358,6 +381,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               </Card.Body>
             </Card>
           ) : null}
+            </>
+          )}
 
         </Container>
       </section>

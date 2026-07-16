@@ -1,9 +1,12 @@
 import { test, expect } from './fixtures/registry-mock'
-import { waitForCatalogSettled } from './fixtures/catalog-load'
+import { waitForCatalogSettled, expectCatalogLoadingWhenObservable } from './fixtures/catalog-load'
 
 test.describe('Home catalog', () => {
   test('loads mocked registry packages', async ({ page }) => {
     await page.goto('/')
+
+    await expectCatalogLoadingWhenObservable(page)
+
     await waitForCatalogSettled(page)
 
     await expect(

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import RegistryCatalogProvider from './RegistryCatalogProvider'
 import { useRegistryCatalog } from './registryCatalogContext'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
-import { sampleCatalogLoadResult } from '../pages/homePageA11yTestFixtures'
+import { sampleCatalogLoadResult } from '../../../../test/fixtures/homePageTestFixtures'
 
 vi.mock('../../infrastructure/registryRepository', () => ({
   loadRegistryCatalog: vi.fn(),
