@@ -8,6 +8,7 @@ import {
   loadedCatalogContext,
   loadingCatalogContext,
   reloadingCatalogContext,
+  unavailableCatalogContext,
 } from '../../../../test/fixtures/homePageTestFixtures'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
@@ -53,7 +54,7 @@ describe('HomePage catalog loading', () => {
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 
-  it('does not show the loading spinner during reload when search has no matches', async () => {
+  it('shows the empty-state card during reload when search has no matches', async () => {
     const user = userEvent.setup()
     useRegistryCatalogMock.mockReturnValue(reloadingCatalogContext)
 
@@ -65,5 +66,17 @@ describe('HomePage catalog loading', () => {
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(screen.getByText('Showing 0 of 1 packages')).toBeInTheDocument()
+    expect(screen.getByText('No packages match your current search.')).toBeInTheDocument()
+  })
+
+  it('does not show the loading spinner when catalog loading failed', () => {
+    useRegistryCatalogMock.mockReturnValue(unavailableCatalogContext)
+
+    const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    expect(screen.getByText('No catalog data available')).toBeInTheDocument()
+    expect(screen.getByText('No catalog data available.')).toBeInTheDocument()
+    expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 })

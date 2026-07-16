@@ -37,3 +37,9 @@ export const reloadingCatalogContext: RegistryCatalogContextValue = {
   ...loadedCatalogContext,
   isLoading: true,
 }
+
+export const unavailableCatalogContext: RegistryCatalogContextValue = {
+  ...loadingCatalogContext,
+  isLoading: false,
+  errorMessage: 'Unable to load the registry index.',
+}

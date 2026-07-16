@@ -371,7 +371,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             )})}
           </Row>
 
-          {!isCatalogLoading && filteredPackages.length === 0 ? (
+          {filteredPackages.length === 0 ? (
             <Card className="mt-4 border-secondary-subtle">
               <Card.Body className="text-center py-4">
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
