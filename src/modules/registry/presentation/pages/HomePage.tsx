@@ -247,7 +247,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             </Alert>
           ) : null}
 
-          {isCatalogLoading && filteredPackages.length === 0 ? (
+          {isCatalogLoading && !catalog ? (
             <div
               className="py-5 d-flex justify-content-center"
               role="region"

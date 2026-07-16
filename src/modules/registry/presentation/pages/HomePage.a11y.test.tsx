@@ -4,7 +4,7 @@ import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import HomePage from './HomePage'
-import { loadedCatalogContext, loadingCatalogContext } from './homePageA11yTestFixtures'
+import { loadedCatalogContext, loadingCatalogContext } from './homePageTestFixtures'
 
 const axeOptions = {
   rules: {

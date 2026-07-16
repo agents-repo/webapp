@@ -1,4 +1,5 @@
 import { cleanup, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
@@ -7,7 +8,7 @@ import {
   loadedCatalogContext,
   loadingCatalogContext,
   reloadingCatalogContext,
-} from './homePageA11yTestFixtures'
+} from './homePageTestFixtures'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -50,5 +51,19 @@ describe('HomePage catalog loading', () => {
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+  })
+
+  it('does not show the loading spinner during reload when search has no matches', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(reloadingCatalogContext)
+
+    const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.type(searchInput, 'no-match-query')
+
+    expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 0 of 1 packages')).toBeInTheDocument()
   })
 })
