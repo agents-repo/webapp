@@ -9,7 +9,6 @@ import {
   faEye,
   faFilter,
   faMagnifyingGlass,
-  faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import {
@@ -40,6 +39,7 @@ import {
   getPackageDownloadTargets,
   type PackageDownloadTarget,
 } from './homePageCatalogState'
+import { faDuotoneSpinner } from './catalogLoadingSpinnerIcon'
 
 const STICKY_SEARCH_THRESHOLD = 180
 
@@ -255,8 +255,9 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               aria-labelledby="catalog-results-summary"
             >
               <FontAwesomeIcon
-                icon={faSpinner}
-                spin
+                icon={faDuotoneSpinner}
+                spinPulse
+                size="3x"
                 className="text-body-secondary catalog-loading-spinner"
                 aria-hidden="true"
               />

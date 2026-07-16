@@ -186,7 +186,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .catalog-loading-spinner.fa-spin {
+  .catalog-loading-spinner.fa-spin,
+  .catalog-loading-spinner.fa-spin-pulse {
     animation: none;
   }
 }

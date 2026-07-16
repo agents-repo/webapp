@@ -28,7 +28,7 @@ describe('HomePage catalog loading', () => {
 
     expect(screen.getByText('Loading registry catalog')).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
-    expect(container.querySelector('.fa-spin')).toBeInTheDocument()
+    expect(container.querySelector('.fa-spin-pulse')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'sample-agent' })).not.toBeInTheDocument()
   })
 
@@ -39,7 +39,7 @@ describe('HomePage catalog loading', () => {
 
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
-    expect(container.querySelector('.fa-spin')).not.toBeInTheDocument()
+    expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
   })
 
   it('keeps package cards visible during a settings reload', async () => {
@@ -48,7 +48,7 @@ describe('HomePage catalog loading', () => {
     const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
-    expect(container.querySelector('.fa-spin')).not.toBeInTheDocument()
+    expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 })
