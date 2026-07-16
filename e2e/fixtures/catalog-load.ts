@@ -8,3 +8,15 @@ export async function waitForCatalogSettled(page: Page): Promise<void> {
   await expect(catalogSummary).toBeVisible()
   await expect(catalogSummary).not.toHaveText(catalogLoadingSummary)
 }
+
+export async function expectCatalogLoadingWhenObservable(page: Page): Promise<void> {
+  const loadingSummary = page.getByText(catalogLoadingSummary)
+  const sawLoading = await loadingSummary
+    .waitFor({ state: 'visible', timeout: 2_000 })
+    .then(() => true)
+    .catch(() => false)
+
+  if (sawLoading) {
+    await expect(page.locator('[aria-busy="true"]')).toBeVisible()
+  }
+}
