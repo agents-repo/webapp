@@ -8,7 +8,7 @@ import {
   loadedCatalogContext,
   loadingCatalogContext,
   reloadingCatalogContext,
-} from './homePageTestFixtures'
+} from '../../../../test/fixtures/homePageTestFixtures'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -29,7 +29,7 @@ describe('HomePage catalog loading', () => {
 
     expect(screen.getByText('Loading registry catalog')).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
-    expect(container.querySelector('.fa-spin-pulse')).toBeInTheDocument()
+    expect(container.querySelector('.catalog-loading-spinner')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'sample-agent' })).not.toBeInTheDocument()
   })
 
@@ -40,7 +40,7 @@ describe('HomePage catalog loading', () => {
 
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
-    expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
+    expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
   })
 
   it('keeps package cards visible during a settings reload', async () => {
@@ -49,7 +49,7 @@ describe('HomePage catalog loading', () => {
     const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
-    expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
+    expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 
@@ -62,7 +62,7 @@ describe('HomePage catalog loading', () => {
     const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
     await user.type(searchInput, 'no-match-query')
 
-    expect(container.querySelector('.fa-spin-pulse')).not.toBeInTheDocument()
+    expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(screen.getByText('Showing 0 of 1 packages')).toBeInTheDocument()
   })

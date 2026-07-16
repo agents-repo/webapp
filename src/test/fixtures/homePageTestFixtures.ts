@@ -1,6 +1,6 @@
-import type { RegistryCatalogContextValue } from '../catalog/registryCatalogContext'
-import type { RegistryCatalogLoadResult } from '../../infrastructure/registryRepository'
-import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
+import type { RegistryCatalogContextValue } from '../../modules/registry/presentation/catalog/registryCatalogContext'
+import type { RegistryCatalogLoadResult } from '../../modules/registry/infrastructure/registryRepository'
+import { sampleRegistryCatalog } from './sampleRegistryCatalog'
 
 export const sampleCatalogLoadResult: RegistryCatalogLoadResult = {
   catalog: sampleRegistryCatalog,
