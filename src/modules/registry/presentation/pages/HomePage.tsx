@@ -9,6 +9,7 @@ import {
   faEye,
   faFilter,
   faMagnifyingGlass,
+  faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import {
@@ -215,7 +216,12 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   </Badge>
                 ) : null}
               </h2>
-              <p className="text-body-secondary mb-0 small" aria-live="polite" aria-atomic="true">
+              <p
+                id="catalog-results-summary"
+                className="text-body-secondary mb-0 small"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {catalogResultsSummary}
               </p>
             </Col>
@@ -241,6 +247,22 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
             </Alert>
           ) : null}
 
+          {isCatalogLoading && filteredPackages.length === 0 ? (
+            <div
+              className="py-5 d-flex justify-content-center"
+              role="region"
+              aria-busy="true"
+              aria-labelledby="catalog-results-summary"
+            >
+              <FontAwesomeIcon
+                icon={faSpinner}
+                spin
+                className="text-body-secondary catalog-loading-spinner"
+                aria-hidden="true"
+              />
+            </div>
+          ) : (
+            <>
           <Row xs={1} md={2} xl={3} className="g-3">
             {filteredPackages.map((pkg) => {
               const statusBadge = PACKAGE_STATUS_BADGE[pkg.status]
@@ -358,6 +380,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               </Card.Body>
             </Card>
           ) : null}
+            </>
+          )}
 
         </Container>
       </section>

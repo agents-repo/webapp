@@ -1,3 +1,4 @@
+import type { RegistryCatalogContextValue } from '../catalog/registryCatalogContext'
 import type { RegistryCatalogLoadResult } from '../../infrastructure/registryRepository'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 
@@ -10,4 +11,29 @@ export const sampleCatalogLoadResult: RegistryCatalogLoadResult = {
   errorMessage: undefined,
   baseUrlRefResolution: null,
   githubRepositoryRefResolution: null,
+}
+
+export const loadedCatalogContext: RegistryCatalogContextValue = {
+  catalog: sampleCatalogLoadResult.catalog,
+  cacheState: sampleCatalogLoadResult.cacheState,
+  indexUrl: sampleCatalogLoadResult.indexUrl,
+  registryBaseUrl: sampleCatalogLoadResult.registryBaseUrl,
+  githubRepositoryUrl: sampleCatalogLoadResult.githubRepositoryUrl ?? '',
+  errorMessage: sampleCatalogLoadResult.errorMessage ?? null,
+  isLoading: false,
+}
+
+export const loadingCatalogContext: RegistryCatalogContextValue = {
+  catalog: null,
+  cacheState: 'none',
+  indexUrl: '',
+  registryBaseUrl: '',
+  githubRepositoryUrl: '',
+  errorMessage: null,
+  isLoading: true,
+}
+
+export const reloadingCatalogContext: RegistryCatalogContextValue = {
+  ...loadedCatalogContext,
+  isLoading: true,
 }

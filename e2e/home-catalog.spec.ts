@@ -4,6 +4,10 @@ import { waitForCatalogSettled } from './fixtures/catalog-load'
 test.describe('Home catalog', () => {
   test('loads mocked registry packages', async ({ page }) => {
     await page.goto('/')
+
+    await expect(page.getByText('Loading registry catalog')).toBeVisible()
+    await expect(page.locator('[aria-busy="true"]')).toBeVisible()
+
     await waitForCatalogSettled(page)
 
     await expect(

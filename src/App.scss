@@ -184,3 +184,9 @@
     transition: transform 0.2s ease;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-loading-spinner.fa-spin {
+    animation: none;
+  }
+}
