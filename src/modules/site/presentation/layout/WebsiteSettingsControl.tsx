@@ -6,6 +6,7 @@ import { isSafeExternalHttpUrl } from '../../application/urlSafety'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
+  clearRegistryCatalogCache,
   clearRegistryTagListCache,
   clearStoredRegistryBaseUrlOverride,
   clearStoredRegistryGitHubRepositoryUrlOverride,
@@ -230,6 +231,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
         }))
       } else {
         clearRegistryTagListCache()
+        clearRegistryCatalogCache()
 
         if (normalizedBaseUrlInput.length === 0) {
           clearStoredRegistryBaseUrlOverride()
@@ -259,6 +261,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
     clearStoredRegistryBaseUrlOverride()
     clearStoredRegistryGitHubRepositoryUrlOverride()
     clearRegistryTagListCache()
+    clearRegistryCatalogCache()
     setModalState((previousValue) => ({
       ...previousValue,
       baseUrlInput: '',
@@ -278,6 +281,18 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
         isSaving: false,
       }))
     }
+  }
+
+  const clearRegistryCacheAndReload = (): void => {
+    clearRegistryCatalogCache()
+    clearRegistryTagListCache()
+
+    if (onSaved) {
+      onSaved()
+      return
+    }
+
+    globalThis.location?.reload()
   }
 
   const activeSource = resolvedSource ?? getRegistrySourceConfig()
@@ -359,6 +374,23 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                 </div>
 
                 {registryCatalogStatusNote ? renderCatalogStatusNote(registryCatalogStatusNote) : null}
+
+                <section className="mt-4">
+                  <h3 className="h6 mb-2">Registry data cache</h3>
+                  <p className="small text-body-secondary mb-3">
+                    Clears catalog and tag list data stored in this browser (localStorage), then reloads the
+                    catalog from the configured source. This does not purge Cloudflare proxy cache; if the
+                    catalog ref stays outdated, check the proxy <code>GET /tags</code> response.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline-secondary"
+                    onClick={clearRegistryCacheAndReload}
+                    disabled={modalState.isSaving}
+                  >
+                    Clear cache and reload catalog
+                  </Button>
+                </section>
               </section>
 
               <section>

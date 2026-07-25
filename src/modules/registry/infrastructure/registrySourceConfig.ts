@@ -130,8 +130,10 @@ const resolveSourceUrlWithAlias = async (
   fallbackRepositoryUrl: string,
   alias: MajorVersionLineAlias,
   options: ResolveSourceUrlOptions,
+  tagListSourceUrl?: string,
 ): Promise<{ resolvedSourceUrl: string; resolution: RegistryRefResolution }> => {
-  const repositoryIdentity = inferRegistryRepositoryIdentity(sourceUrl, fallbackRepositoryUrl)
+  const tagsSourceUrl = tagListSourceUrl ?? sourceUrl
+  const repositoryIdentity = inferRegistryRepositoryIdentity(tagsSourceUrl, fallbackRepositoryUrl)
 
   if (!repositoryIdentity) {
     throw new Error('Could not infer a GitHub repository for major-version line ref resolution.')
@@ -144,7 +146,7 @@ const resolveSourceUrlWithAlias = async (
     {
       signal: options.signal,
       bypassCache: options.bypassTagCache,
-      sourceUrl,
+      sourceUrl: tagsSourceUrl,
       fallbackRepositoryUrl,
     },
   )
@@ -156,6 +158,55 @@ const resolveSourceUrlWithAlias = async (
       resolvedRef,
     },
   }
+}
+
+const GITHUB_TAG_LIST_HOSTNAMES = new Set([
+  'github.com',
+  'www.github.com',
+  'raw.githubusercontent.com',
+  'api.github.com',
+])
+
+const isGitHubTagListHostname = (sourceUrl: string): boolean => {
+  try {
+    return GITHUB_TAG_LIST_HOSTNAMES.has(new URL(sourceUrl.trim()).hostname)
+  } catch {
+    return false
+  }
+}
+
+const repositoryIdentitiesEqual = (
+  left: ReturnType<typeof inferRegistryRepositoryIdentity>,
+  right: ReturnType<typeof inferRegistryRepositoryIdentity>,
+): boolean => {
+  return left !== null && right !== null && left.owner === right.owner && left.repo === right.repo
+}
+
+const getSharedProxyTagListSourceUrl = (
+  configuredSource: RegistrySourceConfig,
+  targetSourceUrl: string,
+): string | null => {
+  const fetchBaseInput =
+    configuredSource.runtimeBaseUrlOverride ?? configuredSource.configuredBaseUrl
+
+  if (isGitHubTagListHostname(fetchBaseInput)) {
+    return null
+  }
+
+  const fetchIdentity = inferRegistryRepositoryIdentity(
+    fetchBaseInput,
+    configuredSource.configuredGithubRepositoryUrl,
+  )
+  const targetIdentity = inferRegistryRepositoryIdentity(
+    targetSourceUrl,
+    configuredSource.configuredGithubRepositoryUrl,
+  )
+
+  if (!repositoryIdentitiesEqual(fetchIdentity, targetIdentity)) {
+    return null
+  }
+
+  return fetchBaseInput
 }
 
 const resolveRegistryBaseSourceUrl = async (
@@ -207,11 +258,14 @@ const resolveGithubRepositorySourceUrl = async (
     }
   }
 
+  const tagListSourceUrl = getSharedProxyTagListSourceUrl(configuredSource, githubRepositoryUrl)
+
   const resolved = await resolveSourceUrlWithAlias(
     githubRepositoryUrl,
     configuredSource.configuredGithubRepositoryUrl,
     alias,
     options,
+    tagListSourceUrl ?? undefined,
   )
 
   return {

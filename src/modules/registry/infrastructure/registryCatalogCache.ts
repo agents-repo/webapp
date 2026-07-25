@@ -258,12 +258,20 @@ export const writeCatalogCache = (
   persistCache()
 }
 
-export const resetRegistryCatalogCacheForTests = (): void => {
+export const clearRegistryCatalogCache = (): void => {
   memoryCacheByIndexUrl.clear()
 
   const storage = getLocalStorage()
 
   if (storage) {
-    storage.removeItem(CACHE_STORAGE_KEY)
+    try {
+      storage.removeItem(CACHE_STORAGE_KEY)
+    } catch {
+      // Ignore storage failures; clearing is best-effort only.
+    }
   }
+}
+
+export const resetRegistryCatalogCacheForTests = (): void => {
+  clearRegistryCatalogCache()
 }
