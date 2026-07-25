@@ -48,6 +48,14 @@ const getFetchInputUrl = (input: RequestInfo | URL): string => {
   return input.url
 }
 
+const isGitHubTagsApiRequestUrl = (url: string): boolean => {
+  try {
+    return new URL(url).hostname === 'api.github.com'
+  } catch {
+    return false
+  }
+}
+
 describe('resolveRegistrySourceConfig', () => {
   beforeEach(() => {
     Object.defineProperty(globalThis, 'localStorage', {
@@ -66,7 +74,7 @@ describe('resolveRegistrySourceConfig', () => {
   it('resolves default v2.x configured source without runtime overrides', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const url = getFetchInputUrl(input)
-      expect(url).not.toContain('api.github.com')
+      expect(isGitHubTagsApiRequestUrl(url)).toBe(false)
 
       return Promise.resolve(
         new Response(JSON.stringify([{ name: 'v2.0.0' }, { name: 'v1.2.0' }]), {
@@ -90,7 +98,7 @@ describe('resolveRegistrySourceConfig', () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const url = getFetchInputUrl(input)
 
-      if (url.includes('api.github.com')) {
+      if (isGitHubTagsApiRequestUrl(url)) {
         return Promise.resolve(
           new Response(JSON.stringify([{ name: 'v9.9.9' }]), {
             status: 200,
