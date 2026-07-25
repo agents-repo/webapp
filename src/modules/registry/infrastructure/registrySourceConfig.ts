@@ -160,7 +160,12 @@ const resolveSourceUrlWithAlias = async (
   }
 }
 
-const GITHUB_TAG_LIST_HOSTNAMES = new Set(['github.com', 'www.github.com', 'raw.githubusercontent.com'])
+const GITHUB_TAG_LIST_HOSTNAMES = new Set([
+  'github.com',
+  'www.github.com',
+  'raw.githubusercontent.com',
+  'api.github.com',
+])
 
 const isGitHubTagListHostname = (sourceUrl: string): boolean => {
   try {

@@ -264,7 +264,11 @@ export const clearRegistryCatalogCache = (): void => {
   const storage = getLocalStorage()
 
   if (storage) {
-    storage.removeItem(CACHE_STORAGE_KEY)
+    try {
+      storage.removeItem(CACHE_STORAGE_KEY)
+    } catch {
+      // Ignore storage failures; clearing is best-effort only.
+    }
   }
 }
 
