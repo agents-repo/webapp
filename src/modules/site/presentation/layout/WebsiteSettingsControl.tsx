@@ -286,7 +286,13 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
   const clearRegistryCacheAndReload = (): void => {
     clearRegistryCatalogCache()
     clearRegistryTagListCache()
-    onSaved?.()
+
+    if (onSaved) {
+      onSaved()
+      return
+    }
+
+    globalThis.location?.reload()
   }
 
   const activeSource = resolvedSource ?? getRegistrySourceConfig()
