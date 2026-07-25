@@ -124,10 +124,13 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 - Major-version line refs (`1.x`, `v1.x`) in either override resolve to the
    latest stable registry release tag. Tag lists are fetched from registry-proxy
    `GET /tags` when the fetch source is a proxy URL, or from the GitHub tags API
-   as a fallback for GitHub-only source URLs. Tag lists are cached for 1 hour in a
+   as a fallback for GitHub-only source URLs. When the default proxy fetch
+   source is configured, browse `v2.x` aliases use the same proxy `/tags` listing
+   as catalog fetch (not per-browser GitHub API calls). Tag lists are cached for 1 hour in a
    single localStorage entry (`registry.tags.cache.v1`) keyed by repository identity
    (`owner/repo`) inside the envelope. Alias re-resolution runs when the
-   24h catalog cache has expired or website settings change — not on every route
+   24h catalog cache has expired, website settings change, or the user chooses
+   **Clear cache and reload catalog** in website settings — not on every route
    navigation. Resolution uses the `semver` package.
 - The registry catalog loads once at app level via
    `RegistryCatalogProvider` (`presentation/catalog/`) and is reused when

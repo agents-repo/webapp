@@ -37,11 +37,13 @@ const {
   mockResolveRegistrySourceConfig,
   mockSetStoredRegistryBaseUrlOverride,
   mockClearRegistryTagListCache,
+  mockClearRegistryCatalogCache,
 } = vi.hoisted(() => ({
   mockValidateRegistrySourceUrlForMajorVersionAlias: vi.fn(),
   mockResolveRegistrySourceConfig: vi.fn(),
   mockSetStoredRegistryBaseUrlOverride: vi.fn(),
   mockClearRegistryTagListCache: vi.fn(),
+  mockClearRegistryCatalogCache: vi.fn(),
 }))
 
 vi.mock('../../../registry/application/registrySource', async () => {
@@ -53,6 +55,7 @@ vi.mock('../../../registry/application/registrySource', async () => {
     resolveRegistrySourceConfig: mockResolveRegistrySourceConfig,
     setStoredRegistryBaseUrlOverride: mockSetStoredRegistryBaseUrlOverride,
     clearRegistryTagListCache: mockClearRegistryTagListCache,
+    clearRegistryCatalogCache: mockClearRegistryCatalogCache,
   }
 })
 
@@ -76,6 +79,7 @@ describe('WebsiteSettingsControl save flow', () => {
     mockResolveRegistrySourceConfig.mockResolvedValue(resolvedSource)
     mockSetStoredRegistryBaseUrlOverride.mockImplementation(() => {})
     mockClearRegistryTagListCache.mockImplementation(() => {})
+    mockClearRegistryCatalogCache.mockImplementation(() => {})
   })
 
   afterEach(() => {
@@ -100,6 +104,7 @@ describe('WebsiteSettingsControl save flow', () => {
       expect(mockValidateRegistrySourceUrlForMajorVersionAlias).toHaveBeenCalled()
       expect(mockSetStoredRegistryBaseUrlOverride).toHaveBeenCalledWith('https://example.com/runtime/')
       expect(mockClearRegistryTagListCache).toHaveBeenCalled()
+      expect(mockClearRegistryCatalogCache).toHaveBeenCalled()
       expect(mockResolveRegistrySourceConfig).toHaveBeenCalled()
       expect(onSaved).toHaveBeenCalled()
     })
@@ -140,5 +145,19 @@ describe('WebsiteSettingsControl save flow', () => {
       ),
     ).toBeInTheDocument()
     expect(mockSetStoredRegistryBaseUrlOverride).not.toHaveBeenCalled()
+  })
+
+  it('clears registry caches and notifies parent when clear cache is clicked', async () => {
+    const user = userEvent.setup()
+    const onSaved = vi.fn()
+
+    renderWithProviders(<WebsiteSettingsControl onSaved={onSaved} />)
+
+    await user.click(screen.getByRole('button', { name: 'Open website settings' }))
+    await user.click(screen.getByRole('button', { name: 'Clear cache and reload catalog' }))
+
+    expect(mockClearRegistryCatalogCache).toHaveBeenCalled()
+    expect(mockClearRegistryTagListCache).toHaveBeenCalled()
+    expect(onSaved).toHaveBeenCalled()
   })
 })

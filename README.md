@@ -135,6 +135,9 @@ Registry catalog loading now uses two coordinated cache layers:
 - App-layer cache contract:
   - 24h freshness window for `index.json`
   - Fresh cache is used before network fetches
+  - Website settings include **Clear cache and reload catalog** to reset
+    `registry.catalog.cache.v1` and `registry.tags.cache.v1` in localStorage and
+    force a catalog reload (does not purge Cloudflare proxy cache)
   - If remote refresh fails, stale cached catalog is used when available
   - If refresh fails and no cached catalog exists, the app shows an error alert
 - Service worker runtime cache:
