@@ -61,6 +61,7 @@ List affected paths or areas:
 - [ ] `npm run test`
 - [ ] `npm run typecheck`
 - [ ] `npm run build:pages`
+- [ ] `npm run test:crawl-files`
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] Pre-ready self-review completed per [Pre-ready agent handoff][org-pre-ready]
   (draft PR updated with validation evidence).
