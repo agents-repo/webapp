@@ -46,7 +46,9 @@ Commit the resulting `allowScripts` update with your dependency change.
 
 ## Local Validation
 
-Run these checks before marking the pull request ready for review:
+Run these checks before agent handoff and before a human marks the pull request
+ready for review (see organization
+[Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)):
 
 ```bash
 npm run env:check

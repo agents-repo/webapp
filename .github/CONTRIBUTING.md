@@ -148,7 +148,9 @@ maintainer-only; agents MUST NOT merge to `main`.
 
 ## Local Validation
 
-Before requesting review, run:
+Before requesting review, follow organization
+[Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)
+and [docs/ai-collaboration.md](../docs/ai-collaboration.md). Run:
 
 ```bash
 npm run env:check

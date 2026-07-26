@@ -61,6 +61,8 @@ List affected paths or areas:
 - [ ] `npm run typecheck`
 - [ ] `npm run build`
 - [ ] Docs were updated where behavior or workflow changed.
+- [ ] Pre-ready self-review completed per org CONTRIBUTING (draft PR updated with validation evidence).
+- [ ] Pull request remains draft until a human marks it ready for review.
 - [ ] This PR follows the repository contributor guidance.
 
 ## Risk and Rollback

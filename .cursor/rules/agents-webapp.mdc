@@ -93,6 +93,15 @@ For UI or accessibility changes, also run `npm run test:a11y`. See
 
 If a command cannot be run, explicitly say why in the handoff.
 
+## Pre-ready handoff
+
+Before handoff on a task branch, agents MUST complete the organization
+[Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)
+norm, run the **Validation** commands above for the change scope, perform a
+self-review, and update the **draft** PR with evidence. Agents MUST NOT mark
+pull requests ready for review. Optional Cursor-only self-review is documented
+in `docs/ai-collaboration.md`.
+
 ## Documentation Standard
 
 Any user-facing behavior, contributor workflow, architectural decision,

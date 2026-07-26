@@ -97,3 +97,32 @@ Project-specific decision records live in:
 - `docs/architecture/ddd-decision.md`
 
 If code and docs disagree, update one of them in the same change.
+
+## Pre-ready handoff
+
+Before agent handoff (while the pull request remains a **draft**), follow the
+organization
+[Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)
+norm and [docs/development.md](development.md#local-validation).
+
+Agents MUST:
+
+- read exemplar code in the same area before editing
+- run the validation commands listed in `docs/development.md` for the change type
+- self-review logic, UI states, accessibility (see `docs/accessibility.md`), and
+  docs/spec alignment
+- update the draft PR description with validation evidence and explicit
+  out-of-scope items
+
+Agents MUST NOT mark pull requests ready for review.
+
+### Optional Cursor self-review (before human marks ready)
+
+In Cursor, you MAY run an extra pre-ready pass before handoff:
+
+- `/review-bugbot` on **branch changes** against the default branch
+- a security review skill on the same diff when the change touches auth, downloads,
+  environment configuration, or untrusted input
+
+These tools are optional and webapp-specific; they do not replace repository
+validation commands or the org pre-ready norm.
