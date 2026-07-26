@@ -58,9 +58,15 @@ List affected paths or areas:
 
 - [ ] `npm run env:check`
 - [ ] `npm run lint:all`
+- [ ] `npm run test`
 - [ ] `npm run typecheck`
-- [ ] `npm run build`
+- [ ] `npm run build:pages`
+- [ ] `npm run test:crawl-files`
 - [ ] Docs were updated where behavior or workflow changed.
+- [ ] Pre-ready self-review completed per [Pre-ready agent handoff][org-pre-ready]
+  (draft PR updated with validation evidence).
+- [ ] For PRs opened by agents: remains draft until a human marks it ready for
+  review (not applicable to human-opened non-draft PRs).
 - [ ] This PR follows the repository contributor guidance.
 
 ## Risk and Rollback
@@ -69,3 +75,4 @@ List affected paths or areas:
 - Rollback plan:
 
 [org-wf-ex]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#workflow-exceptions
+[org-pre-ready]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff
