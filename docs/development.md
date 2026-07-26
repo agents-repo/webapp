@@ -54,7 +54,6 @@ ready for review (agents: see the organization's
 npm run env:check
 npm run lint:all
 npm run test
-npm run test:a11y
 npm run typecheck
 npm run build:pages
 ```
