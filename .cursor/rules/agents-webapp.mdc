@@ -99,7 +99,7 @@ Before handoff on a task branch, agents MUST complete the organization
 [Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)
 norm, run the **Validation** commands above for the change scope, perform a
 self-review, and update the **draft** PR with evidence. Agents MUST NOT mark
-pull requests ready for review. After editing this file, run
+pull requests ready for review. After editing `.github/copilot-instructions.md`, run
 `npm run sync:cursor-rules`. Optional Cursor-only self-review is documented
 in `docs/ai-collaboration.md`.
 
