@@ -247,7 +247,7 @@ Do not edit `.cursor/rules/agents-webapp.mdc` directly.
 - Public accessibility statement: `/accessibility` route in the deployed app
 - Public privacy policies: `/privacy` (EN) and `/privacidade` (pt-BR)
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
-- Copilot project instructions:
+- GitHub Copilot project instructions:
   [.github/copilot-instructions.md](.github/copilot-instructions.md)
 
 ## Automation

@@ -22,8 +22,9 @@ function AboutPage() {
               <h2 className="h4">Mission</h2>
               <p className="text-body-secondary mb-0">
                 Agents Repo is the web interface for browsing, searching, and downloading curated agents
-                and flows from the registry. It helps teams discover maintained packages that are ready for
-                direct use in projects, understand package status, and install them for their preferred targets.
+                and flows from the registry. It helps teams discover maintained packages for GitHub
+                Copilot, Cursor, Claude Code, and OpenAI Codex, understand package status, and install
+                packages for their preferred install targets.
               </p>
             </Card.Body>
           </Card>

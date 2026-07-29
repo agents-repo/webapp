@@ -194,8 +194,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                   Explore ready-to-use agents and flows
                 </h1>
                 <p className="lead fs-6 text-body-secondary mb-0">
-                  Browse agents and flows ready for direct use in your projects, with quick metadata from
-                  the registry index.
+                  Browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex—ready
+                  for direct use in your projects, with quick metadata from the registry index.
                 </p>
                 <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>{searchControl}</div>
               </Stack>

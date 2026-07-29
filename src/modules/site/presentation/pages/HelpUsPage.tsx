@@ -44,7 +44,7 @@ function HelpUsPage() {
                   declared in metadata
                 </li>
                 <li>
-                  Supported install targets include GitHub Copilot, Claude Code, Cursor, and OpenAI Codex
+                  Supported install targets include GitHub Copilot, Cursor, Claude Code, and OpenAI Codex
                 </li>
                 <li>
                   Open a package submission issue on the registry, then branch{' '}
