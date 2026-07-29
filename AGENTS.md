@@ -1,3 +1,5 @@
+<!-- Generated: .github/copilot-instructions.md. Run npm run sync:ide-instructions -->
+
 # Webapp Project Guidelines
 
 ## Project Purpose

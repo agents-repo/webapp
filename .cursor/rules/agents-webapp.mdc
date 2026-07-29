@@ -3,7 +3,7 @@ description: Webapp project guidelines (mirrors copilot-instructions.md)
 alwaysApply: true
 ---
 
-<!-- Generated from .github/copilot-instructions.md — do not edit; run npm run sync:cursor-rules -->
+<!-- Generated: .github/copilot-instructions.md. Run npm run sync:ide-instructions -->
 
 # Webapp Project Guidelines
 
@@ -101,7 +101,7 @@ Before handoff on a task branch, agents MUST complete the organization
 norm, run the **Validation** commands above for the change scope, perform a
 self-review, and update the **draft** PR with evidence. Agents MUST NOT mark
 pull requests ready for review. After editing `.github/copilot-instructions.md`, run
-`npm run sync:cursor-rules`. Optional Cursor-only self-review is documented
+`npm run sync:ide-instructions`. Optional Cursor-only self-review is documented
 in `docs/ai-collaboration.md`.
 
 ## Documentation Standard

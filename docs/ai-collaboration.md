@@ -66,7 +66,7 @@ The main contributor instructions live in:
 After editing `.github/copilot-instructions.md`, regenerate the Cursor rule:
 
 ```bash
-npm run sync:cursor-rules
+npm run sync:ide-instructions
 ```
 
 ## Default branch integration
