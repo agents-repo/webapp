@@ -28,7 +28,7 @@ export const ogImageWidth = 1200
 export const ogImageHeight = 630
 
 export const ogImageAlt =
-  'Agents Repo — browse, search, and download agents and flows from the registry.'
+  'Agents Repo — browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.'
 
 export const ogSiteName = siteName
 

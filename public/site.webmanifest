@@ -1,7 +1,7 @@
 {
   "name": "Agents Repo",
   "short_name": "AgentsRepo",
-  "description": "Browse, search, and download agents and flows from the registry.",
+  "description": "Browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex from the open registry.",
   "id": "/",
   "start_url": "/",
   "scope": "/",

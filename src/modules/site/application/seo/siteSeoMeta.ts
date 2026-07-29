@@ -15,12 +15,13 @@ export interface SiteSeoMeta {
 
 export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
   [siteRoutes.home]: {
-    description: 'Browse, search, and download agents and flows from the registry.',
+    description:
+      'Browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex from the open registry.',
     canonicalPath: siteRoutes.home,
   },
   [siteRoutes.about]: {
     description:
-      'Learn about Agents Repo, the web interface for discovering curated agents and flows from the registry.',
+      'Learn about Agents Repo: browse curated agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
     canonicalPath: siteRoutes.about,
   },
   [siteRoutes.contact]: {
@@ -29,7 +30,7 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
   },
   [siteRoutes.helpUs]: {
     description:
-      'Help improve Agents Repo and the registry by contributing packages, reporting issues, or sharing feedback.',
+      'Help improve the open agents registry. Contribute packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
     canonicalPath: siteRoutes.helpUs,
   },
   [siteRoutes.accessibility]: {
