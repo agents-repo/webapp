@@ -239,7 +239,8 @@ Do not edit generated mirror files directly.
 
 ### Registry workflow packages
 
-Install and refresh catalog packages with `npx agents-repo` (see
+Install and refresh catalog packages with `npm run agents:install` and
+`npm run agents:update` (pinned `npx agents-repo@1.13.0`; see
 [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)). Commit `agents.json`,
 `agents-lock.json`, and extracted paths under `.github/agents/`, `.cursor/skills/`,
 `.claude/agents/`, and `.agents/skills/`.
