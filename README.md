@@ -217,21 +217,33 @@ instructions.
 
 ## IDE Setup
 
-This repository commits a generated Cursor rule mirror so agent instructions
-are available on clone without manual setup.
+This repository commits IDE instruction mirrors and registry workflow packages
+so contributors get agent guidance on clone without manual setup.
 
-| IDE | Project guidelines |
+### Project guidelines
+
+| Install target | Path |
 | --- | --- |
-| GitHub Copilot | `.github/copilot-instructions.md` |
+| GitHub Copilot | `.github/copilot-instructions.md` (canonical) |
 | Cursor | `.cursor/rules/agents-webapp.mdc` |
+| Claude Code | `CLAUDE.md` |
+| OpenAI Codex | `AGENTS.md` |
 
 Regenerate after editing `copilot-instructions.md`:
 
 ```bash
-npm run sync:cursor-rules
+npm run sync:ide-instructions
 ```
 
-Do not edit `.cursor/rules/agents-webapp.mdc` directly.
+Do not edit generated mirror files directly.
+
+### Registry workflow packages
+
+Install and refresh catalog packages with `npm run agents:install` and
+`npm run agents:update` (pinned `npx agents-repo@1.13.0`; see
+[`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)). Commit `agents.json`,
+`agents-lock.json`, and extracted paths under `.github/agents/`, `.cursor/skills/`,
+`.claude/agents/`, and `.agents/skills/`.
 
 ## Project Docs
 

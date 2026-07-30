@@ -63,10 +63,10 @@ The main contributor instructions live in:
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
-After editing `.github/copilot-instructions.md`, regenerate the Cursor rule:
+After editing `.github/copilot-instructions.md`, regenerate IDE instruction mirrors:
 
 ```bash
-npm run sync:cursor-rules
+npm run sync:ide-instructions
 ```
 
 ## Default branch integration

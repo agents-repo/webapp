@@ -126,7 +126,7 @@ describe('eslint fs-filename rule policy', () => {
 
   it('uses test/ override and documented per-script disables', async () => {
     const { default: eslintConfig } = await import('../eslint.config.js')
-    const syncScript = readFileSync(resolve(repoRoot, 'scripts/sync-cursor-rules.mjs'), 'utf8')
+    const syncScript = readFileSync(resolve(repoRoot, 'scripts/sync-ide-instructions.mjs'), 'utf8')
     const pagesScript = readFileSync(resolve(repoRoot, 'scripts/prepare-pages-dist.mjs'), 'utf8')
 
     const testOverride = eslintConfig.some(

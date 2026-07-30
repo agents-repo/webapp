@@ -192,19 +192,47 @@ GitHub license detection and compliance tooling.
 6. Call out any documentation or workflow impact.
 7. If the PR template cannot be applied, include the same required sections manually.
 
-## IDE deployment mirrors
+## IDE setup
 
-| Path | Source |
-| --- | --- |
-| `.cursor/rules/agents-webapp.mdc` | `.github/copilot-instructions.md` |
+### Project guidelines (repo-specific)
 
-Regenerate after editing `copilot-instructions.md`:
+| Install target | Path | Source |
+| --- | --- | --- |
+| GitHub Copilot | `.github/copilot-instructions.md` | **Canonical** — edit here |
+| Cursor | `.cursor/rules/agents-webapp.mdc` | Mirrored from copilot-instructions |
+| Claude Code | `CLAUDE.md` | Mirrored from copilot-instructions |
+| OpenAI Codex | `AGENTS.md` | Mirrored from copilot-instructions |
+
+Regenerate mirrors after editing `copilot-instructions.md`:
 
 ```bash
-npm run sync:cursor-rules
+npm run sync:ide-instructions
 ```
 
-Do not edit `.cursor/rules/` directly.
+Do not edit `.cursor/rules/`, `CLAUDE.md`, or `AGENTS.md` directly.
+
+### Registry workflow packages (CLI)
+
+Install and refresh catalog packages with the [agents-repo CLI](https://github.com/agents-repo/cli).
+`agents.json` points at `https://registry-proxy.maiconfz.workers.dev` (organization
+catalog proxy).
+
+Bootstrap only when `agents.json` is missing:
+
+```bash
+npx agents-repo@1.13.0 init --targets github-copilot claude-code cursor openai-codex
+```
+
+Use the pinned npm scripts (same CLI version as CI):
+
+```bash
+npm run agents:install   # bulk sync from agents.json
+npm run agents:update    # refresh within semver ranges
+```
+
+Commit `agents.json`, `agents-lock.json`, and extracted paths (`.github/agents/`,
+`.cursor/skills/`, `.claude/agents/`, `.agents/skills/`). Do not hand-edit extracted
+package files.
 
 ## AI Collaboration
 
