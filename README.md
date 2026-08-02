@@ -245,6 +245,15 @@ Install and refresh catalog packages with `npm run agents:install` and
 `agents-lock.json`, and extracted paths under `.github/agents/`, `.cursor/skills/`,
 `.claude/agents/`, and `.agents/skills/`.
 
+## Organization
+
+This app is the public UI for the agents-repo platform. The catalog lives in
+[registry](https://github.com/agents-repo/registry); default fetches go through
+[registry-proxy](https://github.com/agents-repo/registry-proxy). Install packages
+with [cli](https://github.com/agents-repo/cli). See the organization [Ecosystem
+overview](https://github.com/agents-repo/.github/blob/main/docs/ecosystem.md)
+for diagrams and contributor flows.
+
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)
