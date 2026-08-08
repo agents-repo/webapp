@@ -4,6 +4,8 @@ const nonHomeRoutes = [
   '/about',
   '/contact',
   '/help-us',
+  '/repositories',
+  '/repositories/registry',
   '/accessibility',
   '/privacy',
   '/privacidade',

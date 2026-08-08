@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCircleInfo,
+  faCodeBranch,
   faEnvelope,
   faHandsHelping,
   faHeart,
@@ -33,6 +34,10 @@ function Footer() {
                 <NavLink to={siteRoutes.about} className="footer-link">
                   <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
                   About
+                </NavLink>
+                <NavLink to={siteRoutes.repositories} className="footer-link">
+                  <FontAwesomeIcon icon={faCodeBranch} className="me-2" aria-hidden="true" />
+                  Repositories
                 </NavLink>
               </div>
             </nav>

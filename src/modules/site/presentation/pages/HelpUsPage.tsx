@@ -170,8 +170,10 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Related</h2>
               <p className="text-body-secondary mb-0">
-                Questions and feedback on <NavLink to={siteRoutes.contact}>Contact</NavLink>. Project
-                context on <NavLink to={siteRoutes.about}>About</NavLink>.
+                Organization repositories on{' '}
+                <NavLink to={siteRoutes.repositories}>Repositories</NavLink>. Questions and feedback on{' '}
+                <NavLink to={siteRoutes.contact}>Contact</NavLink>. Project context on{' '}
+                <NavLink to={siteRoutes.about}>About</NavLink>.
               </p>
             </Card.Body>
           </Card>

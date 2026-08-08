@@ -137,7 +137,8 @@ See [privacy.md](privacy.md) and [seo.md](seo.md) for verification steps.
 ## Smoke checks after deploy
 
 1. Open <https://agents-repo.org/>.
-2. Verify deep links: `/about`, `/contact`, `/help-us`, `/privacy`, `/privacidade`.
+2. Verify deep links: `/about`, `/contact`, `/help-us`, `/repositories`,
+   `/repositories/registry`, `/privacy`, `/privacidade`.
 3. Confirm the registry catalog loads (default proxy source).
 4. Open <https://agents-repo.github.io/> and confirm the browser redirects to
    `https://agents-repo.org/` with the same path.

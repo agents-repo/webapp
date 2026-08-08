@@ -4,13 +4,19 @@ import {
   siteRoutes,
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
+import {
+  getRepositoryDetailPath,
+  isUnlistedRepositoryDetailPath,
+  parseRepositorySlugFromPathname,
+} from '../nestedSiteRoutes.ts'
+import { getRepositoryBySlug } from '../repositories/repositoryManifest.ts'
 
 export type { SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
 export { getSiteRoutePaths, isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
 
 export interface SiteSeoMeta {
   readonly description: string
-  readonly canonicalPath: SiteRoutePath
+  readonly canonicalPath: string
 }
 
 export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
@@ -32,6 +38,11 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
     description:
       'Help improve the open agents registry. Contribute packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
     canonicalPath: siteRoutes.helpUs,
+  },
+  [siteRoutes.repositories]: {
+    description:
+      'Repositories in the agents-repo organization: registry, webapp, CLI, registry-proxy, and shared governance.',
+    canonicalPath: siteRoutes.repositories,
   },
   [siteRoutes.accessibility]: {
     description:
@@ -56,6 +67,21 @@ export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
 
   if (matchedRoute) {
     return siteSeoMeta[matchedRoute]
+  }
+
+  const repositorySlug = parseRepositorySlugFromPathname(normalizedPath)
+  if (repositorySlug) {
+    const entry = getRepositoryBySlug(repositorySlug)
+    if (entry) {
+      return {
+        description: entry.description,
+        canonicalPath: getRepositoryDetailPath(repositorySlug),
+      }
+    }
+  }
+
+  if (isUnlistedRepositoryDetailPath(normalizedPath)) {
+    return siteSeoMeta[siteRoutes.repositories]
   }
 
   return siteSeoMeta[siteRoutes.home]

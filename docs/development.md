@@ -95,6 +95,26 @@ norm.
 - `.github/` contains AI guidance, issue templates, and workflows
 - `.vscode/` contains recommended workspace defaults
 
+## GitHub repository Website field
+
+Each agents-repo GitHub repository can use a stable page on agents-repo.org as
+its **Website** URL. Slugs under `/repositories/` are **immutable** once
+published — do not rename them; external links and GitHub Website fields depend
+on these paths.
+
+| GitHub repository | Canonical Website URL |
+| --- | --- |
+| `agents-repo/registry` | `https://agents-repo.org/repositories/registry` |
+| `agents-repo/webapp` | `https://agents-repo.org/repositories/webapp` |
+| `agents-repo/cli` | `https://agents-repo.org/repositories/cli` |
+| `agents-repo/registry-proxy` | `https://agents-repo.org/repositories/registry-proxy` |
+| `agents-repo/.github` | `https://agents-repo.org/repositories/github` |
+| `agents-repo.github.io` (Pages deploy) | `https://agents-repo.org/repositories/github-pages` |
+
+Manifest data lives in
+`src/modules/site/application/repositories/repositoryManifest.ts`. Unknown
+`/repositories/:slug` paths redirect client-side to `/repositories`.
+
 ## Styling
 
 - App styling is authored in SCSS only.
