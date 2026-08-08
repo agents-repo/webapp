@@ -43,7 +43,7 @@ function RepositoryCard({ entry }: RepositoryCardProps) {
           ))}
         </div>
         <NavLink to={getRepositoryDetailPath(entry.slug)} className="stretched-link">
-          View repository page
+          View {entry.name} repository page
         </NavLink>
       </Card.Body>
     </Card>

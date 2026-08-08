@@ -1,6 +1,7 @@
 import {
   getRepositoryDetailRoutePaths,
   parseRepositorySlugFromPathname,
+  REPOSITORIES_BASE_PATH,
 } from '../../application/nestedSiteRoutes.ts'
 
 export const siteRoutes = {
@@ -8,7 +9,7 @@ export const siteRoutes = {
   about: '/about',
   contact: '/contact',
   helpUs: '/help-us',
-  repositories: '/repositories',
+  repositories: REPOSITORIES_BASE_PATH,
   accessibility: '/accessibility',
   privacy: '/privacy',
   privacyPtBr: '/privacidade',
