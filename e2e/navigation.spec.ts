@@ -34,4 +34,10 @@ test.describe('Navigation', () => {
 
     await expect(page.getByRole('heading', { name: 'Repositories', level: 1 })).toBeVisible()
   })
+
+  test('redirects nested unknown repository paths to the repositories index', async ({ page }) => {
+    await page.goto('/repositories/foo/bar')
+
+    await expect(page.getByRole('heading', { name: 'Repositories', level: 1 })).toBeVisible()
+  })
 })

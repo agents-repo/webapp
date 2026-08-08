@@ -43,4 +43,8 @@ describe('siteSeoMeta', () => {
     expect(isKnownSiteRoute('/repositories/not-listed')).toBe(false)
     expect(isKnownSiteRoute('/missing-page')).toBe(false)
   })
+
+  it('falls back to repositories SEO meta for unlisted repository slugs', () => {
+    expect(getSiteSeoMeta('/repositories/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.repositories))
+  })
 })

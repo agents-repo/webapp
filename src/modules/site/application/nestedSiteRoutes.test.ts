@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
+import { getRepositorySlugs } from './repositories/repositoryManifest.ts'
 import {
   getRepositoryDetailPath,
   getRepositoryNestedRoutePaths,
-  isRepositorySitePath,
+  isUnlistedRepositoryDetailPath,
   parseRepositorySlugFromPathname,
   REPOSITORIES_BASE_PATH,
 } from './nestedSiteRoutes.ts'
@@ -16,7 +17,7 @@ describe('nestedSiteRoutes', () => {
     const paths = getRepositoryNestedRoutePaths()
     expect(paths[0]).toBe('/repositories')
     expect(paths).toContain('/repositories/cli')
-    expect(paths).toHaveLength(7)
+    expect(paths).toHaveLength(1 + getRepositorySlugs().length)
   })
 
   it('parses known repository slugs only', () => {
@@ -26,10 +27,11 @@ describe('nestedSiteRoutes', () => {
     expect(parseRepositorySlugFromPathname('/repositories/unknown')).toBeUndefined()
   })
 
-  it('detects repository site paths', () => {
-    expect(isRepositorySitePath('/repositories')).toBe(true)
-    expect(isRepositorySitePath('/repositories/webapp')).toBe(true)
-    expect(isRepositorySitePath('/repositories/unknown')).toBe(false)
-    expect(isRepositorySitePath('/about')).toBe(false)
+  it('detects unlisted repository detail paths', () => {
+    expect(isUnlistedRepositoryDetailPath('/repositories')).toBe(false)
+    expect(isUnlistedRepositoryDetailPath('/repositories/webapp')).toBe(false)
+    expect(isUnlistedRepositoryDetailPath('/repositories/unknown')).toBe(true)
+    expect(isUnlistedRepositoryDetailPath('/repositories/foo/bar')).toBe(true)
+    expect(isUnlistedRepositoryDetailPath('/about')).toBe(false)
   })
 })

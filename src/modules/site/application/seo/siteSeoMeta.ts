@@ -4,7 +4,11 @@ import {
   siteRoutes,
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
-import { getRepositoryDetailPath, parseRepositorySlugFromPathname } from '../nestedSiteRoutes.ts'
+import {
+  getRepositoryDetailPath,
+  isUnlistedRepositoryDetailPath,
+  parseRepositorySlugFromPathname,
+} from '../nestedSiteRoutes.ts'
 import { getRepositoryBySlug } from '../repositories/repositoryManifest.ts'
 
 export type { SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
@@ -74,6 +78,10 @@ export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
         canonicalPath: getRepositoryDetailPath(repositorySlug),
       }
     }
+  }
+
+  if (isUnlistedRepositoryDetailPath(normalizedPath)) {
+    return siteSeoMeta[siteRoutes.repositories]
   }
 
   return siteSeoMeta[siteRoutes.home]

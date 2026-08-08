@@ -15,8 +15,7 @@ export function getRepositoryNestedRoutePaths(): string[] {
 }
 
 export function parseRepositorySlugFromPathname(pathname: string): string | undefined {
-  const normalized =
-    pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
+  const normalized = normalizeRepositoriesPathname(pathname)
 
   if (normalized === REPOSITORIES_BASE_PATH) {
     return undefined
@@ -35,13 +34,22 @@ export function parseRepositorySlugFromPathname(pathname: string): string | unde
   return getRepositoryBySlug(slug) ? slug : undefined
 }
 
-export function isRepositorySitePath(pathname: string): boolean {
-  const normalized =
-    pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
+function normalizeRepositoriesPathname(pathname: string): string {
+  return pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
+}
+
+/** True for `/repositories/:slug` URLs that do not match a manifest entry (including extra path segments). */
+export function isUnlistedRepositoryDetailPath(pathname: string): boolean {
+  const normalized = normalizeRepositoriesPathname(pathname)
 
   if (normalized === REPOSITORIES_BASE_PATH) {
-    return true
+    return false
   }
 
-  return parseRepositorySlugFromPathname(normalized) !== undefined
+  const prefix = `${REPOSITORIES_BASE_PATH}/`
+  if (!normalized.startsWith(prefix)) {
+    return false
+  }
+
+  return parseRepositorySlugFromPathname(normalized) === undefined
 }
