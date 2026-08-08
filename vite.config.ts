@@ -59,7 +59,7 @@ export default defineConfig(({ mode }) => {
           'favicon.ico',
           'favicon.svg',
           'icons.svg',
-          'og-image.png',
+          'og-image.jpg',
           'site.webmanifest',
           'web-app-manifest-192x192.png',
           'web-app-manifest-512x512.png',

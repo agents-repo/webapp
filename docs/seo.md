@@ -70,7 +70,7 @@ These patterns already help SEO and must stay in place:
 | --- | --- |
 | Self-referential canonical (absolute URL) | `buildRouteHead()` → `<link rel="canonical">` |
 | `og:url` matches canonical | Same builder function |
-| Absolute `og:image` | `{siteOrigin}/og-image.png` (1200×630) |
+| Absolute `og:image` | `{siteOrigin}/og-image.jpg` (1200×630 JPEG) |
 | OG image dimensions and alt | `og:image:width`, `og:image:height`, `og:image:alt` |
 | Twitter large image card | `twitter:card=summary_large_image` |
 | Meta description (~150–160 chars) | `siteSeoMeta` per route |

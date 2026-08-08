@@ -15,7 +15,7 @@ describe('getRouteHeadData', () => {
 
     expect(head.canonicalUrl).toBe('https://agents-repo.org/about')
     expect(head.ogUrl).toBe(head.canonicalUrl)
-    expect(head.ogImage).toBe('https://agents-repo.org/og-image.png')
+    expect(head.ogImage).toBe('https://agents-repo.org/og-image.jpg')
     expect(head.ogImage).toMatch(/^https:\/\//)
   })
 
@@ -46,6 +46,7 @@ describe('renderRouteHeadHtml', () => {
     expect(html).toContain('rel="canonical"')
     expect(html).toContain('property="og:title"')
     expect(html).toContain('name="twitter:card" content="summary_large_image"')
+    expect(html).toContain('property="og:image" content="https://agents-repo.org/og-image.jpg"')
     expect(html).toContain('application/ld+json')
   })
 })
