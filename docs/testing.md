@@ -235,5 +235,7 @@ npm run test
 npm run typecheck
 ```
 
+`lint:all` runs actionlint on `.github/workflows/` via `lint:workflows`.
+
 For UI changes, also run `npm run test:a11y` and, when changing flows or
 routing, `npm run test:e2e` (local only — see [e2e-testing.md](e2e-testing.md)).
