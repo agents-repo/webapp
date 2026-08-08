@@ -96,9 +96,10 @@ function AboutPage() {
               <h2 className="h4">Get involved</h2>
               <p className="text-body-secondary">
                 Questions, feedback, and contributions are welcome. Reach out on{' '}
-                <NavLink to={siteRoutes.contact}>Contact</NavLink> or see how to contribute on{' '}
-                <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>. Source code and registry content live
-                on GitHub:
+                <NavLink to={siteRoutes.contact}>Contact</NavLink>, see how to contribute on{' '}
+                <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>, or browse all organization repositories
+                on <NavLink to={siteRoutes.repositories}>Repositories</NavLink>. Source code and registry
+                content also live on GitHub:
               </p>
               <ul className="mb-0">
                 <li>

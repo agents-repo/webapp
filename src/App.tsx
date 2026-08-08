@@ -34,6 +34,8 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
     HelpUsPage,
     PrivacyPage,
     PrivacidadePage,
+    RepositoriesIndexPage,
+    RepositoryDetailPage,
   } = lazyPages
 
   return (
@@ -45,6 +47,8 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={siteRoutes.about} element={<AboutPage />} />
       <Route path={siteRoutes.contact} element={<ContactPage />} />
       <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
+      <Route path={siteRoutes.repositories} element={<RepositoriesIndexPage />} />
+      <Route path={`${siteRoutes.repositories}/:slug`} element={<RepositoryDetailPage />} />
       <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
       <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
       <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
