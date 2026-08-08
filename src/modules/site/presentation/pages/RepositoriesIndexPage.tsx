@@ -49,8 +49,7 @@ function RepositoriesIndexPage() {
                   aria-label={externalLinkAccessibleName('Ecosystem overview on GitHub')}
                 >
                   Ecosystem overview on GitHub
-                </a>
-                .
+                </a>.
               </p>
             </Card.Body>
           </Card>
