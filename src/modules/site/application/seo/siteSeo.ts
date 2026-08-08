@@ -17,7 +17,7 @@ export function getSiteOrigin(override?: string): string {
 
 export const siteOrigin = getSiteOrigin()
 
-export const ogImagePath = '/og-image.png'
+export const ogImagePath = '/og-image.jpg'
 
 export function getOgImageUrl(origin: string = siteOrigin): string {
   return `${origin}${ogImagePath}`
