@@ -155,7 +155,10 @@ function withBootstrapLock(install) {
   }
 
   if (!releaseLock) {
-    throw new Error('Timed out waiting for actionlint bootstrap lock');
+    throw new Error(
+      `Timed out after ${BOOTSTRAP_LOCK_WAIT_MS}ms waiting for actionlint bootstrap lock at ${BOOTSTRAP_LOCK_FILE}. ` +
+        'If no other process is installing actionlint, remove the stale lock file and retry.',
+    );
   }
 
   try {
