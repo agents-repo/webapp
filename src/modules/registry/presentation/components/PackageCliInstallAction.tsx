@@ -29,6 +29,7 @@ function PackageCliInstallActionInner({
   controlId,
 }: PackageCliInstallActionProps) {
   const toggleRef = useRef<HTMLButtonElement>(null)
+  const popoverInteractionRef = useRef(0)
   const initFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const installFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showPopover, setShowPopover] = useState(false)
@@ -85,15 +86,24 @@ function PackageCliInstallActionInner({
     [],
   )
 
-  const handleTogglePopover = () => {
-    setShowPopover((current) => !current)
-  }
-
-  const handleHidePopover = () => {
+  const closePopover = useCallback(() => {
+    popoverInteractionRef.current += 1
     setShowPopover(false)
     setSelectedTargetIds([])
     setLiveMessage('')
     clearCopyFeedback()
+  }, [clearCopyFeedback])
+
+  const handleTogglePopover = () => {
+    if (showPopover) {
+      closePopover()
+      return
+    }
+    setShowPopover(true)
+  }
+
+  const handleHidePopover = () => {
+    closePopover()
   }
 
   const copyCommand = useCallback(
@@ -101,7 +111,11 @@ function PackageCliInstallActionInner({
       text: string,
       onSuccess: () => void,
     ) => {
+      const interactionAtStart = popoverInteractionRef.current
       const result = await copyTextToClipboard(text)
+      if (interactionAtStart !== popoverInteractionRef.current) {
+        return
+      }
       if (result === 'success') {
         setLiveMessage(COPY_FEEDBACK_MESSAGE)
         onSuccess()

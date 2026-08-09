@@ -76,6 +76,39 @@ describe('PackageCliInstallAction', () => {
     )
   })
 
+  it('does not show copy feedback after popover is dismissed before clipboard resolves', async () => {
+    const user = userEvent.setup()
+    let resolveWrite: (() => void) | undefined
+    const writeText = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveWrite = resolve
+        }),
+    )
+    vi.stubGlobal('navigator', { clipboard: { writeText } })
+
+    render(
+      <PackageCliInstallAction
+        packageName="sample-agent"
+        packageId="agents-repo/sample-agent"
+        controlId="agents-repo--sample-agent"
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'CLI install for sample-agent' }))
+    await user.click(screen.getByRole('button', { name: 'Copy install command for sample-agent' }))
+
+    await user.keyboard('{Escape}')
+
+    resolveWrite?.()
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalled()
+    })
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.queryByText('Copied to clipboard.')).not.toBeInTheDocument()
+  })
+
   it('copies install command to clipboard', async () => {
     const user = userEvent.setup()
     const writeText = vi.fn().mockResolvedValue(undefined)
