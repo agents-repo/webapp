@@ -217,17 +217,21 @@ Install and refresh catalog packages with the [agents-repo CLI](https://github.c
 `agents.json` points at `https://registry-proxy.maiconfz.workers.dev` (organization
 catalog proxy).
 
-Bootstrap only when `agents.json` is missing:
+Bootstrap only when `agents.json` is missing (one-time; use a published CLI
+release or `npm exec agents-repo -- init` after `npm ci`):
 
 ```bash
-npx agents-repo@1.13.0 init --targets github-copilot claude-code cursor openai-codex
+npm exec agents-repo -- init --targets github-copilot claude-code cursor openai-codex
 ```
 
-Use the pinned npm scripts (same CLI version as CI):
+Use the npm scripts for bulk install, update, and CI (CLI version is pinned in
+`package.json` / `package-lock.json`, distinct from registry packages in
+`agents-lock.json`; same commands as pr-baseline after `npm ci`):
 
 ```bash
 npm run agents:install   # bulk sync from agents.json
 npm run agents:update    # refresh within semver ranges
+npm run agents:ci        # lock-pinned registry install (CI parity)
 ```
 
 Commit `agents.json`, `agents-lock.json`, and extracted paths (`.github/agents/`,
