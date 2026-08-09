@@ -1,17 +1,14 @@
 import type { ComponentProps } from 'react'
 import type { Components } from 'react-markdown'
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown, { defaultUrlTransform } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Link } from 'react-router-dom'
-
-function isInternalGuideHref(href: string): boolean {
-  return href.startsWith('/guide') || href === '/repositories' || href.startsWith('/repositories/')
-}
+import { isInternalSiteHref } from './guideInternalHref.ts'
 
 type GuideMarkdownAnchorProps = ComponentProps<'a'>
 
 function GuideMarkdownAnchor({ href, children, ...props }: GuideMarkdownAnchorProps) {
-  if (href && isInternalGuideHref(href)) {
+  if (href && isInternalSiteHref(href)) {
     return (
       <Link to={href} {...props}>
         {children}
@@ -37,7 +34,11 @@ interface GuideMarkdownProps {
 function GuideMarkdown({ markdown }: GuideMarkdownProps) {
   return (
     <div className="guide-markdown">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={guideMarkdownComponents}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        urlTransform={defaultUrlTransform}
+        components={guideMarkdownComponents}
+      >
         {markdown}
       </ReactMarkdown>
     </div>
