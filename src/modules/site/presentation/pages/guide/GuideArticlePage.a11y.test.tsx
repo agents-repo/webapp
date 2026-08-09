@@ -14,7 +14,7 @@ describe('GuideArticlePage accessibility', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Getting started', level: 1 })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Download markdown' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Download Markdown' })).toHaveAttribute(
       'href',
       '/guide/getting-started.md',
     )
