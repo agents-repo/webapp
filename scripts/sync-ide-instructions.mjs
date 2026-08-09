@@ -73,9 +73,9 @@ function rewriteMarkdownTarget(url, targetDir) {
   return `${rewritten}${titleSuffix}`;
 }
 
+// Copilot instructions use simple inline markdown links only.
+/* eslint-disable complexity, sonarjs/cognitive-complexity -- linear scan for markdown links */
 function rewriteRelativeLinks(body, targetDir) {
-  // Copilot instructions use simple inline markdown links only.
-  /* eslint-disable complexity, sonarjs/cognitive-complexity -- linear scan for markdown links */
   let result = '';
   let index = 0;
   while (index < body.length) {
@@ -117,6 +117,7 @@ function rewriteRelativeLinks(body, targetDir) {
   }
   return result;
 }
+/* eslint-enable complexity, sonarjs/cognitive-complexity */
 
 function applyTitleTransforms(body) {
   let result = body;
