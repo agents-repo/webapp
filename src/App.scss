@@ -283,19 +283,21 @@
   position: sticky;
   top: 5.5rem;
   max-height: calc(100vh - 6rem);
+  overflow-x: hidden;
   overflow-y: auto;
+  min-width: 0;
   padding-bottom: 1rem;
 }
 
 // Guide search: use theme secondary for borders (see $secondary in bootstrap-theme.scss).
 // Default --bs-border-color ($border-color) is too faint on the light body background.
 .guide-search {
-  // Room for focus indication; sidebar uses overflow-y: auto and would clip outer rings.
-  padding: 0.125rem;
-  margin: -0.125rem;
+  min-width: 0;
 }
 
 .guide-search-control {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid var(--bs-secondary);
   border-radius: var(--bs-border-radius-sm);
 
@@ -304,6 +306,7 @@
   }
 
   > .guide-search-control__input {
+    min-width: 0;
     border-radius: 0 calc(var(--bs-border-radius-sm) - 1px) calc(var(--bs-border-radius-sm) - 1px) 0;
   }
 
@@ -331,6 +334,7 @@
 
 .guide-search-results {
   max-height: 16rem;
+  overflow-x: hidden;
   overflow-y: auto;
   border-radius: var(--bs-border-radius-sm);
   border: 1px solid var(--bs-secondary);
@@ -370,6 +374,7 @@
   color: var(--bs-body-color);
   text-decoration: none;
   padding: 0.35rem 0.5rem;
+  overflow-wrap: anywhere;
 }
 
 .guide-sidebar-link.active,
