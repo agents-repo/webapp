@@ -1,8 +1,6 @@
-import { siteName, siteName as ogSiteName } from '../accessibility/documentTitleFormat.ts'
+export { siteName, siteName as ogSiteName } from '../accessibility/documentTitleFormat.ts'
 
 const defaultSiteOrigin = 'https://agents-repo.org'
-
-export { siteName, ogSiteName }
 
 interface SiteImportMetaEnv {
   readonly VITE_SITE_URL?: string
