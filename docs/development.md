@@ -126,7 +126,8 @@ Public guides are markdown files in `src/content/guide/` with YAML frontmatter
 
 Add or edit a guide by creating `src/content/guide/<slug>.md` and ensuring the
 slug is unique. Cross-link other guides with paths like `/guide/installing-packages`.
-Run `npm run lint:md` on new content.
+The in-app guide search indexes each page's title, description, and body text from
+the same manifest as the sidebar. Run `npm run lint:md` on new content.
 
 When CLI commands, install targets, or registry submission workflows change in
 upstream repos, manually update the affected guide pages (especially

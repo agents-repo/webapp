@@ -287,6 +287,41 @@
   padding-bottom: 1rem;
 }
 
+.guide-search-results {
+  max-height: 16rem;
+  overflow-y: auto;
+  border-radius: 0.375rem;
+}
+
+.guide-search-result {
+  border-inline: none;
+  border-radius: 0;
+}
+
+.guide-search-result:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.guide-search-result:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.guide-search-result-active,
+.guide-search-result:focus-visible {
+  background-color: var(--bs-primary-bg-subtle);
+  color: var(--bs-body-color);
+}
+
+.guide-search-result-title {
+  color: var(--bs-body-color);
+}
+
+.guide-search-empty {
+  cursor: default;
+}
+
 .guide-sidebar-link {
   border-radius: 0.375rem;
   color: var(--bs-body-color);
