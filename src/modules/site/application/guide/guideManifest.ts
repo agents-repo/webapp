@@ -1,6 +1,6 @@
-import matter from 'gray-matter'
 import { getGuideCatalogEntry, guideCatalog } from './guideCatalog.ts'
 import type { GuideManifestEntry, GuideSectionGroup } from './guideManifest.types.ts'
+import { readFrontmatterScalar, splitGuideMarkdown } from './parseGuideMarkdown.ts'
 
 const guideRawModules = import.meta.glob('../../../../content/guide/*.md', {
   eager: true,
@@ -31,10 +31,9 @@ function buildGuideEntries(): readonly GuideManifestEntry[] {
       throw new Error(`Guide markdown ${slug} is missing from guideCatalog.ts`)
     }
 
-    const parsed = matter(raw)
-    const frontmatterTitle = typeof parsed.data.title === 'string' ? parsed.data.title.trim() : ''
-    const frontmatterDescription =
-      typeof parsed.data.description === 'string' ? parsed.data.description.trim() : ''
+    const { frontmatter, body } = splitGuideMarkdown(raw)
+    const frontmatterTitle = readFrontmatterScalar(frontmatter, 'title')
+    const frontmatterDescription = readFrontmatterScalar(frontmatter, 'description')
 
     if (frontmatterTitle !== catalogEntry.title || frontmatterDescription !== catalogEntry.description) {
       throw new Error(`Guide ${slug} frontmatter does not match guideCatalog.ts`)
@@ -42,7 +41,7 @@ function buildGuideEntries(): readonly GuideManifestEntry[] {
 
     entries.push({
       ...catalogEntry,
-      bodyMarkdown: parsed.content.trim(),
+      bodyMarkdown: body,
     })
   }
 
