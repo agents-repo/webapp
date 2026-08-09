@@ -1,6 +1,7 @@
+import { useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
-import { Button } from 'react-bootstrap'
+import { Button, Overlay, Tooltip } from 'react-bootstrap'
 
 export interface CliTerminalCommandRowProps {
   readonly commandText: string
@@ -10,6 +11,7 @@ export interface CliTerminalCommandRowProps {
   readonly isPlaceholder?: boolean
   readonly labelId: string
   readonly dataTestId?: string
+  readonly copyFeedback?: string
 }
 
 function CliTerminalCommandRow({
@@ -20,7 +22,12 @@ function CliTerminalCommandRow({
   isPlaceholder = false,
   labelId,
   dataTestId,
+  copyFeedback,
 }: CliTerminalCommandRowProps) {
+  const copyButtonRef = useRef<HTMLButtonElement>(null)
+  const showCopyTooltip = Boolean(copyFeedback)
+  const copyTooltipId = `${labelId}-copy-tooltip`
+
   const terminalClassName = isPlaceholder
     ? 'package-cli-terminal package-cli-terminal--placeholder'
     : 'package-cli-terminal'
@@ -40,15 +47,30 @@ function CliTerminalCommandRow({
         {commandText}
       </span>
       <Button
+        ref={copyButtonRef}
         type="button"
         variant="link"
         className="package-cli-terminal__copy p-0 border-0"
         aria-label={copyLabel}
+        aria-describedby={showCopyTooltip ? copyTooltipId : undefined}
         disabled={copyDisabled}
         onClick={onCopy}
       >
         <FontAwesomeIcon icon={faCopy} aria-hidden="true" />
       </Button>
+
+      <Overlay target={copyButtonRef} show={showCopyTooltip} placement="top">
+        {(overlayProps) => (
+          <Tooltip
+            id={copyTooltipId}
+            {...overlayProps}
+            className="package-cli-copy-tooltip"
+            role="status"
+          >
+            {copyFeedback}
+          </Tooltip>
+        )}
+      </Overlay>
     </div>
   )
 }

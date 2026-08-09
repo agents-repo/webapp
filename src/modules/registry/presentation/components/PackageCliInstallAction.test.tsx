@@ -37,15 +37,15 @@ describe('PackageCliInstallAction', () => {
     await user.click(screen.getByRole('button', { name: 'CLI install for sample-agent' }))
 
     expect(screen.getByText('Choose AI tool')).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: 'GitHub Copilot' })).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: 'Claude Code' })).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: 'Cursor' })).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: 'OpenAI Codex' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'GitHub Copilot' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Claude Code' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Cursor' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'OpenAI Codex' })).toBeInTheDocument()
 
     const initCopy = screen.getByRole('button', { name: 'Copy init command for sample-agent' })
     expect(initCopy).toBeDisabled()
 
-    await user.click(screen.getByRole('radio', { name: 'Cursor' }))
+    await user.click(screen.getByRole('checkbox', { name: 'Cursor' }))
 
     expect(screen.getByTestId('cli-init-terminal-agents-repo--sample-agent')).toHaveTextContent(
       'npx agents-repo init --targets cursor',
@@ -53,6 +53,26 @@ describe('PackageCliInstallAction', () => {
     expect(initCopy).toBeEnabled()
     expect(screen.getByTestId('cli-install-terminal-agents-repo--sample-agent')).toHaveTextContent(
       "npx agents-repo install 'agents-repo/sample-agent'",
+    )
+  })
+
+  it('builds init command with multiple selected targets in platform order', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <PackageCliInstallAction
+        packageName="sample-agent"
+        packageId="agents-repo/sample-agent"
+        controlId="agents-repo--sample-agent"
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'CLI install for sample-agent' }))
+    await user.click(screen.getByRole('checkbox', { name: 'Cursor' }))
+    await user.click(screen.getByRole('checkbox', { name: 'GitHub Copilot' }))
+
+    expect(screen.getByTestId('cli-init-terminal-agents-repo--sample-agent')).toHaveTextContent(
+      'npx agents-repo init --targets github-copilot cursor',
     )
   })
 
@@ -74,6 +94,9 @@ describe('PackageCliInstallAction', () => {
 
     await waitFor(() => {
       expect(writeText).toHaveBeenCalledWith("npx agents-repo install 'agents-repo/sample-agent'")
+    })
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('Copied to clipboard.')
     })
   })
 

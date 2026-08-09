@@ -11,8 +11,10 @@ export const buildCliInstallCommand = (packageRef: string): string => {
   return `npx agents-repo install ${shellSingleQuote(trimmed)}`
 }
 
-export const buildCliInitCommand = (targetId: InstallTargetId): string => {
-  return `npx agents-repo init --targets ${targetId}`
+export const buildCliInitCommand = (targetIds: readonly InstallTargetId[]): string => {
+  const selected = new Set(targetIds)
+  const orderedTargets = PLATFORM_INSTALL_TARGETS.filter((targetId) => selected.has(targetId))
+  return `npx agents-repo init --targets ${orderedTargets.join(' ')}`
 }
 
 export const getCliInitPlaceholderCommand = (): string => {
@@ -20,5 +22,5 @@ export const getCliInitPlaceholderCommand = (): string => {
 }
 
 export const getCliInstallPopoverIntro = (): string => {
-  return 'Select an AI tool, then run the init command in your project root. After that, install the package with the command below.'
+  return 'Select one or more AI tools, then run the init command in your project root. After that, install the package with the command below.'
 }

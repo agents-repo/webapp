@@ -1,6 +1,6 @@
-import { useCallback, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTerminal } from '@fortawesome/free-solid-svg-icons'
+import { faSquare, faSquareCheck, faTerminal } from '@fortawesome/free-solid-svg-icons'
 import { Button, Overlay, Popover, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
 import type { InstallTargetId } from '../../domain/package'
 import { getInstallTargetLabel } from '../../application/installTargets'
@@ -14,6 +14,9 @@ import {
 import { copyTextToClipboard } from '../../../site/application/clipboard/copyTextToClipboard'
 import CliTerminalCommandRow from './CliTerminalCommandRow'
 
+const COPY_FEEDBACK_MESSAGE = 'Copied to clipboard.'
+const COPY_FEEDBACK_DURATION_MS = 3000
+
 export interface PackageCliInstallActionProps {
   readonly packageName: string
   readonly packageId: string
@@ -26,9 +29,13 @@ function PackageCliInstallActionInner({
   controlId,
 }: PackageCliInstallActionProps) {
   const toggleRef = useRef<HTMLButtonElement>(null)
+  const initFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const installFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showPopover, setShowPopover] = useState(false)
-  const [selectedTargetId, setSelectedTargetId] = useState<InstallTargetId | null>(null)
+  const [selectedTargetIds, setSelectedTargetIds] = useState<InstallTargetId[]>([])
   const [liveMessage, setLiveMessage] = useState('')
+  const [initCopyFeedback, setInitCopyFeedback] = useState('')
+  const [installCopyFeedback, setInstallCopyFeedback] = useState('')
 
   const reactId = useId()
   const toggleId = `cli-install-toggle-${controlId}`
@@ -37,38 +44,92 @@ function PackageCliInstallActionInner({
   const installLabelId = `cli-install-label-${controlId}`
   const targetGroupName = `cli-target-${controlId}-${reactId.replace(/:/g, '')}`
 
+  useEffect(() => {
+    return () => {
+      if (initFeedbackTimeoutRef.current) {
+        clearTimeout(initFeedbackTimeoutRef.current)
+      }
+      if (installFeedbackTimeoutRef.current) {
+        clearTimeout(installFeedbackTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  const clearCopyFeedback = useCallback(() => {
+    setInitCopyFeedback('')
+    setInstallCopyFeedback('')
+    if (initFeedbackTimeoutRef.current) {
+      clearTimeout(initFeedbackTimeoutRef.current)
+      initFeedbackTimeoutRef.current = null
+    }
+    if (installFeedbackTimeoutRef.current) {
+      clearTimeout(installFeedbackTimeoutRef.current)
+      installFeedbackTimeoutRef.current = null
+    }
+  }, [])
+
+  const showCopyFeedback = useCallback(
+    (
+      setFeedback: (message: string) => void,
+      timeoutRef: { current: ReturnType<typeof setTimeout> | null },
+    ) => {
+      setFeedback(COPY_FEEDBACK_MESSAGE)
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+      timeoutRef.current = setTimeout(() => {
+        setFeedback('')
+        timeoutRef.current = null
+      }, COPY_FEEDBACK_DURATION_MS)
+    },
+    [],
+  )
+
   const handleTogglePopover = () => {
     setShowPopover((current) => !current)
   }
 
   const handleHidePopover = () => {
     setShowPopover(false)
-    setSelectedTargetId(null)
+    setSelectedTargetIds([])
     setLiveMessage('')
+    clearCopyFeedback()
   }
 
-  const copyCommand = useCallback(async (text: string, successMessage: string) => {
-    const result = await copyTextToClipboard(text)
-    if (result === 'success') {
-      setLiveMessage(successMessage)
-      return
-    }
-    setLiveMessage('Could not copy to clipboard. Copy the command manually.')
-  }, [])
+  const copyCommand = useCallback(
+    async (
+      text: string,
+      onSuccess: () => void,
+    ) => {
+      const result = await copyTextToClipboard(text)
+      if (result === 'success') {
+        setLiveMessage(COPY_FEEDBACK_MESSAGE)
+        onSuccess()
+        return
+      }
+      setLiveMessage('Could not copy to clipboard. Copy the command manually.')
+    },
+    [],
+  )
 
   const handleCopyInit = () => {
-    if (!selectedTargetId) {
+    if (selectedTargetIds.length === 0) {
       return
     }
-    void copyCommand(buildCliInitCommand(selectedTargetId), 'Copied init command to clipboard.')
+    void copyCommand(buildCliInitCommand(selectedTargetIds), () => {
+      showCopyFeedback(setInitCopyFeedback, initFeedbackTimeoutRef)
+    })
   }
 
   const handleCopyInstall = () => {
-    void copyCommand(buildCliInstallCommand(packageId), 'Copied install command to clipboard.')
+    void copyCommand(buildCliInstallCommand(packageId), () => {
+      showCopyFeedback(setInstallCopyFeedback, installFeedbackTimeoutRef)
+    })
   }
 
-  const initCommandText = selectedTargetId
-    ? buildCliInitCommand(selectedTargetId)
+  const hasSelectedTargets = selectedTargetIds.length > 0
+  const initCommandText = hasSelectedTargets
+    ? buildCliInitCommand(selectedTargetIds)
     : getCliInitPlaceholderCommand()
 
   return (
@@ -106,23 +167,35 @@ function PackageCliInstallActionInner({
             <fieldset className="package-cli-target-fieldset border-0 p-0 m-0">
               <legend className="form-label small fw-semibold mb-2">Choose AI tool</legend>
               <ToggleButtonGroup
-                type="radio"
+                type="checkbox"
                 name={targetGroupName}
-                value={selectedTargetId ?? ''}
-                onChange={(value) => setSelectedTargetId(value as InstallTargetId)}
+                value={selectedTargetIds}
+                onChange={(values) => setSelectedTargetIds(values as InstallTargetId[])}
                 className="package-cli-target-group d-flex flex-wrap gap-2"
               >
-                {PLATFORM_INSTALL_TARGETS.map((targetId) => (
-                  <ToggleButton
-                    key={targetId}
-                    id={`${targetGroupName}-${targetId}`}
-                    value={targetId}
-                    variant="outline-secondary"
-                    size="sm"
-                  >
-                    {getInstallTargetLabel(targetId)}
-                  </ToggleButton>
-                ))}
+                {PLATFORM_INSTALL_TARGETS.map((targetId) => {
+                  const isSelected = selectedTargetIds.includes(targetId)
+                  const label = getInstallTargetLabel(targetId)
+
+                  return (
+                    <ToggleButton
+                      key={targetId}
+                      id={`${targetGroupName}-${targetId}`}
+                      value={targetId}
+                      variant="outline-secondary"
+                      size="sm"
+                      className="package-cli-target-pill rounded-pill d-inline-flex align-items-center gap-2"
+                      aria-label={label}
+                    >
+                      <FontAwesomeIcon
+                        icon={isSelected ? faSquareCheck : faSquare}
+                        className="package-cli-target-pill__checkbox"
+                        aria-hidden="true"
+                      />
+                      <span>{label}</span>
+                    </ToggleButton>
+                  )
+                })}
               </ToggleButtonGroup>
             </fieldset>
 
@@ -132,10 +205,11 @@ function PackageCliInstallActionInner({
                 commandText={initCommandText}
                 copyLabel={`Copy init command for ${packageName}`}
                 onCopy={handleCopyInit}
-                copyDisabled={!selectedTargetId}
-                isPlaceholder={!selectedTargetId}
+                copyDisabled={!hasSelectedTargets}
+                isPlaceholder={!hasSelectedTargets}
                 labelId={initLabelId}
                 dataTestId={`cli-init-terminal-${controlId}`}
+                copyFeedback={initCopyFeedback}
               />
             </div>
 
@@ -147,6 +221,7 @@ function PackageCliInstallActionInner({
                 onCopy={handleCopyInstall}
                 labelId={installLabelId}
                 dataTestId={`cli-install-terminal-${controlId}`}
+                copyFeedback={installCopyFeedback}
               />
             </div>
 

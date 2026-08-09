@@ -26,8 +26,14 @@ describe('cliInstallCopy', () => {
 
   it('buildCliInitCommand formats each platform target', () => {
     for (const targetId of INSTALL_TARGET_IDS) {
-      expect(buildCliInitCommand(targetId)).toBe(`npx agents-repo init --targets ${targetId}`)
+      expect(buildCliInitCommand([targetId])).toBe(`npx agents-repo init --targets ${targetId}`)
     }
+  })
+
+  it('buildCliInitCommand preserves platform order for multiple targets', () => {
+    expect(buildCliInitCommand(['cursor', 'github-copilot'])).toBe(
+      'npx agents-repo init --targets github-copilot cursor',
+    )
   })
 
   it('exposes stable platform target order', () => {

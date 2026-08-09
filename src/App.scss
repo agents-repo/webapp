@@ -114,6 +114,21 @@
   white-space: nowrap;
 }
 
+.package-cli-target-pill {
+  padding-inline: 0.75rem;
+}
+
+.package-cli-target-pill__checkbox {
+  font-size: 0.875em;
+  opacity: 0.9;
+}
+
+.package-cli-copy-tooltip {
+  --bs-tooltip-bg: rgba(25, 135, 84, 0.96);
+  --bs-tooltip-color: #fff;
+  font-size: 0.75rem;
+}
+
 .package-cli-terminal {
   display: flex;
   align-items: flex-start;
