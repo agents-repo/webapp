@@ -5,6 +5,11 @@ import {
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
 import {
+  getGuideDetailPath,
+  getGuideCatalogEntry,
+} from '../guide/guideCatalog.ts'
+import { isUnlistedGuideDetailPath, parseGuideSlugFromPathname } from '../guide/guideNestedSiteRoutes.ts'
+import {
   getRepositoryDetailPath,
   isUnlistedRepositoryDetailPath,
   parseRepositorySlugFromPathname,
@@ -38,6 +43,11 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
     description:
       'Help improve the open agents registry. Contribute packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
     canonicalPath: siteRoutes.helpUs,
+  },
+  [siteRoutes.guide]: {
+    description:
+      'Guides for browsing the catalog, installing packages with the CLI, contributing to the registry, and downloading markdown for AI agents.',
+    canonicalPath: siteRoutes.guide,
   },
   [siteRoutes.repositories]: {
     description:
@@ -78,6 +88,21 @@ export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
         canonicalPath: getRepositoryDetailPath(repositorySlug),
       }
     }
+  }
+
+  const guideSlug = parseGuideSlugFromPathname(normalizedPath)
+  if (guideSlug) {
+    const guide = getGuideCatalogEntry(guideSlug)
+    if (guide) {
+      return {
+        description: guide.description,
+        canonicalPath: getGuideDetailPath(guideSlug),
+      }
+    }
+  }
+
+  if (isUnlistedGuideDetailPath(normalizedPath)) {
+    return siteSeoMeta[siteRoutes.guide]
   }
 
   if (isUnlistedRepositoryDetailPath(normalizedPath)) {

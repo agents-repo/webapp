@@ -115,6 +115,25 @@ Manifest data lives in
 `src/modules/site/application/repositories/repositoryManifest.ts`. Unknown
 `/repositories/:slug` paths redirect client-side to `/repositories`.
 
+## Site guides (`/guide`)
+
+Public guides are markdown files in `src/content/guide/` with YAML frontmatter
+(`title`, `description`, `order`, `section`). At build time:
+
+- Vite bundles content through `src/modules/site/application/guide/guideManifest.ts`
+- `scripts/copy-guide-markdown.mjs` copies each file to `dist/guide/<slug>.md` and
+  writes `dist/llms.txt` with absolute URLs
+
+Add or edit a guide by creating `src/content/guide/<slug>.md` and ensuring the
+slug is unique. Cross-link other guides with paths like `/guide/installing-packages`.
+Run `npm run lint:md` on new content.
+
+When CLI commands, install targets, or registry submission workflows change in
+upstream repos, manually update the affected guide pages (especially
+`cli-commands`, `install-targets`, `cli-doctor`, and `submitting-a-package`).
+Compare with [agents-repo/cli `docs/npm-cli-parity.md`](https://github.com/agents-repo/cli/blob/main/docs/npm-cli-parity.md)
+on CLI releases.
+
 ## Styling
 
 - App styling is authored in SCSS only.

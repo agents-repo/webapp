@@ -4,6 +4,9 @@ const nonHomeRoutes = [
   '/about',
   '/contact',
   '/help-us',
+  '/guide',
+  '/guide/getting-started',
+  '/guide/installing-packages',
   '/repositories',
   '/repositories/registry',
   '/accessibility',
@@ -46,6 +49,18 @@ test.describe('SEO crawl files', () => {
     const content = await page.content()
     expect(content).toContain('<urlset')
     await expect(page.getByRole('heading', { name: homeHeading, level: 1 })).not.toBeVisible()
+  })
+
+  test('serves guide markdown and llms.txt as static files', async ({ request }) => {
+    const markdownResponse = await request.get('/guide/getting-started.md')
+    await expect(markdownResponse).toBeOK()
+    const markdownBody = await markdownResponse.text()
+    expect(markdownBody).toContain('Agents Repo')
+
+    const llmsResponse = await request.get('/llms.txt')
+    await expect(llmsResponse).toBeOK()
+    const llmsBody = await llmsResponse.text()
+    expect(llmsBody).toContain('https://agents-repo.org/guide/getting-started.md')
   })
 
   test('does not redirect robots.txt to home when service worker is active', async ({ page }) => {
