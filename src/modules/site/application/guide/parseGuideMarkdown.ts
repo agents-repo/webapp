@@ -21,7 +21,7 @@ export function splitGuideMarkdown(raw: string): SplitGuideMarkdownResult {
 }
 
 export function readFrontmatterScalar(frontmatter: string, key: string): string {
-  const pattern = new RegExp(`^${key}:\\s*(.+)$`, 'm')
+  const pattern = new RegExp(String.raw`^${key}:\s*(.+)$`, 'm')
   const match = pattern.exec(frontmatter)
   return match?.[1]?.trim() ?? ''
 }

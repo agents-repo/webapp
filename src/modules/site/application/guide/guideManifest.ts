@@ -22,7 +22,7 @@ function buildGuideEntries(): readonly GuideManifestEntry[] {
 
   for (const [modulePath, raw] of Object.entries(guideRawModules)) {
     if (typeof raw !== 'string') {
-      throw new Error(`Guide module ${modulePath} did not load as raw text`)
+      throw new TypeError(`Guide module ${modulePath} did not load as raw text`)
     }
 
     const slug = slugFromModulePath(modulePath)
