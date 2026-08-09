@@ -48,7 +48,10 @@ export interface RegistryCatalog {
 }
 
 const isSlugChar = (char: string): boolean => {
-  const code = char.charCodeAt(0)
+  const code = char.codePointAt(0)
+  if (code === undefined) {
+    return false
+  }
   return (code >= 97 && code <= 122) || (code >= 48 && code <= 57) || char === '-'
 }
 
@@ -60,7 +63,8 @@ const encodeSlugSegment = (value: string): string => {
       continue
     }
 
-    encoded += `_${char.charCodeAt(0).toString(16)}_`
+    const point = char.codePointAt(0)
+    encoded += `_${(point ?? 0).toString(16)}_`
   }
 
   return encoded.length > 0 ? encoded : 'unknown'

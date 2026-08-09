@@ -10,10 +10,11 @@
   "scripts": {
     "dev": "vite",
     "env:check": "node scripts/validate-env.mjs",
-    "build": "tsc -b && vite build && node --experimental-strip-types scripts/copy-guide-markdown.mjs && node scripts/remove-e2e-build-marker.mjs",
+    "build": "tsc -b && vite build && node --experimental-strip-types scripts/copy-doc-markdown.mjs && node scripts/remove-e2e-build-marker.mjs",
     "build:vite": "vite build && node scripts/remove-e2e-build-marker.mjs",
     "build:pages": "npm run build && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode production",
-    "build:pages:e2e": "tsc -b && vite build --mode e2e && node --experimental-strip-types scripts/copy-guide-markdown.mjs --mode e2e && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode e2e && node scripts/write-e2e-build-marker.mjs",
+    "build:pages:e2e": "tsc -b && vite build --mode e2e && node --experimental-strip-types scripts/copy-doc-markdown.mjs --mode e2e && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode e2e && node scripts/write-e2e-build-marker.mjs",
+    "release": "semantic-release",
     "release:dry-run": "semantic-release --dry-run",
     "lint": "eslint .",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",

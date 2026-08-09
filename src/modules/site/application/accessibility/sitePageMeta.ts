@@ -4,11 +4,11 @@ import {
   siteRoutes,
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
-import { getGuideCatalogEntry } from '../guide/guideCatalog.ts'
+import { getDocCatalogEntry } from '../docs/docsCatalog.ts'
 import {
-  isUnlistedGuideDetailPath,
-  parseGuideSlugFromPathname,
-} from '../guide/guideNestedSiteRoutes.ts'
+  isUnlistedDocDetailPath,
+  parseDocSlugFromPathname,
+} from '../docs/docsNestedSiteRoutes.ts'
 import {
   isUnlistedRepositoryDetailPath,
   parseRepositorySlugFromPathname,
@@ -37,9 +37,9 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
     title: 'Help Us',
     routeLabel: 'Help Us',
   },
-  [siteRoutes.guide]: {
-    title: 'Guides',
-    routeLabel: 'Guides',
+  [siteRoutes.docs]: {
+    title: 'Docs',
+    routeLabel: 'Docs',
   },
   [siteRoutes.repositories]: {
     title: 'Repositories',
@@ -78,19 +78,19 @@ export function getSitePageMeta(pathname: string): SitePageMeta {
     }
   }
 
-  const guideSlug = parseGuideSlugFromPathname(normalizedPath)
-  if (guideSlug) {
-    const guide = getGuideCatalogEntry(guideSlug)
-    if (guide) {
+  const docSlug = parseDocSlugFromPathname(normalizedPath)
+  if (docSlug) {
+    const doc = getDocCatalogEntry(docSlug)
+    if (doc) {
       return {
-        title: guide.title,
-        routeLabel: guide.title,
+        title: doc.title,
+        routeLabel: doc.title,
       }
     }
   }
 
-  if (isUnlistedGuideDetailPath(normalizedPath)) {
-    return sitePageMeta[siteRoutes.guide]
+  if (isUnlistedDocDetailPath(normalizedPath)) {
+    return sitePageMeta[siteRoutes.docs]
   }
 
   if (isUnlistedRepositoryDetailPath(normalizedPath)) {

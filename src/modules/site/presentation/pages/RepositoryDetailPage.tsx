@@ -114,10 +114,10 @@ function RepositoryDetailPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Guide</h2>
-              {entry.guideLinks && entry.guideLinks.length > 0 ? (
+              <h2 className="h4">Docs</h2>
+              {entry.docLinks && entry.docLinks.length > 0 ? (
                 <ul className="mb-0">
-                  {entry.guideLinks.map((link) => (
+                  {entry.docLinks.map((link) => (
                     <li key={link.path}>
                       <NavLink to={link.path}>{link.label}</NavLink>
                     </li>
@@ -125,9 +125,9 @@ function RepositoryDetailPage() {
                 </ul>
               ) : (
                 <p className="text-body-secondary mb-0">
-                  Browse site guides on <NavLink to={siteRoutes.guide}>Guides</NavLink>, including{' '}
-                  <NavLink to="/guide/installing-packages">Installing packages</NavLink> and{' '}
-                  <NavLink to="/guide/cli-commands">CLI command reference</NavLink>. Repository docs remain
+                  Browse site docs on <NavLink to={siteRoutes.docs}>Docs</NavLink>, including{' '}
+                  <NavLink to="/docs/installing-packages">Installing packages</NavLink> and{' '}
+                  <NavLink to="/docs/cli-commands">CLI command reference</NavLink>. Repository docs remain
                   on GitHub.
                 </p>
               )}

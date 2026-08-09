@@ -86,8 +86,8 @@ render pages.
 
 When adding a public route:
 
-1. Add the path to `siteRoutes.ts` (or extend the repository or guide manifest
-   and `getSiteRoutePaths()` for `/repositories/:slug` or `/guide/:slug` pages)
+1. Add the path to `siteRoutes.ts` (or extend the repository or docs manifest
+   and `getSiteRoutePaths()` for `/repositories/:slug` or `/docs/:slug` pages)
 2. Add accessibility metadata to `sitePageMeta.ts` (`title`, `routeLabel`), or
    ensure manifest-driven pages resolve via `getSitePageMeta()`
 3. Add SEO metadata to `siteSeoMeta.ts` (`description`, `canonicalPath`), or
@@ -102,18 +102,18 @@ Unknown `/repositories/:slug` values are not listed in `getSiteRoutePaths()`;
 they redirect to `/repositories` and receive `noindex` at runtime until
 redirect.
 
-### Guide markdown and `llms.txt`
+### Site doc markdown and `llms.txt`
 
-Guide pages also register `/guide` and `/guide/:slug` routes via the guide
-manifest (`getSiteRoutePaths()`). Raw markdown is served at `/guide/<slug>.md`
-(copied during `npm run build`). `llms.txt` at the site root lists all guide
+Site docs also register `/docs` and `/docs/:slug` routes via the docs
+manifest (`getSiteRoutePaths()`). Raw markdown is served at `/docs/<slug>.md`
+(copied during `npm run build`). `llms.txt` at the site root lists all site doc
 `.md` URLs for agents.
 
 The PWA service worker denies `navigateFallback` for `/llms.txt` and
-`/guide/*.md` (see `vite.config.ts`) so browsers fetch static files instead of
+`/docs/*.md` (see `vite.config.ts`) so browsers fetch static files instead of
 the SPA shell.
 
-Unknown `/guide/:slug` values redirect to `/guide` (same pattern as unlisted
+Unknown `/docs/:slug` values redirect to `/docs` (same pattern as unlisted
 repository slugs).
 
 ## SPA limitations

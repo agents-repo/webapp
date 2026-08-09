@@ -1,6 +1,6 @@
 import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
-import { getGuideDetailPath } from '../../application/guide/guideManifest.ts'
+import { getDocDetailPath } from '../../application/docs/docsManifest.ts'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { siteRoutes } from '../routes/siteRoutes'
 
@@ -26,8 +26,8 @@ function HelpUsPage() {
               <p className="text-body-secondary mb-0">
                 The project needs <strong>agents and flows packages</strong> most. Browse the catalog on{' '}
                 <NavLink to={siteRoutes.home}>Home</NavLink>, then follow the{' '}
-                <NavLink to={getGuideDetailPath('submitting-a-package')}>package submission guide</NavLink>.
-                Step-by-step docs live in <NavLink to={siteRoutes.guide}>Guides</NavLink>. Questions and
+                <NavLink to={getDocDetailPath('submitting-a-package')}>package submission guide</NavLink>.
+                Step-by-step docs live in <NavLink to={siteRoutes.docs}>Docs</NavLink>. Questions and
                 feedback are welcome on <NavLink to={siteRoutes.contact}>Contact</NavLink>.
               </p>
             </Card.Body>
@@ -38,8 +38,8 @@ function HelpUsPage() {
               <h2 className="h4">Create agents and flows</h2>
               <p className="text-body-secondary">
                 Contribute maintained packages under <code>packages/</code> in the registry. Start with{' '}
-                <NavLink to={getGuideDetailPath('submitting-a-package')}>Submit a package</NavLink> and{' '}
-                <NavLink to={getGuideDetailPath('contributing-packages')}>Contributing packages</NavLink>.
+                <NavLink to={getDocDetailPath('submitting-a-package')}>Submit a package</NavLink> and{' '}
+                <NavLink to={getDocDetailPath('contributing-packages')}>Contributing packages</NavLink>.
               </p>
               <ul className="mb-0">
                 <li>
@@ -80,8 +80,8 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Improve the webapp</h2>
               <p className="text-body-secondary">
-                UI, UX, registry integration, and site guides are welcome. See{' '}
-                <NavLink to={getGuideDetailPath('contributing-to-webapp')}>Contributing to webapp</NavLink>{' '}
+                UI, UX, registry integration, and site docs are welcome. See{' '}
+                <NavLink to={getDocDetailPath('contributing-to-webapp')}>Contributing to webapp</NavLink>{' '}
                 for workflow and validation commands.
               </p>
               <ul className="mb-0">
@@ -134,7 +134,7 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Related</h2>
               <p className="text-body-secondary mb-0">
-                <NavLink to={siteRoutes.guide}>Guides</NavLink>, organization repositories on{' '}
+                <NavLink to={siteRoutes.docs}>Docs</NavLink>, organization repositories on{' '}
                 <NavLink to={siteRoutes.repositories}>Repositories</NavLink>, questions on{' '}
                 <NavLink to={siteRoutes.contact}>Contact</NavLink>, and context on{' '}
                 <NavLink to={siteRoutes.about}>About</NavLink>.

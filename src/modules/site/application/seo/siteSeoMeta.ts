@@ -5,10 +5,10 @@ import {
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
 import {
-  getGuideDetailPath,
-  getGuideCatalogEntry,
-} from '../guide/guideCatalog.ts'
-import { isUnlistedGuideDetailPath, parseGuideSlugFromPathname } from '../guide/guideNestedSiteRoutes.ts'
+  getDocDetailPath,
+  getDocCatalogEntry,
+} from '../docs/docsCatalog.ts'
+import { isUnlistedDocDetailPath, parseDocSlugFromPathname } from '../docs/docsNestedSiteRoutes.ts'
 import {
   getRepositoryDetailPath,
   isUnlistedRepositoryDetailPath,
@@ -44,10 +44,10 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
       'Help improve the open agents registry. Contribute packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
     canonicalPath: siteRoutes.helpUs,
   },
-  [siteRoutes.guide]: {
+  [siteRoutes.docs]: {
     description:
-      'Guides for browsing the catalog, installing packages with the CLI, contributing to the registry, and downloading markdown for AI agents.',
-    canonicalPath: siteRoutes.guide,
+      'Docs for browsing the catalog, installing packages with the CLI, contributing to the registry, and downloading markdown for AI agents.',
+    canonicalPath: siteRoutes.docs,
   },
   [siteRoutes.repositories]: {
     description:
@@ -90,19 +90,19 @@ export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
     }
   }
 
-  const guideSlug = parseGuideSlugFromPathname(normalizedPath)
-  if (guideSlug) {
-    const guide = getGuideCatalogEntry(guideSlug)
-    if (guide) {
+  const docSlug = parseDocSlugFromPathname(normalizedPath)
+  if (docSlug) {
+    const doc = getDocCatalogEntry(docSlug)
+    if (doc) {
       return {
-        description: guide.description,
-        canonicalPath: getGuideDetailPath(guideSlug),
+        description: doc.description,
+        canonicalPath: getDocDetailPath(docSlug),
       }
     }
   }
 
-  if (isUnlistedGuideDetailPath(normalizedPath)) {
-    return siteSeoMeta[siteRoutes.guide]
+  if (isUnlistedDocDetailPath(normalizedPath)) {
+    return siteSeoMeta[siteRoutes.docs]
   }
 
   if (isUnlistedRepositoryDetailPath(normalizedPath)) {
