@@ -1,6 +1,6 @@
 export type RepositoryRole = 'data' | 'ui' | 'tooling' | 'infrastructure' | 'governance'
 
-export interface RepositoryGuideLink {
+export interface RepositoryDocLink {
   readonly path: string
   readonly label: string
 }
@@ -21,5 +21,5 @@ export interface RepositoryManifestEntry {
   readonly relationship: string
   readonly audience: string
   readonly quickstart?: string
-  readonly guideLinks?: readonly RepositoryGuideLink[]
+  readonly docLinks?: readonly RepositoryDocLink[]
 }

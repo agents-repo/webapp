@@ -36,9 +36,9 @@ function Footer() {
                   <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
                   About
                 </NavLink>
-                <NavLink to={siteRoutes.guide} className="footer-link">
+                <NavLink to={siteRoutes.docs} className="footer-link">
                   <FontAwesomeIcon icon={faBook} className="me-2" aria-hidden="true" />
-                  Guides
+                  Docs
                 </NavLink>
                 <NavLink to={siteRoutes.repositories} className="footer-link">
                   <FontAwesomeIcon icon={faCodeBranch} className="me-2" aria-hidden="true" />

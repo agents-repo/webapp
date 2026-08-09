@@ -50,9 +50,9 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
               <FontAwesomeIcon icon={faCircleInfo} className="me-1" aria-hidden="true" />
               About
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.guide} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={siteRoutes.docs} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faBook} className="me-1" aria-hidden="true" />
-              Guides
+              Docs
             </Nav.Link>
             <Nav.Link as={NavLink} to={siteRoutes.contact} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faEnvelope} className="me-1" aria-hidden="true" />
