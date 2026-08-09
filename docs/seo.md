@@ -70,7 +70,7 @@ These patterns already help SEO and must stay in place:
 | --- | --- |
 | Self-referential canonical (absolute URL) | `buildRouteHead()` → `<link rel="canonical">` |
 | `og:url` matches canonical | Same builder function |
-| Absolute `og:image` | `{siteOrigin}/og-image.png` (1200×630) |
+| Absolute `og:image` | `{siteOrigin}/og-image.jpg` (1200×630 JPEG) |
 | OG image dimensions and alt | `og:image:width`, `og:image:height`, `og:image:alt` |
 | Twitter large image card | `twitter:card=summary_large_image` |
 | Meta description (~150–160 chars) | `siteSeoMeta` per route |
@@ -86,12 +86,21 @@ render pages.
 
 When adding a public route:
 
-1. Add the path to `siteRoutes.ts`
-2. Add accessibility metadata to `sitePageMeta.ts` (`title`, `routeLabel`)
-3. Add SEO metadata to `siteSeoMeta.ts` (`description`, `canonicalPath`)
-4. Call `useDocumentTitle(sitePageMeta[siteRoutes.<route>].title)` on the page
+1. Add the path to `siteRoutes.ts` (or extend the repository manifest and
+   `getSiteRoutePaths()` for `/repositories/:slug` pages)
+2. Add accessibility metadata to `sitePageMeta.ts` (`title`, `routeLabel`), or
+   ensure manifest-driven pages resolve via `getSitePageMeta()`
+3. Add SEO metadata to `siteSeoMeta.ts` (`description`, `canonicalPath`), or
+   ensure manifest entries supply descriptions for detail routes
+4. `RouteDocumentTitle` reads `getSitePageMeta()` — no per-page title hook required
 5. Run `npm run build:pages` and confirm the new route appears in `dist/sitemap.xml`
+   and, for nested paths, under `dist/<segments>/index.html` from
+   `prepare-pages-dist.mjs`
 6. Run `npm run a11y:ci` locally to verify Lighthouse SEO on the new route
+
+Unknown `/repositories/:slug` values are not listed in `getSiteRoutePaths()`;
+they redirect to `/repositories` and receive `noindex` at runtime until
+redirect.
 
 ## SPA limitations
 

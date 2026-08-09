@@ -28,3 +28,5 @@ blob-report/
 *.njsproj
 *.sln
 *.sw?
+
+.cache/actionlint/

@@ -6,6 +6,8 @@ module.exports = {
         'http://localhost:4173/about',
         'http://localhost:4173/contact',
         'http://localhost:4173/help-us',
+        'http://localhost:4173/repositories',
+        'http://localhost:4173/repositories/registry',
         'http://localhost:4173/accessibility',
         'http://localhost:4173/privacy',
         'http://localhost:4173/privacidade',

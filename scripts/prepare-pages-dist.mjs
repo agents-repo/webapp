@@ -46,17 +46,19 @@ function writeRouteDistHtml(routePath, html) {
     return;
   }
 
-  const segment = routePath.slice(1);
-  if (!/^[a-z0-9-]+$/.test(segment)) {
-    throw new Error(`Unsafe route segment for dist output: ${segment}`);
+  const segments = routePath.slice(1).split('/');
+  for (const segment of segments) {
+    if (!/^[a-z0-9-]+$/.test(segment)) {
+      throw new Error(`Unsafe route segment for dist output: ${segment}`);
+    }
   }
 
-  const distSegmentDir = `dist/${segment}`;
+  const distSegmentDir = `dist/${segments.join('/')}`;
   const distSegmentFile = `${distSegmentDir}/index.html`;
 
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- segment validated against siteRoutes
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- segments validated against siteRoutes
   mkdirSync(distSegmentDir, { recursive: true });
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- segment validated against siteRoutes
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- segments validated against siteRoutes
   writeFileSync(distSegmentFile, html);
 }
 

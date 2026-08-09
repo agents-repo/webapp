@@ -1,8 +1,15 @@
+import {
+  getRepositoryDetailRoutePaths,
+  parseRepositorySlugFromPathname,
+  REPOSITORIES_BASE_PATH,
+} from '../../application/nestedSiteRoutes.ts'
+
 export const siteRoutes = {
   home: '/',
   about: '/about',
   contact: '/contact',
   helpUs: '/help-us',
+  repositories: REPOSITORIES_BASE_PATH,
   accessibility: '/accessibility',
   privacy: '/privacy',
   privacyPtBr: '/privacidade',
@@ -20,9 +27,15 @@ export function findSiteRoutePath(normalizedPath: string): SiteRoutePath | undef
 }
 
 export function isKnownSiteRoute(pathname: string): boolean {
-  return findSiteRoutePath(normalizeSitePathname(pathname)) !== undefined
+  const normalizedPath = normalizeSitePathname(pathname)
+  if (findSiteRoutePath(normalizedPath) !== undefined) {
+    return true
+  }
+
+  return parseRepositorySlugFromPathname(normalizedPath) !== undefined
 }
 
-export function getSiteRoutePaths(): SiteRoutePath[] {
-  return Object.values(siteRoutes)
+export function getSiteRoutePaths(): string[] {
+  const staticPaths = Object.values(siteRoutes) as SiteRoutePath[]
+  return [...staticPaths, ...getRepositoryDetailRoutePaths()]
 }

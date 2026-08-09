@@ -1,4 +1,14 @@
-import { siteRoutes, type SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
+import {
+  findSiteRoutePath,
+  normalizeSitePathname,
+  siteRoutes,
+  type SiteRoutePath,
+} from '../../presentation/routes/siteRoutes.ts'
+import {
+  isUnlistedRepositoryDetailPath,
+  parseRepositorySlugFromPathname,
+} from '../nestedSiteRoutes.ts'
+import { getRepositoryBySlug } from '../repositories/repositoryManifest.ts'
 
 export interface SitePageMeta {
   readonly title: string
@@ -22,6 +32,10 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
     title: 'Help Us',
     routeLabel: 'Help Us',
   },
+  [siteRoutes.repositories]: {
+    title: 'Repositories',
+    routeLabel: 'Repositories',
+  },
   [siteRoutes.accessibility]: {
     title: 'Accessibility',
     routeLabel: 'Accessibility statement',
@@ -37,12 +51,26 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
 }
 
 export function getSitePageMeta(pathname: string): SitePageMeta {
-  const normalizedPath = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
-  const routePaths = Object.values(siteRoutes) as SiteRoutePath[]
-  const matchedRoute = routePaths.find((routePath) => routePath === normalizedPath)
+  const normalizedPath = normalizeSitePathname(pathname)
+  const matchedRoute = findSiteRoutePath(normalizedPath)
 
   if (matchedRoute) {
     return sitePageMeta[matchedRoute]
+  }
+
+  const repositorySlug = parseRepositorySlugFromPathname(normalizedPath)
+  if (repositorySlug) {
+    const entry = getRepositoryBySlug(repositorySlug)
+    if (entry) {
+      return {
+        title: entry.name,
+        routeLabel: entry.name,
+      }
+    }
+  }
+
+  if (isUnlistedRepositoryDetailPath(normalizedPath)) {
+    return sitePageMeta[siteRoutes.repositories]
   }
 
   return sitePageMeta[siteRoutes.home]
