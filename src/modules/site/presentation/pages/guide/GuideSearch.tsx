@@ -14,11 +14,17 @@ function GuideSearch() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(-1)
+  const [activeIndexQuery, setActiveIndexQuery] = useState('')
   const [listFocused, setListFocused] = useState(false)
 
   const trimmedQuery = query.trim()
   const results = useMemo(() => searchGuidePages(query), [query])
   const showResults = trimmedQuery.length > 0
+
+  if (activeIndexQuery !== query) {
+    setActiveIndexQuery(query)
+    setActiveIndex(trimmedQuery.length > 0 && results.length > 0 ? 0 : -1)
+  }
 
   const statusMessage = useMemo(() => {
     if (!showResults) {
@@ -45,8 +51,6 @@ function GuideSearch() {
   const handleQueryChange = (nextQuery: string) => {
     setQuery(nextQuery)
     setListFocused(false)
-    const nextResults = searchGuidePages(nextQuery)
-    setActiveIndex(nextResults.length > 0 ? 0 : -1)
   }
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {

@@ -199,7 +199,15 @@ function buildGuideSearchIndex(): readonly GuideSearchIndexEntry[] {
   })
 }
 
-const guideSearchIndex = buildGuideSearchIndex()
+let guideSearchIndex: readonly GuideSearchIndexEntry[] | null = null
+
+function getGuideSearchIndex(): readonly GuideSearchIndexEntry[] {
+  if (guideSearchIndex === null) {
+    guideSearchIndex = buildGuideSearchIndex()
+  }
+
+  return guideSearchIndex
+}
 
 export function searchGuidePages(query: string, options?: GuideSearchOptions): GuideSearchResult[] {
   const normalizedQuery = query.trim().toLowerCase()
@@ -212,7 +220,7 @@ export function searchGuidePages(query: string, options?: GuideSearchOptions): G
   const matches: Array<{ indexEntry: GuideSearchIndexEntry; rank: NonNullable<ReturnType<typeof matchRank>> }> =
     []
 
-  for (const indexEntry of guideSearchIndex) {
+  for (const indexEntry of getGuideSearchIndex()) {
     const rank = matchRank(indexEntry, normalizedQuery)
     if (rank) {
       matches.push({ indexEntry, rank })
