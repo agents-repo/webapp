@@ -38,6 +38,7 @@ function AboutPage() {
                     <li>Browse and search the catalog of agents and flows</li>
                     <li>Filter packages and review status badges</li>
                     <li>Download packages for supported install targets</li>
+                    <li>Copy CLI install commands from package cards (<code>npx agents-repo install …</code>)</li>
                     <li>Configure the registry source from Website settings in the header</li>
                     <li>Install the site as an app from the header when your browser supports it</li>
                     <li>Open package sources on GitHub for deeper inspection</li>

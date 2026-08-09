@@ -39,6 +39,7 @@ import {
   getPackageDownloadTargets,
   type PackageDownloadTarget,
 } from './homePageCatalogState'
+import PackageCliInstallAction from '../components/PackageCliInstallAction'
 import { faDuotoneSpinner } from './catalogLoadingSpinnerIcon'
 
 const STICKY_SEARCH_THRESHOLD = 180
@@ -276,6 +277,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               )
               const safeBrowseUrl =
                 packageBrowseUrl && isSafeExternalHttpUrl(packageBrowseUrl) ? packageBrowseUrl : null
+              const showCli = pkg.id.trim().length > 0
+              const showFooter = showCli || downloadTargets.length > 0 || Boolean(safeBrowseUrl)
 
               return (
               <Col key={packageSlug}>
@@ -347,8 +350,15 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                     </div>
                   </Card.Body>
 
-                  {downloadTargets.length > 0 || safeBrowseUrl ? (
+                  {showFooter ? (
                     <Card.Footer className="d-flex justify-content-center gap-2">
+                      {showCli ? (
+                        <PackageCliInstallAction
+                          packageName={pkg.name}
+                          packageId={pkg.id}
+                          controlId={packageSlug}
+                        />
+                      ) : null}
                       {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, packageSlug, downloadTargets) : null}
                       {safeBrowseUrl ? (
                         <Button

@@ -14,5 +14,6 @@ test.describe('Home catalog', () => {
     ).toBeVisible()
     await expect(page.getByRole('heading', { name: 'sample-agent' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Download sample-agent' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'CLI install for sample-agent' })).toBeVisible()
   })
 })
