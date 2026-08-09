@@ -9,13 +9,13 @@ import {
 } from './cliInstallCopy'
 
 describe('cliInstallCopy', () => {
-  it('buildCliInstallCommand trims and shell-quotes package ref', () => {
+  it('buildCliInstallCommand trims and formats registry package refs without quotes', () => {
     expect(buildCliInstallCommand('  agents-repo/sample-agent  ')).toBe(
-      "npx agents-repo install 'agents-repo/sample-agent'",
+      'npx agents-repo install agents-repo/sample-agent',
     )
   })
 
-  it('buildCliInstallCommand neutralizes shell metacharacters in package ref', () => {
+  it('buildCliInstallCommand shell-quotes unsafe package refs', () => {
     expect(buildCliInstallCommand('evil;curl|sh/foo')).toBe(
       "npx agents-repo install 'evil;curl|sh/foo'",
     )

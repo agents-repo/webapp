@@ -4,13 +4,19 @@ export const PLATFORM_INSTALL_TARGETS: readonly InstallTargetId[] = INSTALL_TARG
 
 const shellEmbeddedSingleQuote = String.raw`'\''`
 
+/** Shell-safe package refs (registry ids) are shown unquoted per issue #148. */
+const UNQUOTED_PACKAGE_REF_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9._/-]*$/
+
 export const shellSingleQuote = (value: string): string => {
   return `'${value.replaceAll("'", shellEmbeddedSingleQuote)}'`
 }
 
 export const buildCliInstallCommand = (packageRef: string): string => {
   const trimmed = packageRef.trim()
-  return `npx agents-repo install ${shellSingleQuote(trimmed)}`
+  const packageRefToken = UNQUOTED_PACKAGE_REF_PATTERN.test(trimmed)
+    ? trimmed
+    : shellSingleQuote(trimmed)
+  return `npx agents-repo install ${packageRefToken}`
 }
 
 export const buildCliInitCommand = (targetIds: readonly InstallTargetId[]): string => {

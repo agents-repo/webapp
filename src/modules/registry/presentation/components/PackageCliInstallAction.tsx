@@ -47,6 +47,7 @@ function PackageCliInstallActionInner({
 
   useEffect(() => {
     return () => {
+      popoverInteractionRef.current += 1
       if (initFeedbackTimeoutRef.current) {
         clearTimeout(initFeedbackTimeoutRef.current)
       }

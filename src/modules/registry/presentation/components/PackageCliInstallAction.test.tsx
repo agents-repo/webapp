@@ -52,7 +52,7 @@ describe('PackageCliInstallAction', () => {
     )
     expect(initCopy).toBeEnabled()
     expect(screen.getByTestId('cli-install-terminal-agents-repo--sample-agent')).toHaveTextContent(
-      "npx agents-repo install 'agents-repo/sample-agent'",
+      'npx agents-repo install agents-repo/sample-agent',
     )
   })
 
@@ -126,7 +126,7 @@ describe('PackageCliInstallAction', () => {
     await user.click(screen.getByRole('button', { name: 'Copy install command for sample-agent' }))
 
     await waitFor(() => {
-      expect(writeText).toHaveBeenCalledWith("npx agents-repo install 'agents-repo/sample-agent'")
+      expect(writeText).toHaveBeenCalledWith('npx agents-repo install agents-repo/sample-agent')
     })
     await waitFor(() => {
       expect(screen.getByRole('status')).toHaveTextContent('Copied to clipboard.')
