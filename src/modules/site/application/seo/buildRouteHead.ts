@@ -138,7 +138,7 @@ export function getRouteHeadData(pathname: string, siteOriginOverride?: string):
 }
 
 export function renderRouteHeadHtml(data: RouteHeadData): string {
-  const jsonLd = JSON.stringify(data.jsonLd).replaceAll('<', '\\u003c')
+  const jsonLd = JSON.stringify(data.jsonLd).replaceAll('<', String.raw`\u003c`)
 
   return [
     `<title>${escapeHtml(data.documentTitle)}</title>`,

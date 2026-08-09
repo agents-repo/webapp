@@ -9,8 +9,8 @@ const CANDIDATE_PATHS = [
   '/usr/bin/chromium',
   '/snap/bin/chromium',
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-  'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  String.raw`C:\Program Files\Google\Chrome\Application\chrome.exe`,
+  String.raw`C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`,
 ].filter((value) => typeof value === 'string' && value.length > 0);
 
 export function resolveChromeExecutable() {
