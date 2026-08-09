@@ -80,7 +80,7 @@ function RepositoriesIndexPage() {
                 </a>
                 , see how to help on <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>, or browse package
                 ideas on <NavLink to={siteRoutes.home}>Home</NavLink>. Read the site{' '}
-                <NavLink to={siteRoutes.guide}>Guides</NavLink> for catalog, CLI, and contribution docs.
+                <NavLink to={siteRoutes.docs}>Docs</NavLink> for catalog, CLI, and contribution docs.
               </p>
             </Card.Body>
           </Card>

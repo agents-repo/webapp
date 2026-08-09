@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => {
           // sitemap.xml and robots.txt are generated post-build; precache cannot
           // include them via includeAssets. Denylist keeps browser navigations on
           // the real static files instead of the SPA shell.
-          navigateFallbackDenylist: [/^\/sitemap\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/, /^\/guide\/[^/]+\.md$/],
+          navigateFallbackDenylist: [/^\/sitemap\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/, /^\/docs\/[^/]+\.md$/],
           runtimeCaching: [
             {
               urlPattern: ({ request, url, sameOrigin }: RuntimeCachingUrlMatchContext) => {

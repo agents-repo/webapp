@@ -27,13 +27,13 @@ describe('siteSeoMeta', () => {
         siteRoutes.about,
         siteRoutes.contact,
         siteRoutes.helpUs,
-        siteRoutes.guide,
+        siteRoutes.docs,
         siteRoutes.repositories,
         siteRoutes.accessibility,
         siteRoutes.privacy,
         siteRoutes.privacyPtBr,
         '/repositories/registry',
-        '/guide/getting-started',
+        '/docs/getting-started',
       ]),
     )
   })
@@ -42,8 +42,11 @@ describe('siteSeoMeta', () => {
     expect(isKnownSiteRoute(siteRoutes.about)).toBe(true)
     expect(isKnownSiteRoute('/about/')).toBe(true)
     expect(isKnownSiteRoute('/repositories/cli')).toBe(true)
-    expect(isKnownSiteRoute('/guide/installing-packages')).toBe(true)
-    expect(isKnownSiteRoute('/guide/not-listed')).toBe(false)
+    expect(isKnownSiteRoute('/docs/installing-packages')).toBe(true)
+    expect(isKnownSiteRoute('/docs/not-listed')).toBe(false)
+    expect(isKnownSiteRoute('/guide')).toBe(false)
+    expect(isKnownSiteRoute('/guide/getting-started')).toBe(false)
+    expect(isKnownSiteRoute('/guide/installing-packages')).toBe(false)
     expect(isKnownSiteRoute('/repositories/not-listed')).toBe(false)
     expect(isKnownSiteRoute('/missing-page')).toBe(false)
   })
@@ -52,7 +55,7 @@ describe('siteSeoMeta', () => {
     expect(getSiteSeoMeta('/repositories/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.repositories))
   })
 
-  it('falls back to guide SEO meta for unlisted guide slugs', () => {
-    expect(getSiteSeoMeta('/guide/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.guide))
+  it('falls back to docs SEO meta for unlisted doc slugs', () => {
+    expect(getSiteSeoMeta('/docs/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.docs))
   })
 })

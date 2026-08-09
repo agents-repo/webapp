@@ -24,9 +24,9 @@ export const repositoryManifest: readonly RepositoryManifestEntry[] = [
       'Registry is the source of truth for package metadata, specs, and versioned ZIPs. Webapp and CLI fetch catalog data through registry-proxy by default.',
     audience: 'Package authors, spec maintainers, and contributors adding agents or flows.',
     quickstart: 'npm run package:validate -- --package <namespace>/<package-id>',
-    guideLinks: [
-      { path: '/guide/how-the-registry-works', label: 'How the registry works' },
-      { path: '/guide/submitting-a-package', label: 'Submit a package' },
+    docLinks: [
+      { path: '/docs/how-the-registry-works', label: 'How the registry works' },
+      { path: '/docs/submitting-a-package', label: 'Submit a package' },
     ],
   },
   {
@@ -66,9 +66,9 @@ export const repositoryManifest: readonly RepositoryManifestEntry[] = [
       'Presents the registry catalog to end users and hosts organization pages such as About, Help Us, and repository documentation.',
     audience: 'Frontend contributors, UX reviewers, and maintainers of site content.',
     quickstart: 'npm install && npm run dev',
-    guideLinks: [
-      { path: '/guide/contributing-to-webapp', label: 'Contributing to webapp' },
-      { path: '/guide/using-the-catalog', label: 'Using the catalog' },
+    docLinks: [
+      { path: '/docs/contributing-to-webapp', label: 'Contributing to webapp' },
+      { path: '/docs/using-the-catalog', label: 'Using the catalog' },
     ],
   },
   {
@@ -88,10 +88,10 @@ export const repositoryManifest: readonly RepositoryManifestEntry[] = [
       'Installs packages from the registry into project install targets, using registry-proxy for catalog fetches by default.',
     audience: 'Developers installing packages locally and contributors extending CLI commands.',
     quickstart: 'npm install -D agents-repo && npx agents-repo --help',
-    guideLinks: [
-      { path: '/guide/installing-packages', label: 'Installing packages' },
-      { path: '/guide/cli-commands', label: 'CLI command reference' },
-      { path: '/guide/cli-doctor', label: 'doctor diagnostics' },
+    docLinks: [
+      { path: '/docs/installing-packages', label: 'Installing packages' },
+      { path: '/docs/cli-commands', label: 'CLI command reference' },
+      { path: '/docs/cli-doctor', label: 'doctor diagnostics' },
     ],
   },
   {
