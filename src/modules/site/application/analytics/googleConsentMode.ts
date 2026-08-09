@@ -16,20 +16,27 @@ declare global {
   }
 }
 
+function getBrowserWindow(): Window | null {
+  const globalScope = globalThis as typeof globalThis & { window?: Window }
+
+  return globalScope.window ?? null
+}
+
 function getGtag(): ((...args: unknown[]) => void) | null {
-  if (typeof globalThis.window === 'undefined') {
+  const browserWindow = getBrowserWindow()
+  if (browserWindow === null) {
     return null
   }
 
-  globalThis.window.dataLayer = globalThis.window.dataLayer ?? []
+  browserWindow.dataLayer = browserWindow.dataLayer ?? []
 
-  if (typeof globalThis.window.gtag !== 'function') {
-    globalThis.window.gtag = function gtag(...args: unknown[]) {
-      globalThis.window.dataLayer?.push(args)
+  if (typeof browserWindow.gtag !== 'function') {
+    browserWindow.gtag = function gtag(...args: unknown[]) {
+      browserWindow.dataLayer?.push(args)
     }
   }
 
-  return globalThis.window.gtag
+  return browserWindow.gtag
 }
 
 export function callGoogleConsentCommand(
@@ -66,12 +73,13 @@ export function denyAllGoogleConsent(): void {
 }
 
 export function pushConsentUpdateEvent(analyticsStorage: 'granted' | 'denied'): void {
-  if (typeof globalThis.window === 'undefined') {
+  const browserWindow = getBrowserWindow()
+  if (browserWindow === null) {
     return
   }
 
-  globalThis.window.dataLayer = globalThis.window.dataLayer ?? []
-  globalThis.window.dataLayer.push({
+  browserWindow.dataLayer = browserWindow.dataLayer ?? []
+  browserWindow.dataLayer.push({
     event: 'consent_update',
     analytics_storage: analyticsStorage,
     ad_storage: 'denied',

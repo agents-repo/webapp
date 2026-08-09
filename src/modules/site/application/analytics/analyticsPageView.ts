@@ -2,6 +2,18 @@ import { isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
 import { isProductionAnalyticsEnabled } from './analyticsEnvironment.ts'
 import { getStoredAnalyticsConsent } from './cookieConsent.ts'
 
+function getBrowserWindow(): Window | null {
+  const globalScope = globalThis as typeof globalThis & { window?: Window }
+
+  return globalScope.window ?? null
+}
+
+function getBrowserDocument(): Document | null {
+  const globalScope = globalThis as typeof globalThis & { document?: Document }
+
+  return globalScope.document ?? null
+}
+
 export function pushAnalyticsPageView(pathname: string, search = ''): void {
   if (!isProductionAnalyticsEnabled()) {
     return
@@ -15,7 +27,7 @@ export function pushAnalyticsPageView(pathname: string, search = ''): void {
     return
   }
 
-  if (typeof globalThis.window === 'undefined' || typeof document === 'undefined') {
+  if (getBrowserWindow() === null || getBrowserDocument() === null) {
     return
   }
 
