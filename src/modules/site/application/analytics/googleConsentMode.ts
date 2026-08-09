@@ -1,3 +1,5 @@
+import { getBrowserWindow } from '../browserGlobals.ts'
+
 export interface GoogleConsentParams {
   readonly ad_storage?: 'denied' | 'granted'
   readonly ad_user_data?: 'denied' | 'granted'
@@ -14,12 +16,6 @@ declare global {
     dataLayer?: unknown[]
     gtag?: (...args: unknown[]) => void
   }
-}
-
-function getBrowserWindow(): Window | null {
-  const globalScope = globalThis as typeof globalThis & { window?: Window }
-
-  return globalScope.window ?? null
 }
 
 function getGtag(): ((...args: unknown[]) => void) | null {

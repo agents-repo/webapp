@@ -1,3 +1,5 @@
+import { getBrowserWindow } from '../browserGlobals.ts'
+
 export const themeModes = ['light', 'dark', 'auto'] as const
 
 export type ThemeMode = (typeof themeModes)[number]
@@ -30,12 +32,6 @@ function updateThemeColorMeta(appliedThemeMode: AppliedThemeMode): void {
 
 function isThemeMode(value: string | null): value is ThemeMode {
   return value === 'light' || value === 'dark' || value === 'auto'
-}
-
-function getBrowserWindow(): Window | null {
-  const globalScope = globalThis as typeof globalThis & { window?: Window }
-
-  return globalScope.window ?? null
 }
 
 function getThemeStorage(): Storage | null {
