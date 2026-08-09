@@ -202,9 +202,7 @@ function buildGuideSearchIndex(): readonly GuideSearchIndexEntry[] {
 let guideSearchIndex: readonly GuideSearchIndexEntry[] | null = null
 
 function getGuideSearchIndex(): readonly GuideSearchIndexEntry[] {
-  if (guideSearchIndex === null) {
-    guideSearchIndex = buildGuideSearchIndex()
-  }
+  guideSearchIndex ??= buildGuideSearchIndex()
 
   return guideSearchIndex
 }
