@@ -7,9 +7,8 @@ interface SiteImportMetaEnv {
 }
 
 export function getSiteOrigin(override?: string): string {
-  const env =
-    typeof import.meta.env === 'undefined' ? ({} as SiteImportMetaEnv) : (import.meta.env as SiteImportMetaEnv)
-  const fromEnv = override ?? env.VITE_SITE_URL?.trim()
+  const env = import.meta.env as SiteImportMetaEnv | undefined
+  const fromEnv = override ?? env?.VITE_SITE_URL?.trim()
   return fromEnv && fromEnv.length > 0 ? fromEnv.replace(/\/$/, '') : defaultSiteOrigin
 }
 

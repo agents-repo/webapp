@@ -8,8 +8,8 @@ interface LazyRouteErrorBoundaryProps {
 }
 
 interface LazyRouteErrorBoundaryState {
-  hasError: boolean
-  retryKey: number
+  readonly hasError: boolean
+  readonly retryKey: number
 }
 
 class LazyRouteErrorBoundary extends Component<
@@ -39,7 +39,7 @@ class LazyRouteErrorBoundary extends Component<
     console.error('Lazy route failed to render:', error, errorInfo)
   }
 
-  private handleRetry = (): void => {
+  private readonly handleRetry = (): void => {
     this.props.onLazyRetry?.()
     this.setState((currentState) => ({
       hasError: false,

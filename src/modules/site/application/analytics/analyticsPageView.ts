@@ -1,3 +1,4 @@
+import { getBrowserDocument, getBrowserWindow } from '../browserGlobals.ts'
 import { isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
 import { isProductionAnalyticsEnabled } from './analyticsEnvironment.ts'
 import { getStoredAnalyticsConsent } from './cookieConsent.ts'
@@ -15,7 +16,7 @@ export function pushAnalyticsPageView(pathname: string, search = ''): void {
     return
   }
 
-  if (typeof globalThis.window === 'undefined' || typeof document === 'undefined') {
+  if (getBrowserWindow() === null || getBrowserDocument() === null) {
     return
   }
 
@@ -24,12 +25,18 @@ export function pushAnalyticsPageView(pathname: string, search = ''): void {
       return
     }
 
-    globalThis.window.dataLayer = globalThis.window.dataLayer ?? []
-    globalThis.window.dataLayer.push({
+    const browserWindow = getBrowserWindow()
+    const browserDocument = getBrowserDocument()
+    if (browserWindow === null || browserDocument === null) {
+      return
+    }
+
+    browserWindow.dataLayer = browserWindow.dataLayer ?? []
+    browserWindow.dataLayer.push({
       event: 'page_view',
       page_path: pathname,
-      page_location: `${globalThis.window.location.origin}${pathname}${search}`,
-      page_title: document.title,
+      page_location: `${browserWindow.location.origin}${pathname}${search}`,
+      page_title: browserDocument.title,
     })
   })
 }
