@@ -27,7 +27,12 @@ import {
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
-import { toPackageSlug, type PackageStatus, type RegistryPackage } from '../../domain/package'
+import {
+  formatRegistryPackageRef,
+  toPackageSlug,
+  type PackageStatus,
+  type RegistryPackage,
+} from '../../domain/package'
 import {
   filterRegistryPackages,
 } from '../../application/registrySelectors'
@@ -277,7 +282,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               )
               const safeBrowseUrl =
                 packageBrowseUrl && isSafeExternalHttpUrl(packageBrowseUrl) ? packageBrowseUrl : null
-              const showCli = pkg.id.trim().length > 0
+              const cliPackageRef = formatRegistryPackageRef(pkg.namespace, pkg.package)
+              const showCli = cliPackageRef !== null
               const showFooter = showCli || downloadTargets.length > 0 || Boolean(safeBrowseUrl)
 
               return (
@@ -355,7 +361,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                       {showCli ? (
                         <PackageCliInstallAction
                           packageName={pkg.name}
-                          packageId={pkg.id}
+                          packageId={cliPackageRef}
                           controlId={packageSlug}
                         />
                       ) : null}

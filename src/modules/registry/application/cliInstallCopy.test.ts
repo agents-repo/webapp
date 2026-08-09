@@ -9,9 +9,18 @@ import {
 } from './cliInstallCopy'
 
 describe('cliInstallCopy', () => {
-  it('buildCliInstallCommand trims package id', () => {
+  it('buildCliInstallCommand trims and shell-quotes package ref', () => {
     expect(buildCliInstallCommand('  agents-repo/sample-agent  ')).toBe(
-      'npx agents-repo install agents-repo/sample-agent',
+      "npx agents-repo install 'agents-repo/sample-agent'",
+    )
+  })
+
+  it('buildCliInstallCommand neutralizes shell metacharacters in package ref', () => {
+    expect(buildCliInstallCommand('evil;curl|sh/foo')).toBe(
+      "npx agents-repo install 'evil;curl|sh/foo'",
+    )
+    expect(buildCliInstallCommand("agents-repo/o'reilly")).toBe(
+      "npx agents-repo install 'agents-repo/o'\\''reilly'",
     )
   })
 
