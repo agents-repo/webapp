@@ -15,7 +15,7 @@ describe('isInternalSiteHref', () => {
   })
 
   it('preserves query and hash when checking pathname', () => {
-    expect(isInternalSiteHref('/contact?ref=guide')).toBe(true)
+    expect(isInternalSiteHref('/contact?ref=docs')).toBe(true)
     expect(isInternalSiteHref('/docs/getting-started#section')).toBe(true)
   })
 })
