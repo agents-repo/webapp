@@ -123,13 +123,14 @@ function GuideSearch() {
           Search guides
         </Form.Label>
         <InputGroup size="sm" className="guide-search-control">
-          <InputGroup.Text className="bg-body-secondary border-secondary">
+          <InputGroup.Text className="guide-search-control__addon">
             <FontAwesomeIcon icon={faMagnifyingGlass} aria-hidden="true" />
           </InputGroup.Text>
           <Form.Control
             ref={inputRef}
             id={inputId}
             type="search"
+            className="guide-search-control__input"
             value={query}
             onChange={(event) => handleQueryChange(event.target.value)}
             onKeyDown={handleInputKeyDown}
