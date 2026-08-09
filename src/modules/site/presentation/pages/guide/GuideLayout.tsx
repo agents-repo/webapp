@@ -6,6 +6,7 @@ import {
   listGuideSectionGroups,
 } from '../../../application/guide/guideManifest.ts'
 import { siteRoutes } from '../../routes/siteRoutes.ts'
+import GuideSearch from './GuideSearch.tsx'
 
 interface GuideLayoutProps {
   readonly children: ReactNode
@@ -21,6 +22,7 @@ function GuideLayout({ children, activeSlug }: GuideLayoutProps) {
       <Row className="g-4">
         <Col lg={3} xl={3}>
           <nav className="guide-sidebar" aria-label="Guide">
+            <GuideSearch key={location.pathname} />
             <Nav className="flex-column gap-1">
               <Nav.Link
                 as={NavLink}
