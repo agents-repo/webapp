@@ -46,6 +46,25 @@ describe('GuideLayout accessibility', () => {
 
     expect(screen.getByRole('listbox', { name: 'Guide search results' })).toBeInTheDocument()
     expect(screen.getByRole('option', { name: /doctor diagnostics/i })).toBeInTheDocument()
-    expect(screen.getByText('1 guide result.')).toBeInTheDocument()
+    expect(screen.getByText('1 guide result for "doctor diagnostics".')).toBeInTheDocument()
+  })
+
+  it('clears whitespace-only search on Escape', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <GuideLayout>
+        <h1>Test article</h1>
+      </GuideLayout>,
+      { initialEntries: ['/guide'] },
+    )
+
+    const input = screen.getByRole('combobox', { name: 'Search guides' })
+    await user.type(input, '   ')
+    expect(input).toHaveValue('   ')
+    expect(screen.queryByRole('listbox', { name: 'Guide search results' })).not.toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(input).toHaveValue('')
   })
 })

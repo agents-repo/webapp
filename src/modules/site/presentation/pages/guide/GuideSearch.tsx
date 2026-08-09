@@ -26,11 +26,11 @@ function GuideSearch() {
     }
 
     if (results.length === 0) {
-      return 'No guides match your search.'
+      return `No guides match your search for "${trimmedQuery}".`
     }
 
-    return `${results.length} guide result${results.length === 1 ? '' : 's'}.`
-  }, [results.length, showResults])
+    return `${results.length} guide result${results.length === 1 ? '' : 's'} for "${trimmedQuery}".`
+  }, [results.length, showResults, trimmedQuery])
 
   const navigateToResult = useCallback(
     (result: GuideSearchResult) => {
@@ -50,6 +50,18 @@ function GuideSearch() {
   }
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      if (query.length > 0) {
+        event.preventDefault()
+        setQuery('')
+        setActiveIndex(-1)
+        setListFocused(false)
+        inputRef.current?.blur()
+      }
+
+      return
+    }
+
     if (!showResults) {
       return
     }
@@ -91,15 +103,6 @@ function GuideSearch() {
       if (target) {
         navigateToResult(target)
       }
-      return
-    }
-
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      setQuery('')
-      setActiveIndex(-1)
-      setListFocused(false)
-      inputRef.current?.blur()
     }
   }
 
