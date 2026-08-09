@@ -3,7 +3,7 @@ export interface SplitGuideMarkdownResult {
   readonly body: string
 }
 
-/** Splits YAML frontmatter from guide markdown without Node-only parsers. */
+/** Splits YAML frontmatter from guide markdown (no gray-matter — keeps the client bundle small). */
 export function splitGuideMarkdown(raw: string): SplitGuideMarkdownResult {
   if (!raw.startsWith('---')) {
     return { frontmatter: '', body: raw.trim() }

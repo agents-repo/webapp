@@ -34,8 +34,15 @@ function buildGuideEntries(): readonly GuideManifestEntry[] {
     const { frontmatter, body } = splitGuideMarkdown(raw)
     const frontmatterTitle = readFrontmatterScalar(frontmatter, 'title')
     const frontmatterDescription = readFrontmatterScalar(frontmatter, 'description')
+    const frontmatterSection = readFrontmatterScalar(frontmatter, 'section')
+    const frontmatterOrder = Number(readFrontmatterScalar(frontmatter, 'order'))
 
-    if (frontmatterTitle !== catalogEntry.title || frontmatterDescription !== catalogEntry.description) {
+    if (
+      frontmatterTitle !== catalogEntry.title ||
+      frontmatterDescription !== catalogEntry.description ||
+      frontmatterSection !== catalogEntry.section ||
+      frontmatterOrder !== catalogEntry.order
+    ) {
       throw new Error(`Guide ${slug} frontmatter does not match guideCatalog.ts`)
     }
 

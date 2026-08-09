@@ -1,3 +1,9 @@
 {
-  "line-length": false
+  "line-length": false,
+  "no-multiple-blanks": {
+    "maximum": 2
+  },
+  "no-duplicate-heading": {
+    "siblings_only": true
+  }
 }
