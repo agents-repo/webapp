@@ -27,7 +27,12 @@ import {
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
-import { toPackageSlug, type PackageStatus, type RegistryPackage } from '../../domain/package'
+import {
+  formatRegistryPackageRef,
+  toPackageSlug,
+  type PackageStatus,
+  type RegistryPackage,
+} from '../../domain/package'
 import {
   filterRegistryPackages,
 } from '../../application/registrySelectors'
@@ -39,6 +44,7 @@ import {
   getPackageDownloadTargets,
   type PackageDownloadTarget,
 } from './homePageCatalogState'
+import PackageCliInstallAction from '../components/PackageCliInstallAction'
 import { faDuotoneSpinner } from './catalogLoadingSpinnerIcon'
 
 const STICKY_SEARCH_THRESHOLD = 180
@@ -276,6 +282,9 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
               )
               const safeBrowseUrl =
                 packageBrowseUrl && isSafeExternalHttpUrl(packageBrowseUrl) ? packageBrowseUrl : null
+              const cliPackageRef = formatRegistryPackageRef(pkg.namespace, pkg.package)
+              const showCli = cliPackageRef !== null
+              const showFooter = showCli || downloadTargets.length > 0 || Boolean(safeBrowseUrl)
 
               return (
               <Col key={packageSlug}>
@@ -347,8 +356,15 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                     </div>
                   </Card.Body>
 
-                  {downloadTargets.length > 0 || safeBrowseUrl ? (
+                  {showFooter ? (
                     <Card.Footer className="d-flex justify-content-center gap-2">
+                      {showCli ? (
+                        <PackageCliInstallAction
+                          packageName={pkg.name}
+                          packageId={cliPackageRef}
+                          controlId={packageSlug}
+                        />
+                      ) : null}
                       {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, packageSlug, downloadTargets) : null}
                       {safeBrowseUrl ? (
                         <Button

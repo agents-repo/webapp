@@ -1,5 +1,19 @@
 import { describe, expect, it } from 'vitest'
-import { toPackageSlug } from './package'
+import { formatRegistryPackageRef, toPackageSlug } from './package'
+
+describe('formatRegistryPackageRef', () => {
+  it('joins trimmed namespace and package when both segments are shell-safe', () => {
+    expect(formatRegistryPackageRef(' agents-repo ', ' sample-agent ')).toBe(
+      'agents-repo/sample-agent',
+    )
+  })
+
+  it('rejects segments with shell metacharacters or path separators', () => {
+    expect(formatRegistryPackageRef('agents-repo', 'hello/agent')).toBeNull()
+    expect(formatRegistryPackageRef('evil;rm', 'sample-agent')).toBeNull()
+    expect(formatRegistryPackageRef('agents-repo', 'sample\n-agent')).toBeNull()
+  })
+})
 
 describe('toPackageSlug', () => {
   it('joins namespace and package id with a double hyphen', () => {

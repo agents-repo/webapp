@@ -70,6 +70,25 @@ export const toPackageSlug = (namespace: string, packageId: string): string => {
   return `${encodeSlugSegment(namespace)}--${encodeSlugSegment(packageId)}`
 }
 
+const REGISTRY_PACKAGE_REF_SEGMENT_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/
+
+export const formatRegistryPackageRef = (
+  namespace: string,
+  packageId: string,
+): string | null => {
+  const namespaceValue = namespace.trim()
+  const packageValue = packageId.trim()
+
+  if (
+    !REGISTRY_PACKAGE_REF_SEGMENT_PATTERN.test(namespaceValue) ||
+    !REGISTRY_PACKAGE_REF_SEGMENT_PATTERN.test(packageValue)
+  ) {
+    return null
+  }
+
+  return `${namespaceValue}/${packageValue}`
+}
+
 export const resolvePackageRef = (
   idOrLeaf: string,
   aliases?: Record<string, string>,
