@@ -27,11 +27,13 @@ describe('siteSeoMeta', () => {
         siteRoutes.about,
         siteRoutes.contact,
         siteRoutes.helpUs,
+        siteRoutes.guide,
         siteRoutes.repositories,
         siteRoutes.accessibility,
         siteRoutes.privacy,
         siteRoutes.privacyPtBr,
         '/repositories/registry',
+        '/guide/getting-started',
       ]),
     )
   })
@@ -40,11 +42,17 @@ describe('siteSeoMeta', () => {
     expect(isKnownSiteRoute(siteRoutes.about)).toBe(true)
     expect(isKnownSiteRoute('/about/')).toBe(true)
     expect(isKnownSiteRoute('/repositories/cli')).toBe(true)
+    expect(isKnownSiteRoute('/guide/installing-packages')).toBe(true)
+    expect(isKnownSiteRoute('/guide/not-listed')).toBe(false)
     expect(isKnownSiteRoute('/repositories/not-listed')).toBe(false)
     expect(isKnownSiteRoute('/missing-page')).toBe(false)
   })
 
   it('falls back to repositories SEO meta for unlisted repository slugs', () => {
     expect(getSiteSeoMeta('/repositories/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.repositories))
+  })
+
+  it('falls back to guide SEO meta for unlisted guide slugs', () => {
+    expect(getSiteSeoMeta('/guide/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.guide))
   })
 })

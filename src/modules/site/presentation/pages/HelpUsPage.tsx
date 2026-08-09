@@ -1,5 +1,6 @@
 import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import { getGuideDetailPath } from '../../application/guide/guideManifest.ts'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { siteRoutes } from '../routes/siteRoutes'
 
@@ -24,9 +25,10 @@ function HelpUsPage() {
               <h2 className="h4">Help us grow</h2>
               <p className="text-body-secondary mb-0">
                 The project needs <strong>agents and flows packages</strong> most. Browse the catalog on{' '}
-                <NavLink to={siteRoutes.home}>Home</NavLink>, then submit maintained packages ready for
-                direct use in projects. Questions and feedback are welcome on{' '}
-                <NavLink to={siteRoutes.contact}>Contact</NavLink>. Webapp improvements are welcome too.
+                <NavLink to={siteRoutes.home}>Home</NavLink>, then follow the{' '}
+                <NavLink to={getGuideDetailPath('submitting-a-package')}>package submission guide</NavLink>.
+                Step-by-step docs live in <NavLink to={siteRoutes.guide}>Guides</NavLink>. Questions and
+                feedback are welcome on <NavLink to={siteRoutes.contact}>Contact</NavLink>.
               </p>
             </Card.Body>
           </Card>
@@ -35,30 +37,10 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Create agents and flows</h2>
               <p className="text-body-secondary">
-                This is the most valuable way to help right now. Contribute new or improved agent and flow
-                packages under <code>packages/</code> in the registry.
+                Contribute maintained packages under <code>packages/</code> in the registry. Start with{' '}
+                <NavLink to={getGuideDetailPath('submitting-a-package')}>Submit a package</NavLink> and{' '}
+                <NavLink to={getGuideDetailPath('contributing-packages')}>Contributing packages</NavLink>.
               </p>
-              <ul className="text-body-secondary">
-                <li>
-                  Packages should be maintained and ready for direct use, with supported install targets
-                  declared in metadata
-                </li>
-                <li>
-                  Supported install targets include GitHub Copilot, Cursor, Claude Code, and OpenAI Codex
-                </li>
-                <li>
-                  Open a package submission issue on the registry, then branch{' '}
-                  <code>package/&lt;issue-number&gt;-&lt;slug&gt;</code>
-                </li>
-                <li>
-                  Follow the registry contributing guide for the <code>package:build</code> / validation
-                  pipeline and submission requirements
-                </li>
-                <li>
-                  Not sure where to start? Browse examples on <NavLink to={siteRoutes.home}>Home</NavLink>{' '}
-                  or ask on <NavLink to={siteRoutes.contact}>Contact</NavLink> before opening a submission
-                </li>
-              </ul>
               <ul className="mb-0">
                 <li>
                   <a
@@ -68,8 +50,7 @@ function HelpUsPage() {
                     aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
                   >
                     agents-repo/registry
-                  </a>{' '}
-                  — agents, flows, and registry index
+                  </a>
                 </li>
                 <li>
                   <a
@@ -79,8 +60,7 @@ function HelpUsPage() {
                     aria-label={externalLinkAccessibleName('Registry contributing guide')}
                   >
                     Contributing guide
-                  </a>{' '}
-                  — package submission workflow and requirements
+                  </a>
                 </li>
                 <li>
                   <a
@@ -90,8 +70,7 @@ function HelpUsPage() {
                     aria-label={externalLinkAccessibleName('Registry issues')}
                   >
                     Issues
-                  </a>{' '}
-                  — package submissions and catalog work
+                  </a>
                 </li>
               </ul>
             </Card.Body>
@@ -101,22 +80,10 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Improve the webapp</h2>
               <p className="text-body-secondary">
-                UI, UX, registry integration, and documentation improvements are welcome, though package
-                contributions remain the top priority.
+                UI, UX, registry integration, and site guides are welcome. See{' '}
+                <NavLink to={getGuideDetailPath('contributing-to-webapp')}>Contributing to webapp</NavLink>{' '}
+                for workflow and validation commands.
               </p>
-              <ul className="text-body-secondary">
-                <li>Open a webapp issue before starting tracked work</li>
-                <li>
-                  Branch: <code>&lt;prefix&gt;/&lt;issue-number&gt;-&lt;slug&gt;</code> (for example{' '}
-                  <code>feat/</code> or <code>fix/</code>)
-                </li>
-                <li>
-                  Run validation before requesting review: <code>npm run env:check</code>,{' '}
-                  <code>npm run lint:all</code>, <code>npm run test</code>, <code>npm run typecheck</code>, and{' '}
-                  <code>npm run build:pages</code>
-                </li>
-                <li>Open a pull request that closes the tracking issue</li>
-              </ul>
               <ul className="mb-0">
                 <li>
                   <a
@@ -126,8 +93,7 @@ function HelpUsPage() {
                     aria-label={externalLinkAccessibleName('agents-repo/webapp repository')}
                   >
                     agents-repo/webapp
-                  </a>{' '}
-                  — this web application
+                  </a>
                 </li>
                 <li>
                   <a
@@ -137,8 +103,7 @@ function HelpUsPage() {
                     aria-label={externalLinkAccessibleName('Webapp contributing guide')}
                   >
                     Contributing guide
-                  </a>{' '}
-                  — branch naming, validation, and PR expectations
+                  </a>
                 </li>
                 <li>
                   <a
@@ -148,8 +113,7 @@ function HelpUsPage() {
                     aria-label={externalLinkAccessibleName('Webapp issues')}
                   >
                     Issues
-                  </a>{' '}
-                  — bugs, UI problems, and tracked work
+                  </a>
                 </li>
               </ul>
             </Card.Body>
@@ -160,8 +124,8 @@ function HelpUsPage() {
               <h2 className="h4">Support the project</h2>
               <p className="text-body-secondary mb-0">
                 <span className="text-body-secondary">Coming soon:</span> financial support through GitHub
-                Sponsors, Patreon, and similar platforms. Those options will be linked here once available.
-                Package contributions remain the most direct way to help today.
+                Sponsors, Patreon, and similar platforms. Package contributions remain the most direct way
+                to help today.
               </p>
             </Card.Body>
           </Card>
@@ -170,9 +134,9 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Related</h2>
               <p className="text-body-secondary mb-0">
-                Organization repositories on{' '}
-                <NavLink to={siteRoutes.repositories}>Repositories</NavLink>. Questions and feedback on{' '}
-                <NavLink to={siteRoutes.contact}>Contact</NavLink>. Project context on{' '}
+                <NavLink to={siteRoutes.guide}>Guides</NavLink>, organization repositories on{' '}
+                <NavLink to={siteRoutes.repositories}>Repositories</NavLink>, questions on{' '}
+                <NavLink to={siteRoutes.contact}>Contact</NavLink>, and context on{' '}
                 <NavLink to={siteRoutes.about}>About</NavLink>.
               </p>
             </Card.Body>

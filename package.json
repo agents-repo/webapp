@@ -10,10 +10,10 @@
   "scripts": {
     "dev": "vite",
     "env:check": "node scripts/validate-env.mjs",
-    "build": "tsc -b && vite build && node scripts/remove-e2e-build-marker.mjs",
+    "build": "tsc -b && vite build && node --experimental-strip-types scripts/copy-guide-markdown.mjs && node scripts/remove-e2e-build-marker.mjs",
     "build:vite": "vite build && node scripts/remove-e2e-build-marker.mjs",
     "build:pages": "npm run build && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode production",
-    "build:pages:e2e": "tsc -b && vite build --mode e2e && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode e2e && node scripts/write-e2e-build-marker.mjs",
+    "build:pages:e2e": "tsc -b && vite build --mode e2e && node --experimental-strip-types scripts/copy-guide-markdown.mjs --mode e2e && node --experimental-strip-types scripts/prepare-pages-dist.mjs --mode e2e && node scripts/write-e2e-build-marker.mjs",
     "release:dry-run": "semantic-release --dry-run",
     "lint": "eslint .",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"**/.*/**/*.md\"",
@@ -47,7 +47,9 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.7",
     "react-helmet-async": "^3.0.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.1",
+    "remark-gfm": "^4.0.1",
     "semver": "^7.8.5"
   },
   "devDependencies": {

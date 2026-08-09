@@ -125,8 +125,10 @@ function RepositoryDetailPage() {
                 </ul>
               ) : (
                 <p className="text-body-secondary mb-0">
-                  Site guide pages at <code>/guide</code> are coming soon. Until then, use the contributing
-                  guide and README on GitHub.
+                  Browse site guides on <NavLink to={siteRoutes.guide}>Guides</NavLink>, including{' '}
+                  <NavLink to="/guide/installing-packages">Installing packages</NavLink> and{' '}
+                  <NavLink to="/guide/cli-commands">CLI command reference</NavLink>. Repository docs remain
+                  on GitHub.
                 </p>
               )}
             </Card.Body>

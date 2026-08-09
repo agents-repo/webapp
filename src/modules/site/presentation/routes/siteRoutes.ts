@@ -1,3 +1,5 @@
+import { getGuideRoutePaths, GUIDE_BASE_PATH } from '../../application/guide/guideCatalog.ts'
+import { parseGuideSlugFromPathname } from '../../application/guide/guideNestedSiteRoutes.ts'
 import {
   getRepositoryDetailRoutePaths,
   parseRepositorySlugFromPathname,
@@ -9,6 +11,7 @@ export const siteRoutes = {
   about: '/about',
   contact: '/contact',
   helpUs: '/help-us',
+  guide: GUIDE_BASE_PATH,
   repositories: REPOSITORIES_BASE_PATH,
   accessibility: '/accessibility',
   privacy: '/privacy',
@@ -32,10 +35,14 @@ export function isKnownSiteRoute(pathname: string): boolean {
     return true
   }
 
+  if (parseGuideSlugFromPathname(normalizedPath) !== undefined) {
+    return true
+  }
+
   return parseRepositorySlugFromPathname(normalizedPath) !== undefined
 }
 
 export function getSiteRoutePaths(): string[] {
   const staticPaths = Object.values(siteRoutes) as SiteRoutePath[]
-  return [...staticPaths, ...getRepositoryDetailRoutePaths()]
+  return [...staticPaths, ...getGuideRoutePaths(), ...getRepositoryDetailRoutePaths()]
 }

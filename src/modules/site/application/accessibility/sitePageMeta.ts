@@ -4,6 +4,11 @@ import {
   siteRoutes,
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
+import { getGuideCatalogEntry } from '../guide/guideCatalog.ts'
+import {
+  isUnlistedGuideDetailPath,
+  parseGuideSlugFromPathname,
+} from '../guide/guideNestedSiteRoutes.ts'
 import {
   isUnlistedRepositoryDetailPath,
   parseRepositorySlugFromPathname,
@@ -31,6 +36,10 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
   [siteRoutes.helpUs]: {
     title: 'Help Us',
     routeLabel: 'Help Us',
+  },
+  [siteRoutes.guide]: {
+    title: 'Guides',
+    routeLabel: 'Guides',
   },
   [siteRoutes.repositories]: {
     title: 'Repositories',
@@ -67,6 +76,21 @@ export function getSitePageMeta(pathname: string): SitePageMeta {
         routeLabel: entry.name,
       }
     }
+  }
+
+  const guideSlug = parseGuideSlugFromPathname(normalizedPath)
+  if (guideSlug) {
+    const guide = getGuideCatalogEntry(guideSlug)
+    if (guide) {
+      return {
+        title: guide.title,
+        routeLabel: guide.title,
+      }
+    }
+  }
+
+  if (isUnlistedGuideDetailPath(normalizedPath)) {
+    return sitePageMeta[siteRoutes.guide]
   }
 
   if (isUnlistedRepositoryDetailPath(normalizedPath)) {

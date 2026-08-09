@@ -26,6 +26,9 @@
     "vitest.a11y.config.ts",
     "scripts/seo-build-config.ts",
     "src/modules/site/application/nestedSiteRoutes.ts",
+    "src/modules/site/application/guide/guideCatalog.ts",
+    "src/modules/site/application/guide/guideManifest.types.ts",
+    "src/modules/site/application/guide/guideNestedSiteRoutes.ts",
     "src/modules/site/application/repositories/repositoryManifest.ts",
     "src/modules/site/application/repositories/repositoryManifest.types.ts",
     "src/modules/site/presentation/routes/siteRoutes.ts"
