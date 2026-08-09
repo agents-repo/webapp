@@ -2,8 +2,10 @@ import { INSTALL_TARGET_IDS, type InstallTargetId } from '../domain/package'
 
 export const PLATFORM_INSTALL_TARGETS: readonly InstallTargetId[] = INSTALL_TARGET_IDS
 
+const shellEmbeddedSingleQuote = String.raw`'\''`
+
 export const shellSingleQuote = (value: string): string => {
-  return `'${value.replace(/'/g, "'\\''")}'`
+  return `'${value.replaceAll("'", shellEmbeddedSingleQuote)}'`
 }
 
 export const buildCliInstallCommand = (packageRef: string): string => {

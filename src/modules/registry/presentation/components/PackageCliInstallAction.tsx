@@ -42,7 +42,7 @@ function PackageCliInstallActionInner({
   const popoverId = `cli-install-popover-${controlId}`
   const initLabelId = `cli-init-label-${controlId}`
   const installLabelId = `cli-install-label-${controlId}`
-  const targetGroupName = `cli-target-${controlId}-${reactId.replace(/:/g, '')}`
+  const targetGroupName = `cli-target-${controlId}-${reactId.replaceAll(':', '')}`
 
   useEffect(() => {
     return () => {
