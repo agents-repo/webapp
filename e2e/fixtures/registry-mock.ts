@@ -1,9 +1,11 @@
-import { test as base, expect } from '@playwright/test'
+import { test as base } from '@playwright/test'
 import {
   E2E_REGISTRY_INDEX_URL,
   searchableCatalog,
   type E2eRegistryCatalog,
 } from './catalog'
+
+export { expect } from '@playwright/test'
 
 export async function mockRegistryIndex(
   page: import('@playwright/test').Page,
@@ -52,5 +54,3 @@ export const test = base.extend<{ catalog: E2eRegistryCatalog }>({
     await use(page)
   },
 })
-
-export { expect }

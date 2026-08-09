@@ -1,8 +1,6 @@
-import { siteName } from '../accessibility/documentTitleFormat.ts'
+export { siteName, siteName as ogSiteName } from '../accessibility/documentTitleFormat.ts'
 
 const defaultSiteOrigin = 'https://agents-repo.org'
-
-export { siteName }
 
 interface SiteImportMetaEnv {
   readonly VITE_SITE_URL?: string
@@ -29,8 +27,6 @@ export const ogImageHeight = 630
 
 export const ogImageAlt =
   'Agents Repo — browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.'
-
-export const ogSiteName = siteName
 
 export const ogLocale = 'en_US'
 

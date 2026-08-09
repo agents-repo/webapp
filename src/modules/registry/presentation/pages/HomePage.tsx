@@ -254,9 +254,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
           ) : null}
 
           {isCatalogLoading && !catalog ? (
-            <div
+            <section
               className="py-5 d-flex justify-content-center"
-              role="region"
               aria-busy="true"
               aria-labelledby="catalog-results-summary"
             >
@@ -267,7 +266,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
                 className="text-body-secondary catalog-loading-spinner"
                 aria-hidden="true"
               />
-            </div>
+            </section>
           ) : (
             <>
           <Row xs={1} md={2} xl={3} className="g-3">

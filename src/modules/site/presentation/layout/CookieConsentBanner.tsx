@@ -21,7 +21,7 @@ function CookieConsentBanner() {
   const headingId = useId()
   const location = useLocation()
   const { isPreferencesOpen, closeCookiePreferences } = useCookieConsent()
-  const [, setConsentRenderGeneration] = useState(0)
+  const [consentRenderGeneration, setConsentRenderGeneration] = useState(0)
   const hasChosen = hasAnalyticsConsentDecision()
   const isVisible = isPreferencesOpen || !hasChosen
   const hasBootstrappedAnalyticsRef = useRef(false)
@@ -91,9 +91,9 @@ function CookieConsentBanner() {
   }
 
   return (
-    <div
+    <section
+      key={consentRenderGeneration}
       className="cookie-consent-banner"
-      role="region"
       aria-labelledby={headingId}
     >
       <div className="cookie-consent-banner__inner container py-3">
@@ -121,7 +121,7 @@ function CookieConsentBanner() {
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 

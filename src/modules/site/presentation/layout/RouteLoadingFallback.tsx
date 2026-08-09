@@ -12,10 +12,10 @@ function RouteLoadingFallback() {
   }, [])
 
   return (
-    <div className="py-5 d-flex justify-content-center" role="status">
+    <output className="py-5 d-flex justify-content-center">
       <span className="visually-hidden">Loading page content</span>
       <Spinner animation="border" aria-hidden="true" />
-    </div>
+    </output>
   )
 }
 

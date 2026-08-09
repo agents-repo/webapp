@@ -16,7 +16,7 @@ class LazyRouteErrorBoundary extends Component<
   LazyRouteErrorBoundaryProps,
   LazyRouteErrorBoundaryState
 > {
-  state: LazyRouteErrorBoundaryState = {
+  readonly state: LazyRouteErrorBoundaryState = {
     hasError: false,
     retryKey: 0,
   }
