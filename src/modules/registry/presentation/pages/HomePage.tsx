@@ -153,9 +153,6 @@ function PackageCard({
                 {pkg.name}
               </Card.Title>
               <Card.Subtitle as="div" className="small text-body-secondary mb-0 mt-1">
-                <Badge bg="light" text="dark" className="me-2 fw-normal">
-                  {pkg.namespace}
-                </Badge>
                 by{' '}
                 <Dropdown as="div" align="end" className="d-inline-block">
                   <Dropdown.Toggle
