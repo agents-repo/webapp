@@ -3,6 +3,8 @@ export interface SplitDocMarkdownResult {
   readonly body: string
 }
 
+export type DocFrontmatterScalarKey = 'title' | 'description' | 'section' | 'order'
+
 /** Splits YAML frontmatter from site doc markdown (no gray-matter — keeps the client bundle small). */
 export function splitDocMarkdown(raw: string): SplitDocMarkdownResult {
   if (!raw.startsWith('---')) {
@@ -20,8 +22,15 @@ export function splitDocMarkdown(raw: string): SplitDocMarkdownResult {
   }
 }
 
-export function readFrontmatterScalar(frontmatter: string, key: string): string {
-  const pattern = new RegExp(String.raw`^${key}:\s*(.+)$`, 'm')
-  const match = pattern.exec(frontmatter)
-  return match?.[1]?.trim() ?? ''
+export function readFrontmatterScalar(frontmatter: string, key: DocFrontmatterScalarKey): string {
+  const prefix = `${key}:`
+  for (const line of frontmatter.split('\n')) {
+    if (!line.startsWith(prefix)) {
+      continue
+    }
+
+    return line.slice(prefix.length).trim()
+  }
+
+  return ''
 }

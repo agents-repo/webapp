@@ -53,16 +53,53 @@ function DocSearch() {
     setListFocused(false)
   }
 
+  const clearSearch = () => {
+    setQuery('')
+    setActiveIndex(-1)
+    setListFocused(false)
+  }
+
+  const handleEscape = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (query.length === 0) {
+      return
+    }
+
+    event.preventDefault()
+    clearSearch()
+    inputRef.current?.blur()
+  }
+
+  const handleArrowDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.preventDefault()
+    if (results.length === 0) {
+      return
+    }
+
+    setListFocused(true)
+    setActiveIndex((prev) => (prev < 0 ? 0 : (prev + 1) % results.length))
+  }
+
+  const handleArrowUp = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.preventDefault()
+    if (results.length === 0) {
+      return
+    }
+
+    setListFocused(true)
+    setActiveIndex((prev) => (prev <= 0 ? results.length - 1 : prev - 1))
+  }
+
+  const handleEnter = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.preventDefault()
+    const target = activeIndex >= 0 ? results[activeIndex] : results[0]
+    if (target) {
+      navigateToResult(target)
+    }
+  }
+
   const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
-      if (query.length > 0) {
-        event.preventDefault()
-        setQuery('')
-        setActiveIndex(-1)
-        setListFocused(false)
-        inputRef.current?.blur()
-      }
-
+      handleEscape(event)
       return
     }
 
@@ -71,42 +108,17 @@ function DocSearch() {
     }
 
     if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      if (results.length === 0) {
-        return
-      }
-
-      setListFocused(true)
-      setActiveIndex((prev) => {
-        const next = prev < 0 ? 0 : (prev + 1) % results.length
-        return next
-      })
+      handleArrowDown(event)
       return
     }
 
     if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      if (results.length === 0) {
-        return
-      }
-
-      setListFocused(true)
-      setActiveIndex((prev) => {
-        if (prev <= 0) {
-          return results.length - 1
-        }
-
-        return prev - 1
-      })
+      handleArrowUp(event)
       return
     }
 
     if (event.key === 'Enter') {
-      event.preventDefault()
-      const target = activeIndex >= 0 ? results[activeIndex] : results[0]
-      if (target) {
-        navigateToResult(target)
-      }
+      handleEnter(event)
     }
   }
 
@@ -188,9 +200,7 @@ function DocSearch() {
                   setListFocused(true)
                 }}
                 onClick={() => {
-                  setQuery('')
-                  setActiveIndex(-1)
-                  setListFocused(false)
+                  clearSearch()
                 }}
               >
                 <span className="docs-search-result-title d-block fw-semibold">{result.title}</span>
