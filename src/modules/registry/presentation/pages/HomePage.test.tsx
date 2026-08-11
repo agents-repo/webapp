@@ -80,3 +80,30 @@ describe('HomePage catalog loading', () => {
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 })
+
+describe('HomePage package card owner', () => {
+  afterEach(() => {
+    cleanup()
+    vi.clearAllMocks()
+  })
+
+  it('shows the owner dropdown without a redundant namespace badge', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    const heading = await screen.findByRole('heading', { name: 'sample-agent' })
+
+    expect(
+      screen.getByRole('button', { name: 'Actions for owner agents-repo' }),
+    ).toBeInTheDocument()
+
+    const card = heading.closest('.package-card')
+    const subtitle = card?.querySelector('.card-subtitle')
+
+    expect(card).not.toBeNull()
+    expect(subtitle).not.toBeNull()
+    expect(subtitle?.querySelector('.badge')).toBeNull()
+    expect(subtitle?.textContent).toMatch(/^by\s+agents-repo/)
+  })
+})
