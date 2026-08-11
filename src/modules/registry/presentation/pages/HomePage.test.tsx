@@ -90,17 +90,18 @@ describe('HomePage package card owner', () => {
   it('shows the owner dropdown without a redundant namespace badge', async () => {
     useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
 
-    const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    await screen.findByRole('heading', { name: 'sample-agent' })
+    const heading = await screen.findByRole('heading', { name: 'sample-agent' })
 
     expect(
       screen.getByRole('button', { name: 'Actions for owner agents-repo' }),
     ).toBeInTheDocument()
 
-    const card = container.querySelector('#package-card-agents-repo--sample-agent')
+    const card = heading.closest('.package-card')
     const subtitle = card?.querySelector('.card-subtitle')
 
+    expect(card).not.toBeNull()
     expect(subtitle).not.toBeNull()
     expect(subtitle?.querySelector('.badge')).toBeNull()
     expect(subtitle?.textContent).toMatch(/^by\s+agents-repo/)
