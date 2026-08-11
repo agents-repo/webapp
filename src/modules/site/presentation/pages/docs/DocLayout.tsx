@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Col, Nav, Row } from 'react-bootstrap'
+import { Col, Container, Nav, Row } from 'react-bootstrap'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   getDocDetailPath,
@@ -18,8 +18,9 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
   const sectionGroups = listDocSectionGroups()
 
   return (
-    <div className="py-5 docs-layout">
-      <Row className="g-4">
+    <div className="py-5">
+      <Container>
+        <Row className="g-4">
         <Col lg={3} xl={3}>
           <nav className="docs-sidebar" aria-label="Docs">
             <DocSearch key={location.pathname} />
@@ -57,7 +58,8 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
         <Col lg={9} xl={8}>
           <article className="docs-article">{children}</article>
         </Col>
-      </Row>
+        </Row>
+      </Container>
     </div>
   )
 }
