@@ -93,39 +93,59 @@ function replaceMarkdownLinksAndImages(text: string): string {
   return output
 }
 
-function stripLinePrefix(line: string): string {
-  let trimmed = line
+function stripHeadingPrefix(line: string): string {
   let hashCount = 0
-
-  while (hashCount < 6 && trimmed[hashCount] === '#') {
+  while (hashCount < 6 && line[hashCount] === '#') {
     hashCount += 1
   }
 
-  if (hashCount > 0 && trimmed[hashCount] === ' ') {
-    trimmed = trimmed.slice(hashCount + 1)
+  if (hashCount > 0 && line[hashCount] === ' ') {
+    return line.slice(hashCount + 1)
   }
 
+  return line
+}
+
+function leadingWhitespaceLength(line: string): number {
   let index = 0
-  while (index < trimmed.length && trimmed[index] === ' ') {
+  while (index < line.length && line[index] === ' ') {
     index += 1
   }
 
-  if (index < trimmed.length && (trimmed[index] === '-' || trimmed[index] === '*' || trimmed[index] === '+')) {
-    if (trimmed[index + 1] === ' ') {
-      return trimmed.slice(index + 2)
-    }
+  return index
+}
+
+function stripUnorderedListPrefix(line: string): string | null {
+  const index = leadingWhitespaceLength(line)
+  const marker = line[index]
+  if (marker !== '-' && marker !== '*' && marker !== '+') {
+    return null
   }
 
+  if (line[index + 1] !== ' ') {
+    return null
+  }
+
+  return line.slice(index + 2)
+}
+
+function stripOrderedListPrefix(line: string): string | null {
+  const index = leadingWhitespaceLength(line)
   let digitIndex = index
-  while (digitIndex < trimmed.length && trimmed[digitIndex] >= '0' && trimmed[digitIndex] <= '9') {
+  while (digitIndex < line.length && line[digitIndex] >= '0' && line[digitIndex] <= '9') {
     digitIndex += 1
   }
 
-  if (digitIndex > index && trimmed[digitIndex] === '.' && trimmed[digitIndex + 1] === ' ') {
-    return trimmed.slice(digitIndex + 2)
+  if (digitIndex <= index || line[digitIndex] !== '.' || line[digitIndex + 1] !== ' ') {
+    return null
   }
 
-  return trimmed
+  return line.slice(digitIndex + 2)
+}
+
+function stripLinePrefix(line: string): string {
+  const withoutHeading = stripHeadingPrefix(line)
+  return stripUnorderedListPrefix(withoutHeading) ?? stripOrderedListPrefix(withoutHeading) ?? withoutHeading
 }
 
 function stripDocMarkdownForSearch(body: string): string {
