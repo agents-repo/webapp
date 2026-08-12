@@ -3,6 +3,7 @@ description: Propose a normative behavior, contract, or workflow rule change.
 title: "spec: "
 labels:
   - documentation
+type: Task
 body:
   - type: markdown
     attributes:

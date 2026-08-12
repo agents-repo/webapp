@@ -3,6 +3,7 @@ description: Track a scoped engineering or documentation task.
 title: "chore: "
 labels:
   - chore
+type: Task
 body:
   - type: markdown
     attributes:
