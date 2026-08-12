@@ -72,7 +72,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/semver": "^7.7.1",
     "@vitejs/plugin-react": "^6.0.3",
-    "agents-repo": "1.19.0",
+    "agents-repo": "1.20.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "eslint": "^10.7.0",
