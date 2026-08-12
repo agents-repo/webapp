@@ -66,10 +66,24 @@ Open a **draft** pull request from your fork **before** substantive implementati
 
 In the GitHub UI: choose **compare across forks**, set the base to `agents-repo/registry` `main`, and set the head to `YOUR_GITHUB_USER:package/my-package`.
 
-With the GitHub CLI (after pushing your branch to your fork):
+With the GitHub CLI, push a scaffold commit so the branch head differs from
+`main`, then open the draft pull request:
 
 ```bash
+git commit --allow-empty -m "chore: scaffold draft package PR"
 git push -u origin package/my-package
+
+cat > pr-body.md <<'EOF'
+## Summary
+
+Draft package submission scaffold.
+
+## Related Issues
+
+Describe the package (namespace/package-id and intent). When a tracking issue
+exists, replace this section with `Closes #<issue-number>`.
+EOF
+
 gh pr create --repo agents-repo/registry --draft \
   --head YOUR_GITHUB_USER:package/my-package \
   --base main \
