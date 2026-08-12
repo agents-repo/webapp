@@ -3,7 +3,7 @@ description: Report a defect or behavior inconsistency in the webapp.
 title: "fix: "
 labels:
   - bug
-type: Task
+type: Bug
 body:
   - type: markdown
     attributes:

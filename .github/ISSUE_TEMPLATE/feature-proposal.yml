@@ -3,7 +3,7 @@ description: Propose a new capability or UX improvement.
 title: "feat: "
 labels:
   - enhancement
-type: Task
+type: Feature
 body:
   - type: markdown
     attributes:
