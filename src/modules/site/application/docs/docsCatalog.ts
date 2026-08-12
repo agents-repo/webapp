@@ -87,7 +87,8 @@ export const docsCatalog: readonly DocCatalogMeta[] = [
   {
     slug: 'submitting-a-package',
     title: 'Submit a package',
-    description: 'Issue, branch, validation, build, draft PR, and squash-merge expectations for registry packages.',
+    description:
+      'Fork-first workflow, optional tracking issue, branch naming, early draft PR, validation, and squash-merge expectations for registry packages.',
     order: 120,
     section: 'Contribute',
   },

@@ -1,27 +1,107 @@
 ---
 title: Submit a package
-description: Issue, branch, validation, build, draft PR, and squash-merge expectations for registry packages.
+description: Fork-first workflow, optional tracking issue, branch naming, early draft PR, validation, and squash-merge expectations for registry packages.
 order: 120
 section: Contribute
 ---
 
-## 1. Open a tracking issue
+Packages are contributed to the [registry](https://github.com/agents-repo/registry) through a pull request to `main`. Most contributors **fork** the registry repository, work on the fork, and open a pull request from the fork to **agents-repo/registry**.
 
-Use the [package submission issue form](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-submission.yml) on **agents-repo/registry**.
+This is different from using **Website settings** to preview a fork in the browser — see [Using the catalog](/docs/using-the-catalog).
 
-## 2. Create a branch
+## 1. Fork and clone
 
-```text
-package/<issue-number>-<short-slug>
+1. On GitHub, fork [agents-repo/registry](https://github.com/agents-repo/registry) to your account or organization.
+2. Clone **your fork** (replace `YOUR_GITHUB_USER`):
+
+   ```bash
+   git clone https://github.com/YOUR_GITHUB_USER/registry.git
+   cd registry
+   ```
+
+3. Add the upstream remote and fetch:
+
+   ```bash
+   git remote add upstream https://github.com/agents-repo/registry.git
+   git fetch upstream
+   git checkout main
+   git merge upstream/main
+   ```
+
+Before starting a long-running branch, sync `main` from `upstream` again so your fork stays current.
+
+## 2. Optional tracking issue
+
+Opening a tracking issue on **upstream** (`agents-repo/registry`, not your fork) is **recommended but not required**.
+
+Use the [package submission issue form](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-submission.yml) when you want maintainer feedback before heavy work, when scope is unclear, or when you prefer a linked discussion thread.
+
+You may skip the issue for small, self-contained pull requests. When you do open one, note the issue number for branch naming and include `Closes #<issue-number>` in the pull request `## Related Issues` section.
+
+## 3. Branch on your fork
+
+Create a branch from updated `main`:
+
+| Situation | Branch pattern | Example |
+| --- | --- | --- |
+| With tracking issue | `package/<issue-number>-<slug>` | `package/56-my-package` |
+| Without tracking issue | `package/<slug>` | `package/my-package` |
+
+`<slug>` is a short lowercase kebab-case package id or descriptor.
+
+```bash
+git checkout -b package/my-package
 ```
 
-## 3. Author under packages/
+Org members with write access to **agents-repo/registry** may branch on the upstream repository directly; the fork flow is still recommended for isolation.
+
+## 4. Open a draft pull request (early)
+
+Open a **draft** pull request from your fork **before** substantive implementation commits. An empty scaffold commit is enough to open the PR if you have no file changes yet.
+
+- **Base repository:** `agents-repo/registry`
+- **Base branch:** `main`
+- **Head repository:** your fork
+- **Compare branch:** your task branch
+
+In the GitHub UI: choose **compare across forks**, set the base to `agents-repo/registry` `main`, and set the head to `YOUR_GITHUB_USER:package/my-package`.
+
+With the GitHub CLI, push a scaffold commit so the branch head differs from
+`main`, then open the draft pull request:
+
+```bash
+git commit --allow-empty -m "chore: scaffold draft package PR"
+git push -u origin package/my-package
+
+cat > pr-body.md <<'EOF'
+## Summary
+
+Draft package submission scaffold.
+
+## Related Issues
+
+Describe the package (namespace/package-id and intent). When a tracking issue
+exists, replace this section with `Closes #<issue-number>`.
+EOF
+
+gh pr create --repo agents-repo/registry --draft \
+  --head YOUR_GITHUB_USER:package/my-package \
+  --base main \
+  --title "feat(package): add my-package" \
+  --body-file pr-body.md
+```
+
+When a tracking issue exists, include `Closes #<issue-number>` in `## Related Issues`. Otherwise, describe the package in that section.
+
+## 5. Author under packages/
 
 Add or update `packages/<namespace>/<package-id>/` with agents/flows, `metadata.json`, and version artifacts per [registry specs](https://github.com/agents-repo/registry/tree/main/specs).
 
-## 4. Validate locally
+Push commits to your fork branch; the draft pull request updates automatically.
 
-From the registry repository (see CONTRIBUTING for pinned Node/npm):
+## 6. Validate locally
+
+From your local clone (see [registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md) for pinned Node/npm):
 
 ```bash
 npm run package:validate -- --package <namespace>/<package-id>
@@ -29,19 +109,28 @@ npm run package:build -- --package <namespace>/<package-id>
 npm run package:validate-artifacts -- --package <namespace>/<package-id> --version <version>
 ```
 
-## 5. Open a draft pull request
+## 7. Ready for review and merge
 
-- Target `main` on **agents-repo/registry**
-- Include `Closes #<issue>` in the PR body
-- Mark ready for review only after CI and maintainer checklist pass
+Mark the pull request **ready for review** only after local validation and CI pass. Maintainers squash-merge with **`feat(package): …`** for new packages or versions, or **`fix(package): …`** for corrections so registry release tags publish.
 
-## 6. Squash merge title
+## Keep your fork updated
 
-Use **`feat(package): …`** for new packages or versions, or **`fix(package): …`** for corrections so registry release tags publish.
+While work is in progress, periodically sync from upstream:
+
+```bash
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+git checkout package/my-package
+git merge main
+```
+
+Resolve conflicts before your final push.
 
 ## Package corrections
 
-For fixes to existing catalog entries, use the [package correction template](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-correction.yml).
+For fixes to existing catalog entries, use the same fork → upstream pull request model. The [package correction template](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-correction.yml) is optional but recommended.
 
 ## Related
 
