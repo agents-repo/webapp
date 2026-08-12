@@ -44,8 +44,7 @@ function HelpUsPage() {
                   aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
                 >
                   agents-repo/registry
-                </a>
-                , add maintained packages under <code>packages/</code>, and open a pull request from your
+                </a>, add maintained packages under <code>packages/</code>, and open a pull request from your
                 fork to upstream. Start with{' '}
                 <NavLink to={getDocDetailPath('submitting-a-package')}>Submit a package</NavLink> and{' '}
                 <NavLink to={getDocDetailPath('contributing-packages')}>Contributing packages</NavLink>.
