@@ -83,7 +83,11 @@ Pre-commit hooks run `npm run lint:all` automatically through Husky.
 on `.github/workflows/`). Run `npm run lint:workflows` before pushing workflow
 changes. See the organization
 [GitHub Actions workflow linting](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md)
-norm.
+norm. When bumping `ACTIONLINT_VERSION` in `scripts/lint-workflows.mjs`, replace
+`scripts/actionlint_<version>_checksums.txt` with the matching file from the
+[actionlint GitHub release](https://github.com/rhysd/actionlint/releases) and
+remove the previous version's checksums file. Keep the same pin across
+organization repositories.
 
 ## Project Layout
 
@@ -296,5 +300,8 @@ Checklist when opening the draft PR and before requesting review:
    for standard tasks, or the security-advisory format defined in the
    **Workflow exceptions** section of `.github/CONTRIBUTING.md` when applicable.
 6. Every PR targeting `main` MUST include a tracking reference.
+
+Canonical cross-repo mapping:
+[organization branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#branch-prefix-reference).
 
 [org-rw]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow

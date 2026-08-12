@@ -195,6 +195,11 @@ Use the prefix that matches the work category:
 - task or chore: `chore/`
 - documentation-only work: `docs/`
 
+See `.github/CONTRIBUTING.md` **Branch Naming** and the organization
+[branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#branch-prefix-reference).
+Branch prefix categorizes work; conventional **commit** (or squash-merge)
+prefix determines automated release bumps.
+
 ## Commit Message Convention
 
 See `.github/CONTRIBUTING.md` for conventional commit prefixes and
