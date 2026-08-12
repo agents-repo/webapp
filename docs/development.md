@@ -298,6 +298,6 @@ Checklist when opening the draft PR and before requesting review:
 6. Every PR targeting `main` MUST include a tracking reference.
 
 Canonical cross-repo mapping:
-[organization branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#shared-norms).
+[organization branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#branch-prefix-reference).
 
 [org-rw]: https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow

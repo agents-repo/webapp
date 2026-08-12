@@ -105,6 +105,9 @@ short lowercase kebab-case.
 
 Create the issue first to obtain the issue number, then open the branch.
 
+See the organization [branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#branch-prefix-reference)
+for the canonical cross-repo mapping.
+
 ## Commit Message Convention
 
 Use conventional-style summaries when possible:

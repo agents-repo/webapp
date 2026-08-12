@@ -23,7 +23,7 @@ This site is developed in [agents-repo/webapp](https://github.com/agents-repo/we
 3. Open a **draft** pull request with `Closes #<issue>`.
 4. Run validation before handoff; a human maintainer marks the PR ready for review.
 
-Full rules: [webapp CONTRIBUTING](https://github.com/agents-repo/webapp/blob/main/.github/CONTRIBUTING.md), [organization Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow), and the [organization branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#shared-norms).
+Full rules: [webapp CONTRIBUTING](https://github.com/agents-repo/webapp/blob/main/.github/CONTRIBUTING.md), [organization Required Workflow](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#required-workflow), and the [organization branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#branch-prefix-reference).
 
 ## Local validation
 
