@@ -37,7 +37,16 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Create agents and flows</h2>
               <p className="text-body-secondary">
-                Contribute maintained packages under <code>packages/</code> in the registry. Start with{' '}
+                Fork <a
+                  href={REGISTRY_REPO_URL}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                >
+                  agents-repo/registry
+                </a>
+                , add maintained packages under <code>packages/</code>, and open a pull request from your
+                fork to upstream. Start with{' '}
                 <NavLink to={getDocDetailPath('submitting-a-package')}>Submit a package</NavLink> and{' '}
                 <NavLink to={getDocDetailPath('contributing-packages')}>Contributing packages</NavLink>.
               </p>

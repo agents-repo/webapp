@@ -15,13 +15,15 @@ Package source lives in the [registry](https://github.com/agents-repo/registry) 
 
 ## Submission workflow
 
+Most contributors **fork** the registry, work on the fork, and open a pull request to **agents-repo/registry** `main`. A tracking issue on upstream is **recommended but not required**.
+
 Step-by-step checklist: **[Submit a package](/docs/submitting-a-package)**.
 
 Human-facing requirements and review expectations: [registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md).
 
 ## Corrections
 
-Fixes to published packages use the [package correction issue template](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-correction.yml) and `fix(package):` squash-merge titles.
+Fixes to published packages use the same fork → upstream pull request model. The [package correction issue template](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-correction.yml) is optional but recommended. Squash-merge titles use `fix(package):`.
 
 ## Help
 
