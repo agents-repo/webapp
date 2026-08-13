@@ -1,6 +1,6 @@
 ---
 title: Submit a package
-description: Fork-first workflow, optional tracking issue, branch naming, early draft PR, validation, and squash-merge expectations for registry packages.
+description: Fork-first workflow, optional tracking issue, AI-first package creation with full-package-creation-flow, validation, and squash-merge expectations.
 order: 120
 section: Contribute
 ---
@@ -93,15 +93,46 @@ gh pr create --repo agents-repo/registry --draft \
 
 When a tracking issue exists, include `Closes #<issue-number>` in `## Related Issues`. Otherwise, describe the package in that section.
 
-## 5. Author under packages/
+## 5. Create the package
 
-Add or update `packages/<namespace>/<package-id>/` with agents/flows, `metadata.json`, and version artifacts per [registry specs](https://github.com/agents-repo/registry/tree/main/specs).
+Package creation is **AI-first**. After the draft pull request is open, create
+package source on the task branch. The registry clone already includes
+[`agents-repo/agents-repo-package-creation`](https://github.com/agents-repo/registry/tree/main/packages/agents-repo/agents-repo-package-creation)
+(extracted skills and agents for GitHub Copilot, Cursor, Claude Code, and OpenAI
+Codex). You do not need a separate CLI install. See
+[registry README — IDE Setup](https://github.com/agents-repo/registry/blob/main/README.md#ide-setup)
+for where those files live.
+
+### Suggested: invoke `full-package-creation-flow`
+
+In your IDE, invoke the **`full-package-creation-flow`** flow (skill or agent,
+depending on the install target). Describe the package you want. The flow
+scaffolds with `package:create`, authors agents/flows and metadata, reviews for
+submission readiness, then runs `package:validate`, `package:build`, and
+`package:validate-artifacts`.
+
+Do not edit files under `versions/` by hand. The flow uses `package:build` for
+version snapshots.
 
 Push commits to your fork branch; the draft pull request updates automatically.
 
+### Alternative: author files yourself
+
+Add or update `packages/<namespace>/<package-id>/` with agents/flows and
+`metadata.json` per [registry specs](https://github.com/agents-repo/registry/tree/main/specs).
+Never create or modify files under `versions/` by hand; `package:build`
+generates those artifacts.
+
+Then run the commands in the next section.
+
 ## 6. Validate locally
 
-From your local clone (see [registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md) for pinned Node/npm):
+If you used the suggested flow, validate/build/artifact checks already ran.
+Still confirm CI on the draft pull request.
+
+If you authored files yourself, run this pipeline from your local clone (see
+[registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md)
+for pinned Node/npm):
 
 ```bash
 npm run package:validate -- --package <namespace>/<package-id>
