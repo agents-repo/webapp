@@ -33,4 +33,4 @@ export const ogType = 'website'
 
 export const twitterCard = 'summary_large_image'
 
-export const twitterSite = '@AgentsRepo'
+export { twitterSite } from '../community/socialLinks.ts'

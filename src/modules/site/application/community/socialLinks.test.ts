@@ -3,6 +3,7 @@ import {
   GITHUB_ORGANIZATION_URL,
   getOrganizationSameAsUrls,
   socialLinks,
+  twitterSite,
 } from './socialLinks.ts'
 
 describe('socialLinks', () => {
@@ -35,5 +36,13 @@ describe('socialLinks', () => {
       'https://www.reddit.com/r/agentsrepo/',
       GITHUB_ORGANIZATION_URL,
     ])
+  })
+
+  it('derives twitter:site from the X profile URL', () => {
+    const xHref = socialLinks.find((link) => link.id === 'x')?.href
+
+    expect(xHref).toBeDefined()
+    expect(twitterSite).toBe('@AgentsRepo')
+    expect(twitterSite).toBe(`@${new URL(xHref ?? '').pathname.split('/').filter(Boolean)[0]}`)
   })
 })
