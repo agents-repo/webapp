@@ -3,6 +3,8 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { socialLinks } from '../../application/community/socialLinks'
+import SocialExternalLink from '../layout/SocialExternalLink'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
@@ -24,8 +26,10 @@ function ContactPage() {
               <h2 className="h4">Reach out</h2>
               <p className="text-body-secondary mb-0">
                 Use this page to find the right channel for questions about packages, registry usage,
-                webapp behavior, and contribution workflows. For registry source configuration, check
-                Website settings in the header before opening a thread.
+                webapp behavior, and contribution workflows. GitHub Discussions and Issues remain the
+                tracked-work path for bugs, package submissions, and contribution work. X and Reddit are
+                for announcements, informal conversation, and community ideas. For registry source
+                configuration, check Website settings in the header before opening a thread.
               </p>
             </Card.Body>
           </Card>
@@ -103,6 +107,24 @@ function ContactPage() {
               </Card>
             </Col>
           </Row>
+
+          <Card>
+            <Card.Body>
+              <h2 className="h4">Community</h2>
+              <p className="text-body-secondary">
+                Join public community channels for informal discussion and ideas. Use GitHub Discussions
+                and Issues above for bugs, tracked work, and package submissions. Do not use social
+                channels for security or privacy requests.
+              </p>
+              <ul className="mb-0">
+                {socialLinks.map((entry) => (
+                  <li key={entry.id}>
+                    <SocialExternalLink entry={entry} /> — {entry.shortDescription}
+                  </li>
+                ))}
+              </ul>
+            </Card.Body>
+          </Card>
 
           <Card>
             <Card.Body>

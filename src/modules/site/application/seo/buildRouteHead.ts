@@ -12,7 +12,9 @@ import {
   ogType,
   siteName,
   twitterCard,
+  twitterSite,
 } from './siteSeo.ts'
+import { getOrganizationSameAsUrls } from '../community/socialLinks.ts'
 import { getSiteSeoMeta } from './siteSeoMeta.ts'
 
 const legacyGithubPagesHost = 'agents-repo.github.io'
@@ -45,6 +47,7 @@ export interface RouteHeadData {
   readonly ogSiteName: string
   readonly ogLocale: string
   readonly twitterCard: string
+  readonly twitterSite: string
   readonly twitterTitle: string
   readonly twitterDescription: string
   readonly twitterImage: string
@@ -86,6 +89,7 @@ function buildJsonLd(
           '@id': organizationId,
           name: siteName,
           url: `${origin}/`,
+          sameAs: getOrganizationSameAsUrls(),
         },
         {
           '@type': 'WebSite',
@@ -130,6 +134,7 @@ export function getRouteHeadData(pathname: string, siteOriginOverride?: string):
     ogSiteName,
     ogLocale,
     twitterCard,
+    twitterSite,
     twitterTitle: documentTitle,
     twitterDescription: seoMeta.description,
     twitterImage: ogImage,
@@ -156,6 +161,7 @@ export function renderRouteHeadHtml(data: RouteHeadData): string {
     `<meta property="og:site_name" content="${escapeHtml(data.ogSiteName)}" />`,
     `<meta property="og:locale" content="${escapeHtml(data.ogLocale)}" />`,
     `<meta name="twitter:card" content="${escapeHtml(data.twitterCard)}" />`,
+    `<meta name="twitter:site" content="${escapeHtml(data.twitterSite)}" />`,
     `<meta name="twitter:title" content="${escapeHtml(data.twitterTitle)}" />`,
     `<meta name="twitter:description" content="${escapeHtml(data.twitterDescription)}" />`,
     `<meta name="twitter:image" content="${escapeHtml(data.twitterImage)}" />`,

@@ -35,6 +35,18 @@ describe('getRouteHeadData', () => {
     expect(about.jsonLd).toMatchObject({ '@type': 'WebPage' })
     expect(about.jsonLd).not.toHaveProperty('@graph')
   })
+
+  it('includes Organization sameAs profiles on the home route', () => {
+    const home = getRouteHeadData(siteRoutes.home)
+    const graph = home.jsonLd['@graph'] as Array<Record<string, unknown>>
+    const organization = graph.find((node) => node['@type'] === 'Organization')
+
+    expect(organization?.sameAs).toEqual([
+      'https://x.com/AgentsRepo',
+      'https://www.reddit.com/r/agentsrepo/',
+      'https://github.com/agents-repo',
+    ])
+  })
 })
 
 describe('renderRouteHeadHtml', () => {
@@ -46,6 +58,7 @@ describe('renderRouteHeadHtml', () => {
     expect(html).toContain('rel="canonical"')
     expect(html).toContain('property="og:title"')
     expect(html).toContain('name="twitter:card" content="summary_large_image"')
+    expect(html).toContain('name="twitter:site" content="@AgentsRepo"')
     expect(html).toContain('property="og:image" content="https://agents-repo.org/og-image.jpg"')
     expect(html).toContain('application/ld+json')
   })

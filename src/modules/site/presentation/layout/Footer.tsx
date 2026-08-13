@@ -14,8 +14,10 @@ import {
 import { Col, Container, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { siteRoutes } from '../routes/siteRoutes'
 import { useCookieConsent } from '../../application/analytics/cookieConsentContext'
+import { socialLinks } from '../../application/community/socialLinks'
+import { siteRoutes } from '../routes/siteRoutes'
+import SocialExternalLink from './SocialExternalLink'
 
 function Footer() {
   const { openCookiePreferences } = useCookieConsent()
@@ -60,6 +62,9 @@ function Footer() {
                   <FontAwesomeIcon icon={faHandsHelping} className="me-2" aria-hidden="true" />
                   Help Us
                 </NavLink>
+                {socialLinks.map((entry) => (
+                  <SocialExternalLink key={entry.id} entry={entry} className="footer-link" />
+                ))}
               </div>
             </nav>
           </Col>

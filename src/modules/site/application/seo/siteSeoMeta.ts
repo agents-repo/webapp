@@ -36,7 +36,8 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
     canonicalPath: siteRoutes.about,
   },
   [siteRoutes.contact]: {
-    description: 'Contact the Agents Repo team for questions, feedback, or support.',
+    description:
+      'Contact Agents Repo through GitHub Discussions and Issues for tracked work, or join X and Reddit for community discussion and ideas.',
     canonicalPath: siteRoutes.contact,
   },
   [siteRoutes.helpUs]: {
