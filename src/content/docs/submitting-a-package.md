@@ -113,8 +113,9 @@ In your IDE, invoke the **`full-package-creation-flow`** flow (skill or agent,
 depending on the install target). Describe the package you want. The flow
 scaffolds with `package:create`, authors agents/flows and metadata, reviews for
 submission readiness, then runs `package:validate`, `package:build`, and
-`package:validate-artifacts` when it completes. You may exit after any step;
-if you do, finish the pipeline in the next section.
+`package:validate-artifacts` when it completes. If you leave the flow after
+authoring and review but before those validation scripts run, finish the
+pipeline in the next section.
 
 Do not edit files under `versions/` by hand. The flow uses `package:build` for
 version snapshots.
