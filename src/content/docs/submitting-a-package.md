@@ -105,11 +105,16 @@ for where those files live.
 
 ### Suggested: invoke `full-package-creation-flow`
 
+The flow runs registry npm scripts. Complete
+[registry README — Development Environment](https://github.com/agents-repo/registry/blob/main/README.md#development-environment)
+setup first (`npm ci` and `npm run env:check` with the pinned Node/npm).
+
 In your IDE, invoke the **`full-package-creation-flow`** flow (skill or agent,
 depending on the install target). Describe the package you want. The flow
 scaffolds with `package:create`, authors agents/flows and metadata, reviews for
 submission readiness, then runs `package:validate`, `package:build`, and
-`package:validate-artifacts`.
+`package:validate-artifacts` when it completes. You may exit after any step;
+if you do, finish the pipeline in the next section.
 
 Do not edit files under `versions/` by hand. The flow uses `package:build` for
 version snapshots.
@@ -127,12 +132,13 @@ Then run the commands in the next section.
 
 ## 6. Validate locally
 
-If you used the suggested flow, validate/build/artifact checks already ran.
-Still confirm CI on the draft pull request.
+From your local clone, use the pinned Node/npm in
+[registry README — Development Environment](https://github.com/agents-repo/registry/blob/main/README.md#development-environment)
+(`npm ci` and `npm run env:check`).
 
-If you authored files yourself, run this pipeline from your local clone (see
-[registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md)
-for pinned Node/npm):
+If the suggested flow finished through artifact validation, confirm CI on the
+draft pull request. If you authored files yourself or the flow stopped early,
+run this pipeline:
 
 ```bash
 npm run package:validate -- --package <namespace>/<package-id>
