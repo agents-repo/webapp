@@ -17,7 +17,7 @@ Package source lives in the [registry](https://github.com/agents-repo/registry) 
 
 Most contributors **fork** the registry, work on the fork, and open a pull request to **agents-repo/registry** `main`. A tracking issue on upstream is **recommended but not required**.
 
-Step-by-step checklist: **[Submit a package](/docs/submitting-a-package)**.
+The suggested authoring path is the in-tree **`full-package-creation-flow`** (`agents-repo/agents-repo-package-creation`) after the draft pull request. Step-by-step checklist: **[Submit a package](/docs/submitting-a-package)**.
 
 Human-facing requirements and review expectations: [registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md).
 
