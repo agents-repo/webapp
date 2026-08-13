@@ -32,3 +32,5 @@ export const ogLocale = 'en_US'
 export const ogType = 'website'
 
 export const twitterCard = 'summary_large_image'
+
+export { twitterSite } from '../community/socialLinks.ts'

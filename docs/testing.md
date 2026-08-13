@@ -179,7 +179,8 @@ hard-coded locale strings.
 | Theme mode persistence | `themeMode.test.ts` |
 | PWA install helpers | `pwaInstall.test.ts` |
 | External link accessible names | `externalLink.test.ts` |
-| Key UI a11y smoke | `Header`, `HomePage`, `WebsiteSettingsControl`, `AccessibilityPage` |
+| Site UI a11y smoke | `Header`, `Footer`, `WebsiteSettingsControl`, `AccessibilityPage` |
+| HomePage a11y smoke | `HomePage` |
 
 ### Prioritized backlog
 
@@ -212,7 +213,9 @@ Skip unit tests for:
 - Static marketing or content pages (`AboutPage`, `ContactPage`, `HelpUsPage`)
 - Trivial label maps (`installTargets.ts`)
 - Type-only modules (`registryCatalogStatusNote.ts`)
-- Thin layout wrappers that delegate to tested logic (`Footer`, `ThemeModeDropdown`)
+- Thin layout wrappers that delegate to tested logic (`ThemeModeDropdown`)
+- `Footer` as a thin layout wrapper; coverage is the a11y smoke test in
+  `Footer.a11y.test.tsx`, not a unit test
 
 ## Future options (not adopted)
 

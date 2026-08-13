@@ -46,7 +46,7 @@ function AccessibilityPage() {
               <p className="text-body-secondary mb-0">
                 This Accessibility Conformance Report (ACR) applies to the Agents Repo web application
                 user interface served from this site. It does not cover third-party websites such as
-                GitHub, LinkedIn, or remote registry hosts linked from the application.
+                GitHub, LinkedIn, X, Reddit, or remote registry hosts linked from the application.
               </p>
             </Card.Body>
           </Card>
