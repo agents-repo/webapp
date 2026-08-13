@@ -41,8 +41,11 @@ describe('socialLinks', () => {
   it('derives twitter:site from the X profile URL', () => {
     const xHref = socialLinks.find((link) => link.id === 'x')?.href
 
-    expect(xHref).toBeDefined()
+    if (xHref === undefined) {
+      throw new Error('expected socialLinks to include an X profile href')
+    }
+
     expect(twitterSite).toBe('@AgentsRepo')
-    expect(twitterSite).toBe(`@${new URL(xHref ?? '').pathname.split('/').filter(Boolean)[0]}`)
+    expect(twitterSite).toBe(`@${new URL(xHref).pathname.split('/').filter(Boolean)[0]}`)
   })
 })
