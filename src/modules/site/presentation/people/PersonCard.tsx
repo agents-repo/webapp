@@ -4,7 +4,11 @@ import { Badge, Card } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
 import { getRepositoryDetailPath } from '../../application/nestedSiteRoutes.ts'
-import { githubAvatarUrl, githubProfileUrl } from '../../application/people/githubPersonUrls.ts'
+import {
+  GITHUB_AVATAR_SIZE_PX,
+  githubAvatarUrl,
+  githubProfileUrl,
+} from '../../application/people/githubPersonUrls.ts'
 import type { PersonEntry } from '../../application/people/peopleManifest.types.ts'
 import { getRepositoryBySlug } from '../../application/repositories/repositoryManifest.ts'
 
@@ -23,8 +27,8 @@ function PersonCard({ person }: PersonCardProps) {
           <img
             src={avatarUrl}
             alt={person.displayName}
-            width={160}
-            height={160}
+            width={GITHUB_AVATAR_SIZE_PX}
+            height={GITHUB_AVATAR_SIZE_PX}
             className="rounded-circle person-card-avatar mb-3"
           />
           <Card.Title as="h3" className="h5">{person.displayName}</Card.Title>

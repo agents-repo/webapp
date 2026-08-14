@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { githubAvatarUrl, githubProfileUrl } from './githubPersonUrls.ts'
+import { GITHUB_AVATAR_SIZE_PX, githubAvatarUrl, githubProfileUrl } from './githubPersonUrls.ts'
 import { contributors, listContributors, listMaintainers, maintainers } from './peopleManifest.ts'
 import type { PersonEntry } from './peopleManifest.types.ts'
 import { getRepositoryBySlug, getRepositorySlugs } from '../repositories/repositoryManifest.ts'
@@ -11,7 +11,9 @@ function collectPeople(entries: readonly PersonEntry[]): readonly PersonEntry[] 
 describe('githubPersonUrls', () => {
   it('builds GitHub profile and avatar URLs from login', () => {
     expect(githubProfileUrl('maiconfz')).toBe('https://github.com/maiconfz')
-    expect(githubAvatarUrl('maiconfz')).toBe('https://github.com/maiconfz.png?size=160')
+    expect(githubAvatarUrl('maiconfz')).toBe(
+      `https://github.com/maiconfz.png?size=${GITHUB_AVATAR_SIZE_PX}`,
+    )
   })
 })
 

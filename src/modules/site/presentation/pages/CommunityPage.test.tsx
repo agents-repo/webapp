@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '../../../../test/renderWithProviders.tsx'
-import { githubAvatarUrl, githubProfileUrl } from '../../application/people/githubPersonUrls.ts'
+import { GITHUB_AVATAR_SIZE_PX, githubAvatarUrl, githubProfileUrl } from '../../application/people/githubPersonUrls.ts'
 import { listMaintainers } from '../../application/people/peopleManifest.ts'
 import { getRepositoryBySlug } from '../../application/repositories/repositoryManifest.ts'
 import { getRepositoryDetailPath } from '../../application/nestedSiteRoutes.ts'
@@ -23,10 +23,10 @@ describe('CommunityPage', () => {
     }
 
     expect(screen.getByRole('heading', { name: maintainer.displayName })).toBeInTheDocument()
-    expect(screen.getByAltText(maintainer.displayName)).toHaveAttribute(
-      'src',
-      githubAvatarUrl(maintainer.githubLogin),
-    )
+    const avatar = screen.getByAltText(maintainer.displayName)
+    expect(avatar).toHaveAttribute('src', githubAvatarUrl(maintainer.githubLogin))
+    expect(avatar).toHaveAttribute('width', String(GITHUB_AVATAR_SIZE_PX))
+    expect(avatar).toHaveAttribute('height', String(GITHUB_AVATAR_SIZE_PX))
     expect(
       screen.getByRole('link', { name: `${maintainer.displayName} on GitHub (opens in a new tab)` }),
     ).toHaveAttribute('href', githubProfileUrl(maintainer.githubLogin))

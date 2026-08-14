@@ -417,6 +417,7 @@
 }
 
 .person-card-avatar {
+  /* 6rem = 96px at the 16px root; keep in sync with GITHUB_AVATAR_SIZE_PX */
   width: 6rem;
   height: 6rem;
   object-fit: cover;
