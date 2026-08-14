@@ -10,7 +10,7 @@ function PersonCardGrid({
   readonly people: ReturnType<typeof listMaintainers>
 }) {
   return (
-    <Row className="g-4">
+    <Row className="g-4 justify-content-center">
       {people.map((person) => (
         <Col key={person.githubLogin} xs={12} sm={6} lg={4}>
           <PersonCard person={person} />
@@ -54,7 +54,7 @@ function CommunityPage() {
             {contributors.length === 0 ? (
               <Card>
                 <Card.Body>
-                  <p className="text-body-secondary mb-0">
+                  <p className="text-body-secondary mb-0 text-center">
                     We don't have any contributor yet{' '}
                     <span aria-hidden="true">😢</span>, find how to help us at{' '}
                     <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>.

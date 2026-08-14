@@ -115,8 +115,10 @@ function Footer() {
           <Col>
             <div className="footer-credits-row">
               <p className="mb-0 text-body-secondary text-center">
-                Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by
-                Maicon + collaborators.
+                Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by{' '}
+                <NavLink to={siteRoutes.community} className="footer-link">
+                  Maicon + collaborators
+                </NavLink>.
               </p>
             </div>
           </Col>

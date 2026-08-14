@@ -18,8 +18,8 @@ function PersonCard({ person }: PersonCardProps) {
 
   return (
     <Card className="h-100">
-      <Card.Body className="d-flex flex-column">
-        <div className="text-center mb-3">
+      <Card.Body className="d-flex flex-column text-center">
+        <div className="mb-3">
           <img
             src={avatarUrl}
             alt={person.displayName}
@@ -38,7 +38,7 @@ function PersonCard({ person }: PersonCardProps) {
             GitHub
           </a>
         </div>
-        <div className="d-flex flex-wrap gap-1 mt-auto">
+        <div className="d-flex flex-wrap gap-1 mt-auto justify-content-center">
           {person.projects.map((project) => {
             const repository = getRepositoryBySlug(project.repositorySlug)
             if (!repository) {
