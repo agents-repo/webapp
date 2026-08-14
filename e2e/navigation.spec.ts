@@ -3,6 +3,7 @@ import { test, expect } from './fixtures/registry-mock'
 const routeHeadings = [
   { path: '/', heading: 'Explore ready-to-use agents and flows' },
   { path: '/about', heading: 'About' },
+  { path: '/community', heading: 'Community' },
   { path: '/contact', heading: 'Contact' },
   { path: '/help-us', heading: 'Help Us' },
   { path: '/repositories', heading: 'Repositories' },

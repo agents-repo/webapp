@@ -29,6 +29,7 @@ interface AppRoutesProps {
 function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
   const {
     AboutPage,
+    CommunityPage,
     AccessibilityPage,
     ContactPage,
     HelpUsPage,
@@ -47,6 +48,7 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
         element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
       />
       <Route path={siteRoutes.about} element={<AboutPage />} />
+      <Route path={siteRoutes.community} element={<CommunityPage />} />
       <Route path={siteRoutes.contact} element={<ContactPage />} />
       <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
       <Route path={siteRoutes.docs} element={<DocIndexPage />} />

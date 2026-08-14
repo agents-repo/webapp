@@ -2,6 +2,7 @@ import { lazy, type LazyExoticComponent, type ComponentType } from 'react'
 
 export interface LazySitePages {
   readonly AboutPage: LazyExoticComponent<ComponentType>
+  readonly CommunityPage: LazyExoticComponent<ComponentType>
   readonly AccessibilityPage: LazyExoticComponent<ComponentType>
   readonly ContactPage: LazyExoticComponent<ComponentType>
   readonly HelpUsPage: LazyExoticComponent<ComponentType>
@@ -16,6 +17,7 @@ export interface LazySitePages {
 export function createLazySitePages(): LazySitePages {
   return {
     AboutPage: lazy(() => import('../pages/AboutPage')),
+    CommunityPage: lazy(() => import('../pages/CommunityPage')),
     AccessibilityPage: lazy(() => import('../pages/AccessibilityPage')),
     ContactPage: lazy(() => import('../pages/ContactPage')),
     HelpUsPage: lazy(() => import('../pages/HelpUsPage')),

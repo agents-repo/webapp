@@ -10,6 +10,7 @@ import {
   faScaleBalanced,
   faUniversalAccess,
   faUserShield,
+  faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { Col, Container, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
@@ -37,6 +38,10 @@ function Footer() {
                 <NavLink to={siteRoutes.about} className="footer-link">
                   <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
                   About
+                </NavLink>
+                <NavLink to={siteRoutes.community} className="footer-link">
+                  <FontAwesomeIcon icon={faUsers} className="me-2" aria-hidden="true" />
+                  Community
                 </NavLink>
                 <NavLink to={siteRoutes.docs} className="footer-link">
                   <FontAwesomeIcon icon={faBook} className="me-2" aria-hidden="true" />
@@ -110,8 +115,10 @@ function Footer() {
           <Col>
             <div className="footer-credits-row">
               <p className="mb-0 text-body-secondary text-center">
-                Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by
-                Maicon + collaborators.
+                Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by{' '}
+                <NavLink to={siteRoutes.community} className="footer-link">
+                  Maicon + collaborators
+                </NavLink>.
               </p>
             </div>
           </Col>

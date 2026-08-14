@@ -35,6 +35,11 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
       'Learn about Agents Repo: browse curated agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
     canonicalPath: siteRoutes.about,
   },
+  [siteRoutes.community]: {
+    description:
+      'Meet Agents Repo maintainers and contributors, and see who maintains the platform repositories.',
+    canonicalPath: siteRoutes.community,
+  },
   [siteRoutes.contact]: {
     description:
       'Contact Agents Repo through GitHub Discussions and Issues for tracked work, or join X and Reddit for community discussion and ideas.',

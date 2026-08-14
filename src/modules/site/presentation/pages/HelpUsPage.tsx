@@ -142,6 +142,7 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Related</h2>
               <p className="text-body-secondary mb-0">
+                <NavLink to={siteRoutes.community}>Community</NavLink>,{' '}
                 <NavLink to={siteRoutes.docs}>Docs</NavLink>, organization repositories on{' '}
                 <NavLink to={siteRoutes.repositories}>Repositories</NavLink>, questions on{' '}
                 <NavLink to={siteRoutes.contact}>Contact</NavLink>, and context on{' '}

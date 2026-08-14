@@ -9,6 +9,7 @@ import {
 export const siteRoutes = {
   home: '/',
   about: '/about',
+  community: '/community',
   contact: '/contact',
   helpUs: '/help-us',
   docs: DOCS_BASE_PATH,

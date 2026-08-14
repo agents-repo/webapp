@@ -415,3 +415,10 @@
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--bs-border-color);
 }
+
+.person-card-avatar {
+  /* 6rem = 96px at the 16px root; keep in sync with GITHUB_AVATAR_SIZE_PX */
+  width: 6rem;
+  height: 6rem;
+  object-fit: cover;
+}
