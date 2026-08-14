@@ -6,6 +6,7 @@ describe('getSitePageMeta', () => {
   it('returns meta for known routes', () => {
     expect(getSitePageMeta(siteRoutes.home).title).toBe('Home')
     expect(getSitePageMeta(siteRoutes.about).title).toBe('About')
+    expect(getSitePageMeta(siteRoutes.community).title).toBe('Community')
     expect(getSitePageMeta(siteRoutes.contact).title).toBe('Contact')
     expect(getSitePageMeta(siteRoutes.helpUs).title).toBe('Help Us')
     expect(getSitePageMeta(siteRoutes.repositories).title).toBe('Repositories')

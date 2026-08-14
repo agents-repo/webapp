@@ -67,7 +67,7 @@ function AboutPage() {
               <h2 className="h4">Creator</h2>
               <p className="text-body-secondary">
                 Agents Repo is created and maintained by Maicon, a senior full stack developer based in
-                Portugal, with support from collaborators.
+                Portugal, with support from <NavLink to={siteRoutes.community}>collaborators</NavLink>.
               </p>
               <div className="d-flex flex-wrap gap-3">
                 <a

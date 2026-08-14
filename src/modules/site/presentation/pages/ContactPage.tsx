@@ -131,7 +131,7 @@ function ContactPage() {
               <h2 className="h4">Creator</h2>
               <p className="text-body-secondary">
                 Maicon is the creator and maintainer of Agents Repo, a senior full stack developer based
-                in Portugal, with support from collaborators.
+                in Portugal, with support from <NavLink to={siteRoutes.community}>collaborators</NavLink>.
               </p>
               <div className="d-flex flex-wrap gap-3">
                 <a

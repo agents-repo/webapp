@@ -25,6 +25,7 @@ describe('siteSeoMeta', () => {
       expect.arrayContaining([
         siteRoutes.home,
         siteRoutes.about,
+        siteRoutes.community,
         siteRoutes.contact,
         siteRoutes.helpUs,
         siteRoutes.docs,
@@ -40,6 +41,7 @@ describe('siteSeoMeta', () => {
 
   it('distinguishes known routes from unknown paths', () => {
     expect(isKnownSiteRoute(siteRoutes.about)).toBe(true)
+    expect(isKnownSiteRoute(siteRoutes.community)).toBe(true)
     expect(isKnownSiteRoute('/about/')).toBe(true)
     expect(isKnownSiteRoute('/repositories/cli')).toBe(true)
     expect(isKnownSiteRoute('/docs/installing-packages')).toBe(true)

@@ -29,6 +29,10 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
     title: 'About',
     routeLabel: 'About',
   },
+  [siteRoutes.community]: {
+    title: 'Community',
+    routeLabel: 'Community',
+  },
   [siteRoutes.contact]: {
     title: 'Contact',
     routeLabel: 'Contact',
