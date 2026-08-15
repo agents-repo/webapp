@@ -4,12 +4,18 @@ import {
   buildRegistryArtifactUrl,
   buildRegistryIndexUrl,
   buildRegistryPackageBrowseUrl,
+  buildRegistryPkgInstructionShortAliasPath,
+  buildRegistryPkgInstructionShortAliasUrl,
+  buildRegistryPkgInstructionsPath,
+  buildRegistryPkgInstructionsUrl,
+  buildRegistryPkgUrl,
   getRegistryBaseUrlFromIndexUrl,
   getRegistryIndexCacheLookupKey,
   getRegistrySourceCacheIdentity,
   normalizeRegistryBaseUrl,
   trimLeadingSlashes,
   trimTrailingSlashes,
+  withRegistryQueryParam,
 } from './registrySourceUrl'
 
 describe('registrySourceUrl', () => {
@@ -205,6 +211,65 @@ describe('registrySourceUrl', () => {
     expect(
       buildRegistryPackageBrowseUrl('https://github.com/agents-repo/registry', 'agents-repo', 'hello/agent'),
     ).toBe('https://github.com/agents-repo/registry/tree/v2.x/packages/agents-repo/hello%2Fagent')
+  })
+
+  it('joins path-only /pkg/ strings onto the registry base while preserving query parameters', () => {
+    expect(
+      buildRegistryPkgUrl(
+        'https://registry-proxy.example.workers.dev?ref=v2.x',
+        '/pkg/agents-repo/hello-agent/1.0.1/instructions.json',
+      ),
+    ).toBe(
+      'https://registry-proxy.example.workers.dev/pkg/agents-repo/hello-agent/1.0.1/instructions.json?ref=v2.x',
+    )
+  })
+
+  it('builds version-in-path instructions.json URLs', () => {
+    expect(buildRegistryPkgInstructionsPath('agents-repo', 'hello-agent', '1.0.1')).toBe(
+      'pkg/agents-repo/hello-agent/1.0.1/instructions.json',
+    )
+    expect(
+      buildRegistryPkgInstructionsUrl(
+        'https://registry-proxy.example.workers.dev?ref=v2.x',
+        'agents-repo',
+        'hello-agent',
+        '1.0.1',
+      ),
+    ).toBe(
+      'https://registry-proxy.example.workers.dev/pkg/agents-repo/hello-agent/1.0.1/instructions.json?ref=v2.x',
+    )
+  })
+
+  it('builds short-alias instruction paths without a version segment', () => {
+    expect(
+      buildRegistryPkgInstructionShortAliasPath('agents-repo', 'hello-agent', 'agent', 'hello-agent'),
+    ).toBe('pkg/agents-repo/hello-agent/agents/hello-agent.agent.md')
+    expect(
+      buildRegistryPkgInstructionShortAliasPath('agents-repo', 'hello-agent', 'flow', 'hello-agents.agent.md'),
+    ).toBe('pkg/agents-repo/hello-agent/flows/hello-agents.agent.md')
+  })
+
+  it('builds short-alias instruction URLs and pinned version query parameters', () => {
+    const latestUrl = buildRegistryPkgInstructionShortAliasUrl(
+      'https://registry-proxy.example.workers.dev?ref=v2.x',
+      'agents-repo',
+      'hello-agent',
+      'agent',
+      'hello-agent',
+    )
+
+    expect(latestUrl).toBe(
+      'https://registry-proxy.example.workers.dev/pkg/agents-repo/hello-agent/agents/hello-agent.agent.md?ref=v2.x',
+    )
+    expect(withRegistryQueryParam(latestUrl, 'version', '1.0.1')).toBe(
+      'https://registry-proxy.example.workers.dev/pkg/agents-repo/hello-agent/agents/hello-agent.agent.md?ref=v2.x&version=1.0.1',
+    )
+  })
+
+  it('encodes /pkg/ path segments to prevent traversal', () => {
+    expect(buildRegistryPkgInstructionsPath('agents-repo', '../evil', '1.0.0')).toBe(
+      'pkg/agents-repo/..%2Fevil/1.0.0/instructions.json',
+    )
   })
 
   it('builds cache lookup keys that ignore query-string refs', () => {

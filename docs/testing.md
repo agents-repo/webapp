@@ -170,6 +170,7 @@ hard-coded locale strings.
 | Source config | `registrySourceConfig.test.ts`, `resolve.test.ts`, `validateAlias.test.ts` |
 | Catalog validation | `registryCatalogValidation.test.ts` |
 | Catalog cache identity | `registryCatalogCache.test.ts` |
+| Chat session cache | `chatInstructionsCache.test.ts` |
 | Repository loading | `registryRepository.test.ts`, cache integration |
 | Registry settings (localStorage) | `registrySourceSettings.test.ts` |
 | Package search selectors | `registrySelectors.test.ts` |

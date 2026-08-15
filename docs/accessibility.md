@@ -46,6 +46,9 @@ Every routed page should:
 
 - Announce search or filter result changes with `aria-live="polite"`
 - Use `aria-busy` while async actions such as PWA install are in progress
+- Use `<output>` for status messages (copy confirmation, loading) instead of
+  `role="status"`. `<output>` has an implicit status role and is more reliable
+  across assistive technologies and devices.
 
 ### Cookie consent banner
 

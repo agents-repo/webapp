@@ -28,6 +28,8 @@ export const sampleRegistryCatalog: RegistryCatalog = {
           status: 'supported',
         },
       ],
+      chatWeb: true,
+      quickstart: 'https://github.com/agents-repo/registry/blob/v2.x/packages/agents-repo/sample-agent/README.md',
     },
   ],
 }
