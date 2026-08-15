@@ -64,6 +64,12 @@ after `build:pages`. For routing, registry integration, or modal flows, also run
 `npm run test:e2e` locally (requires `npx playwright install chromium` once per
 machine). E2E is not part of PR baseline CI — see [e2e-testing.md](e2e-testing.md).
 
+PR baseline also runs `npm run agents:ci` to reinstall registry workflow
+packages from `agents-lock.json`. That script clears extracted package paths,
+then retries up to three times when the CLI reports `[registry_fetch_error]`
+(transient registry-proxy failures such as HTTP 522). Other `ci` failures, and
+the post-install extract drift check, still fail the job immediately.
+
 Use `npm run build` for a standard production build (includes `sitemap.xml` and
 `robots.txt` via `vite-plugin-sitemap`). Use `npm run build:pages` when
 validating the GitHub Pages output (adds per-route HTML injection, `.nojekyll`,

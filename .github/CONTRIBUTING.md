@@ -238,6 +238,10 @@ npm run agents:update    # refresh within semver ranges
 npm run agents:ci        # lock-pinned registry install (CI parity)
 ```
 
+`agents:ci` clears extracted package paths before each install attempt and
+retries up to three times when the CLI reports `[registry_fetch_error]`
+(transient registry-proxy failures such as HTTP 522).
+
 Commit `agents.json`, `agents-lock.json`, and extracted paths (`.github/agents/`,
 `.cursor/skills/`, `.claude/agents/`, `.agents/skills/`). Do not hand-edit extracted
 package files.

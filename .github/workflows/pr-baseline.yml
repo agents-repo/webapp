@@ -25,7 +25,7 @@ jobs:
 
       - name: Verify registry package installs from lock
         run: |
-          rm -rf .github/agents .cursor/skills .claude/agents .agents/skills
+          # agents:ci retries [registry_fetch_error]; see scripts/run-agents-ci.mjs
           npm run agents:ci
           drift_paths=(
             agents.json
