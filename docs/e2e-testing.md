@@ -64,6 +64,7 @@ e2e/
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
 ├── navigation.spec.ts
+├── seo-crawl-files.spec.ts
 ├── cookie-consent.spec.ts
 ├── theme-mode.spec.ts
 ├── website-settings.spec.ts
@@ -124,7 +125,13 @@ in Playwright — use unit tests for GTM injection logic instead.
 2. Query priority: role → label → text (no new `data-testid` unless necessary).
 3. Bootstrap dropdowns: click the toggle first, then the menu item.
 4. One behavior per `test` block; follow Arrange-Act-Assert.
-5. Run `npm run test:e2e` locally before marking ready for review on a PR that
+5. Prefer web-first assertions (visible headings, roles, text) over
+   `waitForLoadState('networkidle')`. Specs that need the PWA worker to
+   intercept navigation must not use `page.route` (Playwright disables service
+   workers when routing). Wait until
+   `navigator.serviceWorker.getRegistration()` reports an `activated` worker;
+   see `e2e/seo-crawl-files.spec.ts`.
+6. Run `npm run test:e2e` locally before marking ready for review on a PR that
    touches UI flows.
 
 ### Checklist
@@ -133,6 +140,8 @@ in Playwright — use unit tests for GTM injection logic instead.
 - [ ] `localStorage` cleared when testing theme or settings persistence
 - [ ] Assertions use visible headings/labels, not `document.title` metadata
 - [ ] Spec file named `*.spec.ts` under `e2e/`
+- [ ] No `waitForLoadState('networkidle')` waits
+- [ ] Service-worker specs avoid `page.route` so the worker can register
 
 ## Debugging failures
 

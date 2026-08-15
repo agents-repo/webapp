@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/registry-mock'
+import { test, expect, type Page } from '@playwright/test'
 
 const nonHomeRoutes = [
   '/about',
@@ -15,6 +15,19 @@ const nonHomeRoutes = [
 ] as const
 
 const homeHeading = 'Explore ready-to-use agents and flows'
+
+async function waitForActiveServiceWorker(page: Page): Promise<void> {
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(async () => {
+          const registration = await navigator.serviceWorker.getRegistration()
+          return registration?.active?.state ?? null
+        }),
+      { timeout: 15_000 },
+    )
+    .toBe('activated')
+}
 
 test.describe('SEO crawl files', () => {
   test('serves sitemap.xml as XML', async ({ request }) => {
@@ -43,7 +56,8 @@ test.describe('SEO crawl files', () => {
 
   test('does not redirect sitemap.xml to home when service worker is active', async ({ page }) => {
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('heading', { name: homeHeading, level: 1 })).toBeVisible()
+    await waitForActiveServiceWorker(page)
     await page.goto('/sitemap.xml')
 
     const content = await page.content()
@@ -65,7 +79,8 @@ test.describe('SEO crawl files', () => {
 
   test('does not redirect robots.txt to home when service worker is active', async ({ page }) => {
     await page.goto('/')
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByRole('heading', { name: homeHeading, level: 1 })).toBeVisible()
+    await waitForActiveServiceWorker(page)
     await page.goto('/robots.txt')
 
     const content = await page.content()
