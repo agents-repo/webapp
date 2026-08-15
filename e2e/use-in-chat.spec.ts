@@ -54,5 +54,16 @@ test.describe('Use in chat', () => {
       'https://e2e.local/registry/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md?version=1.0.0',
     )
     await expect(page.getByRole('tab', { name: 'Microsoft Copilot (web)' })).toBeVisible()
+
+    const agentStarterPrompt = [
+      'Follow these agent instructions:',
+      'https://e2e.local/registry/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md',
+    ].join('\n')
+    const openInChatGpt = page.getByRole('link', { name: 'Open in ChatGPT (opens in a new tab)' })
+    await expect(openInChatGpt).toBeVisible()
+    await expect(openInChatGpt).toHaveAttribute(
+      'href',
+      `https://chatgpt.com/?q=${encodeURIComponent(agentStarterPrompt)}`,
+    )
   })
 })

@@ -221,14 +221,33 @@ export const buildChatStarterPrompt = (
   return `Follow these agent instructions:\n${latestUrl}`
 }
 
+export const buildChatPlatformOpenUrl = (
+  platformId: ChatPlatformGuide['id'],
+  starterPrompt: string,
+): string | null => {
+  if (platformId !== 'chatgpt' || starterPrompt.trim().length === 0) {
+    return null
+  }
+
+  return `https://chatgpt.com/?q=${encodeURIComponent(starterPrompt)}`
+}
+
+export const wrapChatInstructionMarkdownForPaste = (kind: ChatInstructionKind, markdown: string): string => {
+  if (kind === 'flow') {
+    return `Follow this flow:\n\n${markdown}`
+  }
+
+  return `Follow these agent instructions:\n\n${markdown}`
+}
+
 export const CHAT_PLATFORM_GUIDES: readonly ChatPlatformGuide[] = [
   {
     id: 'chatgpt',
     label: 'ChatGPT',
     steps: [
-      'Open a ChatGPT chat in the browser.',
-      'Copy the instruction URL, markdown, or starter prompt from this dialog.',
-      'Paste it into ChatGPT and ask it to follow those instructions.',
+      'Sign in to ChatGPT in the browser if needed.',
+      'Use Open in ChatGPT to start a chat with the starter prompt (latest instruction URLs). ChatGPT may send the prompt automatically.',
+      'Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into ChatGPT.',
     ],
   },
   {

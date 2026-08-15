@@ -19,10 +19,12 @@ import {
   CHAT_PLATFORM_GUIDES,
   buildChatInstructionCopyUrls,
   buildChatInstructionLatestUrlFromPath,
+  buildChatPlatformOpenUrl,
   buildChatStarterPrompt,
   findChatInstruction,
   groupChatInstructionsByKind,
   instructionOptionKey,
+  wrapChatInstructionMarkdownForPaste,
   type ChatInstructionCopyUrls,
   type ChatInstructionEntry,
   type ChatInstructionOptionGroup,
@@ -228,15 +230,31 @@ function UseInChatLoadedForm({
         <div>
           <h3 className="h6">How to use in a web chat</h3>
           <Tabs defaultActiveKey="chatgpt" id={`${pickerId}-platforms`} className="mb-3">
-            {CHAT_PLATFORM_GUIDES.map((guide) => (
-              <Tab eventKey={guide.id} title={guide.label} key={guide.id}>
-                <ol className="small mb-0 ps-3">
-                  {guide.steps.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </Tab>
-            ))}
+            {CHAT_PLATFORM_GUIDES.map((guide) => {
+              const openUrl = buildChatPlatformOpenUrl(guide.id, starterPrompt)
+              const safeOpenUrl = openUrl && isSafeExternalHttpUrl(openUrl) ? openUrl : null
+
+              return (
+                <Tab eventKey={guide.id} title={guide.label} key={guide.id}>
+                  <ol className={safeOpenUrl ? 'small mb-3 ps-3' : 'small mb-0 ps-3'}>
+                    {guide.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  {safeOpenUrl ? (
+                    <a
+                      href={safeOpenUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="btn btn-outline-primary"
+                      aria-label={externalLinkAccessibleName('Open in ChatGPT')}
+                    >
+                      Open in ChatGPT
+                    </a>
+                  ) : null}
+                </Tab>
+              )
+            })}
           </Tabs>
         </div>
 
@@ -400,7 +418,10 @@ function PackageUseInChatAction({
       if (interactionAtStart !== modalInteractionRef.current) {
         return
       }
-      await copyValue('markdown', markdown)
+      await copyValue(
+        'markdown',
+        wrapChatInstructionMarkdownForPaste(selectedState.selectedInstruction.kind, markdown),
+      )
     } catch (error) {
       if (isAbortError(error) || interactionAtStart !== modalInteractionRef.current) {
         return

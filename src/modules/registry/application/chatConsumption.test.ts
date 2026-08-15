@@ -3,11 +3,13 @@ import {
   CHAT_PLATFORM_GUIDES,
   buildChatInstructionCopyUrls,
   buildChatInstructionLatestUrlFromPath,
+  buildChatPlatformOpenUrl,
   buildChatStarterPrompt,
   findChatInstruction,
   groupChatInstructionsByKind,
   instructionOptionKey,
   parseChatInstructionsManifest,
+  wrapChatInstructionMarkdownForPaste,
   type ChatInstructionEntry,
 } from './chatConsumption'
 
@@ -201,5 +203,37 @@ describe('copy URLs and starter prompts', () => {
     expect(CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'copilot-web')?.label).toBe(
       'Microsoft Copilot (web)',
     )
+  })
+
+  it('builds a ChatGPT open URL from the starter prompt and returns null otherwise', () => {
+    const starterPrompt = 'Follow these agent instructions:\nhttps://example.test/agent'
+    expect(buildChatPlatformOpenUrl('chatgpt', starterPrompt)).toBe(
+      `https://chatgpt.com/?q=${encodeURIComponent(starterPrompt)}`,
+    )
+    expect(buildChatPlatformOpenUrl('chatgpt', starterPrompt)).toContain('%20')
+    expect(buildChatPlatformOpenUrl('chatgpt', starterPrompt)).toContain('%0A')
+    expect(buildChatPlatformOpenUrl('gemini', starterPrompt)).toBeNull()
+    expect(buildChatPlatformOpenUrl('copilot-web', starterPrompt)).toBeNull()
+    expect(buildChatPlatformOpenUrl('chatgpt', '')).toBeNull()
+    expect(buildChatPlatformOpenUrl('chatgpt', '   ')).toBeNull()
+  })
+
+  it('wraps copied instruction markdown with a kind-aware preamble', () => {
+    expect(wrapChatInstructionMarkdownForPaste('agent', '# Sample agent')).toBe(
+      'Follow these agent instructions:\n\n# Sample agent',
+    )
+    expect(wrapChatInstructionMarkdownForPaste('flow', '# Sample flow')).toBe(
+      'Follow this flow:\n\n# Sample flow',
+    )
+  })
+
+  it('keeps Gemini and Copilot how-to steps as copy-paste without Open in ChatGPT', () => {
+    const chatgptSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'chatgpt')?.steps ?? []
+    const geminiSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'gemini')?.steps ?? []
+    const copilotSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'copilot-web')?.steps ?? []
+
+    expect(chatgptSteps.join(' ')).toContain('Open in ChatGPT')
+    expect(geminiSteps.join(' ')).not.toContain('Open in ChatGPT')
+    expect(copilotSteps.join(' ')).not.toContain('Open in ChatGPT')
   })
 })

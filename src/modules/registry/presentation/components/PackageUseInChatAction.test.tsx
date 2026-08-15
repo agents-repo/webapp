@@ -1,4 +1,4 @@
-import { cleanup, screen, waitFor } from '@testing-library/react'
+import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
@@ -32,6 +32,23 @@ const defaultProps = {
   controlId: 'agents-repo--sample-agent',
   quickstart: 'https://github.com/agents-repo/registry/blob/v2.x/packages/agents-repo/sample-agent/README.md',
 }
+
+const OPEN_IN_CHATGPT_NAME = 'Open in ChatGPT (opens in a new tab)'
+
+const agentStarterPrompt = [
+  'Follow these agent instructions:',
+  'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md?ref=v2.x',
+].join('\n')
+
+const flowStarterPrompt = [
+  'Follow this flow:',
+  'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/flows/sample-flow.agent.md?ref=v2.x',
+  '',
+  'Load these agent instructions in order:',
+  '1. https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md?ref=v2.x',
+].join('\n')
+
+const chatgptOpenUrl = (prompt: string): string => `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`
 
 const jsonResponse = (payload: unknown, ok = true, status = 200) => ({
   ok,
@@ -81,6 +98,10 @@ describe('PackageUseInChatAction', () => {
     expect(
       screen.getByRole('link', { name: 'Package quickstart (opens in a new tab)' }),
     ).toHaveAttribute('href', defaultProps.quickstart)
+    expect(screen.getByRole('link', { name: OPEN_IN_CHATGPT_NAME })).toHaveAttribute(
+      'href',
+      chatgptOpenUrl(agentStarterPrompt),
+    )
   })
 
   it('shows a flow-aware starter prompt when a flow with agentInstructions is selected', async () => {
@@ -96,15 +117,33 @@ describe('PackageUseInChatAction', () => {
     await screen.findByLabelText('Instruction')
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
 
-    expect(screen.getByDisplayValue(/Follow this flow:/)).toHaveValue(
-      [
-        'Follow this flow:',
-        'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/flows/sample-flow.agent.md?ref=v2.x',
-        '',
-        'Load these agent instructions in order:',
-        '1. https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md?ref=v2.x',
-      ].join('\n'),
+    expect(screen.getByDisplayValue(/Follow this flow:/)).toHaveValue(flowStarterPrompt)
+  })
+
+  it('updates Open in ChatGPT to the current starter prompt and hides it on other tabs', async () => {
+    const user = userEvent.setup()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(instructionsManifest)),
     )
+
+    renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await screen.findByLabelText('Instruction')
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
+
+    expect(screen.getByRole('link', { name: OPEN_IN_CHATGPT_NAME })).toHaveAttribute(
+      'href',
+      chatgptOpenUrl(flowStarterPrompt),
+    )
+
+    await user.click(screen.getByRole('tab', { name: 'Gemini' }))
+    expect(
+      within(screen.getByRole('tabpanel', { name: 'Gemini' })).queryByRole('link', {
+        name: OPEN_IN_CHATGPT_NAME,
+      }),
+    ).not.toBeInTheDocument()
   })
 
   it('copies the latest instruction URL', async () => {
@@ -151,7 +190,7 @@ describe('PackageUseInChatAction', () => {
     await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
 
     await waitFor(() => {
-      expect(writeText).toHaveBeenCalledWith('# Sample agent')
+      expect(writeText).toHaveBeenCalledWith('Follow these agent instructions:\n\n# Sample agent')
     })
     expect(fetchMock).toHaveBeenCalledWith(
       'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/agents/sample-agent.agent.md?ref=v2.x',

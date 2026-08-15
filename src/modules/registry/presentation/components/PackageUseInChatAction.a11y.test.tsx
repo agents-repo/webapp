@@ -53,6 +53,8 @@ describe('PackageUseInChatAction accessibility', () => {
     await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
     await screen.findByLabelText('Instruction')
 
+    expect(screen.getByRole('link', { name: 'Open in ChatGPT (opens in a new tab)' })).toBeInTheDocument()
+
     const results = await axe(container, axeOptions)
     expect(results.violations).toHaveLength(0)
   })
