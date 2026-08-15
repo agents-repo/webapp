@@ -45,6 +45,13 @@ conditional GET revalidation to minimize network usage:
 - Servers that do not send `ETag` or `Last-Modified` fall back silently to a
   full unconditional GET.
 
+Versioned chat instruction bodies (`instructions.json` and `.agent.md` under
+`/pkg/{namespace}/{package}/{version}/`) use a separate **session memory** LRU
+(32 entries). Repeat opens of the same Use in chat package skip the network
+while the tab stays loaded. This cache is not persisted and does not use TTL
+or conditional GET, because published version folders are immutable. Network
+`fetch` still uses `cache: 'no-store'` so freshness stays app-owned.
+
 Service worker runtime caching is intentionally focused to same-origin static
 assets. Registry index freshness is owned by the app-layer cache contract, and
 broad interception of GET requests is intentionally avoided to reduce stale-data

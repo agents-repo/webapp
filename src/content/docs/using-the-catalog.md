@@ -15,7 +15,7 @@ Use the header search on large screens to filter packages by name or description
 
 Package cards may offer:
 
-- **Use in chat** when the registry marks the package as chat-web ready (`chatWeb`). This opens a dialog to copy instruction URLs (latest and pinned), instruction markdown with a short kind-aware preamble, and a starter prompt for ChatGPT, Gemini, or Microsoft Copilot in the browser. The ChatGPT tab includes **Open in ChatGPT**, which opens a new tab with the starter prompt (latest instruction URLs). You must be signed in; ChatGPT may send the prompt automatically. Gemini and Microsoft Copilot remain copy-paste.
+- **Use in chat** when the registry marks the package as chat-web ready (`chatWeb`). This opens a dialog to copy instruction URLs (latest and pinned), instruction markdown with a short kind-aware preamble, and a starter prompt for ChatGPT, Gemini, or Microsoft Copilot in the browser. The ChatGPT tab includes **Open in ChatGPT**, which opens a new tab with the starter prompt (latest instruction URLs). You must be signed in; ChatGPT may send the prompt automatically. Web chats may fail to fetch those URLs; if they cannot load a URL, copy the instruction markdown and paste it into the chat. Copying markdown for a flow includes the flow and its related agent files. Gemini and Microsoft Copilot remain copy-paste.
 - **Direct download** links for version ZIPs per install target (when the registry publishes artifacts).
 - **Copy CLI install** commands (`npx agents-repo install …`) for quick trials.
 - **Browse on GitHub** links to inspect package source in the registry repository.

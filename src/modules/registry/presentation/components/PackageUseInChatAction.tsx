@@ -17,14 +17,16 @@ import { copyTextToClipboard } from '../../../site/application/clipboard/copyTex
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
   CHAT_PLATFORM_GUIDES,
+  CHAT_URL_FETCH_FALLBACK_WARNING,
   buildChatInstructionCopyUrls,
   buildChatInstructionLatestUrlFromPath,
+  buildChatInstructionMarkdownForPaste,
   buildChatPlatformOpenUrl,
+  buildChatRelatedAgentMarkdownSources,
   buildChatStarterPrompt,
   findChatInstruction,
   groupChatInstructionsByKind,
   instructionOptionKey,
-  wrapChatInstructionMarkdownForPaste,
   type ChatInstructionCopyUrls,
   type ChatInstructionEntry,
   type ChatInstructionOptionGroup,
@@ -33,6 +35,7 @@ import {
 import {
   fetchChatInstructionMarkdown,
   fetchChatInstructionsManifest,
+  readCachedChatInstructionsManifest,
 } from '../../infrastructure/chatInstructionsRepository'
 import { buildRegistryPkgInstructionsUrl } from '../../infrastructure/registrySourceUrl'
 
@@ -210,6 +213,9 @@ function UseInChatLoadedForm({
           >
             {isCopyingMarkdown ? 'Copying markdown…' : 'Copy instruction markdown'}
           </Button>
+          {selectedInstruction.kind === 'flow' && (selectedInstruction.agentInstructions?.length ?? 0) > 0 ? (
+            <div className="form-text">Includes this flow and its related agent files.</div>
+          ) : null}
           {copyFeedback.markdown ? (
             <div className="form-text" role="status">
               {copyFeedback.markdown}
@@ -226,6 +232,13 @@ function UseInChatLoadedForm({
           copyFeedback={copyFeedback.prompt ?? ''}
           rows={selectedInstruction.kind === 'flow' ? 6 : 3}
         />
+
+        <Alert variant="warning" role="note" className="mb-0">
+          <Alert.Heading as="h3" className="h6">
+            If the chat cannot load the URL
+          </Alert.Heading>
+          <p className="mb-0">{CHAT_URL_FETCH_FALLBACK_WARNING}</p>
+        </Alert>
 
         <div>
           <h3 className="h6">How to use in a web chat</h3>
@@ -341,13 +354,29 @@ function PackageUseInChatAction({
   }, [])
 
   const openModal = () => {
+    const instructionsUrl = buildRegistryPkgInstructionsUrl(
+      registryBaseUrl,
+      namespace,
+      packageId,
+      latest,
+    )
+    const cached = readCachedChatInstructionsManifest(instructionsUrl)
+
     setShowModal(true)
-    setIsLoading(true)
     setErrorMessage(null)
-    setManifest(null)
-    setSelectedKey('')
     setLiveMessage('')
     clearCopyFeedback()
+
+    if (cached) {
+      setManifest(cached)
+      setSelectedKey(instructionOptionKey(cached.instructions[0]))
+      setIsLoading(false)
+      return
+    }
+
+    setManifest(null)
+    setSelectedKey('')
+    setIsLoading(true)
   }
 
   useEffect(() => {
@@ -414,13 +443,40 @@ function PackageUseInChatAction({
     const interactionAtStart = modalInteractionRef.current
     setIsCopyingMarkdown(true)
     try {
-      const markdown = await fetchChatInstructionMarkdown(selectedState.copyUrls.fetchUrl)
+      const relatedPaths = selectedState.selectedInstruction.agentInstructions ?? []
+      const relatedSources =
+        selectedState.selectedInstruction.kind === 'flow' && relatedPaths.length > 0
+          ? buildChatRelatedAgentMarkdownSources(registryBaseUrl, relatedPaths)
+          : []
+
+      if (relatedSources === null) {
+        throw new Error('Unable to load instruction markdown.')
+      }
+
+      const [markdown, ...relatedMarkdowns] = await Promise.all([
+        fetchChatInstructionMarkdown(selectedState.copyUrls.fetchUrl),
+        ...relatedSources.map((source) => fetchChatInstructionMarkdown(source.fetchUrl)),
+      ])
       if (interactionAtStart !== modalInteractionRef.current) {
         return
       }
+
+      if (relatedMarkdowns.length !== relatedSources.length) {
+        throw new Error('Unable to load instruction markdown.')
+      }
+
+      const relatedAgentMarkdowns = relatedSources.map((source, index) => ({
+        id: source.id,
+        markdown: relatedMarkdowns[index] ?? '',
+      }))
+
       await copyValue(
         'markdown',
-        wrapChatInstructionMarkdownForPaste(selectedState.selectedInstruction.kind, markdown),
+        buildChatInstructionMarkdownForPaste(
+          selectedState.selectedInstruction.kind,
+          markdown,
+          relatedAgentMarkdowns,
+        ),
       )
     } catch (error) {
       if (isAbortError(error) || interactionAtStart !== modalInteractionRef.current) {

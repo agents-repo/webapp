@@ -1,6 +1,8 @@
 import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { CHAT_URL_FETCH_FALLBACK_WARNING } from '../../application/chatConsumption'
+import { resetChatInstructionsCacheForTests } from '../../infrastructure/chatInstructionsRepository'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import PackageUseInChatAction from './PackageUseInChatAction'
 
@@ -65,6 +67,7 @@ const textResponse = (text: string, ok = true, status = 200) => ({
 describe('PackageUseInChatAction', () => {
   afterEach(() => {
     cleanup()
+    resetChatInstructionsCacheForTests()
     vi.unstubAllGlobals()
   })
 
@@ -102,6 +105,9 @@ describe('PackageUseInChatAction', () => {
       'href',
       chatgptOpenUrl(agentStarterPrompt),
     )
+    expect(screen.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeInTheDocument()
+    expect(screen.getByText(CHAT_URL_FETCH_FALLBACK_WARNING)).toBeInTheDocument()
+    expect(screen.queryByText('Includes this flow and its related agent files.')).not.toBeInTheDocument()
   })
 
   it('shows a flow-aware starter prompt when a flow with agentInstructions is selected', async () => {
@@ -118,6 +124,7 @@ describe('PackageUseInChatAction', () => {
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
 
     expect(screen.getByDisplayValue(/Follow this flow:/)).toHaveValue(flowStarterPrompt)
+    expect(screen.getByText('Includes this flow and its related agent files.')).toBeInTheDocument()
   })
 
   it('updates Open in ChatGPT to the current starter prompt and hides it on other tabs', async () => {
@@ -144,6 +151,8 @@ describe('PackageUseInChatAction', () => {
         name: OPEN_IN_CHATGPT_NAME,
       }),
     ).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeInTheDocument()
+    expect(screen.getByText(CHAT_URL_FETCH_FALLBACK_WARNING)).toBeInTheDocument()
   })
 
   it('copies the latest instruction URL', async () => {
@@ -196,6 +205,87 @@ describe('PackageUseInChatAction', () => {
       'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/agents/sample-agent.agent.md?ref=v2.x',
       expect.objectContaining({ cache: 'no-store' }),
     )
+
+    await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledTimes(2)
+    })
+    expect(
+      fetchMock.mock.calls.filter(([url]) => String(url).includes('.agent.md')),
+    ).toHaveLength(1)
+  })
+
+  it('copies flow markdown bundled with related agent files', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    vi.stubGlobal('navigator', { clipboard: { writeText } })
+    const fetchMock = vi.fn((url: string) => {
+      if (String(url).includes('instructions.json')) {
+        return Promise.resolve(jsonResponse(instructionsManifest))
+      }
+      if (String(url).includes('/flows/sample-flow.agent.md')) {
+        return Promise.resolve(textResponse('# Sample flow'))
+      }
+      return Promise.resolve(textResponse('# Sample agent'))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await screen.findByLabelText('Instruction')
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
+    await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith(
+        [
+          'Follow this flow:',
+          '',
+          '# Sample flow',
+          '',
+          'Load these agent instructions in order:',
+          '',
+          '1. sample-agent',
+          '',
+          '# Sample agent',
+        ].join('\n'),
+      )
+    })
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/flows/sample-flow.agent.md?ref=v2.x',
+      expect.objectContaining({ cache: 'no-store' }),
+    )
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/agents/sample-agent.agent.md?ref=v2.x',
+      expect.objectContaining({ cache: 'no-store' }),
+    )
+  })
+
+  it('does not copy when a related agent markdown fetch fails', async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    vi.stubGlobal('navigator', { clipboard: { writeText } })
+    const fetchMock = vi.fn((url: string) => {
+      if (String(url).includes('instructions.json')) {
+        return Promise.resolve(jsonResponse(instructionsManifest))
+      }
+      if (String(url).includes('/flows/sample-flow.agent.md')) {
+        return Promise.resolve(textResponse('# Sample flow'))
+      }
+      return Promise.resolve(textResponse('# Sample agent', false, 404))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await screen.findByLabelText('Instruction')
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
+    await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
+
+    expect(await screen.findByText('Unable to load instruction markdown (404).')).toBeInTheDocument()
+    expect(writeText).not.toHaveBeenCalled()
   })
 
   it('shows a modal error when instructions.json cannot be loaded', async () => {
@@ -211,5 +301,39 @@ describe('PackageUseInChatAction', () => {
 
     expect(await screen.findByText('Unable to load chat instructions (404).')).toBeInTheDocument()
     expect(screen.queryByLabelText('Instruction')).not.toBeInTheDocument()
+  })
+
+  it('does not refetch instructions.json when the same package is opened again', async () => {
+    const user = userEvent.setup()
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(instructionsManifest))
+    vi.stubGlobal('fetch', fetchMock)
+
+    renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    expect(screen.getByLabelText('Instruction')).toBeInTheDocument()
+    expect(screen.queryByText('Loading chat instructions')).not.toBeInTheDocument()
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('fetches instructions.json again when the package version changes', async () => {
+    const user = userEvent.setup()
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(instructionsManifest))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { rerender } = renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+
+    rerender(<PackageUseInChatAction {...defaultProps} latest="1.0.1" />)
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 })

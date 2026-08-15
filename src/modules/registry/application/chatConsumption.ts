@@ -179,6 +179,20 @@ export const buildChatInstructionCopyUrls = (
 }
 
 const VERSIONED_PKG_PATH_PATTERN = /^\/pkg\/([^/]+)\/([^/]+)\/[^/]+\/(agents|flows)\/([^/]+)$/
+const AGENT_INSTRUCTION_FILE_SUFFIX = '.agent.md'
+
+export const CHAT_URL_FETCH_FALLBACK_WARNING =
+  'Web chats may fail to fetch instruction URLs from the starter prompt. If the chat cannot load a URL, copy the instruction markdown from this dialog and paste it into the chat.'
+
+export interface ChatRelatedAgentMarkdownSource {
+  readonly id: string
+  readonly fetchUrl: string
+}
+
+export interface ChatRelatedAgentMarkdown {
+  readonly id: string
+  readonly markdown: string
+}
 
 const toShortAliasPkgPath = (versionedPath: string): string | null => {
   const match = VERSIONED_PKG_PATH_PATTERN.exec(versionedPath.trim())
@@ -187,6 +201,41 @@ const toShortAliasPkgPath = (versionedPath: string): string | null => {
   }
 
   return `/pkg/${match[1]}/${match[2]}/${match[3]}/${match[4]}`
+}
+
+export const instructionIdFromVersionedPkgPath = (versionedPath: string): string | null => {
+  const match = VERSIONED_PKG_PATH_PATTERN.exec(versionedPath.trim())
+  if (!match) {
+    return null
+  }
+
+  const filename = match[4]
+  if (!filename.endsWith(AGENT_INSTRUCTION_FILE_SUFFIX) || filename.length <= AGENT_INSTRUCTION_FILE_SUFFIX.length) {
+    return null
+  }
+
+  return filename.slice(0, -AGENT_INSTRUCTION_FILE_SUFFIX.length)
+}
+
+export const buildChatRelatedAgentMarkdownSources = (
+  registryBaseUrl: string,
+  agentInstructionPaths: readonly string[],
+): readonly ChatRelatedAgentMarkdownSource[] | null => {
+  const sources: ChatRelatedAgentMarkdownSource[] = []
+
+  for (const path of agentInstructionPaths) {
+    const id = instructionIdFromVersionedPkgPath(path)
+    if (!id) {
+      return null
+    }
+
+    sources.push({
+      id,
+      fetchUrl: buildRegistryPkgUrl(registryBaseUrl, path),
+    })
+  }
+
+  return sources
 }
 
 export const buildChatInstructionLatestUrlFromPath = (
@@ -240,13 +289,29 @@ export const wrapChatInstructionMarkdownForPaste = (kind: ChatInstructionKind, m
   return `Follow these agent instructions:\n\n${markdown}`
 }
 
+export const buildChatInstructionMarkdownForPaste = (
+  kind: ChatInstructionKind,
+  markdown: string,
+  relatedAgentMarkdowns: readonly ChatRelatedAgentMarkdown[] = [],
+): string => {
+  if (kind === 'flow' && relatedAgentMarkdowns.length > 0) {
+    const numberedAgents = relatedAgentMarkdowns
+      .map((agent, index) => `${index + 1}. ${agent.id}\n\n${agent.markdown}`)
+      .join('\n\n')
+
+    return `Follow this flow:\n\n${markdown}\n\nLoad these agent instructions in order:\n\n${numberedAgents}`
+  }
+
+  return wrapChatInstructionMarkdownForPaste(kind, markdown)
+}
+
 export const CHAT_PLATFORM_GUIDES: readonly ChatPlatformGuide[] = [
   {
     id: 'chatgpt',
     label: 'ChatGPT',
     steps: [
       'Sign in to ChatGPT in the browser if needed.',
-      'Use Open in ChatGPT to start a chat with the starter prompt (latest instruction URLs). ChatGPT may send the prompt automatically.',
+      'Use Open in ChatGPT to start a chat with the starter prompt (latest instruction URLs). ChatGPT may send the prompt automatically. ChatGPT may not fetch those URLs.',
       'Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into ChatGPT.',
     ],
   },

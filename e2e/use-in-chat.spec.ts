@@ -65,5 +65,11 @@ test.describe('Use in chat', () => {
       'href',
       `https://chatgpt.com/?q=${encodeURIComponent(agentStarterPrompt)}`,
     )
+    await expect(page.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeVisible()
+    await expect(
+      page.getByText(
+        'Web chats may fail to fetch instruction URLs from the starter prompt. If the chat cannot load a URL, copy the instruction markdown from this dialog and paste it into the chat.',
+      ),
+    ).toBeVisible()
   })
 })

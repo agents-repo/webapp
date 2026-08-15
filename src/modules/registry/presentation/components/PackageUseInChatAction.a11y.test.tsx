@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
+import { resetChatInstructionsCacheForTests } from '../../infrastructure/chatInstructionsRepository'
 import PackageUseInChatAction from './PackageUseInChatAction'
 
 const axeOptions = {
@@ -26,6 +27,7 @@ const instructionsManifest = {
 
 describe('PackageUseInChatAction accessibility', () => {
   afterEach(() => {
+    resetChatInstructionsCacheForTests()
     vi.unstubAllGlobals()
   })
 
@@ -54,6 +56,7 @@ describe('PackageUseInChatAction accessibility', () => {
     await screen.findByLabelText('Instruction')
 
     expect(screen.getByRole('link', { name: 'Open in ChatGPT (opens in a new tab)' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeInTheDocument()
 
     const results = await axe(container, axeOptions)
     expect(results.violations).toHaveLength(0)

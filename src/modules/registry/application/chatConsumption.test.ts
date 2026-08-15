@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import {
   CHAT_PLATFORM_GUIDES,
+  CHAT_URL_FETCH_FALLBACK_WARNING,
   buildChatInstructionCopyUrls,
   buildChatInstructionLatestUrlFromPath,
+  buildChatInstructionMarkdownForPaste,
   buildChatPlatformOpenUrl,
+  buildChatRelatedAgentMarkdownSources,
   buildChatStarterPrompt,
   findChatInstruction,
   groupChatInstructionsByKind,
+  instructionIdFromVersionedPkgPath,
   instructionOptionKey,
   parseChatInstructionsManifest,
   wrapChatInstructionMarkdownForPaste,
@@ -227,12 +231,69 @@ describe('copy URLs and starter prompts', () => {
     )
   })
 
+  it('builds pasted markdown for agents, flows, and flows with related agents', () => {
+    expect(buildChatInstructionMarkdownForPaste('agent', '# Sample agent')).toBe(
+      'Follow these agent instructions:\n\n# Sample agent',
+    )
+    expect(buildChatInstructionMarkdownForPaste('flow', '# Sample flow')).toBe(
+      'Follow this flow:\n\n# Sample flow',
+    )
+    expect(
+      buildChatInstructionMarkdownForPaste('flow', '# Sample flow', [
+        { id: 'hello-agent', markdown: '# Hello agent' },
+        { id: 'hello-again', markdown: '# Hello again' },
+      ]),
+    ).toBe(
+      [
+        'Follow this flow:',
+        '',
+        '# Sample flow',
+        '',
+        'Load these agent instructions in order:',
+        '',
+        '1. hello-agent',
+        '',
+        '# Hello agent',
+        '',
+        '2. hello-again',
+        '',
+        '# Hello again',
+      ].join('\n'),
+    )
+  })
+
+  it('builds version-in-path fetch sources for related agent files', () => {
+    expect(instructionIdFromVersionedPkgPath('/pkg/agents-repo/hello-agent/1.0.1/agents/hello-agent.agent.md')).toBe(
+      'hello-agent',
+    )
+    expect(instructionIdFromVersionedPkgPath('packages/not-pkg')).toBeNull()
+    expect(buildChatRelatedAgentMarkdownSources(baseUrl, helloFlowEntry.agentInstructions ?? [])).toEqual([
+      {
+        id: 'hello-agent',
+        fetchUrl:
+          'https://registry-proxy.example.workers.dev/pkg/agents-repo/hello-agent/1.0.1/agents/hello-agent.agent.md?ref=v2.x',
+      },
+      {
+        id: 'hello-again',
+        fetchUrl:
+          'https://registry-proxy.example.workers.dev/pkg/agents-repo/hello-agent/1.0.1/agents/hello-again.agent.md?ref=v2.x',
+      },
+    ])
+    expect(buildChatRelatedAgentMarkdownSources(baseUrl, ['packages/not-pkg'])).toBeNull()
+  })
+
+  it('warns that web chats may fail to fetch instruction URLs', () => {
+    expect(CHAT_URL_FETCH_FALLBACK_WARNING).toContain('may fail to fetch instruction URLs')
+    expect(CHAT_URL_FETCH_FALLBACK_WARNING).toContain('copy the instruction markdown')
+  })
+
   it('keeps Gemini and Copilot how-to steps as copy-paste without Open in ChatGPT', () => {
     const chatgptSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'chatgpt')?.steps ?? []
     const geminiSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'gemini')?.steps ?? []
     const copilotSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'copilot-web')?.steps ?? []
 
     expect(chatgptSteps.join(' ')).toContain('Open in ChatGPT')
+    expect(chatgptSteps.join(' ')).toContain('may not fetch those URLs')
     expect(geminiSteps.join(' ')).not.toContain('Open in ChatGPT')
     expect(copilotSteps.join(' ')).not.toContain('Open in ChatGPT')
   })
