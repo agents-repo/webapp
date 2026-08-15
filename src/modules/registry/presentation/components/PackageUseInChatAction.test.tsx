@@ -284,7 +284,10 @@ describe('PackageUseInChatAction', () => {
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
     await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
 
-    expect(await screen.findByText('Unable to load instruction markdown (404).')).toBeInTheDocument()
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Unable to load instruction markdown (404).',
+    )
+    expect(screen.getByLabelText('Instruction')).toBeInTheDocument()
     expect(writeText).not.toHaveBeenCalled()
   })
 
@@ -318,6 +321,55 @@ describe('PackageUseInChatAction', () => {
     expect(screen.getByLabelText('Instruction')).toBeInTheDocument()
     expect(screen.queryByText('Loading chat instructions')).not.toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('hides stale copy URLs while a new instructions.json version is loading', async () => {
+    const user = userEvent.setup()
+    const manifestV2 = {
+      ...instructionsManifest,
+      version: '1.0.1',
+      instructions: instructionsManifest.instructions.map((entry) => ({
+        ...entry,
+        path: entry.path.replaceAll('1.0.0', '1.0.1'),
+      })),
+    }
+    let resolveUpgrade: ((value: ReturnType<typeof jsonResponse>) => void) | undefined
+    const upgradeResponse = new Promise<ReturnType<typeof jsonResponse>>((resolve) => {
+      resolveUpgrade = resolve
+    })
+    const fetchMock = vi.fn((url: string) => {
+      if (String(url).includes('/1.0.1/instructions.json')) {
+        return upgradeResponse
+      }
+      return Promise.resolve(jsonResponse(instructionsManifest))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { rerender } = renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue(
+        'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md?ref=v2.x&version=1.0.0',
+      ),
+    ).toBeInTheDocument()
+
+    rerender(<PackageUseInChatAction {...defaultProps} latest="1.0.1" />)
+
+    expect(screen.getByText('Loading chat instructions')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Instruction')).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue(/version=1\.0\.0/)).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue(/version=1\.0\.1/)).not.toBeInTheDocument()
+
+    resolveUpgrade?.(jsonResponse(manifestV2))
+
+    expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue(
+        'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/agents/sample-agent.agent.md?ref=v2.x&version=1.0.1',
+      ),
+    ).toBeInTheDocument()
   })
 
   it('fetches instructions.json again when the package version changes', async () => {

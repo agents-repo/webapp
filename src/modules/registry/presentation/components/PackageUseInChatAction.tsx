@@ -292,10 +292,11 @@ function PackageUseInChatAction({
   const modalInteractionRef = useRef(0)
   const copyFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showModal, setShowModal] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [isCopyingMarkdown, setIsCopyingMarkdown] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [errorUrl, setErrorUrl] = useState<string | null>(null)
   const [manifest, setManifest] = useState<ChatInstructionsManifest | null>(null)
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState('')
   const [liveMessage, setLiveMessage] = useState('')
   const [copyFeedback, setCopyFeedback] = useState<Partial<Record<CopyField, string>>>({})
@@ -304,10 +305,18 @@ function PackageUseInChatAction({
   const modalId = `use-in-chat-modal-${controlId}`
   const pickerId = `use-in-chat-picker-${controlId}-${reactId.replaceAll(':', '')}`
   const safeQuickstart = quickstart && isSafeExternalHttpUrl(quickstart) ? quickstart : null
+  const instructionsUrl = buildRegistryPkgInstructionsUrl(
+    registryBaseUrl,
+    namespace,
+    packageId,
+    latest,
+  )
   const selectedState =
-    manifest === null
+    manifest === null || loadedUrl !== instructionsUrl
       ? null
       : resolveSelectedChatCopyState(manifest, selectedKey, registryBaseUrl, namespace, packageId, latest)
+  const visibleError = errorUrl === instructionsUrl ? errorMessage : null
+  const showInstructionsLoading = showModal && selectedState === null && visibleError === null
 
   const clearCopyFeedback = useCallback(() => {
     setCopyFeedback({})
@@ -320,10 +329,11 @@ function PackageUseInChatAction({
   const closeModal = useCallback(() => {
     modalInteractionRef.current += 1
     setShowModal(false)
-    setIsLoading(false)
     setIsCopyingMarkdown(false)
     setErrorMessage(null)
+    setErrorUrl(null)
     setManifest(null)
+    setLoadedUrl(null)
     setSelectedKey('')
     setLiveMessage('')
     clearCopyFeedback()
@@ -349,30 +359,31 @@ function PackageUseInChatAction({
     }, COPY_FEEDBACK_DURATION_MS)
   }, [])
 
+  const applyManifest = useCallback((loaded: ChatInstructionsManifest, sourceUrl: string): void => {
+    setManifest(loaded)
+    setLoadedUrl(sourceUrl)
+    setSelectedKey(instructionOptionKey(loaded.instructions[0]))
+    setErrorMessage(null)
+    setErrorUrl(null)
+  }, [])
+
   const openModal = () => {
-    const instructionsUrl = buildRegistryPkgInstructionsUrl(
-      registryBaseUrl,
-      namespace,
-      packageId,
-      latest,
-    )
     const cached = readCachedChatInstructionsManifest(instructionsUrl)
 
     setShowModal(true)
-    setErrorMessage(null)
     setLiveMessage('')
     clearCopyFeedback()
 
     if (cached) {
-      setManifest(cached)
-      setSelectedKey(instructionOptionKey(cached.instructions[0]))
-      setIsLoading(false)
+      applyManifest(cached, instructionsUrl)
       return
     }
 
     setManifest(null)
+    setLoadedUrl(null)
     setSelectedKey('')
-    setIsLoading(true)
+    setErrorMessage(null)
+    setErrorUrl(null)
   }
 
   useEffect(() => {
@@ -380,40 +391,34 @@ function PackageUseInChatAction({
       return
     }
 
-    const interactionAtStart = modalInteractionRef.current
+    let cancelled = false
     const controller = new AbortController()
 
     const loadInstructions = async (): Promise<void> => {
       try {
-        const loaded = await fetchChatInstructionsManifest(
-          buildRegistryPkgInstructionsUrl(registryBaseUrl, namespace, packageId, latest),
-          controller.signal,
-        )
-        if (interactionAtStart !== modalInteractionRef.current) {
+        const loaded = await fetchChatInstructionsManifest(instructionsUrl, controller.signal)
+        if (cancelled) {
           return
         }
-        setManifest(loaded)
-        setSelectedKey(instructionOptionKey(loaded.instructions[0]))
-        setErrorMessage(null)
+        applyManifest(loaded, instructionsUrl)
       } catch (error) {
-        if (isAbortError(error) || interactionAtStart !== modalInteractionRef.current) {
+        if (cancelled || isAbortError(error)) {
           return
         }
         setManifest(null)
+        setLoadedUrl(null)
         setErrorMessage(messageFromError(error, 'Unable to load chat instructions.'))
-      } finally {
-        if (interactionAtStart === modalInteractionRef.current) {
-          setIsLoading(false)
-        }
+        setErrorUrl(instructionsUrl)
       }
     }
 
     void loadInstructions()
 
     return () => {
+      cancelled = true
       controller.abort()
     }
-  }, [latest, namespace, packageId, registryBaseUrl, showModal])
+  }, [applyManifest, instructionsUrl, showModal])
 
   const copyValue = useCallback(
     async (field: CopyField, text: string) => {
@@ -423,6 +428,8 @@ function PackageUseInChatAction({
         return
       }
       if (result === 'success') {
+        setErrorMessage(null)
+        setErrorUrl(null)
         setLiveMessage(COPY_FEEDBACK_MESSAGE)
         showFieldCopyFeedback(field)
         return
@@ -437,6 +444,8 @@ function PackageUseInChatAction({
       return
     }
     const interactionAtStart = modalInteractionRef.current
+    setErrorMessage(null)
+    setErrorUrl(null)
     setIsCopyingMarkdown(true)
     try {
       const relatedPaths = selectedState.selectedInstruction.agentInstructions ?? []
@@ -478,7 +487,10 @@ function PackageUseInChatAction({
       if (isAbortError(error) || interactionAtStart !== modalInteractionRef.current) {
         return
       }
-      setLiveMessage(messageFromError(error, 'Unable to load instruction markdown.'))
+      const message = messageFromError(error, 'Unable to load instruction markdown.')
+      setLiveMessage(message)
+      setErrorMessage(message)
+      setErrorUrl(instructionsUrl)
     } finally {
       if (interactionAtStart === modalInteractionRef.current) {
         setIsCopyingMarkdown(false)
@@ -515,17 +527,17 @@ function PackageUseInChatAction({
             Use {packageName} in chat
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body id={modalId} aria-busy={isLoading}>
-          {isLoading ? (
+        <Modal.Body id={modalId} aria-busy={showInstructionsLoading}>
+          {showInstructionsLoading ? (
             <output className="d-flex align-items-center gap-2">
               <Spinner animation="border" size="sm" aria-hidden="true" />
               <span>Loading chat instructions</span>
             </output>
           ) : null}
 
-          {errorMessage ? (
-            <Alert variant="danger" className="mb-0">
-              {errorMessage}
+          {visibleError ? (
+            <Alert variant="danger" className={selectedState ? 'mb-3' : 'mb-0'}>
+              {visibleError}
             </Alert>
           ) : null}
 
