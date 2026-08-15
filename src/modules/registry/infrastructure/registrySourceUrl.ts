@@ -190,6 +190,82 @@ export const buildRegistryArtifactUrl = (
   targetId: string,
 ): string => buildRegistryIndexUrl(baseUrl, buildRegistryArtifactPath(namespace, packageId, version, targetId))
 
+export type ChatInstructionKind = 'agent' | 'flow'
+
+const AGENT_INSTRUCTION_FILE_SUFFIX = '.agent.md'
+
+const chatInstructionDirectory = (kind: ChatInstructionKind): 'agents' | 'flows' => {
+  return kind === 'agent' ? 'agents' : 'flows'
+}
+
+const instructionFileName = (entryId: string): string => {
+  const stem = entryId.trim().replace(/\.agent\.md$/i, '')
+  return `${encodePathSegment(stem)}${AGENT_INSTRUCTION_FILE_SUFFIX}`
+}
+
+export const buildRegistryPkgUrl = (baseUrl: string, pkgPath: string): string => {
+  return buildRegistryIndexUrl(baseUrl, trimLeadingSlashes(pkgPath))
+}
+
+export const buildRegistryPkgInstructionsPath = (
+  namespace: string,
+  packageId: string,
+  version: string,
+): string => {
+  return [
+    'pkg',
+    encodePathSegment(namespace),
+    encodePathSegment(packageId),
+    encodePathSegment(version),
+    'instructions.json',
+  ].join('/')
+}
+
+export const buildRegistryPkgInstructionsUrl = (
+  baseUrl: string,
+  namespace: string,
+  packageId: string,
+  version: string,
+): string => buildRegistryPkgUrl(baseUrl, buildRegistryPkgInstructionsPath(namespace, packageId, version))
+
+export const buildRegistryPkgInstructionShortAliasPath = (
+  namespace: string,
+  packageId: string,
+  kind: ChatInstructionKind,
+  entryId: string,
+): string => {
+  return [
+    'pkg',
+    encodePathSegment(namespace),
+    encodePathSegment(packageId),
+    chatInstructionDirectory(kind),
+    instructionFileName(entryId),
+  ].join('/')
+}
+
+export const buildRegistryPkgInstructionShortAliasUrl = (
+  baseUrl: string,
+  namespace: string,
+  packageId: string,
+  kind: ChatInstructionKind,
+  entryId: string,
+): string =>
+  buildRegistryPkgUrl(
+    baseUrl,
+    buildRegistryPkgInstructionShortAliasPath(namespace, packageId, kind, entryId),
+  )
+
+export const withRegistryQueryParam = (url: string, name: string, value: string): string => {
+  try {
+    const parsed = new URL(url)
+    parsed.searchParams.set(name, value)
+    return parsed.toString()
+  } catch {
+    const separator = url.includes('?') ? '&' : '?'
+    return `${url}${separator}${encodeURIComponent(name)}=${encodeURIComponent(value)}`
+  }
+}
+
 const isGitHubHostname = (hostname: string): boolean => {
   return hostname === GITHUB_HOSTNAME || hostname === GITHUB_WWW_HOSTNAME
 }

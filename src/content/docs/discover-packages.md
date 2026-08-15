@@ -9,7 +9,7 @@ section: Catalog
 
 1. Open [Home](/) and search or scroll the catalog.
 2. Open a package’s GitHub tree link to read agents, flows, and `metadata.json`.
-3. Copy a CLI install command from the card or note the package id (`namespace/package-id`).
+3. Copy a CLI install command from the card, use **Use in chat** when it is available, or note the package id (`namespace/package-id`).
 
 See [Using the catalog](/docs/using-the-catalog) for UI details.
 

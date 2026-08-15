@@ -1,6 +1,6 @@
 ---
 title: Using the catalog
-description: Search, package cards, downloads, CLI commands from the UI, and website settings.
+description: Search, package cards, Use in chat, downloads, CLI commands from the UI, and website settings.
 order: 30
 section: Catalog
 ---
@@ -15,6 +15,7 @@ Use the header search on large screens to filter packages by name or description
 
 Package cards may offer:
 
+- **Use in chat** when the registry marks the package as chat-web ready (`chatWeb`). This opens a dialog to copy instruction URLs (latest and pinned), raw instruction markdown, and a starter prompt for ChatGPT, Gemini, or Microsoft Copilot in the browser.
 - **Direct download** links for version ZIPs per install target (when the registry publishes artifacts).
 - **Copy CLI install** commands (`npx agents-repo install …`) for quick trials.
 - **Browse on GitHub** links to inspect package source in the registry repository.

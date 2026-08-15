@@ -26,6 +26,46 @@ export async function mockRegistryIndex(
   })
 }
 
+export async function mockChatPackageArtifacts(
+  page: import('@playwright/test').Page,
+  options: {
+    readonly instructionsUrl: string
+    readonly manifest: unknown
+    readonly markdownUrl?: string
+    readonly markdown?: string
+  },
+): Promise<void> {
+  await page.route((url) => url.href === options.instructionsUrl, async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(options.manifest),
+    })
+  })
+
+  if (!options.markdownUrl || options.markdown === undefined) {
+    return
+  }
+
+  await page.route((url) => url.href === options.markdownUrl, async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/markdown',
+      body: options.markdown,
+    })
+  })
+}
+
 export async function mockRegistryIndexFailure(
   page: import('@playwright/test').Page,
   indexUrl: string = E2E_REGISTRY_INDEX_URL,
