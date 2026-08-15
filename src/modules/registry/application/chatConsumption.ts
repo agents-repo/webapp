@@ -51,8 +51,22 @@ const isNonEmptyString = (value: unknown): value is string => {
   return typeof value === 'string' && value.trim().length > 0
 }
 
+const isSafePkgPathSegment = (segment: string): boolean => {
+  return segment.length > 0 && segment !== '.' && segment !== '..'
+}
+
 const isPkgPath = (value: unknown): value is string => {
-  return isNonEmptyString(value) && value.trim().startsWith('/pkg/')
+  if (!isNonEmptyString(value)) {
+    return false
+  }
+
+  const path = value.trim()
+  if (!path.startsWith('/pkg/')) {
+    return false
+  }
+
+  const segments = path.split('/')
+  return segments[0] === '' && segments.slice(1).every(isSafePkgPathSegment)
 }
 
 const parseAgentInstructions = (value: unknown): readonly string[] | null | undefined => {

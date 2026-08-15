@@ -81,6 +81,20 @@ describe('parseChatInstructionsManifest', () => {
         instructions: [{ kind: 'agent', id: 'x', path: 'packages/x.agent.md' }],
       }),
     ).toBeNull()
+    expect(
+      parseChatInstructionsManifest({
+        ...validManifest,
+        instructions: [
+          { kind: 'agent', id: 'x', path: '/pkg/ns/pkg/1.0.0/agents/../evil.agent.md' },
+        ],
+      }),
+    ).toBeNull()
+    expect(
+      parseChatInstructionsManifest({
+        ...validManifest,
+        instructions: [{ kind: 'agent', id: 'x', path: '/pkg/ns/pkg/1.0.0/agents/./evil.agent.md' }],
+      }),
+    ).toBeNull()
   })
 
   it('omits empty agentInstructions and rejects invalid agentInstruction paths', () => {
