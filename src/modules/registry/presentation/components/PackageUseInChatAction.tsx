@@ -133,9 +133,7 @@ function CopyableTextRow({
         </Button>
       </InputGroup>
       {copyFeedback ? (
-        <div className="form-text" role="status">
-          {copyFeedback}
-        </div>
+        <output className="form-text d-block">{copyFeedback}</output>
       ) : null}
     </Form.Group>
   )
@@ -217,9 +215,7 @@ function UseInChatLoadedForm({
             <div className="form-text">Includes this flow and its related agent files.</div>
           ) : null}
           {copyFeedback.markdown ? (
-            <div className="form-text" role="status">
-              {copyFeedback.markdown}
-            </div>
+            <output className="form-text d-block">{copyFeedback.markdown}</output>
           ) : null}
         </div>
 
@@ -521,10 +517,10 @@ function PackageUseInChatAction({
         </Modal.Header>
         <Modal.Body id={modalId} aria-busy={isLoading}>
           {isLoading ? (
-            <div className="d-flex align-items-center gap-2" role="status">
+            <output className="d-flex align-items-center gap-2">
               <Spinner animation="border" size="sm" aria-hidden="true" />
               <span>Loading chat instructions</span>
-            </div>
+            </output>
           ) : null}
 
           {errorMessage ? (
