@@ -18,6 +18,8 @@ export interface E2eRegistryPackage {
     readonly band: 'minimal' | 'low' | 'moderate' | 'high' | 'critical' | 'mixed'
   }
   readonly installTargets?: readonly E2eInstallTargetEntry[]
+  readonly chatWeb?: boolean
+  readonly quickstart?: string
 }
 
 export interface E2eRegistryCatalog {
@@ -52,6 +54,8 @@ export const searchableCatalog: E2eRegistryCatalog = {
       category: 'agent',
       estimateOverallCost: { band: 'low' },
       installTargets: [{ id: 'cursor', status: 'supported' }],
+      chatWeb: true,
+      quickstart: 'https://github.com/agents-repo/registry/blob/main/packages/agents-repo/sample-agent/README.md',
     },
     {
       id: 'agents-repo/demo-flow',

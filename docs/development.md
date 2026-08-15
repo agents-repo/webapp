@@ -233,6 +233,10 @@ on CLI releases.
    Modified` response resets the TTL with zero body downloaded; a `200` response
    stores the new payload and the updated `ETag`/`Last-Modified` headers.
    Service worker runtime caching is focused to same-origin static assets only.
+   Use in chat loads versioned `/pkg/` `instructions.json` and instruction
+   markdown through a session-only in-memory LRU (not localStorage). Repeat
+   opens of the same package version skip the network; a new `latest` URL is a
+   miss. Failed loads are not cached.
 - The styling and architecture decisions are documented in
    `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
 

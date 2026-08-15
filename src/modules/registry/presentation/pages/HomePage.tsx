@@ -45,6 +45,7 @@ import {
   type PackageDownloadTarget,
 } from './homePageCatalogState'
 import PackageCliInstallAction from '../components/PackageCliInstallAction'
+import PackageUseInChatAction from '../components/PackageUseInChatAction'
 import { faDuotoneSpinner } from './catalogLoadingSpinnerIcon'
 
 const STICKY_SEARCH_THRESHOLD = 180
@@ -141,7 +142,8 @@ function PackageCard({
     packageBrowseUrl && isSafeExternalHttpUrl(packageBrowseUrl) ? packageBrowseUrl : null
   const cliPackageRef = formatRegistryPackageRef(pkg.namespace, pkg.package)
   const showCli = cliPackageRef !== null
-  const showFooter = showCli || downloadTargets.length > 0 || Boolean(safeBrowseUrl)
+  const showUseInChat = pkg.chatWeb === true
+  const showFooter = showCli || downloadTargets.length > 0 || Boolean(safeBrowseUrl) || showUseInChat
 
   return (
     <Col>
@@ -217,6 +219,17 @@ function PackageCard({
                 packageName={pkg.name}
                 packageId={cliPackageRef}
                 controlId={packageSlug}
+              />
+            ) : null}
+            {showUseInChat ? (
+              <PackageUseInChatAction
+                packageName={pkg.name}
+                namespace={pkg.namespace}
+                packageId={pkg.package}
+                latest={pkg.latest}
+                registryBaseUrl={registryBaseUrl}
+                controlId={packageSlug}
+                quickstart={pkg.quickstart}
               />
             ) : null}
             {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, packageSlug, downloadTargets) : null}

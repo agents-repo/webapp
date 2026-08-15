@@ -182,4 +182,51 @@ describe('isRegistryCatalog', () => {
     ).toBe(false)
   })
 
+  it('accepts packages with chatWeb true or omitted', () => {
+    const withChatWeb = makeValidPackage()
+    withChatWeb.chatWeb = true
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.3.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [withChatWeb],
+      }),
+    ).toBe(true)
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.3.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [makeValidPackage()],
+      }),
+    ).toBe(true)
+  })
+
+  it('accepts packages with chatWeb false', () => {
+    const pkg = makeValidPackage()
+    pkg.chatWeb = false
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.3.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [pkg],
+      }),
+    ).toBe(true)
+  })
+
+  it('rejects invalid chatWeb types', () => {
+    const pkg = makeValidPackage()
+    pkg.chatWeb = 'true'
+
+    expect(
+      isRegistryCatalog({
+        schemaVersion: '1.3.0',
+        updatedAt: '2026-06-08T02:09:56.645Z',
+        packages: [pkg],
+      }),
+    ).toBe(false)
+  })
+
 })

@@ -23,7 +23,7 @@ export const docsCatalog: readonly DocCatalogMeta[] = [
   {
     slug: 'using-the-catalog',
     title: 'Using the catalog',
-    description: 'Search, package cards, downloads, CLI commands from the UI, and website settings.',
+    description: 'Search, package cards, Use in chat, downloads, CLI commands from the UI, and website settings.',
     order: 30,
     section: 'Catalog',
   },

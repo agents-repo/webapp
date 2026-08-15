@@ -10,6 +10,7 @@ import {
   reloadingCatalogContext,
   unavailableCatalogContext,
 } from '../../../../test/fixtures/homePageTestFixtures'
+import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -105,5 +106,34 @@ describe('HomePage package card owner', () => {
     expect(subtitle).not.toBeNull()
     expect(subtitle?.querySelector('.badge')).toBeNull()
     expect(subtitle?.textContent).toMatch(/^by\s+agents-repo/)
+  })
+
+  it('shows Use in chat when chatWeb is true', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    expect(await screen.findByRole('button', { name: 'Use sample-agent in chat' })).toBeInTheDocument()
+  })
+
+  it('hides Use in chat when chatWeb is omitted', async () => {
+    const catalogWithoutChatWeb = {
+      ...sampleRegistryCatalog,
+      packages: sampleRegistryCatalog.packages.map((pkg) => {
+        const nextPackage = { ...pkg }
+        delete nextPackage.chatWeb
+        return nextPackage
+      }),
+    }
+
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: catalogWithoutChatWeb,
+    })
+
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Use sample-agent in chat' })).not.toBeInTheDocument()
   })
 })
