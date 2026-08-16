@@ -55,6 +55,19 @@ test.describe('Package pages', () => {
     await expect(page).toHaveURL('/packages/agents-repo/sample-agent')
   })
 
+  test('keeps the CLI install popover inside the viewport on the package page', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 640 })
+    await page.goto('/packages/agents-repo/sample-agent')
+    await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
+
+    await page.getByRole('button', { name: 'CLI install for sample-agent' }).click()
+
+    const popover = page.locator('#cli-install-popover-agents-repo--sample-agent-detail')
+    await expect(popover).toBeVisible()
+    await expect(page.getByText('Choose AI tool')).toBeVisible()
+    await expect(popover).toBeInViewport({ ratio: 1 })
+  })
+
   test('expands agent markdown on the package page', async ({ page }) => {
     await page.goto('/packages/agents-repo/sample-agent')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
