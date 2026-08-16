@@ -182,6 +182,7 @@ hard-coded locale strings.
 | External link accessible names | `externalLink.test.ts` |
 | Site UI a11y smoke | `Header`, `Footer`, `WebsiteSettingsControl`, `AccessibilityPage` |
 | HomePage a11y smoke | `HomePage` |
+| Package pages | `PackagesIndexPage`, `NamespacePackagesPage`, `PackageDetailPage` |
 
 ### Prioritized backlog
 

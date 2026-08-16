@@ -1,5 +1,5 @@
 import semver from 'semver'
-import { DEFAULT_REGISTRY_REF } from './registrySourceUrl'
+import { DEFAULT_REGISTRY_REF } from './registrySourceUrl.ts'
 
 const MAJOR_VERSION_LINE_ALIAS_PATTERN = /^v?\d+\.x$/i
 

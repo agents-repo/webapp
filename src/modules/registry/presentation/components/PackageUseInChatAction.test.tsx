@@ -203,7 +203,9 @@ describe('PackageUseInChatAction', () => {
     })
     expect(fetchMock).toHaveBeenCalledWith(
       'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/agents/sample-agent.agent.md?ref=v2.x',
-      expect.objectContaining({ cache: 'no-store' }),
+      expect.objectContaining({
+        headers: { Accept: 'text/markdown, text/plain, */*' },
+      }),
     )
 
     await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
@@ -254,11 +256,15 @@ describe('PackageUseInChatAction', () => {
     })
     expect(fetchMock).toHaveBeenCalledWith(
       'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/flows/sample-flow.agent.md?ref=v2.x',
-      expect.objectContaining({ cache: 'no-store' }),
+      expect.objectContaining({
+        headers: { Accept: 'text/markdown, text/plain, */*' },
+      }),
     )
     expect(fetchMock).toHaveBeenCalledWith(
       'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/1.0.0/agents/sample-agent.agent.md?ref=v2.x',
-      expect.objectContaining({ cache: 'no-store' }),
+      expect.objectContaining({
+        headers: { Accept: 'text/markdown, text/plain, */*' },
+      }),
     )
   })
 

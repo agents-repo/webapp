@@ -13,6 +13,7 @@
     "http://localhost:4173/help-us",
     "http://localhost:4173/repositories",
     "http://localhost:4173/repositories/registry",
+    "http://localhost:4173/packages",
     "http://localhost:4173/accessibility"
   ]
 }

@@ -5,9 +5,19 @@ import {
   parseRepositorySlugFromPathname,
   REPOSITORIES_BASE_PATH,
 } from '../../application/nestedSiteRoutes.ts'
+import {
+  isKnownPackageSiteRoute,
+  PACKAGES_BASE_PATH,
+} from '../../../registry/application/packageSiteRoutes.ts'
+import {
+  getRuntimePackageCatalog,
+  isRuntimePackageCatalogResolved,
+} from '../../../registry/application/runtimePackageCatalog.ts'
+import type { RegistryCatalog } from '../../../registry/domain/package.ts'
 
 export const siteRoutes = {
   home: '/',
+  packages: PACKAGES_BASE_PATH,
   about: '/about',
   community: '/community',
   contact: '/contact',
@@ -30,7 +40,11 @@ export function findSiteRoutePath(normalizedPath: string): SiteRoutePath | undef
   return routePaths.find((routePath) => routePath === normalizedPath)
 }
 
-export function isKnownSiteRoute(pathname: string): boolean {
+export function isKnownSiteRoute(
+  pathname: string,
+  catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
+  catalogResolved = isRuntimePackageCatalogResolved(),
+): boolean {
   const normalizedPath = normalizeSitePathname(pathname)
   if (findSiteRoutePath(normalizedPath) !== undefined) {
     return true
@@ -40,7 +54,11 @@ export function isKnownSiteRoute(pathname: string): boolean {
     return true
   }
 
-  return parseRepositorySlugFromPathname(normalizedPath) !== undefined
+  if (parseRepositorySlugFromPathname(normalizedPath) !== undefined) {
+    return true
+  }
+
+  return isKnownPackageSiteRoute(normalizedPath, catalog, catalogResolved)
 }
 
 export function getSiteRoutePaths(): string[] {

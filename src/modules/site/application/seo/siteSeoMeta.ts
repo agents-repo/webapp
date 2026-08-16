@@ -15,6 +15,22 @@ import {
   parseRepositorySlugFromPathname,
 } from '../nestedSiteRoutes.ts'
 import { getRepositoryBySlug } from '../repositories/repositoryManifest.ts'
+import {
+  getNamespacePackagesPath,
+  getPackageDetailPath,
+  isUnlistedPackageSitePath,
+  parsePackageSitePath,
+  type PackageSiteRoute,
+} from '../../../registry/application/packageSiteRoutes.ts'
+import {
+  getPackageSiteSeoDescription,
+  getPackagesIndexSeoDescription,
+} from '../../../registry/application/packageSiteSeo.ts'
+import {
+  getRuntimePackageCatalog,
+  isRuntimePackageCatalogResolved,
+} from '../../../registry/application/runtimePackageCatalog.ts'
+import type { RegistryCatalog } from '../../../registry/domain/package.ts'
 
 export type { SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
 export { getSiteRoutePaths, isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
@@ -29,6 +45,10 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
     description:
       'Browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex from the open registry.',
     canonicalPath: siteRoutes.home,
+  },
+  [siteRoutes.packages]: {
+    description: getPackagesIndexSeoDescription(),
+    canonicalPath: siteRoutes.packages,
   },
   [siteRoutes.about]: {
     description:
@@ -77,7 +97,23 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
   },
 }
 
-export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
+function getPackageCanonicalPath(route: PackageSiteRoute): string {
+  if (route.kind === 'index') {
+    return siteRoutes.packages
+  }
+
+  if (route.kind === 'namespace') {
+    return getNamespacePackagesPath(route.namespace)
+  }
+
+  return getPackageDetailPath(route.namespace, route.packageId)
+}
+
+export function getSiteSeoMeta(
+  pathname: string,
+  catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
+  catalogResolved = isRuntimePackageCatalogResolved(),
+): SiteSeoMeta {
   const normalizedPath = normalizeSitePathname(pathname)
   const matchedRoute = findSiteRoutePath(normalizedPath)
 
@@ -105,6 +141,18 @@ export function getSiteSeoMeta(pathname: string): SiteSeoMeta {
         canonicalPath: getDocDetailPath(docSlug),
       }
     }
+  }
+
+  const packageRoute = parsePackageSitePath(normalizedPath)
+  if (packageRoute) {
+    return {
+      description: getPackageSiteSeoDescription(packageRoute, catalog),
+      canonicalPath: getPackageCanonicalPath(packageRoute),
+    }
+  }
+
+  if (isUnlistedPackageSitePath(normalizedPath, catalog, catalogResolved)) {
+    return siteSeoMeta[siteRoutes.packages]
   }
 
   if (isUnlistedDocDetailPath(normalizedPath)) {

@@ -5,8 +5,14 @@ import {
   injectSpaFallbackHeadIntoHtml,
   injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
-import { resolveBuildSiteOrigin } from './seo-build-config.ts';
-import { getSiteRoutePaths } from '../src/modules/site/application/seo/siteSeoMeta.ts';
+import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts';
+import { setRuntimePackageCatalog } from '../src/modules/registry/application/runtimePackageCatalog.ts';
+import { DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL } from '../src/modules/registry/infrastructure/registrySourceUrl.ts';
+import {
+  getBuildSiteRoutePaths,
+  readGeneratedPackageSiteCatalog,
+  resolveBuildSiteOrigin,
+} from './seo-build-config.ts';
 
 function parseModeArg() {
   const modeIndex = process.argv.indexOf('--mode');
@@ -30,10 +36,19 @@ if (existsSync(e2eBuildMarkerPath)) {
 }
 
 const siteOrigin = resolveBuildSiteOrigin(parseModeArg());
+const generatedCatalog = readGeneratedPackageSiteCatalog();
+if (generatedCatalog && isRegistryCatalog(generatedCatalog)) {
+  setRuntimePackageCatalog(generatedCatalog, {
+    resolved: true,
+    githubRepositoryUrl: DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL,
+  });
+}
+
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
+const buildRoutePaths = getBuildSiteRoutePaths();
 
 function assertKnownSiteRoute(routePath) {
-  if (!getSiteRoutePaths().includes(routePath)) {
+  if (!buildRoutePaths.includes(routePath)) {
     throw new Error(`Unknown site route for dist output: ${routePath}`);
   }
 }
@@ -62,7 +77,7 @@ function writeRouteDistHtml(routePath, html) {
   writeFileSync(distSegmentFile, html);
 }
 
-for (const routePath of getSiteRoutePaths()) {
+for (const routePath of buildRoutePaths) {
   const html = injectLegacyDomainRedirectIntoHtml(
     injectRouteHeadIntoHtml(baseHtml, routePath, siteOrigin),
   );

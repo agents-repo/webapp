@@ -9,9 +9,11 @@ presentation concerns separated when those layers are useful for the feature.
 ## Current Module Boundaries
 
 - `src/modules/registry/` owns registry package data, selectors, repository
-  adapters, and the landing page.
+  adapters, the landing catalog, and in-app package index and detail pages
+  (`/packages`, `/packages/:namespace`, `/packages/:namespace/:packageId`).
 - `src/modules/site/` owns the shared site shell, routes, and generic site
-  pages.
+  pages. Package SEO helpers in `site` read the runtime catalog snapshot from
+  the registry module.
 
 ## Rules
 

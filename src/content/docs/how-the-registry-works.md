@@ -29,7 +29,7 @@ Production webapp and many CLI setups use [registry-proxy](https://github.com/ag
 
 ## Webapp vs CLI
 
-- **Webapp**: loads the index for search/UI; offers Use in chat, downloads, and browse links ([Using the catalog](/docs/using-the-catalog)).
+- **Webapp**: loads the index for search/UI; offers in-app package pages, Use in chat, downloads, and GitHub browse on the detail page ([Using the catalog](/docs/using-the-catalog)).
 - **CLI**: resolves versions, verifies ZIP integrity, and extracts into install target paths ([Installing packages](/docs/installing-packages)).
 
 Normative formats live in [registry specs](https://github.com/agents-repo/registry/tree/main/specs). This guide does not duplicate spec text.

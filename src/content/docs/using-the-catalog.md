@@ -1,11 +1,14 @@
 ---
 title: Using the catalog
-description: Search, package cards, Use in chat, downloads, CLI commands from the UI, and website settings.
+description: Search, package cards, in-app package pages, Use in chat, downloads, CLI commands from the UI, and website settings.
 order: 30
 section: Catalog
 ---
 
-The catalog on [Home](/) lists packages from the registry index. Each card shows metadata, status, supported install targets, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
+The catalog on [Home](/) and the crawlable [Packages](/packages) index lists
+packages from the registry index. Each card shows metadata, status, supported
+install targets, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). **View** and the package title open the in-app
+package page. **View on GitHub** is on that page. On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
 
 ## Search and filters
 
@@ -27,7 +30,9 @@ Package cards may offer:
   its related agent files. Gemini and Microsoft Copilot remain copy-paste.
 - **Direct download** links for version ZIPs per install target (when the registry publishes artifacts).
 - **Copy CLI install** commands (`npx agents-repo install …`) for quick trials.
-- **Browse on GitHub** links to inspect package source in the registry repository.
+- **View** opens the in-app package page (`/packages/<namespace>/<package-id>`).
+  That page repeats CLI, Use in chat, and Download, and adds **View on GitHub**
+  to inspect package source in the registry repository.
 
 For reproducible projects, prefer pinning the CLI in `devDependencies` and using project scripts — see [Installing packages](/docs/installing-packages).
 

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
 
 import type { CatalogCacheState } from '../../application/catalogCacheState'
 import { formatCatalogUpdatedAt } from '../../application/registrySelectors'
+import { setRuntimePackageCatalog } from '../../application/runtimePackageCatalog'
 import type { RegistryCatalog } from '../../domain/package'
 import {
   loadRegistryCatalog,
@@ -144,6 +145,13 @@ function RegistryCatalogProvider({
       abortController.abort()
     }
   }, [onCatalogStatusNoteChange, registrySettingsVersion])
+
+  useLayoutEffect(() => {
+    setRuntimePackageCatalog(catalog, {
+      resolved: !isLoading || catalog !== null,
+      githubRepositoryUrl,
+    })
+  }, [catalog, githubRepositoryUrl, isLoading])
 
   const value = useMemo<RegistryCatalogContextValue>(
     () => ({

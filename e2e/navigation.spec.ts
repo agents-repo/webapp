@@ -2,6 +2,7 @@ import { test, expect } from './fixtures/registry-mock'
 
 const routeHeadings = [
   { path: '/', heading: 'Explore ready-to-use agents and flows' },
+  { path: '/packages', heading: 'All packages' },
   { path: '/about', heading: 'About' },
   { path: '/community', heading: 'Community' },
   { path: '/contact', heading: 'Contact' },
@@ -34,6 +35,15 @@ test.describe('Navigation', () => {
     await page.goto('/repositories/not-a-real-slug')
 
     await expect(page.getByRole('heading', { name: 'Repositories', level: 1 })).toBeVisible()
+  })
+
+  test('shows not-found for unknown package paths instead of redirecting home', async ({ page }) => {
+    await page.goto('/packages/not-a-real-namespace/not-a-real-package')
+
+    await expect(page.getByRole('heading', { name: 'Package not found', level: 1 })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
+    ).toHaveCount(0)
   })
 
   test('redirects nested unknown repository paths to the repositories index', async ({ page }) => {

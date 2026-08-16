@@ -60,7 +60,6 @@ const loadChatInstructionsManifestFromNetwork = async (
   url: string,
 ): Promise<ChatInstructionsManifest> => {
   const response = await fetch(url, {
-    cache: 'no-store',
     headers: { Accept: 'application/json' },
   })
 
@@ -85,7 +84,6 @@ const loadChatInstructionsManifestFromNetwork = async (
 
 const loadChatInstructionMarkdownFromNetwork = async (url: string): Promise<string> => {
   const response = await fetch(url, {
-    cache: 'no-store',
     headers: { Accept: 'text/markdown, text/plain, */*' },
   })
 

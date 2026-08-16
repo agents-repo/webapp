@@ -31,6 +31,7 @@ export interface E2eRegistryCatalog {
 
 /** Index URL resolved when the app is built with `.env.e2e` / `vite --mode e2e`. */
 export const E2E_REGISTRY_INDEX_URL = 'https://e2e.local/registry/packages/index.json'
+export const E2E_REGISTRY_BASE_URL = 'https://e2e.local/registry'
 
 export const searchableCatalog: E2eRegistryCatalog = {
   schemaVersion: '1.3.0',

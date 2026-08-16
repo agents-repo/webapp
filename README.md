@@ -91,8 +91,8 @@ Build-time variables remain:
   If omitted, the source URL is used as the base URL (GitHub URLs are normalized to raw content).
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
   `packages/index.json`
-- `VITE_REGISTRY_GITHUB_REPOSITORY_URL`: GitHub repository URL used for package
-  browse links in package cards. Default:
+- `VITE_REGISTRY_GITHUB_REPOSITORY_URL`: GitHub repository URL used for
+  **View on GitHub** on package detail pages. Default:
   `https://github.com/agents-repo/registry/tree/v2.x`
 
 GitHub repository URLs and `/tree/<ref>` or `/blob/<ref>` URLs are normalized
@@ -122,8 +122,8 @@ At runtime, users can set custom registry URLs in the header settings modal:
 
 - **Registry base URL override** — catalog fetching (GitHub URLs auto-normalized,
   raw URLs and other base URLs used as-is). Empty resets to configured defaults.
-- **GitHub repository URL** — package browse links only; opens
-  `github.com/.../tree/{ref}/packages/{id}` in package card footers. Independent
+- **GitHub repository URL** — **View on GitHub** on package detail pages; opens
+  `github.com/.../tree/{ref}/packages/{namespace}/{package-id}`. Independent
   from the fetch override. Empty resets to `VITE_REGISTRY_GITHUB_REPOSITORY_URL`.
 
 Fetch defaults (proxy) and browse defaults (GitHub repository) serve different
@@ -139,11 +139,12 @@ that matches the app's registry catalog contract.
 Registry catalog loading now uses two coordinated cache layers:
 
 - App-layer cache contract:
-  - 24h freshness window for `index.json`
+  - 24h freshness window for `index.json` and package `detail.json`
   - Fresh cache is used before network fetches
   - Website settings include **Clear cache and reload catalog** to reset
-    `registry.catalog.cache.v1` and `registry.tags.cache.v1` in localStorage and
-    force a catalog reload (does not purge Cloudflare proxy cache)
+    `registry.catalog.cache.v1`, `registry.package-detail.cache.v1`, and
+    `registry.tags.cache.v1` in localStorage and force a catalog reload (does
+    not purge Cloudflare proxy cache or the browser HTTP `max-age=300` cache)
   - If remote refresh fails, stale cached catalog is used when available
   - If refresh fails and no cached catalog exists, the app shows an error alert
 - Service worker runtime cache:

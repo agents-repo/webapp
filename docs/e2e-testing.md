@@ -59,11 +59,13 @@ e2e/
 │   ├── catalog.ts          # Typed catalog JSON (mirrors src/test/fixtures shape)
 │   ├── catalog-load.ts     # waitForCatalogSettled helper
 │   ├── registry-mock.ts    # page.route helpers + extended test fixture
+│   ├── package-detail.ts   # sample-agent detail.json for package pages
 │   └── storage.ts          # localStorage/sessionStorage isolation
 ├── e2e-build-guard.setup.ts # Fails fast when port 4173 is not an e2e build
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
 ├── navigation.spec.ts
+├── packages.spec.ts
 ├── seo-crawl-files.spec.ts
 ├── cookie-consent.spec.ts
 ├── theme-mode.spec.ts

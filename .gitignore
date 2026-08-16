@@ -30,3 +30,4 @@ blob-report/
 *.sw?
 
 .cache/actionlint/
+scripts/.generated/

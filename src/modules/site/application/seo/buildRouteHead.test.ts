@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 import { siteRoutes } from '../../presentation/routes/siteRoutes'
 import {
   buildRouteHead,
@@ -25,6 +26,25 @@ describe('getRouteHeadData', () => {
     for (const route of routes) {
       expect(getRouteHeadData(route).documentTitle.length).toBeLessThanOrEqual(60)
     }
+  })
+
+  it('emits CollectionPage JSON-LD on package indexes and SoftwareSourceCode on detail', () => {
+    const indexHead = getRouteHeadData(siteRoutes.packages)
+    const namespaceHead = getRouteHeadData('/packages/agents-repo', 'https://agents-repo.org', {
+      catalog: sampleRegistryCatalog,
+    })
+    const detailHead = getRouteHeadData('/packages/agents-repo/sample-agent', 'https://agents-repo.org', {
+      catalog: sampleRegistryCatalog,
+      githubRepositoryUrl: 'https://github.com/agents-repo/registry/tree/v2.x',
+    })
+
+    expect(indexHead.jsonLd).toMatchObject({ '@type': 'CollectionPage' })
+    expect(namespaceHead.jsonLd).toMatchObject({ '@type': 'CollectionPage' })
+    expect(detailHead.jsonLd).toMatchObject({
+      '@type': 'SoftwareSourceCode',
+      codeRepository:
+        'https://github.com/agents-repo/registry/tree/v2.x/packages/agents-repo/sample-agent',
+    })
   })
 
   it('emits WebSite JSON-LD on the home route only', () => {

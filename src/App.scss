@@ -127,12 +127,37 @@
   }
 }
 
+.package-card-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.package-card-title-link:hover,
+.package-card-title-link:focus-visible {
+  text-decoration: underline;
+}
+
 .package-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   line-clamp: 3;
   overflow: hidden;
+}
+
+.package-detail-markdown {
+  max-width: 48rem;
+}
+
+.package-detail-markdown pre {
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  background: var(--bs-tertiary-bg);
+  border-radius: 0.5rem;
+}
+
+.package-instruction-accordion .accordion-button {
+  align-items: flex-start;
 }
 
 .owner-dropdown-toggle::after {

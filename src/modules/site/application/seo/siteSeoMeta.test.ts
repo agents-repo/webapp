@@ -24,6 +24,7 @@ describe('siteSeoMeta', () => {
     expect(getSiteRoutePaths()).toEqual(
       expect.arrayContaining([
         siteRoutes.home,
+        siteRoutes.packages,
         siteRoutes.about,
         siteRoutes.community,
         siteRoutes.contact,
@@ -40,6 +41,7 @@ describe('siteSeoMeta', () => {
   })
 
   it('distinguishes known routes from unknown paths', () => {
+    expect(isKnownSiteRoute(siteRoutes.packages)).toBe(true)
     expect(isKnownSiteRoute(siteRoutes.about)).toBe(true)
     expect(isKnownSiteRoute(siteRoutes.community)).toBe(true)
     expect(isKnownSiteRoute('/about/')).toBe(true)

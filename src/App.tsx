@@ -1,4 +1,4 @@
-import { Suspense, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AnalyticsRouteTracker from './modules/site/application/analytics/AnalyticsRouteTracker'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
@@ -20,6 +20,11 @@ import {
 import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from './modules/site/application/websiteSettings/registryCatalogStatusNote'
 import './App.scss'
+
+const PackagesIndexPage = lazy(() => import('./modules/registry/presentation/pages/PackagesIndexPage'))
+const NamespacePackagesPage = lazy(() => import('./modules/registry/presentation/pages/NamespacePackagesPage'))
+const PackageDetailPage = lazy(() => import('./modules/registry/presentation/pages/PackageDetailPage'))
+const PackageSiteNotFound = lazy(() => import('./modules/registry/presentation/pages/PackageSiteNotFound'))
 
 interface AppRoutesProps {
   readonly lazyPages: LazySitePages
@@ -60,6 +65,19 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
         path={`${siteRoutes.repositories}/*`}
         element={<Navigate to={siteRoutes.repositories} replace />}
       />
+      <Route
+        path={siteRoutes.packages}
+        element={<PackagesIndexPage setHeaderSearchSlot={setHeaderSearchSlot} />}
+      />
+      <Route
+        path={`${siteRoutes.packages}/:namespace/:packageId`}
+        element={<PackageDetailPage setHeaderSearchSlot={setHeaderSearchSlot} />}
+      />
+      <Route
+        path={`${siteRoutes.packages}/:namespace`}
+        element={<NamespacePackagesPage setHeaderSearchSlot={setHeaderSearchSlot} />}
+      />
+      <Route path={`${siteRoutes.packages}/*`} element={<PackageSiteNotFound />} />
       <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
       <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
       <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />

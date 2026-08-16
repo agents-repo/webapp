@@ -11,7 +11,7 @@ import {
   someUrlHasHostname,
 } from '../scripts/crawl-file-url-validation.mjs'
 import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
-import { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
+import { getBuildSiteRoutePaths } from '../scripts/seo-build-config.ts'
 import { previewTestHostname } from '../scripts/crawl-file-origins.mjs'
 
 const distDir = resolve(process.cwd(), 'dist')
@@ -43,7 +43,7 @@ function assertCrawlFilesMatchOrigin(origin) {
   requireCrawlFiles()
   const xml = readFileSync(resolve(distDir, 'sitemap.xml'), 'utf8')
   const robots = readFileSync(resolve(distDir, 'robots.txt'), 'utf8')
-  const routes = getSiteRoutePaths()
+  const routes = getBuildSiteRoutePaths()
   const entries = parseSitemapEntries(xml)
   const sitemapUrls = parseSitemapLocUrls(xml)
   const robotsUrls = parseRobotsSitemapUrls(robots)
