@@ -96,6 +96,7 @@
 .package-card-action-label {
   display: inline-block;
   max-width: 8rem;
+  min-width: 0;
   margin-inline-start: 0.5rem;
   overflow: hidden;
   white-space: nowrap;
@@ -110,7 +111,14 @@
   }
 }
 
-@media (min-width: 768px) {
+// Collapse only when the primary pointer can hover. Touch md+ layouts keep
+// labels visible (and wrapping). Hover-capable md+ keeps one row so expanding
+// a label cannot wrap/re-center the footer into an expand/collapse loop.
+@media (min-width: 768px) and (hover: hover) {
+  .package-card-footer {
+    flex-wrap: nowrap;
+  }
+
   .package-card .package-card-action-label {
     max-width: 0;
     margin-inline-start: 0;

@@ -35,7 +35,9 @@ Every routed page should:
 4. Mark decorative icons with `aria-hidden="true"`
 5. Label icon-only controls with `aria-label`. Package card footer actions
    are a hybrid: they keep a short visible label (CLI, Use in chat, Download,
-   View) that collapses from `md` up until hover, keyboard focus, or
+   View). Those labels stay visible below Bootstrap `md` and on `md+`
+   viewports whose primary pointer cannot hover. On hover-capable `md+`
+   they collapse until hover, keyboard focus (`:focus-visible`), or
    `aria-expanded`. When `aria-label` also includes the package name, the
    visible label must be a contiguous prefix of that name (WCAG 2.5.3 Label
    in Name), for example `Use in chat for {name}`.

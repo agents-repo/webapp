@@ -213,7 +213,7 @@ function PackageCard({
         </Card.Body>
 
         {showFooter ? (
-          <Card.Footer className="d-flex justify-content-center gap-2 flex-wrap">
+          <Card.Footer className="package-card-footer d-flex justify-content-center gap-2 flex-wrap">
             {showCli ? (
               <PackageCliInstallAction
                 packageName={pkg.name}
