@@ -260,6 +260,18 @@ with [cli](https://github.com/agents-repo/cli). See the organization [Ecosystem
 overview](https://github.com/agents-repo/.github/blob/main/docs/ecosystem.md)
 for diagrams and contributor flows.
 
+## Docs and repository pages
+
+For user guides and cross-repo documentation, see
+[agents-repo.org/docs/](https://agents-repo.org/docs/).
+For this repository's overview on the public site, see
+[agents-repo.org/repositories/webapp/](https://agents-repo.org/repositories/webapp/).
+
+When you change a user-facing or contributor workflow in this
+repository, update the corresponding page(s) in
+[agents-repo/webapp](https://github.com/agents-repo/webapp) under
+`src/content/docs/` in the same PR or an immediate follow-up.
+
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)
