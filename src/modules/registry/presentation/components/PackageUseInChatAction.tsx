@@ -505,14 +505,15 @@ function PackageUseInChatAction({
         type="button"
         variant="outline-primary"
         size="lg"
-        className="d-inline-flex align-items-center justify-content-center"
-        aria-label={`Use ${packageName} in chat`}
+        className="d-inline-flex align-items-center justify-content-center package-card-action"
+        aria-label={`Use in chat for ${packageName}`}
         aria-haspopup="dialog"
         aria-expanded={showModal}
         aria-controls={modalId}
         onClick={openModal}
       >
         <FontAwesomeIcon icon={faComments} aria-hidden="true" />
+        <span className="package-card-action-label">Use in chat</span>
       </Button>
 
       <Modal

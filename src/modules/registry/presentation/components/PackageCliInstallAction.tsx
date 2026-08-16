@@ -155,13 +155,14 @@ function PackageCliInstallActionInner({
         type="button"
         variant="outline-primary"
         size="lg"
-        className="d-inline-flex align-items-center justify-content-center"
+        className="d-inline-flex align-items-center justify-content-center package-card-action"
         aria-label={`CLI install for ${packageName}`}
         aria-expanded={showPopover}
         aria-controls={popoverId}
         onClick={handleTogglePopover}
       >
         <FontAwesomeIcon icon={faTerminal} aria-hidden="true" />
+        <span className="package-card-action-label">CLI</span>
       </Button>
 
       <Overlay

@@ -80,7 +80,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
 
     expect(await screen.findByRole('heading', { name: 'Use sample-agent in chat' })).toBeInTheDocument()
     expect(screen.getByLabelText('Instruction')).toBeInTheDocument()
@@ -119,7 +119,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByLabelText('Instruction')
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
 
@@ -136,7 +136,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByLabelText('Instruction')
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
 
@@ -166,7 +166,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByRole('button', { name: 'Copy latest instruction URL for sample-agent' })
     await user.click(screen.getByRole('button', { name: 'Copy latest instruction URL for sample-agent' }))
 
@@ -194,7 +194,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByRole('button', { name: 'Copy instruction markdown' })
     await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
 
@@ -232,7 +232,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByLabelText('Instruction')
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
     await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
@@ -279,7 +279,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByLabelText('Instruction')
     await user.selectOptions(screen.getByRole('combobox', { name: 'Instruction' }), 'flow:sample-flow')
     await user.click(screen.getByRole('button', { name: 'Copy instruction markdown' }))
@@ -300,7 +300,7 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
 
     expect(await screen.findByText('Unable to load chat instructions (404).')).toBeInTheDocument()
     expect(screen.queryByLabelText('Instruction')).not.toBeInTheDocument()
@@ -313,11 +313,11 @@ describe('PackageUseInChatAction', () => {
 
     renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Close' }))
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     expect(screen.getByLabelText('Instruction')).toBeInTheDocument()
     expect(screen.queryByText('Loading chat instructions')).not.toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -347,7 +347,7 @@ describe('PackageUseInChatAction', () => {
 
     const { rerender } = renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
     expect(
       screen.getByDisplayValue(
@@ -379,12 +379,12 @@ describe('PackageUseInChatAction', () => {
 
     const { rerender } = renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Close' }))
 
     rerender(<PackageUseInChatAction {...defaultProps} latest="1.0.1" />)
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     expect(await screen.findByLabelText('Instruction')).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })

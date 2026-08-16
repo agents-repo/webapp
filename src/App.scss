@@ -93,6 +93,39 @@
     0 0.55rem 1.25rem rgba(0, 0, 0, 0.24);
 }
 
+.package-card-action-label {
+  display: inline-block;
+  max-width: 8rem;
+  margin-inline-start: 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  vertical-align: middle;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      max-width 0.18s ease,
+      margin-inline-start 0.18s ease,
+      opacity 0.18s ease;
+  }
+}
+
+@media (min-width: 768px) {
+  .package-card .package-card-action-label {
+    max-width: 0;
+    margin-inline-start: 0;
+    opacity: 0;
+  }
+
+  .package-card .package-card-action:hover .package-card-action-label,
+  .package-card .package-card-action:focus-visible .package-card-action-label,
+  .package-card .package-card-action[aria-expanded='true'] .package-card-action-label {
+    max-width: 8rem;
+    margin-inline-start: 0.5rem;
+    opacity: 1;
+  }
+}
+
 .package-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
