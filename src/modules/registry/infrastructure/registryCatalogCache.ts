@@ -1,4 +1,5 @@
 import type { RegistryCatalog } from '../domain/package'
+import { createPersistentLruCache } from './persistentLruCache'
 import { isRegistryCatalog } from './registryCatalogValidation'
 import { extractRegistryRef, refsAreCompatibleForCatalogCacheFallback } from './registryMajorVersionRef'
 import {
@@ -22,51 +23,6 @@ interface RegistryCatalogCacheEnvelope {
 
 export type { RegistryCatalogCacheEnvelope }
 
-class RegistryCatalogLruCache {
-  readonly #entries = new Map<string, RegistryCatalogCacheEnvelope>()
-
-  get(indexUrl: string): RegistryCatalogCacheEnvelope | undefined {
-    const entry = this.#entries.get(indexUrl)
-
-    if (!entry) {
-      return undefined
-    }
-
-    this.#entries.delete(indexUrl)
-    this.#entries.set(indexUrl, entry)
-
-    return entry
-  }
-
-  set(indexUrl: string, envelope: RegistryCatalogCacheEnvelope): void {
-    if (this.#entries.has(indexUrl)) {
-      this.#entries.delete(indexUrl)
-    }
-
-    this.#entries.set(indexUrl, envelope)
-
-    while (this.#entries.size > CACHE_MAX_ENTRIES) {
-      const oldestKey = this.#entries.keys().next().value
-
-      if (oldestKey === undefined) {
-        break
-      }
-
-      this.#entries.delete(oldestKey)
-    }
-  }
-
-  values(): IterableIterator<RegistryCatalogCacheEnvelope> {
-    return this.#entries.values()
-  }
-
-  clear(): void {
-    this.#entries.clear()
-  }
-}
-
-const memoryCacheByIndexUrl = new RegistryCatalogLruCache()
-
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null
 }
@@ -84,91 +40,15 @@ const isEnvelope = (value: unknown): value is RegistryCatalogCacheEnvelope => {
   )
 }
 
-const getLocalStorage = (): Storage | null => {
-  try {
-    return globalThis.localStorage
-  } catch {
-    return null
-  }
-}
-
-const loadPersistentCache = (): RegistryCatalogCacheEnvelope[] => {
-  const storage = getLocalStorage()
-
-  if (!storage) {
-    return []
-  }
-
-  try {
-    const rawValue = storage.getItem(CACHE_STORAGE_KEY)
-
-    if (!rawValue) {
-      return []
-    }
-
-    const parsedValue: unknown = JSON.parse(rawValue)
-
-    if (!Array.isArray(parsedValue)) {
-      return []
-    }
-
-    return parsedValue.filter((item) => isEnvelope(item))
-  } catch {
-    return []
-  }
-}
-
-const persistCache = (): void => {
-  const storage = getLocalStorage()
-
-  if (!storage) {
-    return
-  }
-
-  try {
-    storage.setItem(CACHE_STORAGE_KEY, JSON.stringify(Array.from(memoryCacheByIndexUrl.values())))
-  } catch {
-    // Ignore quota and serialization errors; caching is best-effort only.
-  }
-}
-
-const getEnvelopeFromMemoryOrStorage = (indexUrl: string): RegistryCatalogCacheEnvelope | null => {
-  const memoryValue = memoryCacheByIndexUrl.get(indexUrl)
-
-  if (memoryValue) {
-    return memoryValue
-  }
-
-  const persistentEntries = loadPersistentCache()
-
-  if (persistentEntries.length === 0) {
-    return null
-  }
-
-  for (const entry of persistentEntries) {
-    memoryCacheByIndexUrl.set(entry.indexUrl, entry)
-  }
-
-  return memoryCacheByIndexUrl.get(indexUrl) ?? null
-}
-
-const isFresh = (cachedAt: number): boolean => {
-  return Date.now() - cachedAt <= CACHE_TTL_MS
-}
+const catalogCache = createPersistentLruCache<RegistryCatalogCacheEnvelope>({
+  storageKey: CACHE_STORAGE_KEY,
+  maxEntries: CACHE_MAX_ENTRIES,
+  ttlMs: CACHE_TTL_MS,
+  getKey: (envelope) => envelope.indexUrl,
+  isEnvelope,
+})
 
 export type { RegistrySourceCacheIdentity as RegistryCatalogCacheSourceIdentity }
-
-const listAllCatalogCacheEnvelopes = (): RegistryCatalogCacheEnvelope[] => {
-  const persistentEntries = loadPersistentCache()
-
-  for (const entry of persistentEntries) {
-    if (!memoryCacheByIndexUrl.get(entry.indexUrl)) {
-      memoryCacheByIndexUrl.set(entry.indexUrl, entry)
-    }
-  }
-
-  return Array.from(memoryCacheByIndexUrl.values())
-}
 
 const envelopeMatchesSourceIdentity = (
   envelope: RegistryCatalogCacheEnvelope,
@@ -189,11 +69,12 @@ const readCatalogCacheEnvelopeForSourceIdentity = (
   identity: RegistrySourceCacheIdentity,
   options: { freshOnly: boolean },
 ): RegistryCatalogCacheEnvelope | null => {
-  const matchingEnvelopes = listAllCatalogCacheEnvelopes()
+  const matchingEnvelopes = catalogCache
+    .listAll()
     .filter(
       (envelope) =>
         envelopeMatchesSourceIdentity(envelope, identity) &&
-        (!options.freshOnly || isFresh(envelope.cachedAt)),
+        (!options.freshOnly || catalogCache.isFresh(envelope.cachedAt)),
     )
     .sort((left, right) => right.cachedAt - left.cachedAt)
 
@@ -213,9 +94,9 @@ export const readStaleCatalogCacheEnvelopeForSourceIdentity = (
 }
 
 export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null => {
-  const envelope = getEnvelopeFromMemoryOrStorage(indexUrl)
+  const envelope = catalogCache.get(indexUrl)
 
-  if (!envelope || !isFresh(envelope.cachedAt)) {
+  if (!envelope || !catalogCache.isFresh(envelope.cachedAt)) {
     return null
   }
 
@@ -225,19 +106,17 @@ export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null 
 export const readCatalogCacheEnvelope = (
   indexUrl: string,
 ): RegistryCatalogCacheEnvelope | null => {
-  return getEnvelopeFromMemoryOrStorage(indexUrl)
+  return catalogCache.get(indexUrl)
 }
 
 export const touchCatalogCache = (indexUrl: string): void => {
-  const envelope = getEnvelopeFromMemoryOrStorage(indexUrl)
+  const envelope = catalogCache.get(indexUrl)
 
   if (!envelope) {
     return
   }
 
-  memoryCacheByIndexUrl.set(indexUrl, { ...envelope, cachedAt: Date.now() })
-
-  persistCache()
+  catalogCache.write(indexUrl, { ...envelope, cachedAt: Date.now() })
 }
 
 export const writeCatalogCache = (
@@ -246,7 +125,7 @@ export const writeCatalogCache = (
   etag?: string,
   lastModified?: string,
 ): void => {
-  memoryCacheByIndexUrl.set(indexUrl, {
+  catalogCache.write(indexUrl, {
     cacheVersion: CACHE_VERSION,
     cachedAt: Date.now(),
     indexUrl,
@@ -254,22 +133,10 @@ export const writeCatalogCache = (
     etag,
     lastModified,
   })
-
-  persistCache()
 }
 
 export const clearRegistryCatalogCache = (): void => {
-  memoryCacheByIndexUrl.clear()
-
-  const storage = getLocalStorage()
-
-  if (storage) {
-    try {
-      storage.removeItem(CACHE_STORAGE_KEY)
-    } catch {
-      // Ignore storage failures; clearing is best-effort only.
-    }
-  }
+  catalogCache.clear()
 }
 
 export const resetRegistryCatalogCacheForTests = (): void => {

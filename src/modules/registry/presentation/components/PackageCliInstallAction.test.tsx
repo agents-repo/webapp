@@ -36,6 +36,9 @@ describe('PackageCliInstallAction', () => {
 
     await user.click(screen.getByRole('button', { name: 'CLI install for sample-agent' }))
 
+    expect(document.getElementById('cli-install-popover-agents-repo--sample-agent')).toHaveClass(
+      'package-cli-install-popover',
+    )
     expect(screen.getByText('Choose AI tool')).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: 'GitHub Copilot' })).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: 'Claude Code' })).toBeInTheDocument()

@@ -44,10 +44,10 @@ describe('chatInstructionsRepository', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       'https://example.test/pkg/ns/id/1.0.1/instructions.json',
       expect.objectContaining({
-        cache: 'no-store',
         headers: { Accept: 'application/json' },
       }),
     )
+    expect(fetchMock.mock.calls[0][1]).not.toMatchObject({ cache: 'no-store' })
   })
 
   it('reuses a cached instructions.json body for the same URL', async () => {
@@ -165,9 +165,9 @@ describe('chatInstructionsRepository', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       url,
       expect.objectContaining({
-        cache: 'no-store',
         headers: { Accept: 'text/markdown, text/plain, */*' },
       }),
     )
+    expect(fetchMock.mock.calls[0][1]).not.toMatchObject({ cache: 'no-store' })
   })
 })

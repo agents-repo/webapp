@@ -14,6 +14,16 @@ import {
   parseRepositorySlugFromPathname,
 } from '../nestedSiteRoutes.ts'
 import { getRepositoryBySlug } from '../repositories/repositoryManifest.ts'
+import {
+  isUnlistedPackageSitePath,
+  parsePackageSitePath,
+} from '../../../registry/application/packageSiteRoutes.ts'
+import { getPackageSitePageTitle } from '../../../registry/application/packageSiteSeo.ts'
+import {
+  getRuntimePackageCatalog,
+  isRuntimePackageCatalogResolved,
+} from '../../../registry/application/runtimePackageCatalog.ts'
+import type { RegistryCatalog } from '../../../registry/domain/package.ts'
 
 export interface SitePageMeta {
   readonly title: string
@@ -24,6 +34,10 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
   [siteRoutes.home]: {
     title: 'Home',
     routeLabel: 'Home',
+  },
+  [siteRoutes.packages]: {
+    title: 'Packages',
+    routeLabel: 'Packages',
   },
   [siteRoutes.about]: {
     title: 'About',
@@ -63,7 +77,16 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
   },
 }
 
-export function getSitePageMeta(pathname: string): SitePageMeta {
+const packageNotFoundMeta: SitePageMeta = {
+  title: 'Package not found',
+  routeLabel: 'Package not found',
+}
+
+export function getSitePageMeta(
+  pathname: string,
+  catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
+  catalogResolved = isRuntimePackageCatalogResolved(),
+): SitePageMeta {
   const normalizedPath = normalizeSitePathname(pathname)
   const matchedRoute = findSiteRoutePath(normalizedPath)
 
@@ -91,6 +114,16 @@ export function getSitePageMeta(pathname: string): SitePageMeta {
         routeLabel: doc.title,
       }
     }
+  }
+
+  const packageRoute = parsePackageSitePath(normalizedPath)
+  if (packageRoute) {
+    const title = getPackageSitePageTitle(packageRoute, catalog)
+    return { title, routeLabel: title }
+  }
+
+  if (isUnlistedPackageSitePath(normalizedPath, catalog, catalogResolved)) {
+    return packageNotFoundMeta
   }
 
   if (isUnlistedDocDetailPath(normalizedPath)) {

@@ -89,6 +89,18 @@ norm. When bumping `ACTIONLINT_VERSION` in `scripts/lint-workflows.mjs`, replace
 remove the previous version's checksums file. Keep the same pin across
 organization repositories.
 
+## SonarQube Cloud
+
+Automatic Analysis reads [`.sonarcloud.properties`](../.sonarcloud.properties)
+on each push to the default branch or a pull request branch.
+
+`sonar.sources` and `sonar.tests` must be disjoint directory lists (no
+wildcards). `sonar.sources` is `src,public,scripts,docs` — not `.` — so the
+Playwright tree (`e2e/`) and repo tooling tests (`test/`) are not nested under
+sources. Co-located Vitest files under `src/` stay source. Do not add `e2e` or
+`test` back under `sonar.sources`; Automatic Analysis fails with “Source and
+test paths overlap”.
+
 ## Project Layout
 
 - `src/` contains the React application
@@ -152,10 +164,14 @@ on CLI releases.
 
 ## Current UI State
 
-- The landing page loads registry package cards from a configured index source
-  URL and shows an error alert if no catalog data can be loaded.
+- The landing page and `/packages` indexes load registry package cards from a
+  configured index source URL and show an error alert if no catalog data can be
+  loaded. `/packages` is the crawlable all-packages index (distinct heading from
+  Home). `/packages/:namespace` is the same search, scoped to that namespace.
+  `/packages/:namespace/:packageId` is the latest-only package detail page.
 - Package card footer actions (CLI, Use in chat, Download, View) include short
-  visible labels. Below Bootstrap `md` the labels stay visible and the footer
+  visible labels. **View** and the card title open the in-app package page.
+  **View on GitHub** is on the detail page. Below Bootstrap `md` the labels stay visible and the footer
   may wrap. From `md` up the footer stays on one row (`flex-md-nowrap`) and
   labels stay collapsed at rest (icon-first), then expand on that control's
   hover, keyboard focus (`:focus-visible`), or while `aria-expanded` is true.
@@ -177,7 +193,7 @@ on CLI releases.
    website settings modal with two independent registry URL overrides:
   - **Registry base URL override** for catalog fetching (GitHub URLs
     auto-normalized to raw content, raw URLs and other base URLs used as-is).
-  - **GitHub repository URL** for package browse links in package card footers.
+  - **GitHub repository URL** for **View on GitHub** on package detail pages.
     GitHub-only; does not affect catalog fetching.
    Both overrides persist in localStorage and take precedence over build-time
    configuration. Reset to default clears both overrides.
@@ -194,8 +210,9 @@ on CLI releases.
    route navigation. Resolution uses the `semver` package.
 - The registry catalog loads once at app level via
    `RegistryCatalogProvider` (`presentation/catalog/`) and is reused when
-   returning to the home page; settings changes trigger a forced reload that
-   bypasses warm in-memory catalog cache and tag cache.
+   returning to catalog pages; settings changes trigger a forced reload that
+   bypasses warm in-memory catalog cache and tag cache and also clears the
+   package `detail.json` localStorage LRU.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page

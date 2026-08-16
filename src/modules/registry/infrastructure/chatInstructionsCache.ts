@@ -1,48 +1,10 @@
 import type { ChatInstructionsManifest } from '../application/chatConsumption'
+import { LruCache } from './persistentLruCache'
 
 export const CHAT_INSTRUCTIONS_CACHE_MAX_ENTRIES = 32
 
-class ChatInstructionsLruCache<T> {
-  readonly #entries = new Map<string, T>()
-
-  get(url: string): T | undefined {
-    const entry = this.#entries.get(url)
-
-    if (entry === undefined) {
-      return undefined
-    }
-
-    this.#entries.delete(url)
-    this.#entries.set(url, entry)
-
-    return entry
-  }
-
-  set(url: string, value: T): void {
-    if (this.#entries.has(url)) {
-      this.#entries.delete(url)
-    }
-
-    this.#entries.set(url, value)
-
-    while (this.#entries.size > CHAT_INSTRUCTIONS_CACHE_MAX_ENTRIES) {
-      const oldestKey = this.#entries.keys().next().value
-
-      if (oldestKey === undefined) {
-        break
-      }
-
-      this.#entries.delete(oldestKey)
-    }
-  }
-
-  clear(): void {
-    this.#entries.clear()
-  }
-}
-
-const manifestCache = new ChatInstructionsLruCache<ChatInstructionsManifest>()
-const markdownCache = new ChatInstructionsLruCache<string>()
+const manifestCache = new LruCache<ChatInstructionsManifest>(CHAT_INSTRUCTIONS_CACHE_MAX_ENTRIES)
+const markdownCache = new LruCache<string>(CHAT_INSTRUCTIONS_CACHE_MAX_ENTRIES)
 
 export const readCachedChatInstructionsManifest = (
   url: string,

@@ -203,6 +203,16 @@ const instructionFileName = (entryId: string): string => {
   return `${encodePathSegment(stem)}${AGENT_INSTRUCTION_FILE_SUFFIX}`
 }
 
+export const buildRegistryPackageDetailPath = (namespace: string, packageId: string): string => {
+  return ['packages', encodePathSegment(namespace), encodePathSegment(packageId), 'detail.json'].join('/')
+}
+
+export const buildRegistryPackageDetailUrl = (
+  baseUrl: string,
+  namespace: string,
+  packageId: string,
+): string => buildRegistryIndexUrl(baseUrl, buildRegistryPackageDetailPath(namespace, packageId))
+
 export const buildRegistryPkgUrl = (baseUrl: string, pkgPath: string): string => {
   return buildRegistryIndexUrl(baseUrl, trimLeadingSlashes(pkgPath))
 }

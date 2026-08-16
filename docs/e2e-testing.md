@@ -58,12 +58,14 @@ e2e/
 ├── fixtures/
 │   ├── catalog.ts          # Typed catalog JSON (mirrors src/test/fixtures shape)
 │   ├── catalog-load.ts     # waitForCatalogSettled helper
-│   ├── registry-mock.ts    # page.route helpers + extended test fixture
+│   ├── registry-mock.ts    # GET fulfill helpers + extended test fixture
+│   ├── package-detail.ts   # sample-agent detail.json for package pages
 │   └── storage.ts          # localStorage/sessionStorage isolation
 ├── e2e-build-guard.setup.ts # Fails fast when port 4173 is not an e2e build
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
 ├── navigation.spec.ts
+├── packages.spec.ts
 ├── seo-crawl-files.spec.ts
 ├── cookie-consent.spec.ts
 ├── theme-mode.spec.ts
@@ -100,7 +102,9 @@ test('example', async ({ page }) => {
 ```
 
 Use `mockRegistryIndex(page, catalog, indexUrl)` when a spec needs a custom
-index URL (for example website settings override tests).
+index URL (for example website settings override tests). Use
+`mockPackageDetailArtifacts(page, { detailUrl, detail, markdownUrl, markdown })`
+for package detail pages (same pattern as `mockChatPackageArtifacts`).
 
 Clear browser storage for persistence specs via `clearBrowserStorage(page)` in
 `beforeEach`. It clears on the first navigation only and skips later reloads.

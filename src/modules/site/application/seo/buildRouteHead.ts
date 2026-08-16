@@ -16,6 +16,14 @@ import {
 } from './siteSeo.ts'
 import { getOrganizationSameAsUrls } from '../community/socialLinks.ts'
 import { getSiteSeoMeta } from './siteSeoMeta.ts'
+import { parsePackageSitePath } from '../../../registry/application/packageSiteRoutes.ts'
+import { getPackageCodeRepositoryUrl } from '../../../registry/application/packageSiteSeo.ts'
+import {
+  getRuntimeGithubRepositoryUrl,
+  getRuntimePackageCatalog,
+} from '../../../registry/application/runtimePackageCatalog.ts'
+import { DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL } from '../../../registry/infrastructure/registrySourceUrl.ts'
+import type { RegistryCatalog } from '../../../registry/domain/package.ts'
 
 const legacyGithubPagesHost = 'agents-repo.github.io'
 const customSiteOrigin = 'https://agents-repo.org'
@@ -76,6 +84,7 @@ function buildJsonLd(
   pageTitle: string,
   description: string,
   canonicalUrl: string,
+  githubRepositoryUrl: string,
 ): Record<string, unknown> {
   const organizationId = `${origin}/#organization`
   const websiteId = `${origin}/#website`
@@ -102,6 +111,33 @@ function buildJsonLd(
     }
   }
 
+  const packageRoute = parsePackageSitePath(canonicalPath)
+  if (packageRoute?.kind === 'index' || packageRoute?.kind === 'namespace') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: formatDocumentTitle(pageTitle),
+      description,
+      url: canonicalUrl,
+    }
+  }
+
+  if (packageRoute?.kind === 'detail') {
+    const codeRepository = getPackageCodeRepositoryUrl(
+      githubRepositoryUrl,
+      packageRoute.namespace,
+      packageRoute.packageId,
+    )
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareSourceCode',
+      name: formatDocumentTitle(pageTitle),
+      description,
+      url: canonicalUrl,
+      ...(codeRepository ? { codeRepository } : {}),
+    }
+  }
+
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -111,10 +147,22 @@ function buildJsonLd(
   }
 }
 
-export function getRouteHeadData(pathname: string, siteOriginOverride?: string): RouteHeadData {
+export interface RouteHeadOptions {
+  readonly catalog?: RegistryCatalog | null
+  readonly githubRepositoryUrl?: string
+}
+
+export function getRouteHeadData(
+  pathname: string,
+  siteOriginOverride?: string,
+  options: RouteHeadOptions = {},
+): RouteHeadData {
   const origin = getSiteOrigin(siteOriginOverride)
-  const pageMeta = getSitePageMeta(pathname)
-  const seoMeta = getSiteSeoMeta(pathname)
+  const catalog = options.catalog ?? getRuntimePackageCatalog()
+  const githubRepositoryUrl =
+    options.githubRepositoryUrl || getRuntimeGithubRepositoryUrl() || DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL
+  const pageMeta = getSitePageMeta(pathname, catalog)
+  const seoMeta = getSiteSeoMeta(pathname, catalog)
   const documentTitle = formatDocumentTitle(pageMeta.title)
   const canonicalUrl = buildCanonicalUrl(origin, seoMeta.canonicalPath)
   const ogImage = getOgImageUrl(origin)
@@ -138,7 +186,14 @@ export function getRouteHeadData(pathname: string, siteOriginOverride?: string):
     twitterTitle: documentTitle,
     twitterDescription: seoMeta.description,
     twitterImage: ogImage,
-    jsonLd: buildJsonLd(origin, seoMeta.canonicalPath, pageMeta.title, seoMeta.description, canonicalUrl),
+    jsonLd: buildJsonLd(
+      origin,
+      seoMeta.canonicalPath,
+      pageMeta.title,
+      seoMeta.description,
+      canonicalUrl,
+      githubRepositoryUrl,
+    ),
   }
 }
 

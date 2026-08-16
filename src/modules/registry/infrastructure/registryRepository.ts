@@ -284,7 +284,6 @@ const fetchCatalogFromNetwork = async (
 ): Promise<FetchCatalogNetworkResult> => {
   const response = await fetch(indexUrl, {
     signal,
-    cache: 'no-store',
     headers: { Accept: 'application/json', ...conditionalHeaders },
   })
 

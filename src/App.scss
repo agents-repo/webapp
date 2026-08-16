@@ -127,12 +127,37 @@
   }
 }
 
+.package-card-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.package-card-title-link:hover,
+.package-card-title-link:focus-visible {
+  text-decoration: underline;
+}
+
 .package-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   line-clamp: 3;
   overflow: hidden;
+}
+
+.package-detail-markdown {
+  max-width: 48rem;
+}
+
+.package-detail-markdown pre {
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  background: var(--bs-tertiary-bg);
+  border-radius: 0.5rem;
+}
+
+.package-instruction-accordion .accordion-button {
+  align-items: flex-start;
 }
 
 .owner-dropdown-toggle::after {
@@ -142,6 +167,20 @@
 .package-cli-install-popover {
   --package-cli-terminal-bg: rgba(12, 8, 20, 0.96);
   --package-cli-terminal-border: rgba(196, 124, 255, 0.45);
+  width: 100%;
+  max-width: min(100vw - 2rem, 22rem);
+
+  .popover-body {
+    max-height: min(32rem, calc(100vh - 3rem));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  @supports (height: 100dvh) {
+    .popover-body {
+      max-height: min(32rem, calc(100dvh - 3rem));
+    }
+  }
 }
 
 .package-cli-target-group .btn {

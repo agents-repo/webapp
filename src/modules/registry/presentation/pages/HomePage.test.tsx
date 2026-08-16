@@ -132,6 +132,14 @@ describe('HomePage package card owner', () => {
     expect(footer).toHaveTextContent('Use in chat')
     expect(footer).toHaveTextContent('Download')
     expect(footer).toHaveTextContent('View')
+    expect(screen.getByRole('link', { name: 'View sample-agent' })).toHaveAttribute(
+      'href',
+      '/packages/agents-repo/sample-agent',
+    )
+    expect(screen.getByRole('heading', { name: 'sample-agent' }).querySelector('a')).toHaveAttribute(
+      'href',
+      '/packages/agents-repo/sample-agent',
+    )
   })
 
   it('hides Use in chat when chatWeb is omitted', async () => {

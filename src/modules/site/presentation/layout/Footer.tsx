@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faBook,
+  faBoxesStacked,
   faCircleInfo,
   faCodeBranch,
   faEnvelope,
@@ -34,6 +35,10 @@ function Footer() {
                 <NavLink to={siteRoutes.home} className="footer-link">
                   <FontAwesomeIcon icon={faHouse} className="me-2" aria-hidden="true" />
                   Home
+                </NavLink>
+                <NavLink to={siteRoutes.packages} className="footer-link">
+                  <FontAwesomeIcon icon={faBoxesStacked} className="me-2" aria-hidden="true" />
+                  Packages
                 </NavLink>
                 <NavLink to={siteRoutes.about} className="footer-link">
                   <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />

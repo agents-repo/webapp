@@ -7,6 +7,7 @@ import { externalLinkAccessibleName } from '../../application/accessibility/exte
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
   clearRegistryCatalogCache,
+  clearRegistryPackageDetailCache,
   clearRegistryTagListCache,
   clearStoredRegistryBaseUrlOverride,
   clearStoredRegistryGitHubRepositoryUrlOverride,
@@ -232,6 +233,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
       } else {
         clearRegistryTagListCache()
         clearRegistryCatalogCache()
+        clearRegistryPackageDetailCache()
 
         if (normalizedBaseUrlInput.length === 0) {
           clearStoredRegistryBaseUrlOverride()
@@ -262,6 +264,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
     clearStoredRegistryGitHubRepositoryUrlOverride()
     clearRegistryTagListCache()
     clearRegistryCatalogCache()
+    clearRegistryPackageDetailCache()
     setModalState((previousValue) => ({
       ...previousValue,
       baseUrlInput: '',
@@ -285,6 +288,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
 
   const clearRegistryCacheAndReload = (): void => {
     clearRegistryCatalogCache()
+    clearRegistryPackageDetailCache()
     clearRegistryTagListCache()
 
     if (onSaved) {
@@ -396,7 +400,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
               <section>
                 <h3 className="h6 mb-2">Package browse links</h3>
                 <p className="small text-body-secondary mb-3">
-                  Configure the GitHub repository URL used for &quot;view package on GitHub&quot; links in package cards.
+                  Configure the GitHub repository URL used for &quot;View on GitHub&quot; links on package detail pages.
                   This does not affect catalog fetching. GitHub tree URLs may use major-version line refs such as{' '}
                   <code>1.x</code>.
                 </p>

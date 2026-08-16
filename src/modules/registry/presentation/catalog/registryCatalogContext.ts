@@ -15,6 +15,10 @@ export interface RegistryCatalogContextValue {
 
 export const RegistryCatalogContext = createContext<RegistryCatalogContextValue | null>(null)
 
+export function useOptionalRegistryCatalog(): RegistryCatalogContextValue | null {
+  return useContext(RegistryCatalogContext)
+}
+
 export function useRegistryCatalog(): RegistryCatalogContextValue {
   const context = useContext(RegistryCatalogContext)
 

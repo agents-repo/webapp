@@ -6,7 +6,7 @@ import {
   type InstallTargetEntry,
   type RegistryCatalog,
   type RegistryPackage,
-} from '../domain/package'
+} from '../domain/package.ts'
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null

@@ -1,6 +1,6 @@
 import semver from 'semver'
 
-import { inferRegistryRepositoryIdentity } from './registryMajorVersionRef'
+import { inferRegistryRepositoryIdentity } from './registryMajorVersionRef.ts'
 
 const TAG_LIST_CACHE_STORAGE_KEY = 'registry.tags.cache.v1'
 const TAG_LIST_CACHE_TTL_MS = 60 * 60 * 1000

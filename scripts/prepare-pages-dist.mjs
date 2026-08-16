@@ -5,22 +5,17 @@ import {
   injectSpaFallbackHeadIntoHtml,
   injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
-import { resolveBuildSiteOrigin } from './seo-build-config.ts';
-import { getSiteRoutePaths } from '../src/modules/site/application/seo/siteSeoMeta.ts';
-
-function parseModeArg() {
-  const modeIndex = process.argv.indexOf('--mode');
-  if (modeIndex === -1) {
-    return process.env.MODE ?? 'production';
-  }
-
-  const mode = process.argv[modeIndex + 1];
-  if (!mode) {
-    throw new Error('Missing value for --mode');
-  }
-
-  return mode;
-}
+import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts';
+import { setRuntimePackageCatalog } from '../src/modules/registry/application/runtimePackageCatalog.ts';
+import {
+  getBuildSiteRoutePaths,
+  readGeneratedPackageSiteCatalog,
+  resolveBuildSiteOrigin,
+} from './seo-build-config.ts';
+import {
+  parsePrefetchModeArg,
+  resolveConfiguredIndexUrl,
+} from './prefetch-package-site-routes-lib.mjs';
 
 const distDir = resolve(process.cwd(), 'dist');
 const e2eBuildMarkerPath = resolve(distDir, 'e2e-build-marker.json');
@@ -29,11 +24,22 @@ if (existsSync(e2eBuildMarkerPath)) {
   unlinkSync(e2eBuildMarkerPath);
 }
 
-const siteOrigin = resolveBuildSiteOrigin(parseModeArg());
+const mode = parsePrefetchModeArg();
+const siteOrigin = resolveBuildSiteOrigin(mode);
+const generatedCatalog = readGeneratedPackageSiteCatalog();
+if (generatedCatalog && isRegistryCatalog(generatedCatalog)) {
+  const configured = resolveConfiguredIndexUrl(mode);
+  setRuntimePackageCatalog(generatedCatalog, {
+    resolved: true,
+    githubRepositoryUrl: configured.githubRepositoryUrl,
+  });
+}
+
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
+const buildRoutePaths = getBuildSiteRoutePaths();
 
 function assertKnownSiteRoute(routePath) {
-  if (!getSiteRoutePaths().includes(routePath)) {
+  if (!buildRoutePaths.includes(routePath)) {
     throw new Error(`Unknown site route for dist output: ${routePath}`);
   }
 }
@@ -62,7 +68,7 @@ function writeRouteDistHtml(routePath, html) {
   writeFileSync(distSegmentFile, html);
 }
 
-for (const routePath of getSiteRoutePaths()) {
+for (const routePath of buildRoutePaths) {
   const html = injectLegacyDomainRedirectIntoHtml(
     injectRouteHeadIntoHtml(baseHtml, routePath, siteOrigin),
   );

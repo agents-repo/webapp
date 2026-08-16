@@ -23,3 +23,5 @@ export type { RegistryRefResolution, RegistrySourceConfig } from '../infrastruct
 export { clearRegistryTagListCache } from '../infrastructure/registryTagResolver'
 
 export { clearRegistryCatalogCache } from '../infrastructure/registryCatalogCache'
+
+export { clearRegistryPackageDetailCache } from '../infrastructure/packageDetailRepository'
