@@ -1,6 +1,7 @@
 import type { PackageDetailDocument } from '../domain/packageDetail'
 import {
   buildPackageDetailCacheKey,
+  clearRegistryPackageDetailCache as clearPackageDetailStorage,
   readFreshPackageDetailCache,
   writePackageDetailCache,
 } from './packageDetailCache'
@@ -8,9 +9,20 @@ import { isPackageDetailDocument } from './packageDetailValidation'
 import { buildRegistryPackageDetailUrl } from './registrySourceUrl'
 
 const inflightByCacheKey = new Map<string, Promise<PackageDetailDocument>>()
+let loadGeneration = 0
+
+export const invalidatePackageDetailLoads = (): void => {
+  loadGeneration += 1
+  inflightByCacheKey.clear()
+}
+
+export const clearRegistryPackageDetailCache = (): void => {
+  invalidatePackageDetailLoads()
+  clearPackageDetailStorage()
+}
 
 export const resetPackageDetailRepositoryForTests = (): void => {
-  inflightByCacheKey.clear()
+  invalidatePackageDetailLoads()
 }
 
 const abortError = (): DOMException => {
@@ -94,9 +106,12 @@ export const loadPackageDetail = async (options: {
 
   let pending = inflightByCacheKey.get(cacheKey)
   if (!pending) {
+    const generation = loadGeneration
     pending = loadPackageDetailFromNetwork(detailUrl)
       .then((detail) => {
-        writePackageDetailCache(cacheKey, detail)
+        if (generation === loadGeneration) {
+          writePackageDetailCache(cacheKey, detail)
+        }
         return detail
       })
       .finally(() => {

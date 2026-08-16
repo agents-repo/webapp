@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { Alert, Card, Row } from 'react-bootstrap'
+import { Alert, Badge, Card, Col, Container, Row } from 'react-bootstrap'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getCatalogAlertState } from '../pages/homePageCatalogState'
@@ -29,8 +29,7 @@ export function CatalogAlert(options: {
             aria-label={externalLinkAccessibleName('Check configured index URL')}
           >
             Check configured index URL
-          </a>
-          .
+          </a>.
         </>
       ) : null}
       {catalogErrorMessage ? <span className="small"> Details are available in the browser console.</span> : null}
@@ -83,5 +82,72 @@ export function PackageCatalogGrid(options: {
         />
       ))}
     </Row>
+  )
+}
+
+export function CatalogResultsPanel(options: {
+  readonly resultsHeading: string
+  readonly schemaVersion?: string
+  readonly catalogResultsSummary: string
+  readonly catalogAlertState: NonNullable<ReturnType<typeof getCatalogAlertState>> | null
+  readonly catalogSourceUrl: string
+  readonly canShowCatalogSourceLink: boolean
+  readonly catalogErrorMessage: string | null
+  readonly showLoadingSpinner: boolean
+  readonly filteredPackages: readonly RegistryPackage[]
+  readonly hasCatalog: boolean
+  readonly registryBaseUrl: string
+  readonly onFilterByOwner: (owner: string) => void
+}): ReactNode {
+  return (
+    <section className="py-4 py-lg-5">
+      <Container>
+        <Row className="align-items-end mb-3 g-2">
+          <Col lg={8}>
+            <h2 className="h3 mb-1 d-flex align-items-center gap-2 flex-wrap">
+              {options.resultsHeading}
+              {options.schemaVersion ? (
+                <Badge bg="secondary" pill className="fw-normal">
+                  schema v{options.schemaVersion}
+                </Badge>
+              ) : null}
+            </h2>
+            <p
+              id="catalog-results-summary"
+              className="text-body-secondary mb-0 small"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {options.catalogResultsSummary}
+            </p>
+          </Col>
+        </Row>
+
+        {options.catalogAlertState ? (
+          <CatalogAlert
+            alertState={options.catalogAlertState}
+            catalogSourceUrl={options.catalogSourceUrl}
+            canShowCatalogSourceLink={options.canShowCatalogSourceLink}
+            catalogErrorMessage={options.catalogErrorMessage}
+          />
+        ) : null}
+
+        {options.showLoadingSpinner ? (
+          <CatalogLoadingSpinner />
+        ) : (
+          <>
+            <PackageCatalogGrid
+              packages={options.filteredPackages}
+              registryBaseUrl={options.registryBaseUrl}
+              onFilterByOwner={options.onFilterByOwner}
+            />
+
+            {options.filteredPackages.length === 0 ? (
+              <EmptyCatalogState hasCatalog={options.hasCatalog} />
+            ) : null}
+          </>
+        )}
+      </Container>
+    </section>
   )
 }

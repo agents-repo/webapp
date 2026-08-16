@@ -7,26 +7,15 @@ import {
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
 import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts';
 import { setRuntimePackageCatalog } from '../src/modules/registry/application/runtimePackageCatalog.ts';
-import { DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL } from '../src/modules/registry/infrastructure/registrySourceUrl.ts';
 import {
   getBuildSiteRoutePaths,
   readGeneratedPackageSiteCatalog,
   resolveBuildSiteOrigin,
 } from './seo-build-config.ts';
-
-function parseModeArg() {
-  const modeIndex = process.argv.indexOf('--mode');
-  if (modeIndex === -1) {
-    return process.env.MODE ?? 'production';
-  }
-
-  const mode = process.argv[modeIndex + 1];
-  if (!mode) {
-    throw new Error('Missing value for --mode');
-  }
-
-  return mode;
-}
+import {
+  parsePrefetchModeArg,
+  resolveConfiguredIndexUrl,
+} from './prefetch-package-site-routes-lib.mjs';
 
 const distDir = resolve(process.cwd(), 'dist');
 const e2eBuildMarkerPath = resolve(distDir, 'e2e-build-marker.json');
@@ -35,12 +24,14 @@ if (existsSync(e2eBuildMarkerPath)) {
   unlinkSync(e2eBuildMarkerPath);
 }
 
-const siteOrigin = resolveBuildSiteOrigin(parseModeArg());
+const mode = parsePrefetchModeArg();
+const siteOrigin = resolveBuildSiteOrigin(mode);
 const generatedCatalog = readGeneratedPackageSiteCatalog();
 if (generatedCatalog && isRegistryCatalog(generatedCatalog)) {
+  const configured = resolveConfiguredIndexUrl(mode);
   setRuntimePackageCatalog(generatedCatalog, {
     resolved: true,
-    githubRepositoryUrl: DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL,
+    githubRepositoryUrl: configured.githubRepositoryUrl,
   });
 }
 

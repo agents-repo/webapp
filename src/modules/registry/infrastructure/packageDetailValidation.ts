@@ -35,7 +35,34 @@ const isEstimateCost = (value: unknown): value is PackageDetailEntry['estimateCo
   return typeof value.estimatedCost === 'number' && Number.isInteger(value.estimatedCost) && isPackageCostBand(value.band)
 }
 
-const isDetailEntry = (value: unknown): value is PackageDetailEntry => {
+const isSafePathSegment = (segment: string): boolean => {
+  return segment.length > 0 && segment !== '.' && segment !== '..'
+}
+
+const isSafeInstructionPath = (value: string, packageRef: string, version: string): boolean => {
+  if (!value.endsWith('.agent.md') || value.includes('\\') || value.includes('\0')) {
+    return false
+  }
+
+  const segments = value.split('/')
+  if (segments.length !== 7 || !segments.every(isSafePathSegment)) {
+    return false
+  }
+
+  return (
+    segments[0] === 'packages' &&
+    `${segments[1]}/${segments[2]}` === packageRef &&
+    segments[3] === 'versions' &&
+    segments[4] === version &&
+    (segments[5] === 'agents' || segments[5] === 'flows')
+  )
+}
+
+const isDetailEntry = (
+  value: unknown,
+  packageRef: string,
+  version: string,
+): value is PackageDetailEntry => {
   if (!isRecord(value)) {
     return false
   }
@@ -56,7 +83,7 @@ const isDetailEntry = (value: unknown): value is PackageDetailEntry => {
     return false
   }
 
-  return value.instructionPath.startsWith('packages/') && value.instructionPath.endsWith('.agent.md')
+  return isSafeInstructionPath(value.instructionPath, packageRef, version)
 }
 
 const isVersionEntry = (value: unknown): value is PackageDetailVersionEntry => {
@@ -135,5 +162,9 @@ export const isPackageDetailDocument = (value: unknown): value is PackageDetailD
     return false
   }
 
-  return value.agents.every(isDetailEntry) && value.flows.every(isDetailEntry) && entries.every(isVersionEntry)
+  return (
+    value.agents.every((entry) => isDetailEntry(entry, value.package, value.version)) &&
+    value.flows.every((entry) => isDetailEntry(entry, value.package, value.version)) &&
+    entries.every(isVersionEntry)
+  )
 }

@@ -35,7 +35,9 @@ A failed fetch or schema mismatch **fails the production Pages build**. It write
 gitignored `scripts/.generated/package-site-routes.json` and
 `package-site-catalog.json` used by `getBuildSiteRoutePaths()` in
 `vite.config.ts` and `scripts/prepare-pages-dist.mjs`. `prepare-pages-dist.mjs`
-injects route-specific head tags into `dist/**/index.html`. `404.html` uses a
+injects route-specific head tags into `dist/**/index.html`, including package
+JSON-LD `codeRepository` from `VITE_REGISTRY_GITHUB_REPOSITORY_URL` for the
+build mode (not a hardcoded default). `404.html` uses a
 separate `noindex` fallback head for unknown paths.
 
 **Crawl files:** `vite-plugin-sitemap` in `vite.config.ts` generates

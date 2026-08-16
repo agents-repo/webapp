@@ -14,13 +14,13 @@ export function readGeneratedPackageSiteRoutes(): string[] {
 
   const parsed: unknown = JSON.parse(readFileSync(GENERATED_PACKAGE_SITE_ROUTES_PATH, 'utf8'))
   if (!Array.isArray(parsed)) {
-    throw new Error('scripts/.generated/package-site-routes.json must be a JSON array of strings')
+    throw new TypeError('scripts/.generated/package-site-routes.json must be a JSON array of strings')
   }
 
   const routes: string[] = []
   for (const item of parsed) {
     if (typeof item !== 'string') {
-      throw new Error('scripts/.generated/package-site-routes.json must be a JSON array of strings')
+      throw new TypeError('scripts/.generated/package-site-routes.json must be a JSON array of strings')
     }
     routes.push(item)
   }

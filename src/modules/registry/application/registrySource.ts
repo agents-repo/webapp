@@ -24,4 +24,4 @@ export { clearRegistryTagListCache } from '../infrastructure/registryTagResolver
 
 export { clearRegistryCatalogCache } from '../infrastructure/registryCatalogCache'
 
-export { clearRegistryPackageDetailCache } from '../infrastructure/packageDetailCache'
+export { clearRegistryPackageDetailCache } from '../infrastructure/packageDetailRepository'
