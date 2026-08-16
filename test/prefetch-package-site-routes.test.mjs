@@ -29,11 +29,22 @@ describe('prefetch package site routes', () => {
   })
 
   it('resolves a v2.x alias to a concrete tag before fetching the index', async () => {
-    const indexUrl = await resolveProductionIndexUrl('production', {
-      loadEnv: () => ({}),
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => [{ name: 'v2.3.1' }, { name: 'v2.0.0' }, { name: 'v1.9.0' }],
+      headers: { get: () => null },
     })
 
-    assert.match(indexUrl, /[?&]ref=v2\.\d+\.\d+(?:&|$)/)
-    assert.doesNotMatch(indexUrl, /[?&]ref=v2\.x(?:&|$)/)
+    try {
+      const indexUrl = await resolveProductionIndexUrl('production', {
+        loadEnv: () => ({}),
+      })
+
+      assert.match(indexUrl, /[?&]ref=v2\.\d+\.\d+(?:&|$)/)
+      assert.doesNotMatch(indexUrl, /[?&]ref=v2\.x(?:&|$)/)
+    } finally {
+      globalThis.fetch = originalFetch
+    }
   })
 })

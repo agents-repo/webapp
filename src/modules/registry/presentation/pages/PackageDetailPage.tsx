@@ -205,9 +205,12 @@ function PackageDetailLoaded(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
+  const detailRequestKey = `${catalogPackage.namespace}/${catalogPackage.package}/${catalogPackage.latest}::${registryBaseUrl}`
   const [detail, setDetail] = useState<PackageDetailDocument | null>(null)
   const [detailError, setDetailError] = useState<string | null>(null)
-  const [isDetailLoading, setIsDetailLoading] = useState(Boolean(registryBaseUrl))
+  const [settledRequestKey, setSettledRequestKey] = useState<string | null>(null)
+  const isDetailLoading = Boolean(registryBaseUrl) && settledRequestKey !== detailRequestKey
+  const visibleDetailError = settledRequestKey === detailRequestKey ? detailError : null
 
   useEffect(() => {
     if (!registryBaseUrl) {
@@ -227,6 +230,8 @@ function PackageDetailLoaded(options: {
       .then((payload) => {
         if (isActive) {
           setDetail(payload)
+          setDetailError(null)
+          setSettledRequestKey(detailRequestKey)
         }
       })
       .catch((error: unknown) => {
@@ -235,18 +240,14 @@ function PackageDetailLoaded(options: {
         }
 
         setDetailError(error instanceof Error ? error.message : 'Unable to load package detail.')
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsDetailLoading(false)
-        }
+        setSettledRequestKey(detailRequestKey)
       })
 
     return () => {
       isActive = false
       abortController.abort()
     }
-  }, [catalogPackage, registryBaseUrl])
+  }, [catalogPackage, detailRequestKey, registryBaseUrl])
 
   return (
     <div className="py-4 py-lg-5">
@@ -283,7 +284,7 @@ function PackageDetailLoaded(options: {
             </Col>
           </Row>
 
-          {detailError ? <Alert variant="warning">{detailError}</Alert> : null}
+          {visibleDetailError ? <Alert variant="warning">{visibleDetailError}</Alert> : null}
 
           <Card className="border-secondary-subtle">
             <Card.Body>
