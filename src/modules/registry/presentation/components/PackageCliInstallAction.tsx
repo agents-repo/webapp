@@ -168,14 +168,23 @@ function PackageCliInstallActionInner({
         show={showPopover}
         target={toggleRef}
         placement="top"
+        flip
+        containerPadding={8}
+        popperConfig={{
+          strategy: 'fixed',
+          modifiers: [
+            {
+              name: 'preventOverflow',
+              options: {
+                altAxis: true,
+              },
+            },
+          ],
+        }}
         rootClose
         onHide={handleHidePopover}
       >
-        <Popover
-          id={popoverId}
-          className="package-cli-install-popover"
-          style={{ maxWidth: 'min(100vw - 2rem, 22rem)', width: '100%' }}
-        >
+        <Popover id={popoverId} className="package-cli-install-popover">
           <Popover.Body className="d-flex flex-column gap-3">
             <p className="small text-body-secondary mb-0">{getCliInstallPopoverIntro()}</p>
 

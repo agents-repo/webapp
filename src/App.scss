@@ -167,6 +167,20 @@
 .package-cli-install-popover {
   --package-cli-terminal-bg: rgba(12, 8, 20, 0.96);
   --package-cli-terminal-border: rgba(196, 124, 255, 0.45);
+  width: 100%;
+  max-width: min(100vw - 2rem, 22rem);
+
+  .popover-body {
+    max-height: min(32rem, calc(100vh - 3rem));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  @supports (height: 100dvh) {
+    .popover-body {
+      max-height: min(32rem, calc(100dvh - 3rem));
+    }
+  }
 }
 
 .package-cli-target-group .btn {
