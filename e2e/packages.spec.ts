@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/registry-mock'
+import { test, expect, mockPackageDetailArtifacts } from './fixtures/registry-mock'
 import { E2E_REGISTRY_BASE_URL } from './fixtures/catalog'
 import { waitForCatalogSettled } from './fixtures/catalog-load'
 import { sampleAgentPackageDetail } from './fixtures/package-detail'
@@ -8,30 +8,11 @@ const sampleAgentMarkdownUrl = `${E2E_REGISTRY_BASE_URL}/packages/agents-repo/sa
 
 test.describe('Package pages', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route((url) => url.href === sampleAgentDetailUrl, async (route) => {
-      if (route.request().method() !== 'GET') {
-        await route.continue()
-        return
-      }
-
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(sampleAgentPackageDetail),
-      })
-    })
-
-    await page.route((url) => url.href === sampleAgentMarkdownUrl, async (route) => {
-      if (route.request().method() !== 'GET') {
-        await route.continue()
-        return
-      }
-
-      await route.fulfill({
-        status: 200,
-        contentType: 'text/markdown',
-        body: '# Sample agent body',
-      })
+    await mockPackageDetailArtifacts(page, {
+      detailUrl: sampleAgentDetailUrl,
+      detail: sampleAgentPackageDetail,
+      markdownUrl: sampleAgentMarkdownUrl,
+      markdown: '# Sample agent body',
     })
   })
 

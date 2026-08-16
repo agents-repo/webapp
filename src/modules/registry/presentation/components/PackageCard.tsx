@@ -1,67 +1,16 @@
-import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faChevronDown,
-  faCircleCheck,
-  faClock,
-  faDownload,
-  faEye,
-  faFilter,
-} from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faEye, faFilter } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { Badge, Card, Col, Dropdown, Stack } from 'react-bootstrap'
+import { Card, Col, Dropdown, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { formatRegistryPackageRef, toPackageSlug, type PackageStatus, type RegistryPackage } from '../../domain/package'
+import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getNamespacePackagesPath, getPackageDetailPath } from '../../application/packageSiteRoutes'
-import {
-  getPackageDownloadTargets,
-  type PackageDownloadTarget,
-} from '../pages/homePageCatalogState'
+import { getPackageDownloadTargets } from '../pages/homePageCatalogState'
 import PackageCliInstallAction from './PackageCliInstallAction'
+import { PackageDownloadMenu } from './PackageDownloadMenu'
+import { PackageMetaBadges } from './PackageMetaBadges'
+import { PackageStatusBadge } from './PackageStatusBadge'
 import PackageUseInChatAction from './PackageUseInChatAction'
-
-const PACKAGE_STATUS_BADGE: Record<PackageStatus, { bg: string; icon: typeof faCircleCheck }> = {
-  active: { bg: 'success', icon: faCircleCheck },
-  deprecated: { bg: 'warning', icon: faClock },
-  archived: { bg: 'secondary', icon: faClock },
-  yanked: { bg: 'danger', icon: faClock },
-}
-
-const renderPackageDownloadAction = (
-  pkg: RegistryPackage,
-  packageSlug: string,
-  downloadTargets: PackageDownloadTarget[],
-): ReactNode => (
-  <Dropdown align="end">
-    <Dropdown.Toggle
-      variant="outline-primary"
-      id={`download-actions-${packageSlug}`}
-      className="d-inline-flex align-items-center justify-content-center package-card-action"
-      aria-label={`Download ${pkg.name}`}
-    >
-      <FontAwesomeIcon icon={faDownload} aria-hidden="true" />
-      <span className="package-card-action-label">Download</span>
-    </Dropdown.Toggle>
-    <Dropdown.Menu>
-      {downloadTargets.map((target) => (
-        <Dropdown.Item
-          key={target.id}
-          href={target.href}
-          target="_blank"
-          rel="noreferrer noopener"
-          aria-label={`Download ${pkg.name} for ${target.label} (opens in a new tab)`}
-        >
-          {target.label}
-          {target.status === 'experimental' ? (
-            <Badge bg="warning" text="dark" pill className="ms-2 fw-normal">
-              experimental
-            </Badge>
-          ) : null}
-        </Dropdown.Item>
-      ))}
-    </Dropdown.Menu>
-  </Dropdown>
-)
 
 export interface PackageCardProps {
   readonly pkg: RegistryPackage
@@ -70,7 +19,6 @@ export interface PackageCardProps {
 }
 
 export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCardProps) {
-  const statusBadge = PACKAGE_STATUS_BADGE[pkg.status]
   const packageSlug = toPackageSlug(pkg.namespace, pkg.package)
   const downloadTargets = getPackageDownloadTargets(pkg, registryBaseUrl)
   const detailPath = getPackageDetailPath(pkg.namespace, pkg.package)
@@ -124,10 +72,7 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
                 </Dropdown>
               </Card.Subtitle>
             </div>
-            <Badge bg={statusBadge.bg}>
-              <FontAwesomeIcon icon={statusBadge.icon} className="me-1" aria-hidden="true" />
-              {pkg.status}
-            </Badge>
+            <PackageStatusBadge status={pkg.status} />
           </Stack>
         </Card.Header>
 
@@ -135,21 +80,7 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
           <Card.Text as="p" className="small text-body-secondary mb-0 package-description">
             {pkg.description}
           </Card.Text>
-          <Stack direction="horizontal" gap={2} className="flex-wrap">
-            <Badge bg="primary">v{pkg.latest}</Badge>
-            <Badge bg="secondary">{pkg.category}</Badge>
-            <Badge bg="info" text="dark">
-              {pkg.estimateOverallCost.band} cost
-            </Badge>
-          </Stack>
-
-          <div className="d-flex gap-2 flex-wrap">
-            {pkg.tags.map((tag) => (
-              <Badge key={tag} bg="light" text="dark" pill className="fw-normal">
-                #{tag}
-              </Badge>
-            ))}
-          </div>
+          <PackageMetaBadges pkg={pkg} />
         </Card.Body>
 
         <Card.Footer className="d-flex justify-content-center gap-2 flex-wrap flex-md-nowrap">
@@ -171,7 +102,11 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
               quickstart={pkg.quickstart}
             />
           ) : null}
-          {downloadTargets.length > 0 ? renderPackageDownloadAction(pkg, packageSlug, downloadTargets) : null}
+          <PackageDownloadMenu
+            packageName={pkg.name}
+            controlId={`download-actions-${packageSlug}`}
+            downloadTargets={downloadTargets}
+          />
           <Link
             to={detailPath}
             className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center package-card-action"

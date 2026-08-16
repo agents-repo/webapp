@@ -25,21 +25,18 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
     return <PackageSiteNotFound />
   }
 
+  const layoutProps = {
+    setHeaderSearchSlot,
+    title: `${namespaceValue} packages`,
+    lead: `Published packages in the ${namespaceValue} namespace. Search is limited to this namespace.`,
+    resultsHeading: (trimmedQuery: string) =>
+      trimmedQuery ? `Search results for "${trimmedQuery}"` : `${namespaceValue} packages`,
+    searchInputId: `namespace-packages-search-${namespaceValue}`,
+    searchAriaLabel: `Search packages in ${namespaceValue}`,
+  }
+
   if (isLoading && !catalog) {
-    return (
-      <PackageCatalogIndexLayout
-        setHeaderSearchSlot={setHeaderSearchSlot}
-        title={`${namespaceValue} packages`}
-        lead={`Published packages in the ${namespaceValue} namespace. Search is limited to this namespace.`}
-        resultsHeading={(trimmedQuery) =>
-          trimmedQuery ? `Search results for "${trimmedQuery}"` : `${namespaceValue} packages`
-        }
-        searchInputId={`namespace-packages-search-${namespaceValue}`}
-        searchAriaLabel={`Search packages in ${namespaceValue}`}
-        packages={[]}
-        catalog={null}
-      />
-    )
+    return <PackageCatalogIndexLayout {...layoutProps} packages={[]} catalog={null} />
   }
 
   if (!namespaceKnown) {
@@ -48,20 +45,7 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
 
   const packages = catalog?.packages.filter((pkg) => pkg.namespace === namespaceValue) ?? []
 
-  return (
-    <PackageCatalogIndexLayout
-      setHeaderSearchSlot={setHeaderSearchSlot}
-      title={`${namespaceValue} packages`}
-      lead={`Published packages in the ${namespaceValue} namespace. Search is limited to this namespace.`}
-      resultsHeading={(trimmedQuery) =>
-        trimmedQuery ? `Search results for "${trimmedQuery}"` : `${namespaceValue} packages`
-      }
-      searchInputId={`namespace-packages-search-${namespaceValue}`}
-      searchAriaLabel={`Search packages in ${namespaceValue}`}
-      packages={packages}
-      catalog={catalog}
-    />
-  )
+  return <PackageCatalogIndexLayout {...layoutProps} packages={packages} catalog={catalog} />
 }
 
 export default NamespacePackagesPage

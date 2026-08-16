@@ -9,7 +9,9 @@ SonarJS rules, selected security checks, and type-aware TypeScript analysis)
 for code linting, and markdownlint for documentation checks. Runtime
 installability and offline support are provided through `vite-plugin-pwa`, and
 registry catalog cache semantics are implemented with a lightweight in-memory
-LRU policy plus persistent browser storage.
+LRU policy plus persistent browser storage. Catalog index and package
+`detail.json` share that persistent LRU helper in registry infrastructure;
+chat instruction bodies use the in-memory LRU only (no persistence).
 
 ## Styling Policy
 
@@ -52,9 +54,9 @@ skip the network while the tab stays loaded. This cache is not persisted and
 does not use TTL or conditional GET, because published version folders are
 immutable. Network `fetch` omits `cache: 'no-store'` so browsers can honor
 registry-proxy `Cache-Control: public, max-age=300` for catalog, `detail.json`,
-and expand markdown. The app still keeps a 24h localStorage LRU for catalog and
-`detail.json`. **Clear cache and reload catalog** clears those app stores; it
-does not bust the HTTP 300s cache.
+and expand markdown. Catalog index and package `detail.json` share a 24h
+localStorage LRU helper in registry infrastructure. **Clear cache and reload
+catalog** clears those app stores; it does not bust the HTTP 300s cache.
 
 Service worker runtime caching is intentionally focused to same-origin static
 assets. Registry index freshness is owned by the app-layer cache contract, and

@@ -1,4 +1,5 @@
 import { parseChatInstructionsManifest, type ChatInstructionsManifest } from '../application/chatConsumption'
+import { settleWithCallerSignal } from './callerAbort'
 import {
   readCachedChatInstructionMarkdown,
   readCachedChatInstructionsManifest,
@@ -16,44 +17,6 @@ export const resetChatInstructionsCacheForTests = (): void => {
   inflightManifestByUrl.clear()
   inflightMarkdownByUrl.clear()
   resetChatInstructionsLruCacheForTests()
-}
-
-const abortError = (): DOMException => {
-  return new DOMException('The operation was aborted.', 'AbortError')
-}
-
-const settleWithCallerSignal = async <T>(value: Promise<T> | T, signal?: AbortSignal): Promise<T> => {
-  if (signal?.aborted) {
-    throw abortError()
-  }
-
-  if (!(value instanceof Promise)) {
-    return value
-  }
-
-  if (!signal) {
-    return value
-  }
-
-  return new Promise<T>((resolve, reject) => {
-    const onAbort = (): void => {
-      signal.removeEventListener('abort', onAbort)
-      reject(abortError())
-    }
-
-    signal.addEventListener('abort', onAbort, { once: true })
-
-    value.then(
-      (resolved) => {
-        signal.removeEventListener('abort', onAbort)
-        resolve(resolved)
-      },
-      (error: unknown) => {
-        signal.removeEventListener('abort', onAbort)
-        reject(error instanceof Error ? error : new Error(String(error)))
-      },
-    )
-  })
 }
 
 const loadChatInstructionsManifestFromNetwork = async (

@@ -22,6 +22,9 @@ presentation concerns separated when those layers are useful for the feature.
   application, and UI concerns in presentation.
 - Keep cache adapters and remote-fetch fallback policies in infrastructure so
   presentation and application layers consume a stable loading contract.
+- Shared persistent LRU and abort helpers for registry caches and fetches live
+  in registry infrastructure (`persistentLruCache.ts`, `callerAbort.ts`). Do
+  not promote them to a cross-module global.
 - Prefer local module composition over creating shared globals for feature-specific behavior.
 - When a module grows, split it by responsibility before duplicating logic elsewhere.
 

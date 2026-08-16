@@ -1,22 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCircleCheck,
-  faClock,
-  faDownload,
-  faExternalLink,
-} from '@fortawesome/free-solid-svg-icons'
+import { faExternalLink } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import {
-  Alert,
-  Badge,
-  Card,
-  Col,
-  Container,
-  Dropdown,
-  Row,
-  Stack,
-} from 'react-bootstrap'
+import { Alert, Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink, useParams } from 'react-router-dom'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
@@ -25,74 +11,24 @@ import {
   getNamespacePackagesPath,
   getPackagesIndexPath,
 } from '../../application/packageSiteRoutes'
-import { formatRegistryPackageRef, toPackageSlug, type PackageStatus, type RegistryPackage } from '../../domain/package'
+import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import type { PackageDetailDocument } from '../../domain/packageDetail'
 import { loadPackageDetail } from '../../infrastructure/packageDetailRepository'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import PackageCliInstallAction from '../components/PackageCliInstallAction'
+import { PackageDownloadMenu } from '../components/PackageDownloadMenu'
 import PackageInstructionAccordion from '../components/PackageInstructionAccordion'
 import PackageMarkdown from '../components/PackageMarkdown'
+import { PackageMetaBadges } from '../components/PackageMetaBadges'
+import { PackageStatusBadge } from '../components/PackageStatusBadge'
 import PackageUseInChatAction from '../components/PackageUseInChatAction'
 import { faDuotoneSpinner } from './catalogLoadingSpinnerIcon'
-import {
-  getPackageDownloadTargets,
-  type PackageDownloadTarget,
-} from './homePageCatalogState'
+import { getPackageDownloadTargets } from './homePageCatalogState'
 import PackageSiteNotFound from './PackageSiteNotFound'
-
-const PACKAGE_STATUS_BADGE: Record<PackageStatus, { bg: string; icon: typeof faCircleCheck }> = {
-  active: { bg: 'success', icon: faCircleCheck },
-  deprecated: { bg: 'warning', icon: faClock },
-  archived: { bg: 'secondary', icon: faClock },
-  yanked: { bg: 'danger', icon: faClock },
-}
 
 interface PackageDetailPageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
-}
-
-function PackageDetailDownloadMenu(options: {
-  readonly packageName: string
-  readonly packageSlug: string
-  readonly downloadTargets: PackageDownloadTarget[]
-}): ReactNode {
-  const { packageName, packageSlug, downloadTargets } = options
-  if (downloadTargets.length === 0) {
-    return null
-  }
-
-  return (
-    <Dropdown align="end">
-      <Dropdown.Toggle
-        variant="outline-primary"
-        id={`download-actions-detail-${packageSlug}`}
-        className="d-inline-flex align-items-center justify-content-center package-card-action"
-        aria-label={`Download ${packageName}`}
-      >
-        <FontAwesomeIcon icon={faDownload} aria-hidden="true" />
-        <span className="package-card-action-label">Download</span>
-      </Dropdown.Toggle>
-      <Dropdown.Menu>
-        {downloadTargets.map((target) => (
-          <Dropdown.Item
-            key={target.id}
-            href={target.href}
-            target="_blank"
-            rel="noreferrer noopener"
-            aria-label={`Download ${packageName} for ${target.label} (opens in a new tab)`}
-          >
-            {target.label}
-            {target.status === 'experimental' ? (
-              <Badge bg="warning" text="dark" pill className="ms-2 fw-normal">
-                experimental
-              </Badge>
-            ) : null}
-          </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    </Dropdown>
-  )
 }
 
 function PackageDetailHeader(options: {
@@ -101,7 +37,6 @@ function PackageDetailHeader(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
-  const statusBadge = PACKAGE_STATUS_BADGE[catalogPackage.status]
   const packageSlug = toPackageSlug(catalogPackage.namespace, catalogPackage.package)
   const downloadTargets = getPackageDownloadTargets(catalogPackage, registryBaseUrl)
   const cliPackageRef = formatRegistryPackageRef(catalogPackage.namespace, catalogPackage.package)
@@ -116,28 +51,14 @@ function PackageDetailHeader(options: {
     <div>
       <Stack direction="horizontal" gap={2} className="flex-wrap align-items-center mb-2">
         <h1 className="h2 mb-0">{catalogPackage.name}</h1>
-        <Badge bg={statusBadge.bg}>
-          <FontAwesomeIcon icon={statusBadge.icon} className="me-1" aria-hidden="true" />
-          {catalogPackage.status}
-        </Badge>
+        <PackageStatusBadge status={catalogPackage.status} />
       </Stack>
       <p className="text-body-secondary mb-2">
         by{' '}
         <NavLink to={getNamespacePackagesPath(catalogPackage.namespace)}>{catalogPackage.owner}</NavLink>
       </p>
       <p className="mb-3">{catalogPackage.description}</p>
-      <Stack direction="horizontal" gap={2} className="flex-wrap mb-3">
-        <Badge bg="primary">v{catalogPackage.latest}</Badge>
-        <Badge bg="secondary">{catalogPackage.category}</Badge>
-        <Badge bg="info" text="dark">
-          {catalogPackage.estimateOverallCost.band} cost
-        </Badge>
-        {catalogPackage.tags.map((tag) => (
-          <Badge key={tag} bg="light" text="dark" pill className="fw-normal">
-            #{tag}
-          </Badge>
-        ))}
-      </Stack>
+      <PackageMetaBadges pkg={catalogPackage} className="flex-wrap mb-3" />
       <div className="d-flex gap-2 flex-wrap">
         {cliPackageRef ? (
           <PackageCliInstallAction
@@ -157,9 +78,9 @@ function PackageDetailHeader(options: {
             quickstart={catalogPackage.quickstart}
           />
         ) : null}
-        <PackageDetailDownloadMenu
+        <PackageDownloadMenu
           packageName={catalogPackage.name}
-          packageSlug={`${packageSlug}-detail`}
+          controlId={`download-actions-detail-${packageSlug}`}
           downloadTargets={downloadTargets}
         />
         {safeGithubUrl ? (

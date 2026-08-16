@@ -1,4 +1,5 @@
 import type { PackageDetailDocument } from '../domain/packageDetail'
+import { settleWithCallerSignal } from './callerAbort'
 import {
   buildPackageDetailCacheKey,
   clearRegistryPackageDetailCache as clearPackageDetailStorage,
@@ -23,44 +24,6 @@ export const clearRegistryPackageDetailCache = (): void => {
 
 export const resetPackageDetailRepositoryForTests = (): void => {
   invalidatePackageDetailLoads()
-}
-
-const abortError = (): DOMException => {
-  return new DOMException('The operation was aborted.', 'AbortError')
-}
-
-const settleWithCallerSignal = async <T>(value: Promise<T> | T, signal?: AbortSignal): Promise<T> => {
-  if (signal?.aborted) {
-    throw abortError()
-  }
-
-  if (!(value instanceof Promise)) {
-    return value
-  }
-
-  if (!signal) {
-    return value
-  }
-
-  return new Promise<T>((resolve, reject) => {
-    const onAbort = (): void => {
-      signal.removeEventListener('abort', onAbort)
-      reject(abortError())
-    }
-
-    signal.addEventListener('abort', onAbort, { once: true })
-
-    value.then(
-      (resolved) => {
-        signal.removeEventListener('abort', onAbort)
-        resolve(resolved)
-      },
-      (error: unknown) => {
-        signal.removeEventListener('abort', onAbort)
-        reject(error instanceof Error ? error : new Error(String(error)))
-      },
-    )
-  })
 }
 
 const loadPackageDetailFromNetwork = async (detailUrl: string): Promise<PackageDetailDocument> => {

@@ -80,6 +80,7 @@ src/
 │   ├── setup.ts
 │   ├── renderWithProviders.tsx
 │   ├── testUtils.ts
+│   ├── memoryStorage.ts
 │   └── fixtures/
 │       └── sampleRegistryCatalog.ts
 ├── modules/
@@ -134,7 +135,9 @@ extract it to a sibling module before testing.
 - Vitest config sets `clearMocks: true` so mock state does not leak between tests.
 - Mock fetch with `vi.spyOn(globalThis, 'fetch')` for infrastructure tests.
 - For tests touching `localStorage`, call `clearTestStorage()` from
-  `src/test/testUtils.ts` in `beforeEach` or `afterEach`.
+  `src/test/testUtils.ts` in `beforeEach` or `afterEach`. When a test needs an
+  isolated `Storage` implementation, use `MemoryStorage` from
+  `src/test/memoryStorage.ts`.
 - Use `resetRegistryCatalogCacheForTests()` when testing catalog cache behavior.
 
 ### Component and hook tests
