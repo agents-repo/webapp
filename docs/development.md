@@ -101,6 +101,16 @@ sources. Co-located Vitest files under `src/` stay source. Do not add `e2e` or
 `test` back under `sonar.sources`; Automatic Analysis fails with “Source and
 test paths overlap”.
 
+`sonar.exclusions` also covers SVG and source-map assets (`**/*.svg`,
+`**/*.map`), including `public/favicon.svg`, `public/icons.svg`, and
+`src/assets/logo/agents-repo-logo.svg`. `sonar.cpd.exclusions` covers
+`src/test/` helpers and `src/test/fixtures/` catalog mocks so duplicated
+production-shaped fixture data does not inflate copy-paste findings.
+
+Coverage report paths (`sonar.javascript.lcov.reportPaths`) and other external
+analyzer reports are unsupported under Automatic Analysis. Do not add them
+while Automatic Analysis is on.
+
 ## Project Layout
 
 - `src/` contains the React application
