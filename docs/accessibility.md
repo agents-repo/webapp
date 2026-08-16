@@ -33,7 +33,13 @@ Every routed page should:
    `src/App.tsx` (page components use a wrapper `div`, not their own `main`).
 3. Use semantic headings in order (`h1` once per page)
 4. Mark decorative icons with `aria-hidden="true"`
-5. Label icon-only controls with `aria-label`
+5. Label icon-only controls with `aria-label`. Package card footer actions
+   are a hybrid: they keep a short visible label (CLI, Use in chat, Download,
+   View) that stays visible below Bootstrap `md`. From `md` up they collapse
+   until hover, keyboard focus (`:focus-visible`), or `aria-expanded`. When
+   `aria-label` also includes the package name, the visible label must be a
+   contiguous prefix of that name (WCAG 2.5.3 Label in Name), for example
+   `Use in chat for {name}`.
 6. Use `externalLinkAccessibleName()` for links that open in a new tab
 
 ### Forms
@@ -104,6 +110,8 @@ When changing UI:
 - [ ] Keyboard navigation still works (skip link, header, main, footer)
 - [ ] New external links use `externalLinkAccessibleName()`
 - [ ] New icon-only controls have accessible names
+- [ ] Package card footer action `aria-label`s contain the visible label as a
+  contiguous prefix when the name also includes the package
 - [ ] Forms have associated labels
 - [ ] `npm run test:a11y` passes
 - [ ] Docs updated if patterns or validation changed

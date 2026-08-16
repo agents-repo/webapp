@@ -5,7 +5,7 @@ order: 30
 section: Catalog
 ---
 
-The catalog on [Home](/) lists packages from the registry index. Each card shows metadata, status, supported install targets, and actions.
+The catalog on [Home](/) lists packages from the registry index. Each card shows metadata, status, supported install targets, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
 
 ## Search and filters
 

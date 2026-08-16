@@ -40,10 +40,10 @@ test.describe('Use in chat', () => {
     const sampleCard = page.locator('#package-card-agents-repo--sample-agent')
     const demoCard = page.locator('#package-card-agents-repo--demo-flow')
 
-    await expect(sampleCard.getByRole('button', { name: 'Use sample-agent in chat' })).toBeVisible()
-    await expect(demoCard.getByRole('button', { name: /Use .* in chat/ })).toHaveCount(0)
+    await expect(sampleCard.getByRole('button', { name: 'Use in chat for sample-agent' })).toBeVisible()
+    await expect(demoCard.getByRole('button', { name: /Use in chat for / })).toHaveCount(0)
 
-    await sampleCard.getByRole('button', { name: 'Use sample-agent in chat' }).click()
+    await sampleCard.getByRole('button', { name: 'Use in chat for sample-agent' }).click()
 
     await expect(page.getByRole('heading', { name: 'Use sample-agent in chat' })).toBeVisible()
     await expect(page.getByRole('combobox', { name: 'Instruction' })).toBeVisible()

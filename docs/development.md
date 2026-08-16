@@ -153,7 +153,15 @@ on CLI releases.
 ## Current UI State
 
 - The landing page loads registry package cards from a configured index source
-   URL and shows an error alert if no catalog data can be loaded.
+  URL and shows an error alert if no catalog data can be loaded.
+- Package card footer actions (CLI, Use in chat, Download, View) include short
+  visible labels. Below Bootstrap `md` the labels stay visible and the footer
+  may wrap. From `md` up the footer stays on one row (`flex-md-nowrap`) and
+  labels stay collapsed at rest (icon-first), then expand on that control's
+  hover, keyboard focus (`:focus-visible`), or while `aria-expanded` is true.
+  Large tablets in the 2-column layout do not get hover; labels then appear on
+  focus or after tap. jsdom tests assert the label text and footer wrap classes
+  in the DOM, not the `md+` collapse.
 - Search is client-side only. On `lg+`, it transitions from hero to sticky
    header on scroll; below `lg`, hero search stays visible because sticky header
    search is hidden.

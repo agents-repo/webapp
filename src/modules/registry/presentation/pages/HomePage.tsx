@@ -65,12 +65,12 @@ const renderPackageDownloadAction = (
   <Dropdown align="end">
     <Dropdown.Toggle
       variant="outline-primary"
-      size="lg"
       id={`download-actions-${packageSlug}`}
-      className="d-inline-flex align-items-center justify-content-center"
+      className="d-inline-flex align-items-center justify-content-center package-card-action"
       aria-label={`Download ${pkg.name}`}
     >
-      <FontAwesomeIcon icon={faDownload} aria-hidden="true" className="me-1" />
+      <FontAwesomeIcon icon={faDownload} aria-hidden="true" />
+      <span className="package-card-action-label">Download</span>
     </Dropdown.Toggle>
     <Dropdown.Menu>
       {downloadTargets.map((target) => (
@@ -213,7 +213,7 @@ function PackageCard({
         </Card.Body>
 
         {showFooter ? (
-          <Card.Footer className="d-flex justify-content-center gap-2">
+          <Card.Footer className="d-flex justify-content-center gap-2 flex-wrap flex-md-nowrap">
             {showCli ? (
               <PackageCliInstallAction
                 packageName={pkg.name}
@@ -240,11 +240,11 @@ function PackageCard({
                 target="_blank"
                 rel="noreferrer noopener"
                 variant="outline-primary"
-                size="lg"
-                className="d-inline-flex align-items-center justify-content-center"
+                className="d-inline-flex align-items-center justify-content-center package-card-action"
                 aria-label={`View ${pkg.name} on GitHub (opens in a new tab)`}
               >
                 <FontAwesomeIcon icon={faEye} aria-hidden="true" />
+                <span className="package-card-action-label">View</span>
               </Button>
             ) : null}
           </Card.Footer>

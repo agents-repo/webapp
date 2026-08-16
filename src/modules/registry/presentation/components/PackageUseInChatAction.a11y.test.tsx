@@ -52,7 +52,7 @@ describe('PackageUseInChatAction accessibility', () => {
       />,
     )
 
-    await user.click(screen.getByRole('button', { name: 'Use sample-agent in chat' }))
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
     await screen.findByLabelText('Instruction')
 
     expect(screen.getByRole('link', { name: 'Open in ChatGPT (opens in a new tab)' })).toBeInTheDocument()

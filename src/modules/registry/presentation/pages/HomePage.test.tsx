@@ -113,7 +113,25 @@ describe('HomePage package card owner', () => {
 
     renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    expect(await screen.findByRole('button', { name: 'Use sample-agent in chat' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Use in chat for sample-agent' })).toBeInTheDocument()
+  })
+
+  it('shows short visible labels on sample-agent footer actions', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    const heading = await screen.findByRole('heading', { name: 'sample-agent' })
+    const card = heading.closest('.package-card')
+    const footer = card?.querySelector('.card-footer')
+
+    expect(footer).not.toBeNull()
+    expect(footer).toHaveClass('flex-wrap')
+    expect(footer).toHaveClass('flex-md-nowrap')
+    expect(footer).toHaveTextContent('CLI')
+    expect(footer).toHaveTextContent('Use in chat')
+    expect(footer).toHaveTextContent('Download')
+    expect(footer).toHaveTextContent('View')
   })
 
   it('hides Use in chat when chatWeb is omitted', async () => {
@@ -134,6 +152,6 @@ describe('HomePage package card owner', () => {
     renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Use sample-agent in chat' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Use in chat for sample-agent' })).not.toBeInTheDocument()
   })
 })
