@@ -89,6 +89,18 @@ norm. When bumping `ACTIONLINT_VERSION` in `scripts/lint-workflows.mjs`, replace
 remove the previous version's checksums file. Keep the same pin across
 organization repositories.
 
+## SonarQube Cloud
+
+Automatic Analysis reads [`.sonarcloud.properties`](../.sonarcloud.properties)
+on each push to the default branch or a pull request branch.
+
+`sonar.sources` and `sonar.tests` must be disjoint directory lists (no
+wildcards). `sonar.sources` is `src,public,scripts,docs` — not `.` — so the
+Playwright tree (`e2e/`) and repo tooling tests (`test/`) are not nested under
+sources. Co-located Vitest files under `src/` stay source. Do not add `e2e` or
+`test` back under `sonar.sources`; Automatic Analysis fails with “Source and
+test paths overlap”.
+
 ## Project Layout
 
 - `src/` contains the React application
