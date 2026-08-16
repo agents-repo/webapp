@@ -126,8 +126,8 @@ describe('HomePage package card owner', () => {
     const footer = card?.querySelector('.card-footer')
 
     expect(footer).not.toBeNull()
-    expect(footer).toHaveClass('package-card-footer')
     expect(footer).toHaveClass('flex-wrap')
+    expect(footer).toHaveClass('flex-md-nowrap')
     expect(footer).toHaveTextContent('CLI')
     expect(footer).toHaveTextContent('Use in chat')
     expect(footer).toHaveTextContent('Download')
