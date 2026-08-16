@@ -55,6 +55,8 @@ Every routed page should:
 - Use `<output>` for status messages (copy confirmation, loading) instead of
   `role="status"`. `<output>` has an implicit status role and is more reliable
   across assistive technologies and devices.
+- Keep popovers inside the viewport. Prefer Popper `flip` and a max-height with
+  scrolling so interactive content is not clipped by the window edge.
 
 ### Cookie consent banner
 

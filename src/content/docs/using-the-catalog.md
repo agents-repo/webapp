@@ -27,6 +27,9 @@ Package cards may offer:
   its related agent files. Gemini and Microsoft Copilot remain copy-paste.
 - **Direct download** links for version ZIPs per install target (when the registry publishes artifacts).
 - **Copy CLI install** commands (`npx agents-repo install …`) for quick trials.
+  The CLI popover stays inside the viewport: it flips below the button when
+  there is not enough room above, and the panel scrolls if it is taller than
+  the window.
 - **Browse on GitHub** links to inspect package source in the registry repository.
 
 For reproducible projects, prefer pinning the CLI in `devDependencies` and using project scripts — see [Installing packages](/docs/installing-packages).
