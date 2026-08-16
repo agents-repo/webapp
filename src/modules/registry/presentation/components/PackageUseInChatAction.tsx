@@ -504,7 +504,6 @@ function PackageUseInChatAction({
         id={toggleId}
         type="button"
         variant="outline-primary"
-        size="lg"
         className="d-inline-flex align-items-center justify-content-center package-card-action"
         aria-label={`Use in chat for ${packageName}`}
         aria-haspopup="dialog"
