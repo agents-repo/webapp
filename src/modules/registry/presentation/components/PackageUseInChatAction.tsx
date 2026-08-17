@@ -256,9 +256,9 @@ function UseInChatLoadedForm({
                       target="_blank"
                       rel="noreferrer noopener"
                       className="btn btn-outline-primary"
-                      aria-label={externalLinkAccessibleName('Open in ChatGPT')}
+                      aria-label={externalLinkAccessibleName(`Open in ${guide.label}`)}
                     >
-                      Open in ChatGPT
+                      Open in {guide.label}
                     </a>
                   ) : null}
                 </Tab>

@@ -28,7 +28,7 @@ export interface ChatInstructionCopyUrls {
 }
 
 export interface ChatPlatformGuide {
-  readonly id: 'chatgpt' | 'gemini' | 'copilot-web'
+  readonly id: 'chatgpt' | 'grok' | 'gemini' | 'copilot-web'
   readonly label: string
   readonly steps: readonly string[]
 }
@@ -284,15 +284,21 @@ export const buildChatStarterPrompt = (
   return `Follow these agent instructions:\n${latestUrl}`
 }
 
+const CHAT_PLATFORM_OPEN_URL_PREFIXES: Partial<Record<ChatPlatformGuide['id'], string>> = {
+  chatgpt: 'https://chatgpt.com/?q=',
+  grok: 'https://grok.com/?q=',
+}
+
 export const buildChatPlatformOpenUrl = (
   platformId: ChatPlatformGuide['id'],
   starterPrompt: string,
 ): string | null => {
-  if (platformId !== 'chatgpt' || starterPrompt.trim().length === 0) {
+  const openUrlPrefix = CHAT_PLATFORM_OPEN_URL_PREFIXES[platformId]
+  if (!openUrlPrefix || starterPrompt.trim().length === 0) {
     return null
   }
 
-  return `https://chatgpt.com/?q=${encodeURIComponent(starterPrompt)}`
+  return `${openUrlPrefix}${encodeURIComponent(starterPrompt)}`
 }
 
 export const wrapChatInstructionMarkdownForPaste = (kind: ChatInstructionKind, markdown: string): string => {
@@ -327,6 +333,15 @@ export const CHAT_PLATFORM_GUIDES: readonly ChatPlatformGuide[] = [
       'Sign in to ChatGPT in the browser if needed.',
       'Use Open in ChatGPT to start a chat with the starter prompt (latest instruction URLs). ChatGPT may send the prompt automatically. ChatGPT may not fetch those URLs.',
       'Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into ChatGPT.',
+    ],
+  },
+  {
+    id: 'grok',
+    label: 'Grok',
+    steps: [
+      'Sign in to Grok in the browser if needed.',
+      'Use Open in Grok to start a chat with the starter prompt (latest instruction URLs). Grok may send the prompt automatically. Grok may not fetch those URLs.',
+      'Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into Grok.',
     ],
   },
   {

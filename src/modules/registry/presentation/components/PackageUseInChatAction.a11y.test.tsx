@@ -56,6 +56,9 @@ describe('PackageUseInChatAction accessibility', () => {
     await screen.findByLabelText('Instruction')
 
     expect(screen.getByRole('link', { name: 'Open in ChatGPT (opens in a new tab)' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Grok' })).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Grok' }))
+    expect(screen.getByRole('link', { name: 'Open in Grok (opens in a new tab)' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeInTheDocument()
 
     const results = await axe(container, axeOptions)
