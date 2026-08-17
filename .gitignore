@@ -31,3 +31,4 @@ blob-report/
 
 .cache/actionlint/
 scripts/.generated/
+docs/slides/build/
