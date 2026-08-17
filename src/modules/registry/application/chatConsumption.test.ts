@@ -217,23 +217,35 @@ describe('copy URLs and starter prompts', () => {
   })
 
   it('labels Microsoft Copilot as web to distinguish IDE downloads', () => {
-    expect(CHAT_PLATFORM_GUIDES.map((guide) => guide.id)).toEqual(['chatgpt', 'gemini', 'copilot-web'])
+    expect(CHAT_PLATFORM_GUIDES.map((guide) => guide.id)).toEqual([
+      'chatgpt',
+      'grok',
+      'gemini',
+      'copilot-web',
+    ])
     expect(CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'copilot-web')?.label).toBe(
       'Microsoft Copilot (web)',
     )
   })
 
-  it('builds a ChatGPT open URL from the starter prompt and returns null otherwise', () => {
+  it('builds ChatGPT and Grok open URLs from the starter prompt and returns null otherwise', () => {
     const starterPrompt = 'Follow these agent instructions:\nhttps://example.test/agent'
     expect(buildChatPlatformOpenUrl('chatgpt', starterPrompt)).toBe(
       `https://chatgpt.com/?q=${encodeURIComponent(starterPrompt)}`,
     )
     expect(buildChatPlatformOpenUrl('chatgpt', starterPrompt)).toContain('%20')
     expect(buildChatPlatformOpenUrl('chatgpt', starterPrompt)).toContain('%0A')
+    expect(buildChatPlatformOpenUrl('grok', starterPrompt)).toBe(
+      `https://grok.com/?q=${encodeURIComponent(starterPrompt)}`,
+    )
+    expect(buildChatPlatformOpenUrl('grok', starterPrompt)).toContain('%20')
+    expect(buildChatPlatformOpenUrl('grok', starterPrompt)).toContain('%0A')
     expect(buildChatPlatformOpenUrl('gemini', starterPrompt)).toBeNull()
     expect(buildChatPlatformOpenUrl('copilot-web', starterPrompt)).toBeNull()
     expect(buildChatPlatformOpenUrl('chatgpt', '')).toBeNull()
     expect(buildChatPlatformOpenUrl('chatgpt', '   ')).toBeNull()
+    expect(buildChatPlatformOpenUrl('grok', '')).toBeNull()
+    expect(buildChatPlatformOpenUrl('grok', '   ')).toBeNull()
   })
 
   it('wraps copied instruction markdown with a kind-aware preamble', () => {
@@ -301,14 +313,19 @@ describe('copy URLs and starter prompts', () => {
     expect(CHAT_URL_FETCH_FALLBACK_WARNING).toContain('copy the instruction markdown')
   })
 
-  it('keeps Gemini and Copilot how-to steps as copy-paste without Open in ChatGPT', () => {
+  it('keeps Gemini and Copilot how-to steps as copy-paste without Open in links', () => {
     const chatgptSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'chatgpt')?.steps ?? []
+    const grokSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'grok')?.steps ?? []
     const geminiSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'gemini')?.steps ?? []
     const copilotSteps = CHAT_PLATFORM_GUIDES.find((guide) => guide.id === 'copilot-web')?.steps ?? []
 
     expect(chatgptSteps.join(' ')).toContain('Open in ChatGPT')
     expect(chatgptSteps.join(' ')).toContain('may not fetch those URLs')
+    expect(grokSteps.join(' ')).toContain('Open in Grok')
+    expect(grokSteps.join(' ')).toContain('may not fetch those URLs')
     expect(geminiSteps.join(' ')).not.toContain('Open in ChatGPT')
+    expect(geminiSteps.join(' ')).not.toContain('Open in Grok')
     expect(copilotSteps.join(' ')).not.toContain('Open in ChatGPT')
+    expect(copilotSteps.join(' ')).not.toContain('Open in Grok')
   })
 })

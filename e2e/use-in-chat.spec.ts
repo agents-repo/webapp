@@ -65,6 +65,13 @@ test.describe('Use in chat', () => {
       'href',
       `https://chatgpt.com/?q=${encodeURIComponent(agentStarterPrompt)}`,
     )
+    await page.getByRole('tab', { name: 'Grok' }).click()
+    const openInGrok = page.getByRole('link', { name: 'Open in Grok (opens in a new tab)' })
+    await expect(openInGrok).toBeVisible()
+    await expect(openInGrok).toHaveAttribute(
+      'href',
+      `https://grok.com/?q=${encodeURIComponent(agentStarterPrompt)}`,
+    )
     await expect(page.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeVisible()
     await expect(
       page.getByText(

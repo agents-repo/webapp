@@ -36,6 +36,7 @@ const defaultProps = {
 }
 
 const OPEN_IN_CHATGPT_NAME = 'Open in ChatGPT (opens in a new tab)'
+const OPEN_IN_GROK_NAME = 'Open in Grok (opens in a new tab)'
 
 const agentStarterPrompt = [
   'Follow these agent instructions:',
@@ -51,6 +52,7 @@ const flowStarterPrompt = [
 ].join('\n')
 
 const chatgptOpenUrl = (prompt: string): string => `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`
+const grokOpenUrl = (prompt: string): string => `https://grok.com/?q=${encodeURIComponent(prompt)}`
 
 const jsonResponse = (payload: unknown, ok = true, status = 200) => ({
   ok,
@@ -96,6 +98,7 @@ describe('PackageUseInChatAction', () => {
       ),
     ).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'ChatGPT' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Grok' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Gemini' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Microsoft Copilot (web)' })).toBeInTheDocument()
     expect(
@@ -104,6 +107,11 @@ describe('PackageUseInChatAction', () => {
     expect(screen.getByRole('link', { name: OPEN_IN_CHATGPT_NAME })).toHaveAttribute(
       'href',
       chatgptOpenUrl(agentStarterPrompt),
+    )
+    await user.click(screen.getByRole('tab', { name: 'Grok' }))
+    expect(screen.getByRole('link', { name: OPEN_IN_GROK_NAME })).toHaveAttribute(
+      'href',
+      grokOpenUrl(agentStarterPrompt),
     )
     expect(screen.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeInTheDocument()
     expect(screen.getByText(CHAT_URL_FETCH_FALLBACK_WARNING)).toBeInTheDocument()
@@ -127,7 +135,7 @@ describe('PackageUseInChatAction', () => {
     expect(screen.getByText('Includes this flow and its related agent files.')).toBeInTheDocument()
   })
 
-  it('updates Open in ChatGPT to the current starter prompt and hides it on other tabs', async () => {
+  it('updates Open in ChatGPT and Open in Grok to the current starter prompt and hides them on other tabs', async () => {
     const user = userEvent.setup()
     vi.stubGlobal(
       'fetch',
@@ -145,10 +153,21 @@ describe('PackageUseInChatAction', () => {
       chatgptOpenUrl(flowStarterPrompt),
     )
 
+    await user.click(screen.getByRole('tab', { name: 'Grok' }))
+    expect(screen.getByRole('link', { name: OPEN_IN_GROK_NAME })).toHaveAttribute(
+      'href',
+      grokOpenUrl(flowStarterPrompt),
+    )
+
     await user.click(screen.getByRole('tab', { name: 'Gemini' }))
     expect(
       within(screen.getByRole('tabpanel', { name: 'Gemini' })).queryByRole('link', {
         name: OPEN_IN_CHATGPT_NAME,
+      }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(screen.getByRole('tabpanel', { name: 'Gemini' })).queryByRole('link', {
+        name: OPEN_IN_GROK_NAME,
       }),
     ).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'If the chat cannot load the URL' })).toBeInTheDocument()
