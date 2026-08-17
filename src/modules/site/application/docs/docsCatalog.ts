@@ -38,7 +38,7 @@ export const docsCatalog: readonly DocCatalogMeta[] = [
     slug: 'how-the-registry-works',
     title: 'How the registry works',
     description:
-      'Catalog index, package metadata, version manifests, ZIP artifacts, and how webapp and CLI fetch data.',
+      'Catalog index, package detail.json, version manifests, ZIP artifacts, and how webapp and CLI fetch data.',
     order: 50,
     section: 'Registry',
   },

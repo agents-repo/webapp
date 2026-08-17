@@ -8,8 +8,8 @@ section: Catalog
 ## On the website
 
 1. Open [Home](/) and search or scroll the catalog.
-2. Open a package’s GitHub tree link to read agents, flows, and `metadata.json`.
-3. Copy a CLI install command from the card, use **Use in chat** when it is available, or note the package id (`namespace/package-id`).
+2. Open a package card (**View** or the title) to read the in-app package page. That page loads `detail.json` for the latest snapshot, including README when `readmeMarkdown` is present.
+3. Copy a CLI install command from the card, use **Use in chat** when it is available, or note the package id (`namespace/package-id`). **View on GitHub** on the package page is for source inspection.
 
 See [Using the catalog](/docs/using-the-catalog) for UI details.
 
@@ -24,4 +24,4 @@ See [Using the catalog](/docs/using-the-catalog) for UI details.
 
 ## Recommended path
 
-Discover → evaluate source on GitHub → `agents-repo install <id>` (or bulk sync from `agents.json`) → commit [agents.json and lockfile](/docs/agents-json-lock).
+Discover → evaluate on the in-app package page → `agents-repo install <id>` (or bulk sync from `agents.json`) → commit [agents.json and lockfile](/docs/agents-json-lock).
