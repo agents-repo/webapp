@@ -23,4 +23,4 @@ The **agents-repo** organization ships a small platform:
 
 ## Data vs tooling
 
-The registry is **data-first** (no runtime in the catalog). The webapp and CLI are **consumers** that read the same catalog index and manifests. See [How the registry works](/docs/how-the-registry-works) for the read path.
+The registry is **data-first** (no runtime in the catalog). Webapp and CLI both resolve a catalog ref and load `packages/index.json`. The webapp then loads `packages/<namespace>/<package-id>/detail.json` for in-app package pages. The CLI install path uses `versions/manifest.json`, version-scoped `metadata.json`, and target ZIPs. See [How the registry works](/docs/how-the-registry-works) for the read path.

@@ -11,7 +11,7 @@ Package source lives in the [registry](https://github.com/agents-repo/registry) 
 
 - Packages must be **maintained** and ready for direct use.
 - Declare supported **install targets** in metadata.
-- Follow normative specs in [registry/specs](https://github.com/agents-repo/registry/tree/main/specs) (package format, agent/flow format, metadata, manifests, versioning).
+- Follow normative specs in [registry/specs](https://github.com/agents-repo/registry/tree/main/specs) (package format, package detail, agent/flow format, metadata, manifests, versioning).
 
 ## Submission workflow
 

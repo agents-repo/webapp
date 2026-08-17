@@ -117,8 +117,7 @@ submission readiness, then runs `package:validate`, `package:build`, and
 authoring and review but before those validation scripts run, finish the
 pipeline in the next section.
 
-Do not edit files under `versions/` by hand. The flow uses `package:build` for
-version snapshots.
+Do not edit files under `versions/` by hand, and do not author `detail.json`. The flow uses `package:build` for version snapshots and generated package detail. If the package has a root `README.md`, build copies it into the new snapshot.
 
 Push commits to your fork branch; the draft pull request updates automatically.
 
@@ -126,8 +125,9 @@ Push commits to your fork branch; the draft pull request updates automatically.
 
 Add or update `packages/<namespace>/<package-id>/` with agents/flows and
 `metadata.json` per [registry specs](https://github.com/agents-repo/registry/tree/main/specs).
-Never create or modify files under `versions/` by hand; `package:build`
-generates those artifacts.
+Never create or modify files under `versions/` by hand, and do not author
+`detail.json`; `package:build` generates those artifacts. Optional package-root
+`README.md` is copied into the snapshot at build time.
 
 Then run the commands in the next section.
 

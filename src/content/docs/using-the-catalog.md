@@ -35,7 +35,8 @@ Package cards may offer:
   the window.
 - **View** opens the in-app package page (`/packages/<namespace>/<package-id>`).
   That page repeats CLI, Use in chat, and Download, and adds **View on GitHub**
-  to inspect package source in the registry repository.
+  to inspect package source in the registry repository. The README on that page
+  is the latest snapshot, loaded from `detail.json` (`readmeMarkdown`).
 
 For reproducible projects, prefer pinning the CLI in `devDependencies` and using project scripts — see [Installing packages](/docs/installing-packages).
 
