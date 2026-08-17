@@ -32,7 +32,7 @@ and create a release in the same push.
 The **Deploy Webapp** workflow runs on `push` to `main` when any of these
 paths change:
 
-- `src/**`, `public/**`, `scripts/**`, `test/**`
+- `src/**`, `public/**`, `scripts/**` (except `scripts/slides.mjs`), `test/**`
 - `index.html`, `vite.config.ts`, `tsconfig*.json`
 - `package.json`, `package-lock.json`, `.env.production`
 - `.nvmrc`, `eslint.config.js`

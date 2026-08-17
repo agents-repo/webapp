@@ -53,6 +53,8 @@ npm run test:e2e
 npm run typecheck
 npm run build
 npm run build:pages
+npm run test:crawl-files
+npm run slides:check
 ```
 
 Accessibility-focused checks (local only, not in PR baseline CI):
@@ -278,6 +280,7 @@ repository, update the corresponding page(s) in
 - Development workflow: [docs/development.md](docs/development.md)
 - Testing guide: [docs/testing.md](docs/testing.md)
 - Deployment and Pages: [docs/deployment.md](docs/deployment.md)
+- Presentation slides: [docs/slides/README.md](docs/slides/README.md)
 - AI collaboration guidance: [docs/ai-collaboration.md](docs/ai-collaboration.md)
 - Styling and technology decisions: [docs/styling-and-technology.md](docs/styling-and-technology.md)
 - Architecture and DDD decision: [docs/architecture/ddd-decision.md](docs/architecture/ddd-decision.md)
