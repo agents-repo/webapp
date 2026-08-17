@@ -8,6 +8,7 @@ on:
       - 'src/**'
       - 'public/**'
       - 'scripts/**'
+      - '!scripts/slides.mjs'
       - 'test/**'
       - 'index.html'
       - 'vite.config.ts'
