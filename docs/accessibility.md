@@ -58,6 +58,21 @@ Every routed page should:
 - Keep popovers inside the viewport. Prefer Popper `flip` and a max-height with
   scrolling so interactive content is not clipped by the window edge.
 
+### Package README mermaid diagrams
+
+Fenced `mermaid` blocks in package README and accordion instruction markdown
+render through `PackageMarkdown` as images (not as inline SVG):
+
+- Loading uses `<output>` with visually hidden “Loading diagram” and an
+  `aria-hidden` spinner
+- Success uses `<img alt="Mermaid diagram">` plus a visually hidden source
+  description
+- Render failure restores the original `<pre><code class="language-mermaid">`
+  fence
+
+Site docs (`DocMarkdown`) do not render mermaid. Fence language `flowchart`
+stays a plain code block.
+
 ### Cookie consent banner
 
 The analytics consent banner (`CookieConsentBanner.tsx`) must:

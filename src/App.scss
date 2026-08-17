@@ -156,6 +156,17 @@
   border-radius: 0.5rem;
 }
 
+.package-detail-markdown .package-detail-mermaid {
+  margin: 0 0 1rem;
+  overflow-x: auto;
+}
+
+.package-detail-markdown .package-detail-mermaid-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .package-instruction-accordion .accordion-button {
   align-items: flex-start;
 }

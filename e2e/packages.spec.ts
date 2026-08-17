@@ -68,6 +68,53 @@ test.describe('Package pages', () => {
     await expect(popover).toBeInViewport({ ratio: 1 })
   })
 
+  test('renders a mermaid flowchart in the package README', async ({ page }) => {
+    const mermaidReadme = [
+      '# sample-agent',
+      '',
+      '```mermaid',
+      'flowchart TD',
+      '  startNode[Start] --> endNode[End]',
+      '```',
+    ].join('\n')
+
+    await mockPackageDetailArtifacts(page, {
+      detailUrl: sampleAgentDetailUrl,
+      detail: {
+        ...sampleAgentPackageDetail,
+        readmeMarkdown: mermaidReadme,
+      },
+      markdownUrl: sampleAgentMarkdownUrl,
+      markdown: '# Sample agent body',
+    })
+
+    await page.goto('/packages/agents-repo/sample-agent')
+    await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'README' })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Mermaid diagram' })).toBeVisible()
+  })
+
+  test('keeps a broken mermaid README fence as source', async ({ page }) => {
+    const brokenReadme = ['# sample-agent', '', '```mermaid', 'not a valid mermaid diagram', '```'].join(
+      '\n',
+    )
+
+    await mockPackageDetailArtifacts(page, {
+      detailUrl: sampleAgentDetailUrl,
+      detail: {
+        ...sampleAgentPackageDetail,
+        readmeMarkdown: brokenReadme,
+      },
+      markdownUrl: sampleAgentMarkdownUrl,
+      markdown: '# Sample agent body',
+    })
+
+    await page.goto('/packages/agents-repo/sample-agent')
+    await expect(page.getByRole('heading', { name: 'README' })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Mermaid diagram' })).toHaveCount(0)
+    await expect(page.locator('code.language-mermaid')).toContainText('not a valid mermaid diagram')
+  })
+
   test('expands agent markdown on the package page', async ({ page }) => {
     await page.goto('/packages/agents-repo/sample-agent')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
