@@ -113,9 +113,12 @@ export function MermaidDiagram({ source }: MermaidDiagramProps) {
 
     return () => {
       cancelled = true
-      if (objectUrl !== undefined) {
-        URL.revokeObjectURL(objectUrl)
+      if (objectUrl === undefined) {
+        return
       }
+      const revokedUrl = objectUrl
+      URL.revokeObjectURL(revokedUrl)
+      setResult((previous) => (previous?.imageUrl === revokedUrl ? null : previous))
     }
   }, [appliedTheme, reactId, source])
 

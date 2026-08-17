@@ -17,12 +17,14 @@ vi.mock('mermaid', () => ({
 const mermaidSource = 'flowchart TD\n  startNode[Start] --> endNode[End]'
 
 describe('MermaidDiagram', () => {
+  let revokeObjectURL: ReturnType<typeof vi.spyOn>
+
   beforeEach(() => {
     mermaidMocks.initialize.mockReset()
     mermaidMocks.render.mockReset()
-    document.documentElement.removeAttribute('data-bs-theme')
+    delete document.documentElement.dataset.bsTheme
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mermaid-diagram')
-    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+    revokeObjectURL = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
   })
 
   afterEach(() => {
@@ -67,6 +69,33 @@ describe('MermaidDiagram', () => {
     expect(mermaidMocks.initialize).toHaveBeenCalledWith(
       expect.objectContaining({ theme: 'dark' }),
     )
+  })
+
+  it('does not reuse a revoked blob URL when the theme returns to a previous value', async () => {
+    mermaidMocks.render.mockResolvedValue({ svg: '<svg xmlns="http://www.w3.org/2000/svg"></svg>' })
+
+    render(<MermaidDiagram source={mermaidSource} />)
+    await screen.findByRole('img', { name: 'Mermaid diagram' })
+
+    mermaidMocks.render.mockReturnValue(new Promise(() => {}))
+    document.documentElement.dataset.bsTheme = 'dark'
+    await waitFor(() => {
+      expect(mermaidMocks.initialize).toHaveBeenLastCalledWith(
+        expect.objectContaining({ theme: 'dark' }),
+      )
+    })
+
+    const callsAfterDark = mermaidMocks.initialize.mock.calls.length
+    delete document.documentElement.dataset.bsTheme
+    await waitFor(() => {
+      expect(mermaidMocks.initialize.mock.calls.length).toBeGreaterThan(callsAfterDark)
+      expect(mermaidMocks.initialize).toHaveBeenLastCalledWith(
+        expect.objectContaining({ theme: 'default' }),
+      )
+    })
+    expect(screen.getByText('Loading diagram')).toBeInTheDocument()
+    expect(screen.queryByRole('img', { name: 'Mermaid diagram' })).not.toBeInTheDocument()
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:mermaid-diagram')
   })
 
   it('falls back to the original fenced source when mermaid render fails', async () => {
