@@ -1,10 +1,31 @@
-import { cleanup, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import PackageMarkdown from './PackageMarkdown'
 
+const mermaidMocks = vi.hoisted(() => ({
+  initialize: vi.fn(),
+  render: vi.fn(),
+}))
+
+vi.mock('mermaid', () => ({
+  default: {
+    initialize: mermaidMocks.initialize,
+    render: mermaidMocks.render,
+  },
+}))
+
 describe('PackageMarkdown', () => {
+  beforeEach(() => {
+    mermaidMocks.initialize.mockReset()
+    mermaidMocks.render.mockReset()
+    mermaidMocks.render.mockResolvedValue({ svg: '<svg xmlns="http://www.w3.org/2000/svg"></svg>' })
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mermaid-diagram')
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+  })
+
   afterEach(() => {
     cleanup()
+    vi.restoreAllMocks()
   })
 
   it('opens http(s) links in a new tab and omits unsafe javascript URLs', () => {
@@ -27,5 +48,43 @@ describe('PackageMarkdown', () => {
     const relativeLink = screen.getByRole('link', { name: 'local' })
     expect(relativeLink).toHaveAttribute('href', '#readme')
     expect(relativeLink).not.toHaveAttribute('target')
+  })
+
+  it('keeps non-mermaid fences as pre/code including flowchart language', () => {
+    const markdown = ['```flowchart', 'st=>start: Start', '```', '', '```js', 'const n = 1', '```'].join(
+      '\n',
+    )
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(document.querySelector('code.language-flowchart')).not.toBeNull()
+    expect(document.querySelector('code.language-js')).not.toBeNull()
+    expect(screen.queryByRole('img', { name: 'Mermaid diagram' })).not.toBeInTheDocument()
+    expect(mermaidMocks.render).not.toHaveBeenCalled()
+  })
+
+  it('renders language-mermaid fences as a diagram image outside pre', async () => {
+    const markdown = ['```mermaid', 'flowchart TD', '  startNode[Start] --> endNode[End]', '```'].join(
+      '\n',
+    )
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    const image = await screen.findByRole('img', { name: 'Mermaid diagram' })
+    expect(image.closest('pre')).toBeNull()
+    expect(document.querySelector('div.package-detail-markdown > pre')).toBeNull()
+  })
+
+  it('falls back to the mermaid fence when render fails', async () => {
+    mermaidMocks.render.mockRejectedValue(new Error('parse failed'))
+    const markdown = ['```mermaid', 'not a valid diagram', '```'].join('\n')
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    await waitFor(() => {
+      expect(document.querySelector('code.language-mermaid')).not.toBeNull()
+    })
+    expect(screen.queryByRole('img', { name: 'Mermaid diagram' })).not.toBeInTheDocument()
+    expect(document.querySelector('code.language-mermaid')).toHaveTextContent('not a valid diagram')
   })
 })

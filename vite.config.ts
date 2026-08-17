@@ -35,6 +35,10 @@ export default defineConfig(({ mode }) => {
                 name: 'vendor-ui',
                 test: /node_modules[\\/](react-bootstrap|bootstrap|@popperjs|@restart|classnames|prop-types|invariant|warning|dom-helpers|uncontrollable)[\\/]/,
               },
+              {
+                name: 'vendor-mermaid',
+                test: /node_modules[\\/](mermaid|@mermaid-js)[\\/]/,
+              },
             ],
           },
         },
@@ -70,6 +74,9 @@ export default defineConfig(({ mode }) => {
           // sitemap.xml and robots.txt are generated post-build; precache cannot
           // include them via includeAssets. Denylist keeps browser navigations on
           // the real static files instead of the SPA shell.
+          // mermaid is lazy-loaded for package README diagrams and exceeds
+          // Workbox's 2 MiB precache limit; runtime caching still covers it.
+          globIgnores: ['**/*.map', '**/vendor-mermaid-*.js'],
           navigateFallbackDenylist: [/^\/sitemap\.xml$/, /^\/robots\.txt$/, /^\/llms\.txt$/, /^\/docs\/[^/]+\.md$/],
           runtimeCaching: [
             {

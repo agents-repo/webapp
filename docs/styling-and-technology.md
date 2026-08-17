@@ -84,6 +84,13 @@ chunks below Vite's 500 kB warning threshold:
 - **Vendor chunk groups** — `vite.config.ts` uses Rolldown
   `build.rolldownOptions.output.codeSplitting` to split React and UI library
   dependencies into separate hashed chunks (`vendor-react`, `vendor-ui`).
+  Package README mermaid diagrams load `mermaid` on demand (`vendor-mermaid`)
+  so pages without `language-mermaid` fences do not pay that cost. Site docs
+  (`DocMarkdown`) do not load this chunk. `vendor-mermaid` is larger than Vite's
+  500 kB warning and Workbox's 2 MiB precache limit; it is excluded from the
+  service worker precache and fetched only when a mermaid fence renders.
+  Runtime `StaleWhileRevalidate` still caches the hashed file after first use.
+  The initial bundle, `vendor-react`, and `vendor-ui` stay under 500 kB.
 
 `RouteLoadingFallback` provides a `role="status"` loading message while async route
 chunks fetch and marks the app-shell `main` with `aria-busy` during loading.
