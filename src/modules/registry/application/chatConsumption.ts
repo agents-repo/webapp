@@ -284,7 +284,7 @@ export const buildChatStarterPrompt = (
   return `Follow these agent instructions:\n${latestUrl}`
 }
 
-const CHAT_PLATFORM_OPEN_ORIGINS: Partial<Record<ChatPlatformGuide['id'], string>> = {
+const CHAT_PLATFORM_OPEN_URL_PREFIXES: Partial<Record<ChatPlatformGuide['id'], string>> = {
   chatgpt: 'https://chatgpt.com/?q=',
   grok: 'https://grok.com/?q=',
 }
@@ -293,12 +293,12 @@ export const buildChatPlatformOpenUrl = (
   platformId: ChatPlatformGuide['id'],
   starterPrompt: string,
 ): string | null => {
-  const origin = CHAT_PLATFORM_OPEN_ORIGINS[platformId]
-  if (!origin || starterPrompt.trim().length === 0) {
+  const openUrlPrefix = CHAT_PLATFORM_OPEN_URL_PREFIXES[platformId]
+  if (!openUrlPrefix || starterPrompt.trim().length === 0) {
     return null
   }
 
-  return `${origin}${encodeURIComponent(starterPrompt)}`
+  return `${openUrlPrefix}${encodeURIComponent(starterPrompt)}`
 }
 
 export const wrapChatInstructionMarkdownForPaste = (kind: ChatInstructionKind, markdown: string): string => {
