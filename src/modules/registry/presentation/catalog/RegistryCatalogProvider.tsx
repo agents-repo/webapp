@@ -85,7 +85,7 @@ function RegistryCatalogProvider({
   const runCatalogLoad = useCallback(
     (force: boolean): Promise<void> => {
       const inFlight = inFlightRef.current
-      if (inFlight && inFlight.force && force) {
+      if (inFlight?.force && force) {
         return inFlight.promise
       }
 
