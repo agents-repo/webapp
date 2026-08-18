@@ -120,11 +120,13 @@ redirect.
 
 Unknown `/packages/...` paths show an in-app **Package not found** page (they do
 **not** silently redirect to Home) and receive `noindex`. While the catalog is
-still loading, valid-looking `/packages/:namespace` and
-`/packages/:namespace/:packageId` paths are not marked `noindex` yet. After the
-catalog loads, membership in the live index controls indexability so packages
-published after the last webapp deploy still get runtime SEO/analytics on
-client navigation. They enter the sitemap on the next successful `build:pages`.
+still loading, including a one-time membership recheck against a freshly
+resolved registry line, valid-looking `/packages/:namespace` and
+`/packages/:namespace/:packageId` paths are not marked `noindex` yet. After that
+load attempt finishes, membership in the live index controls indexability so
+packages published after the last webapp deploy still get runtime SEO/analytics
+on client navigation. They enter the sitemap on the next successful
+`build:pages`.
 
 ### Site doc markdown and `llms.txt`
 

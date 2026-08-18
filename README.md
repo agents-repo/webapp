@@ -143,6 +143,9 @@ Registry catalog loading now uses two coordinated cache layers:
 - App-layer cache contract:
   - 24h freshness window for `index.json` and package `detail.json`
   - Fresh cache is used before network fetches
+  - A package index or detail URL missing from that fresh cache triggers one
+    forced catalog reload (re-resolve `v2.x`, bypass tag cache) before
+    **Package not found**
   - Website settings include **Clear cache and reload catalog** to reset
     `registry.catalog.cache.v1`, `registry.package-detail.cache.v1`, and
     `registry.tags.cache.v1` in localStorage and force a catalog reload (does

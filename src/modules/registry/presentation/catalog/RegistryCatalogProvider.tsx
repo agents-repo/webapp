@@ -1,8 +1,11 @@
-import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import type { CatalogCacheState } from '../../application/catalogCacheState'
 import { formatCatalogUpdatedAt } from '../../application/registrySelectors'
-import { setRuntimePackageCatalog } from '../../application/runtimePackageCatalog'
+import {
+  isCatalogLoadAttemptResolved,
+  setRuntimePackageCatalog,
+} from '../../application/runtimePackageCatalog'
 import type { RegistryCatalog } from '../../domain/package'
 import {
   loadRegistryCatalog,
@@ -16,6 +19,10 @@ interface RegistryCatalogProviderProps {
   readonly children: ReactNode
   readonly registrySettingsVersion: number
   readonly onCatalogStatusNoteChange: (note: RegistryCatalogStatusNote | null) => void
+}
+
+const isAbortError = (error: unknown): boolean => {
+  return error instanceof DOMException && error.name === 'AbortError'
 }
 
 const applyCatalogLoadResult = (
@@ -71,84 +78,106 @@ function RegistryCatalogProvider({
   const [githubRepositoryUrl, setGithubRepositoryUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [hasCompletedForcedReload, setHasCompletedForcedReload] = useState(false)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const inFlightRef = useRef<{ readonly promise: Promise<void>; readonly force: boolean } | null>(null)
 
-  useEffect(() => {
-    const abortController = new AbortController()
-    let isActive = true
+  const runCatalogLoad = useCallback(
+    (force: boolean): Promise<void> => {
+      const inFlight = inFlightRef.current
+      if (inFlight && inFlight.force && force) {
+        return inFlight.promise
+      }
 
-    const loadCatalog = async (): Promise<void> => {
+      abortControllerRef.current?.abort()
+      const abortController = new AbortController()
+      abortControllerRef.current = abortController
       setIsLoading(true)
 
-      try {
-        const isSettingsReload = registrySettingsVersion > 0
-        const result = await loadRegistryCatalog({
-          signal: abortController.signal,
-          ...(isSettingsReload
-            ? { forceSourceResolution: true, bypassTagCache: true }
-            : {}),
-        })
+      const promise = (async () => {
+        try {
+          const result = await loadRegistryCatalog({
+            signal: abortController.signal,
+            ...(force ? { forceSourceResolution: true, bypassTagCache: true } : {}),
+          })
 
-        if (!isActive) {
-          return
+          if (abortController.signal.aborted) {
+            return
+          }
+
+          applyCatalogLoadResult(
+            result,
+            {
+              setCatalog,
+              setCacheState,
+              setIndexUrl,
+              setRegistryBaseUrl,
+              setGithubRepositoryUrl,
+              setErrorMessage,
+            },
+            onCatalogStatusNoteChange,
+          )
+          setHasCompletedForcedReload(force)
+        } catch (error) {
+          if (abortController.signal.aborted || isAbortError(error)) {
+            return
+          }
+
+          const failureMessage =
+            error instanceof Error ? error.message : 'Unknown registry catalog loading error'
+
+          applyCatalogLoadResult(
+            {
+              catalog: null,
+              indexUrl: '',
+              registryBaseUrl: '',
+              cacheState: 'none',
+              errorMessage: failureMessage,
+            },
+            {
+              setCatalog,
+              setCacheState,
+              setIndexUrl,
+              setRegistryBaseUrl,
+              setGithubRepositoryUrl,
+              setErrorMessage,
+            },
+            onCatalogStatusNoteChange,
+          )
+          setHasCompletedForcedReload(force)
+          console.warn('Registry catalog load failed:', error)
+        } finally {
+          if (abortControllerRef.current === abortController) {
+            inFlightRef.current = null
+            if (!abortController.signal.aborted) {
+              setIsLoading(false)
+            }
+          }
         }
+      })()
 
-        applyCatalogLoadResult(
-          result,
-          {
-            setCatalog,
-            setCacheState,
-            setIndexUrl,
-            setRegistryBaseUrl,
-            setGithubRepositoryUrl,
-            setErrorMessage,
-          },
-          onCatalogStatusNoteChange,
-        )
-      } catch (error) {
-        if (!isActive) {
-          return
-        }
+      inFlightRef.current = { promise, force }
+      return promise
+    },
+    [onCatalogStatusNoteChange],
+  )
 
-        const failureMessage =
-          error instanceof Error ? error.message : 'Unknown registry catalog loading error'
+  const reloadCatalog = useCallback((): Promise<void> => {
+    return runCatalogLoad(true)
+  }, [runCatalogLoad])
 
-        applyCatalogLoadResult(
-          {
-            catalog: null,
-            indexUrl: '',
-            registryBaseUrl: '',
-            cacheState: 'none',
-            errorMessage: failureMessage,
-          },
-          {
-            setCatalog,
-            setCacheState,
-            setIndexUrl,
-            setRegistryBaseUrl,
-            setGithubRepositoryUrl,
-            setErrorMessage,
-          },
-          onCatalogStatusNoteChange,
-        )
-        console.warn('Registry catalog load failed:', error)
-      } finally {
-        if (isActive) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    void loadCatalog()
+  useEffect(() => {
+    void runCatalogLoad(registrySettingsVersion > 0)
 
     return () => {
-      isActive = false
-      abortController.abort()
+      abortControllerRef.current?.abort()
+      inFlightRef.current = null
     }
-  }, [onCatalogStatusNoteChange, registrySettingsVersion])
+  }, [registrySettingsVersion, runCatalogLoad])
 
   useLayoutEffect(() => {
     setRuntimePackageCatalog(catalog, {
-      resolved: !isLoading || catalog !== null,
+      resolved: isCatalogLoadAttemptResolved(isLoading),
       githubRepositoryUrl,
     })
   }, [catalog, githubRepositoryUrl, isLoading])
@@ -162,8 +191,20 @@ function RegistryCatalogProvider({
       githubRepositoryUrl,
       errorMessage,
       isLoading,
+      hasCompletedForcedReload,
+      reloadCatalog,
     }),
-    [cacheState, catalog, errorMessage, githubRepositoryUrl, indexUrl, isLoading, registryBaseUrl],
+    [
+      cacheState,
+      catalog,
+      errorMessage,
+      githubRepositoryUrl,
+      hasCompletedForcedReload,
+      indexUrl,
+      isLoading,
+      registryBaseUrl,
+      reloadCatalog,
+    ],
   )
 
   return <RegistryCatalogContext.Provider value={value}>{children}</RegistryCatalogContext.Provider>

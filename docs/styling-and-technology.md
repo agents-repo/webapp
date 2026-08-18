@@ -37,7 +37,11 @@ catalog data when available and otherwise shows an error state.
 Registry index loading follows an app-owned 24h freshness policy with
 conditional GET revalidation to minimize network usage:
 
-- Serve directly from cache when within 24h TTL — no network request.
+- Serve directly from cache when within 24h TTL — no network request, except
+  when a package index or detail URL is missing from that cached catalog. In
+  that case the app re-resolves the major-version alias (for example `v2.x`)
+  and reloads `packages/index.json` once, then shows the package or
+  **Package not found**.
 - After TTL expires, send a conditional GET using `If-None-Match` (ETag) and/or
   `If-Modified-Since` headers stored from the previous response.
 - A `304 Not Modified` response resets the TTL with zero body downloaded.

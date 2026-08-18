@@ -4,6 +4,10 @@ let runtimePackageCatalog: RegistryCatalog | null = null
 let runtimePackageCatalogResolved = false
 let runtimeGithubRepositoryUrl = ''
 
+export function isCatalogLoadAttemptResolved(isLoading: boolean): boolean {
+  return !isLoading
+}
+
 export function setRuntimePackageCatalog(
   catalog: RegistryCatalog | null,
   options: { readonly resolved?: boolean; readonly githubRepositoryUrl?: string } = {},

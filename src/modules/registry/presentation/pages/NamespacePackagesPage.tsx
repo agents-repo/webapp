@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { namespaceExistsInCatalog } from '../../application/packageSiteRoutes'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
 import { PackageCatalogIndexLayout } from './PackageCatalogIndexLayout'
 import PackageSiteNotFound from './PackageSiteNotFound'
 
@@ -14,6 +15,11 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
   const { catalog, isLoading } = useRegistryCatalog()
   const namespaceValue = namespace ?? ''
   const namespaceKnown = catalog ? namespaceExistsInCatalog(catalog, namespaceValue) : false
+
+  useCatalogMembershipRecheck({
+    enabled: Boolean(namespaceValue),
+    isMember: namespaceKnown,
+  })
 
   useEffect(() => {
     if (!namespaceKnown && catalog && !isLoading) {
@@ -35,7 +41,7 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
     searchAriaLabel: `Search packages in ${namespaceValue}`,
   }
 
-  if (isLoading && !catalog) {
+  if (isLoading && !namespaceKnown) {
     return <PackageCatalogIndexLayout {...layoutProps} packages={[]} catalog={null} />
   }
 

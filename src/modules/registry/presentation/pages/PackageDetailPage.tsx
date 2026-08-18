@@ -16,6 +16,7 @@ import type { PackageDetailDocument } from '../../domain/packageDetail'
 import { loadPackageDetail } from '../../infrastructure/packageDetailRepository'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
 import PackageCliInstallAction from '../components/PackageCliInstallAction'
 import { PackageDownloadMenu } from '../components/PackageDownloadMenu'
 import PackageInstructionAccordion from '../components/PackageInstructionAccordion'
@@ -344,11 +345,16 @@ function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
       ? findRegistryPackage(catalog, namespaceValue, packageIdValue)
       : undefined
 
+  useCatalogMembershipRecheck({
+    enabled: Boolean(namespaceValue && packageIdValue),
+    isMember: catalogPackage !== undefined,
+  })
+
   if (!namespaceValue || !packageIdValue) {
     return <PackageSiteNotFound />
   }
 
-  if (isLoading && !catalog) {
+  if (isLoading && !catalogPackage) {
     return (
       <div className="py-5">
         <Container>

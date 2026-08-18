@@ -13,6 +13,8 @@ export const sampleCatalogLoadResult: RegistryCatalogLoadResult = {
   githubRepositoryRefResolution: null,
 }
 
+const noopReloadCatalog = (): Promise<void> => Promise.resolve()
+
 export const loadedCatalogContext: RegistryCatalogContextValue = {
   catalog: sampleCatalogLoadResult.catalog,
   cacheState: sampleCatalogLoadResult.cacheState,
@@ -21,6 +23,8 @@ export const loadedCatalogContext: RegistryCatalogContextValue = {
   githubRepositoryUrl: sampleCatalogLoadResult.githubRepositoryUrl ?? '',
   errorMessage: sampleCatalogLoadResult.errorMessage ?? null,
   isLoading: false,
+  hasCompletedForcedReload: false,
+  reloadCatalog: noopReloadCatalog,
 }
 
 export const loadingCatalogContext: RegistryCatalogContextValue = {
@@ -31,6 +35,8 @@ export const loadingCatalogContext: RegistryCatalogContextValue = {
   githubRepositoryUrl: '',
   errorMessage: null,
   isLoading: true,
+  hasCompletedForcedReload: false,
+  reloadCatalog: noopReloadCatalog,
 }
 
 export const reloadingCatalogContext: RegistryCatalogContextValue = {
