@@ -2,7 +2,9 @@ import { Children, isValidElement, type ReactNode } from 'react'
 import Markdown, { defaultUrlTransform } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { Components } from 'react-markdown'
+import { parsePackageMarkdownFrontmatter } from '../../application/packageMarkdownFrontmatter'
 import { MermaidDiagram } from './MermaidDiagram'
+import PackageMarkdownYamlTable from './PackageMarkdownYamlTable'
 
 interface CodeFenceProps {
   readonly className?: string
@@ -73,15 +75,20 @@ interface PackageMarkdownProps {
 }
 
 function PackageMarkdown({ markdown }: PackageMarkdownProps) {
+  const { data, body } = parsePackageMarkdownFrontmatter(markdown)
+
   return (
     <div className="package-detail-markdown">
-      <Markdown
-        remarkPlugins={[remarkGfm]}
-        urlTransform={defaultUrlTransform}
-        components={markdownComponents}
-      >
-        {markdown}
-      </Markdown>
+      {data ? <PackageMarkdownYamlTable data={data} /> : null}
+      {body ? (
+        <Markdown
+          remarkPlugins={[remarkGfm]}
+          urlTransform={defaultUrlTransform}
+          components={markdownComponents}
+        >
+          {body}
+        </Markdown>
+      ) : null}
     </div>
   )
 }

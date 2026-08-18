@@ -6,7 +6,10 @@ The webapp is a Vite + React + TypeScript frontend. It uses Bootstrap and
 React Bootstrap for UI primitives, Font Awesome React for iconography, React
 Router for page navigation, Sass for authored styles, ESLint (including
 SonarJS rules, selected security checks, and type-aware TypeScript analysis)
-for code linting, and markdownlint for documentation checks. Runtime
+for code linting, and markdownlint for documentation checks. Package README
+and agent/flow accordion markdown parse YAML frontmatter with the `yaml`
+package (YAML 1.2) and render the body with `react-markdown` plus
+`remark-gfm`. Site docs still split frontmatter without a YAML parser. Runtime
 installability and offline support are provided through `vite-plugin-pwa`, and
 registry catalog cache semantics are implemented with a lightweight in-memory
 LRU policy plus persistent browser storage. Catalog index and package
@@ -75,6 +78,18 @@ lets users choose light, dark, or auto. The selected mode is persisted.
 
 Header chrome is intentionally fixed to a dark surface for consistency, while
 page content surfaces (including cards) follow the selected color mode.
+
+Package README and accordion markdown (`PackageMarkdown`) render a closed YAML
+frontmatter mapping as nested HTML tables (two-column key/value tables;
+arrays of objects as header rows; arrays of primitives as a single-column
+table). The remaining body is GitHub Flavored Markdown. Unclosed or invalid
+YAML, and non-mapping roots, stay ordinary markdown. Table cell borders and
+padding are shared with `.docs-markdown` in `src/App.scss`. Site docs still
+strip YAML frontmatter instead of showing it as a table. The `yaml` parser is
+a static import on the lazy `PackageDetailPage` chunk (about 119 kB minified
+with package markdown, 38 kB gzip). That stays under the 500 kB warning used
+for `vendor-react` / `vendor-ui` / the initial bundle, so `yaml` is not
+lazy-imported on its own.
 
 ## Code splitting
 

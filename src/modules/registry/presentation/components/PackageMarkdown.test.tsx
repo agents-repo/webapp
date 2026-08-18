@@ -87,4 +87,57 @@ describe('PackageMarkdown', () => {
     expect(screen.queryByRole('img', { name: 'Mermaid diagram' })).not.toBeInTheDocument()
     expect(document.querySelector('code.language-mermaid')).toHaveTextContent('not a valid diagram')
   })
+
+  it('renders YAML frontmatter as nested metadata tables and GFM for the body', () => {
+    const markdown = [
+      '---',
+      'name: ai-first-chat',
+      'description: Talk-only chat about AI-first projects.',
+      'version: 1.0.0',
+      'license: MIT',
+      'inputs:',
+      '  - name: user-message',
+      '    type: string',
+      '    description: The user question.',
+      'outputs:',
+      '  - name: reply',
+      '    type: string',
+      '    description: Conversational reply.',
+      '---',
+      '',
+      '# Overview',
+      '',
+      'Hello from the body.',
+    ].join('\n')
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(screen.getByRole('rowheader', { name: 'name' })).toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: 'ai-first-chat' })).toBeInTheDocument()
+    expect(screen.getAllByRole('columnheader', { name: 'type' })).toHaveLength(2)
+    expect(screen.getByRole('cell', { name: 'user-message' })).toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: 'reply' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Overview' })).toBeInTheDocument()
+    expect(screen.getByText('Hello from the body.')).toBeInTheDocument()
+    expect(screen.queryByRole('separator')).not.toBeInTheDocument()
+  })
+
+  it('renders GFM pipe tables in the markdown body', () => {
+    const markdown = ['| Col |', '| --- |', '| cell |'].join('\n')
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(screen.getByRole('columnheader', { name: 'Col' })).toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: 'cell' })).toBeInTheDocument()
+  })
+
+  it('keeps unclosed YAML frontmatter as ordinary markdown', () => {
+    const markdown = '---\nname: ai-first-chat\n\n# Overview'
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(screen.getByRole('separator')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Overview' })).toBeInTheDocument()
+    expect(screen.queryByRole('rowheader', { name: 'name' })).not.toBeInTheDocument()
+  })
 })
