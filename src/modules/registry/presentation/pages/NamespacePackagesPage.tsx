@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
-import { namespaceExistsInCatalog } from '../../application/packageSiteRoutes'
+import { isPackagePathSegment, namespaceExistsInCatalog } from '../../application/packageSiteRoutes'
 import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
@@ -15,16 +15,19 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
   const { namespace } = useParams()
   const { catalog, isLoading, hasCompletedForcedReload } = useRegistryCatalog()
   const namespaceValue = namespace ?? ''
+  const isValidNamespacePath = isPackagePathSegment(namespaceValue)
   const namespaceKnown = catalog ? namespaceExistsInCatalog(catalog, namespaceValue) : false
-  const awaitingMembershipRecheck = shouldAwaitCatalogMembershipRecheck({
-    catalog,
-    isLoading,
-    hasCompletedForcedReload,
-    isMember: namespaceKnown,
-  })
+  const awaitingMembershipRecheck =
+    isValidNamespacePath &&
+    shouldAwaitCatalogMembershipRecheck({
+      catalog,
+      isLoading,
+      hasCompletedForcedReload,
+      isMember: namespaceKnown,
+    })
 
   useCatalogMembershipRecheck({
-    enabled: Boolean(namespaceValue),
+    enabled: isValidNamespacePath,
     isMember: namespaceKnown,
   })
 
@@ -34,7 +37,7 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
     }
   }, [awaitingMembershipRecheck, catalog, namespaceKnown, setHeaderSearchSlot])
 
-  if (!namespaceValue) {
+  if (!isValidNamespacePath) {
     return <PackageSiteNotFound />
   }
 

@@ -10,6 +10,7 @@ import {
   findRegistryPackage,
   getNamespacePackagesPath,
   getPackagesIndexPath,
+  isPackagePathSegment,
 } from '../../application/packageSiteRoutes'
 import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
@@ -342,17 +343,19 @@ function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
 
   const namespaceValue = namespace ?? ''
   const packageIdValue = packageId ?? ''
+  const isValidPackagePath =
+    isPackagePathSegment(namespaceValue) && isPackagePathSegment(packageIdValue)
   const catalogPackage =
-    catalog && namespaceValue && packageIdValue
+    catalog && isValidPackagePath
       ? findRegistryPackage(catalog, namespaceValue, packageIdValue)
       : undefined
 
   useCatalogMembershipRecheck({
-    enabled: Boolean(namespaceValue && packageIdValue),
+    enabled: isValidPackagePath,
     isMember: catalogPackage !== undefined,
   })
 
-  if (!namespaceValue || !packageIdValue) {
+  if (!isValidPackagePath) {
     return <PackageSiteNotFound />
   }
 

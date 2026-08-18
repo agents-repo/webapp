@@ -100,4 +100,25 @@ describe('NamespacePackagesPage', () => {
       expect(reloadCatalog).toHaveBeenCalledTimes(1)
     })
   })
+
+  it('shows not-found for invalid namespace segments without reloading the catalog', () => {
+    const reloadCatalog = vi.fn().mockResolvedValue(undefined)
+    useRegistryCatalogMock.mockReturnValue({
+      ...reloadingCatalogContext,
+      reloadCatalog,
+    })
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace"
+          element={<NamespacePackagesPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/Invalid_Namespace'] },
+    )
+
+    expect(screen.getByRole('heading', { name: 'Package not found', level: 1 })).toBeInTheDocument()
+    expect(reloadCatalog).not.toHaveBeenCalled()
+  })
 })
