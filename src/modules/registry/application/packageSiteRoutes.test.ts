@@ -4,6 +4,7 @@ import {
   buildPackageSiteRoutesFromCatalog,
   getPackageDetailPath,
   isKnownPackageSiteRoute,
+  isPackageSitePathCatalogMember,
   isUnlistedPackageSitePath,
   parsePackageSitePath,
 } from './packageSiteRoutes'
@@ -41,6 +42,25 @@ describe('packageSiteRoutes', () => {
     expect(isKnownPackageSiteRoute('/packages/agents-repo/missing-pkg', sampleRegistryCatalog, true)).toBe(
       false,
     )
+  })
+
+  it('treats index and extra-segment paths as catalog-satisfied', () => {
+    expect(isPackageSitePathCatalogMember('/packages', sampleRegistryCatalog)).toBe(true)
+    expect(
+      isPackageSitePathCatalogMember('/packages/agents-repo/sample-agent/extra', sampleRegistryCatalog),
+    ).toBe(true)
+  })
+
+  it('requires namespace and detail membership in the loaded catalog', () => {
+    expect(isPackageSitePathCatalogMember('/packages/agents-repo', sampleRegistryCatalog)).toBe(true)
+    expect(
+      isPackageSitePathCatalogMember('/packages/agents-repo/sample-agent', sampleRegistryCatalog),
+    ).toBe(true)
+    expect(isPackageSitePathCatalogMember('/packages/missing-ns', sampleRegistryCatalog)).toBe(false)
+    expect(
+      isPackageSitePathCatalogMember('/packages/agents-repo/missing-pkg', sampleRegistryCatalog),
+    ).toBe(false)
+    expect(isPackageSitePathCatalogMember('/packages/agents-repo/missing-pkg', null)).toBe(false)
   })
 
   it('builds namespace and detail routes from the catalog', () => {

@@ -77,6 +77,26 @@ export function namespaceExistsInCatalog(catalog: RegistryCatalog, namespace: st
   return catalog.packages.some((pkg) => pkg.namespace === namespace)
 }
 
+export function isPackageSitePathCatalogMember(
+  pathname: string,
+  catalog: RegistryCatalog | null,
+): boolean {
+  const parsed = parsePackageSitePath(pathname)
+  if (parsed === undefined || parsed.kind === 'index') {
+    return true
+  }
+
+  if (catalog === null) {
+    return false
+  }
+
+  if (parsed.kind === 'namespace') {
+    return namespaceExistsInCatalog(catalog, parsed.namespace)
+  }
+
+  return findRegistryPackage(catalog, parsed.namespace, parsed.packageId) !== undefined
+}
+
 export function isKnownPackageSiteRoute(
   pathname: string,
   catalog: RegistryCatalog | null,

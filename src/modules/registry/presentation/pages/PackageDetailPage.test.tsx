@@ -6,7 +6,10 @@ import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { samplePackageDetail } from '../../../../test/fixtures/samplePackageDetail'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import PackageDetailPage from './PackageDetailPage'
-import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixtures'
+import {
+  loadedCatalogContext,
+  reloadingCatalogContext,
+} from '../../../../test/fixtures/homePageTestFixtures'
 import {
   clearRegistryPackageDetailCache,
   resetPackageDetailRepositoryForTests,
@@ -144,8 +147,38 @@ describe('PackageDetailPage', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('shows not-found for an unknown package after the catalog loads', () => {
-    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+  it('requests a catalog reload when the listed catalog does not include the package', async () => {
+    const reloadCatalog = vi.fn().mockResolvedValue(undefined)
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      reloadCatalog,
+    })
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace/:packageId"
+          element={<PackageDetailPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/agents-repo/missing-pkg'] },
+    )
+
+    expect(screen.getByRole('region', { name: 'Loading package' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Package not found', level: 1 })).not.toBeInTheDocument()
+
+    await waitFor(() => {
+      expect(reloadCatalog).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('shows not-found for an unknown package after a forced catalog reload', () => {
+    const reloadCatalog = vi.fn().mockResolvedValue(undefined)
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      hasCompletedForcedReload: true,
+      reloadCatalog,
+    })
 
     renderWithProviders(
       <Routes>
@@ -158,5 +191,81 @@ describe('PackageDetailPage', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Package not found', level: 1 })).toBeInTheDocument()
+    expect(reloadCatalog).not.toHaveBeenCalled()
+  })
+
+  it('keeps the loading spinner while a missing package is rechecked', () => {
+    useRegistryCatalogMock.mockReturnValue(reloadingCatalogContext)
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace/:packageId"
+          element={<PackageDetailPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/agents-repo/missing-pkg'] },
+    )
+
+    expect(screen.getByRole('region', { name: 'Loading package' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Package not found', level: 1 })).not.toBeInTheDocument()
+  })
+
+  it('does not reload the catalog when the package is already listed', () => {
+    const reloadCatalog = vi.fn().mockResolvedValue(undefined)
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      reloadCatalog,
+    })
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url: string) => {
+        if (String(url).includes('detail.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(samplePackageDetail),
+          })
+        }
+
+        return Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve('# Agent body'),
+        })
+      }),
+    )
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace/:packageId"
+          element={<PackageDetailPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/agents-repo/sample-agent'] },
+    )
+
+    expect(screen.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeInTheDocument()
+    expect(reloadCatalog).not.toHaveBeenCalled()
+  })
+
+  it('shows not-found for invalid package path segments without reloading the catalog', () => {
+    const reloadCatalog = vi.fn().mockResolvedValue(undefined)
+    useRegistryCatalogMock.mockReturnValue({
+      ...reloadingCatalogContext,
+      reloadCatalog,
+    })
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace/:packageId"
+          element={<PackageDetailPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/agents-repo/Invalid_Package'] },
+    )
+
+    expect(screen.getByRole('heading', { name: 'Package not found', level: 1 })).toBeInTheDocument()
+    expect(reloadCatalog).not.toHaveBeenCalled()
   })
 })

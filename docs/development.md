@@ -215,14 +215,20 @@ on CLI releases.
    as catalog fetch (not per-browser GitHub API calls). Tag lists are cached for
    1 hour in a single localStorage entry (`registry.tags.cache.v1`) keyed by
    repository identity (`owner/repo`) inside the envelope. Alias re-resolution runs
-   when the 24h catalog cache has expired, website settings change, or the user
-   chooses **Clear cache and reload catalog** in website settings — not on every
-   route navigation. Resolution uses the `semver` package.
+   when the 24h catalog cache has expired, website settings change, the user
+   chooses **Clear cache and reload catalog** in website settings, or a package
+   index/detail URL is missing from the loaded catalog (one forced reload per
+   session) — not on every route navigation. Resolution uses the `semver`
+   package.
 - The registry catalog loads once at app level via
    `RegistryCatalogProvider` (`presentation/catalog/`) and is reused when
    returning to catalog pages; settings changes trigger a forced reload that
    bypasses warm in-memory catalog cache and tag cache and also clears the
-   package `detail.json` localStorage LRU.
+   package `detail.json` localStorage LRU. A `/packages/:namespace` or
+   `/packages/:namespace/:packageId` path that is missing from the loaded
+   catalog triggers the same forced catalog reload at most once per session
+   (it does not clear detail or tag stores). Extra-segment `/packages/*`
+   paths stay on not-found without that reload.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
 - Header chrome remains intentionally dark across all modes, while page

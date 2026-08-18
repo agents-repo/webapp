@@ -1,4 +1,5 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import RegistryCatalogProvider from './RegistryCatalogProvider'
 import { useRegistryCatalog } from './registryCatalogContext'
@@ -148,5 +149,65 @@ describe('RegistryCatalogProvider', () => {
     expect(warnSpy).toHaveBeenCalledTimes(1)
     expect(warnSpy).toHaveBeenCalledWith('Registry catalog load failed:', expect.any(Error))
     warnSpy.mockRestore()
+  })
+
+  it('forces source resolution when reloadCatalog is called and coalesces in-flight reloads', async () => {
+    let resolveReload: ((result: typeof sampleCatalogLoadResult) => void) | undefined
+    loadRegistryCatalogMock.mockResolvedValueOnce(sampleCatalogLoadResult)
+    loadRegistryCatalogMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveReload = resolve
+        }),
+    )
+
+    function ReloadConsumer() {
+      const { isLoading, hasCompletedForcedReload, reloadCatalog } = useRegistryCatalog()
+
+      return (
+        <div>
+          <p>{isLoading ? 'loading' : 'settled'}</p>
+          <p>{hasCompletedForcedReload ? 'forced' : 'not-forced'}</p>
+          <button
+            type="button"
+            onClick={() => {
+              void reloadCatalog()
+              void reloadCatalog()
+            }}
+          >
+            reload
+          </button>
+        </div>
+      )
+    }
+
+    render(
+      <RegistryCatalogProvider
+        registrySettingsVersion={0}
+        onCatalogStatusNoteChange={onCatalogStatusNoteChange}
+      >
+        <ReloadConsumer />
+      </RegistryCatalogProvider>,
+    )
+
+    await screen.findByText('settled')
+    expect(screen.getByText('not-forced')).toBeInTheDocument()
+    const callsAfterMount = loadRegistryCatalogMock.mock.calls.length
+
+    await userEvent.click(screen.getByRole('button', { name: 'reload' }))
+
+    expect(loadRegistryCatalogMock.mock.calls).toHaveLength(callsAfterMount + 1)
+    expect(loadRegistryCatalogMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        forceSourceResolution: true,
+        bypassTagCache: true,
+      }),
+    )
+    expect(screen.getByText('loading')).toBeInTheDocument()
+
+    resolveReload?.(sampleCatalogLoadResult)
+
+    await screen.findByText('settled')
+    expect(screen.getByText('forced')).toBeInTheDocument()
   })
 })

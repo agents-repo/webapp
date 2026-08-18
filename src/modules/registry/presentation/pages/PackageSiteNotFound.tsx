@@ -9,7 +9,7 @@ function PackageSiteNotFound() {
       <Container>
         <h1 className="h2 mb-3">Package not found</h1>
         <p className="text-body-secondary">
-          This package path is not in the loaded registry catalog.
+          This package path is not in the current registry catalog.
         </p>
         <Card className="border-secondary-subtle">
           <Card.Body>

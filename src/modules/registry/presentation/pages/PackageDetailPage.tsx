@@ -10,12 +10,15 @@ import {
   findRegistryPackage,
   getNamespacePackagesPath,
   getPackagesIndexPath,
+  isPackagePathSegment,
 } from '../../application/packageSiteRoutes'
+import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import type { PackageDetailDocument } from '../../domain/packageDetail'
 import { loadPackageDetail } from '../../infrastructure/packageDetailRepository'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
 import PackageCliInstallAction from '../components/PackageCliInstallAction'
 import { PackageDownloadMenu } from '../components/PackageDownloadMenu'
 import PackageInstructionAccordion from '../components/PackageInstructionAccordion'
@@ -328,7 +331,8 @@ function PackageDetailLoaded(options: {
 
 function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
   const { namespace, packageId } = useParams()
-  const { catalog, isLoading, registryBaseUrl, githubRepositoryUrl } = useRegistryCatalog()
+  const { catalog, isLoading, hasCompletedForcedReload, registryBaseUrl, githubRepositoryUrl } =
+    useRegistryCatalog()
 
   useEffect(() => {
     setHeaderSearchSlot(null)
@@ -339,16 +343,30 @@ function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
 
   const namespaceValue = namespace ?? ''
   const packageIdValue = packageId ?? ''
+  const isValidPackagePath =
+    isPackagePathSegment(namespaceValue) && isPackagePathSegment(packageIdValue)
   const catalogPackage =
-    catalog && namespaceValue && packageIdValue
+    catalog && isValidPackagePath
       ? findRegistryPackage(catalog, namespaceValue, packageIdValue)
       : undefined
 
-  if (!namespaceValue || !packageIdValue) {
+  useCatalogMembershipRecheck({
+    enabled: isValidPackagePath,
+    isMember: catalogPackage !== undefined,
+  })
+
+  if (!isValidPackagePath) {
     return <PackageSiteNotFound />
   }
 
-  if (isLoading && !catalog) {
+  if (
+    shouldAwaitCatalogMembershipRecheck({
+      catalog,
+      isLoading,
+      hasCompletedForcedReload,
+      isMember: catalogPackage !== undefined,
+    })
+  ) {
     return (
       <div className="py-5">
         <Container>

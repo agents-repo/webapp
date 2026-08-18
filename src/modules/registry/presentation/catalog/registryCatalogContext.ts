@@ -11,6 +11,8 @@ export interface RegistryCatalogContextValue {
   readonly githubRepositoryUrl: string
   readonly errorMessage: string | null
   readonly isLoading: boolean
+  readonly hasCompletedForcedReload: boolean
+  readonly reloadCatalog: () => Promise<void>
 }
 
 export const RegistryCatalogContext = createContext<RegistryCatalogContextValue | null>(null)
