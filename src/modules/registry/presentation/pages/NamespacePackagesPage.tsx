@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { namespaceExistsInCatalog } from '../../application/packageSiteRoutes'
+import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
 import { PackageCatalogIndexLayout } from './PackageCatalogIndexLayout'
@@ -12,9 +13,15 @@ interface NamespacePackagesPageProps {
 
 function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPageProps) {
   const { namespace } = useParams()
-  const { catalog, isLoading } = useRegistryCatalog()
+  const { catalog, isLoading, hasCompletedForcedReload } = useRegistryCatalog()
   const namespaceValue = namespace ?? ''
   const namespaceKnown = catalog ? namespaceExistsInCatalog(catalog, namespaceValue) : false
+  const awaitingMembershipRecheck = shouldAwaitCatalogMembershipRecheck({
+    catalog,
+    isLoading,
+    hasCompletedForcedReload,
+    isMember: namespaceKnown,
+  })
 
   useCatalogMembershipRecheck({
     enabled: Boolean(namespaceValue),
@@ -22,10 +29,10 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
   })
 
   useEffect(() => {
-    if (!namespaceKnown && catalog && !isLoading) {
+    if (!namespaceKnown && catalog && !awaitingMembershipRecheck) {
       setHeaderSearchSlot(null)
     }
-  }, [catalog, isLoading, namespaceKnown, setHeaderSearchSlot])
+  }, [awaitingMembershipRecheck, catalog, namespaceKnown, setHeaderSearchSlot])
 
   if (!namespaceValue) {
     return <PackageSiteNotFound />
@@ -41,7 +48,7 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
     searchAriaLabel: `Search packages in ${namespaceValue}`,
   }
 
-  if (isLoading && !namespaceKnown) {
+  if (awaitingMembershipRecheck) {
     return <PackageCatalogIndexLayout {...layoutProps} packages={[]} catalog={null} />
   }
 

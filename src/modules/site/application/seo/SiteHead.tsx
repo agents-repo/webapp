@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
+import { isPackageSitePathCatalogMember } from '../../../registry/application/packageSiteRoutes.ts'
 import { isCatalogLoadAttemptResolved } from '../../../registry/application/runtimePackageCatalog.ts'
 import { useOptionalRegistryCatalog } from '../../../registry/presentation/catalog/registryCatalogContext.ts'
 import { isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
@@ -10,7 +11,11 @@ function SiteHead() {
   const catalogContext = useOptionalRegistryCatalog()
   const catalog = catalogContext?.catalog ?? null
   const catalogResolved = catalogContext
-    ? isCatalogLoadAttemptResolved(catalogContext.isLoading)
+    ? isCatalogLoadAttemptResolved(catalogContext.isLoading, {
+        catalog,
+        hasCompletedForcedReload: catalogContext.hasCompletedForcedReload,
+        isMember: isPackageSitePathCatalogMember(pathname, catalog),
+      })
     : false
 
   if (!isKnownSiteRoute(pathname, catalog, catalogResolved)) {

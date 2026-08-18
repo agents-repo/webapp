@@ -11,6 +11,7 @@ import {
   getNamespacePackagesPath,
   getPackagesIndexPath,
 } from '../../application/packageSiteRoutes'
+import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import type { PackageDetailDocument } from '../../domain/packageDetail'
 import { loadPackageDetail } from '../../infrastructure/packageDetailRepository'
@@ -329,7 +330,8 @@ function PackageDetailLoaded(options: {
 
 function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
   const { namespace, packageId } = useParams()
-  const { catalog, isLoading, registryBaseUrl, githubRepositoryUrl } = useRegistryCatalog()
+  const { catalog, isLoading, hasCompletedForcedReload, registryBaseUrl, githubRepositoryUrl } =
+    useRegistryCatalog()
 
   useEffect(() => {
     setHeaderSearchSlot(null)
@@ -354,7 +356,14 @@ function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
     return <PackageSiteNotFound />
   }
 
-  if (isLoading && !catalogPackage) {
+  if (
+    shouldAwaitCatalogMembershipRecheck({
+      catalog,
+      isLoading,
+      hasCompletedForcedReload,
+      isMember: catalogPackage !== undefined,
+    })
+  ) {
     return (
       <div className="py-5">
         <Container>

@@ -164,6 +164,9 @@ describe('PackageDetailPage', () => {
       { initialEntries: ['/packages/agents-repo/missing-pkg'] },
     )
 
+    expect(screen.getByRole('region', { name: 'Loading package' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Package not found', level: 1 })).not.toBeInTheDocument()
+
     await waitFor(() => {
       expect(reloadCatalog).toHaveBeenCalledTimes(1)
     })

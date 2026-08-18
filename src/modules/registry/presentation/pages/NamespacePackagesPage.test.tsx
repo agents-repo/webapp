@@ -93,6 +93,9 @@ describe('NamespacePackagesPage', () => {
       { initialEntries: ['/packages/missing-ns'] },
     )
 
+    expect(screen.getByRole('heading', { name: 'missing-ns packages', level: 1 })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Package not found', level: 1 })).not.toBeInTheDocument()
+
     await waitFor(() => {
       expect(reloadCatalog).toHaveBeenCalledTimes(1)
     })

@@ -1,6 +1,7 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { findRegistryPackage } from '../../application/packageSiteRoutes'
+import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 import { sampleCatalogLoadResult } from '../../../../test/fixtures/homePageTestFixtures'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
@@ -24,13 +25,20 @@ const emptyCatalogLoadResult = {
 }
 
 function MembershipProbe() {
-  const { catalog, isLoading } = useRegistryCatalog()
+  const { catalog, isLoading, hasCompletedForcedReload } = useRegistryCatalog()
   const isMember =
     catalog !== null && findRegistryPackage(catalog, 'agents-repo', 'sample-agent') !== undefined
 
   useCatalogMembershipRecheck({ enabled: true, isMember })
 
-  if (isLoading && !isMember) {
+  if (
+    shouldAwaitCatalogMembershipRecheck({
+      catalog,
+      isLoading,
+      hasCompletedForcedReload,
+      isMember,
+    })
+  ) {
     return <p>checking</p>
   }
 

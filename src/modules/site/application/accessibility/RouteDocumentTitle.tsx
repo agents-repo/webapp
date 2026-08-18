@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { isPackageSitePathCatalogMember } from '../../../registry/application/packageSiteRoutes.ts'
 import { isCatalogLoadAttemptResolved } from '../../../registry/application/runtimePackageCatalog.ts'
 import { useOptionalRegistryCatalog } from '../../../registry/presentation/catalog/registryCatalogContext.ts'
 import { formatDocumentTitle } from './useDocumentTitle'
@@ -10,7 +11,11 @@ function RouteDocumentTitle() {
   const catalogContext = useOptionalRegistryCatalog()
   const catalog = catalogContext?.catalog ?? null
   const catalogResolved = catalogContext
-    ? isCatalogLoadAttemptResolved(catalogContext.isLoading)
+    ? isCatalogLoadAttemptResolved(catalogContext.isLoading, {
+        catalog,
+        hasCompletedForcedReload: catalogContext.hasCompletedForcedReload,
+        isMember: isPackageSitePathCatalogMember(pathname, catalog),
+      })
     : false
 
   useEffect(() => {
