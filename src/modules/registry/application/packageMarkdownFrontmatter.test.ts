@@ -47,6 +47,15 @@ describe('parsePackageMarkdownFrontmatter', () => {
     })
   })
 
+  it('preserves leading body indentation after the closing fence', () => {
+    const raw = '---\nname: sample-agent\n---\n    indented\n'
+
+    expect(parsePackageMarkdownFrontmatter(raw)).toEqual({
+      data: { name: 'sample-agent' },
+      body: '    indented',
+    })
+  })
+
   it('accepts CRLF closed fences', () => {
     const raw = '---\r\nname: sample-agent\r\n---\r\n\r\n# Overview'
 

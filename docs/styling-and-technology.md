@@ -82,7 +82,7 @@ page content surfaces (including cards) follow the selected color mode.
 Package README and accordion markdown (`PackageMarkdown`) render a closed YAML
 frontmatter mapping as nested HTML tables (two-column key/value tables;
 arrays of objects as header rows; arrays of primitives as a single-column
-table). The remaining body is GitHub Flavored Markdown. Unclosed or invalid
+table with a `Value` column header). The remaining body is GitHub Flavored Markdown. Unclosed or invalid
 YAML, and non-mapping roots, stay ordinary markdown. Cyclic YAML aliases and
 nodes nested deeper than 32 mappings or arrays are omitted from the table so
 rendering cannot overflow the call stack. Table cell borders and

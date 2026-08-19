@@ -212,6 +212,11 @@ function PackageYamlPrimitiveArrayTable({
 }) {
   return (
     <table>
+      <thead>
+        <tr>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
       <tbody>
         {keyedYamlTableRows(items).map(({ item, key }) => (
           <tr key={key}>

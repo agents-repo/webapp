@@ -9,6 +9,37 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+const trimSurroundingNewlines = (value: string): string => {
+  let start = 0
+  let end = value.length
+
+  while (start < end) {
+    if (value.startsWith('\r\n', start)) {
+      start += 2
+      continue
+    }
+    if (value.startsWith('\n', start)) {
+      start += 1
+      continue
+    }
+    break
+  }
+
+  while (end > start) {
+    if (value.endsWith('\r\n', end)) {
+      end -= 2
+      continue
+    }
+    if (value.endsWith('\n', end)) {
+      end -= 1
+      continue
+    }
+    break
+  }
+
+  return value.slice(start, end)
+}
+
 const splitClosedFrontmatter = (raw: string): { yamlText: string; body: string } | null => {
   if (!raw.startsWith('---')) {
     return null
@@ -33,7 +64,7 @@ const splitClosedFrontmatter = (raw: string): { yamlText: string; body: string }
 
   return {
     yamlText: afterOpen.slice(0, closeMatch.index).trim(),
-    body: afterOpen.slice(closeMatch.index + closeMatch[0].length).trim(),
+    body: trimSurroundingNewlines(afterOpen.slice(closeMatch.index + closeMatch[0].length)),
   }
 }
 

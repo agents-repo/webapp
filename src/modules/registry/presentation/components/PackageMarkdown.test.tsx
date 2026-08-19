@@ -162,6 +162,7 @@ describe('PackageMarkdown', () => {
 
     render(<PackageMarkdown markdown={markdown} />)
 
+    expect(screen.getByRole('columnheader', { name: 'Value' })).toBeInTheDocument()
     expect(screen.getAllByRole('cell', { name: 'chat' })).toHaveLength(2)
   })
 
