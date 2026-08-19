@@ -27,7 +27,7 @@ export const wcagCriterionSummaries: readonly WcagCriterionSummary[] = [
     principle: 'Operable',
     supportLevel: 'Partially supports',
     notes:
-      'Keyboard access, visible focus styles, route announcements, and reduced-motion preferences are supported. Mobile search is not duplicated in the sticky header below the large breakpoint.',
+      'Keyboard access, visible focus styles, route announcements, and reduced-motion preferences are supported. Mobile search is not duplicated in the sticky header below the large breakpoint. Packages listing filters use labeled checkboxes and a mobile Offcanvas with a focus trap.',
   },
   {
     principle: 'Understandable',

@@ -55,12 +55,18 @@ export function CatalogLoadingSpinner(): ReactNode {
   )
 }
 
-export function EmptyCatalogState({ hasCatalog }: { readonly hasCatalog: boolean }): ReactNode {
+export function EmptyCatalogState({
+  hasCatalog,
+  emptyMatchMessage = 'No packages match your current search.',
+}: {
+  readonly hasCatalog: boolean
+  readonly emptyMatchMessage?: string
+}): ReactNode {
   return (
     <Card className="mt-4 border-secondary-subtle">
       <Card.Body className="text-center py-4">
         <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" aria-hidden="true" />
-        {hasCatalog ? 'No packages match your current search.' : 'No catalog data available.'}
+        {hasCatalog ? emptyMatchMessage : 'No catalog data available.'}
       </Card.Body>
     </Card>
   )
@@ -70,15 +76,20 @@ export function PackageCatalogGrid(options: {
   readonly packages: readonly RegistryPackage[]
   readonly registryBaseUrl: string
   readonly onFilterByOwner: (owner: string) => void
+  readonly onToggleFacet?: (facet: 'category' | 'tag', value: string) => void
+  readonly isFacetSelected?: (facet: 'category' | 'tag', value: string) => boolean
+  readonly xl?: number
 }): ReactNode {
   return (
-    <Row xs={1} md={2} xl={3} className="g-3">
+    <Row xs={1} md={2} xl={options.xl ?? 3} className="g-3">
       {options.packages.map((pkg) => (
         <PackageCard
           key={toPackageSlug(pkg.namespace, pkg.package)}
           pkg={pkg}
           registryBaseUrl={options.registryBaseUrl}
           onFilterByOwner={options.onFilterByOwner}
+          onToggleFacet={options.onToggleFacet}
+          isFacetSelected={options.isFacetSelected}
         />
       ))}
     </Row>

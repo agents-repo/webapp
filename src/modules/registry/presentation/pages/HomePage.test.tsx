@@ -43,6 +43,8 @@ describe('HomePage catalog loading', () => {
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Toggle category filter/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Hide filters|Show filters|Filters/ })).not.toBeInTheDocument()
   })
 
   it('keeps package cards visible during a settings reload', async () => {

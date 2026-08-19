@@ -58,6 +58,14 @@ describe('PackageDetailPage', () => {
 
     expect(screen.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /View sample-agent on GitHub/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Packages in category agent' })).toHaveAttribute(
+      'href',
+      '/packages/?category=agent',
+    )
+    expect(screen.getByRole('link', { name: 'Packages tagged sample' })).toHaveAttribute(
+      'href',
+      '/packages/?tag=sample',
+    )
     expect(await screen.findByText('A sample README.')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: /A sample agent/ }))

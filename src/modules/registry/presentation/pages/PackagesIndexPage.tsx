@@ -13,7 +13,7 @@ function PackagesIndexPage({ setHeaderSearchSlot }: PackagesIndexPageProps) {
     <PackageCatalogIndexLayout
       setHeaderSearchSlot={setHeaderSearchSlot}
       title="All packages"
-      lead="A crawlable index of every published package in the registry. Search works the same as Home."
+      lead="A crawlable index of every published package in the registry. Search by name, owner, description, tag, or category, and narrow results with filters."
       resultsHeading={(trimmedQuery) =>
         trimmedQuery ? `Search results for "${trimmedQuery}"` : 'Published packages'
       }

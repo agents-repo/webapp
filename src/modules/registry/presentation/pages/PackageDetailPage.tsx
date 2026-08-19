@@ -13,6 +13,7 @@ import {
   getPackagesIndexPath,
   isPackagePathSegment,
 } from '../../application/packageSiteRoutes'
+import { getPackageCatalogFacetQueryPath } from '../../application/packageCatalogFilters'
 import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import type { PackageDetailDocument } from '../../domain/packageDetail'
@@ -62,7 +63,11 @@ function PackageDetailHeader(options: {
         <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>{catalogPackage.owner}</NavLink>
       </p>
       <p className="mb-3">{catalogPackage.description}</p>
-      <PackageMetaBadges pkg={catalogPackage} className="flex-wrap mb-3" />
+      <PackageMetaBadges
+        pkg={catalogPackage}
+        className="flex-wrap mb-3"
+        getFacetHref={(facet, value) => publicSitePath(getPackageCatalogFacetQueryPath(facet, value))}
+      />
       <div className="d-flex gap-2 flex-wrap">
         {cliPackageRef ? (
           <PackageCliInstallAction

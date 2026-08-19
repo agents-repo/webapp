@@ -47,6 +47,10 @@ Every routed page should:
 - Associate every input with a visible or visually hidden `Form.Label`
 - Prefer one `<form>` per modal or page section so Enter submits predictably
 - Surface validation errors with `isInvalid` and `Form.Control.Feedback`
+- Packages listing filters use labeled checkboxes with unique `id`s for the
+  desktop sidebar (`sidebar-`) and mobile Offcanvas (`offcanvas-`) copies.
+  Offcanvas provides a focus trap while it is open. Result counts stay on
+  `#catalog-results-summary` with `aria-live="polite"`.
 
 ### Dynamic content
 

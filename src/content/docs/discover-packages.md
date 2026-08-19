@@ -8,8 +8,11 @@ section: Catalog
 ## On the website
 
 1. Open [Home](/) and search or scroll the catalog.
-2. Open a package card (**View** or the title) to read the in-app package page. That page loads `detail.json` for the latest snapshot, including README when `readmeMarkdown` is present.
-3. Copy a CLI install command from the card, use **Use in chat** when it is available, or note the package id (`namespace/package-id`). **View on GitHub** on the package page is for source inspection.
+2. Open [Packages](/packages) to search and filter by category, tags, install
+   targets, status, cost band, or Use in chat. Filters apply to the website
+   catalog only; they are not CLI search flags.
+3. Open a package card (**View** or the title) to read the in-app package page. That page loads `detail.json` for the latest snapshot, including README when `readmeMarkdown` is present.
+4. Copy a CLI install command from the card, use **Use in chat** when it is available, or note the package id (`namespace/package-id`). **View on GitHub** on the package page is for source inspection.
 
 See [Using the catalog](/docs/using-the-catalog) for UI details.
 

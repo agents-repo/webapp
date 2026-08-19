@@ -134,6 +134,17 @@ describe('getCatalogResultsSummary', () => {
       }),
     ).toBe('No catalog data available')
   })
+
+  it('uses listingCount when provided without changing the default total', () => {
+    expect(
+      getCatalogResultsSummary({
+        catalog: sampleRegistryCatalog,
+        filteredCount: 1,
+        isLoading: false,
+        listingCount: 3,
+      }),
+    ).toBe('Showing 1 of 3 packages')
+  })
 })
 
 describe('getPackageDownloadTargets', () => {

@@ -17,9 +17,17 @@ export interface PackageCardProps {
   readonly pkg: RegistryPackage
   readonly registryBaseUrl: string
   readonly onFilterByOwner: (owner: string) => void
+  readonly onToggleFacet?: (facet: 'category' | 'tag', value: string) => void
+  readonly isFacetSelected?: (facet: 'category' | 'tag', value: string) => boolean
 }
 
-export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCardProps) {
+export function PackageCard({
+  pkg,
+  registryBaseUrl,
+  onFilterByOwner,
+  onToggleFacet,
+  isFacetSelected,
+}: PackageCardProps) {
   const packageSlug = toPackageSlug(pkg.namespace, pkg.package)
   const downloadTargets = getPackageDownloadTargets(pkg, registryBaseUrl)
   const detailPath = getPackageDetailPath(pkg.namespace, pkg.package)
@@ -81,7 +89,7 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
           <Card.Text as="p" className="small text-body-secondary mb-0 package-description">
             {pkg.description}
           </Card.Text>
-          <PackageMetaBadges pkg={pkg} />
+          <PackageMetaBadges pkg={pkg} onToggleFacet={onToggleFacet} isFacetSelected={isFacetSelected} />
         </Card.Body>
 
         <Card.Footer className="d-flex justify-content-center gap-2 flex-wrap flex-md-nowrap">

@@ -32,7 +32,7 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       ],
       listItems: [
         'Dados de analytics (somente se você aceitar cookies de analytics) por meio do Google Tag Manager e tags relacionadas do Google Analytics.',
-        'Preferências locais do navegador, como tema e substituições opcionais da fonte do registry que você configurar.',
+        'Preferências locais do navegador, como tema, estado recolhido da barra de filtros do catálogo e substituições opcionais da fonte do registry que você configurar.',
         'JSON do catálogo do registry, JSON de detalhe de pacote, listas de tags e JSON/markdown de instruções de chat armazenados em IndexedDB para reutilizar payloads recentemente baixados. Esse cache não é usado para analytics e não exige consentimento extra.',
         'Sua escolha de consentimento de analytics armazenada localmente para lembrarmos sua preferência.',
         'Informações técnicas processadas por serviços de terceiros que linkamos (por exemplo GitHub ou hosts do registry) quando você opta por visitá-los.',
@@ -43,7 +43,7 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       title: 'Como usamos os dados',
       listItems: [
         'Operar o site, incluindo navegação no catálogo, busca, downloads e instalação PWA opcional.',
-        'Lembrar seu tema e configurações do registry.',
+        'Lembrar seu tema, a barra de filtros do catálogo e configurações do registry.',
         'Reutilizar JSON e markdown do registry recentemente obtidos do IndexedDB enquanto você navega.',
         'Medir o uso agregado do site quando você aceita cookies de analytics.',
         'Responder a solicitações de contato e privacidade que você nos enviar.',
@@ -66,6 +66,13 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
         {
           name: 'theme',
           purpose: 'Armazena sua preferência de tema claro, escuro ou automático.',
+          storage: 'localStorage',
+          duration: 'Até você limpar os dados do site.',
+          consentRequired: 'Não (preferência).',
+        },
+        {
+          name: 'catalog.filters.sidebarCollapsed',
+          purpose: 'Armazena se a barra de filtros da listagem de pacotes está recolhida em telas grandes.',
           storage: 'localStorage',
           duration: 'Até você limpar os dados do site.',
           consentRequired: 'Não (preferência).',

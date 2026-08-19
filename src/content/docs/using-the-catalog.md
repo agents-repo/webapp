@@ -12,7 +12,20 @@ package page. **View on GitHub** is on that page. On narrow screens those labels
 
 ## Search and filters
 
-Use the header search on large screens to filter packages by name or description. Review status badges and target compatibility before installing.
+[Home](/) search is in-memory and matches package name, owner, description, and
+tags. The crawlable [Packages](/packages) index uses the same search fields plus
+category, and adds store-style filters for category, tags, install targets,
+status, cost band, and Use in chat. Selected search and filters are stored in
+the page URL so you can reload or share the view. [Home](/) does not apply those
+filter query parameters.
+
+On [Packages](/packages) and namespace listings, popular category and tag chips
+sit above the cards. The full checkbox groups are in a collapsible sidebar on
+large screens (Hide filters / Show filters) and in a Filters panel on smaller
+screens. Yanked packages stay hidden on those listings.
+
+Use the header search on large screens to filter packages by name or
+description. Review status badges and target compatibility before installing.
 
 ## Download and CLI actions
 
@@ -46,7 +59,7 @@ For reproducible projects, prefer pinning the CLI in `devDependencies` and using
 
 ## Website settings
 
-Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog. It does not delete ZIP downloads or change analytics/theme preferences.
+Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog. It does not delete ZIP downloads or change analytics, theme, or catalog filter sidebar preferences.
 
 ## Install the site (PWA)
 
