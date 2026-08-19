@@ -163,8 +163,11 @@ hard-coded locale strings.
 
 - File suffix: `.a11y.test.tsx`
 - Use `axe()` from `vitest-axe` on the rendered container.
-- Some tests disable `color-contrast` because jsdom does not evaluate contrast;
-  real contrast is checked via `npm run a11y:ci`. See [accessibility.md](accessibility.md).
+- Some tests disable `color-contrast` because jsdom does not evaluate contrast.
+  Token-level dark-mode contrast for links, outline buttons, and the always-dark
+  header current page is asserted in `test/dark-mode-contrast.test.mjs` (included
+  in `npm run test:sync`). Rendered contrast is checked via `npm run a11y:ci`.
+  See [accessibility.md](accessibility.md).
 
 ## Coverage map
 
@@ -190,6 +193,7 @@ hard-coded locale strings.
 | PWA install helpers | `pwaInstall.test.ts` |
 | External link accessible names | `externalLink.test.ts` |
 | Site UI a11y smoke | `Header`, `Footer`, `WebsiteSettingsControl`, `AccessibilityPage` |
+| Dark-mode contrast tokens | `test/dark-mode-contrast.test.mjs` |
 | HomePage a11y smoke | `HomePage` |
 | Package pages | `PackagesIndexPage`, `NamespacePackagesPage`, `PackageDetailPage` |
 

@@ -1,8 +1,8 @@
-export const accessibilityStatementReportDate = '2026-06-29'
+export const accessibilityStatementReportDate = '2026-08-19'
 
 export const accessibilityConformanceSummary = {
   productName: 'Agents Repo web application',
-  reportVersion: '1.0',
+  reportVersion: '1.1',
   wcagVersion: 'WCAG 2.2',
   conformanceTarget: 'Level AA',
   conformanceStatus: 'Partially conformant',
@@ -21,7 +21,7 @@ export const wcagCriterionSummaries: readonly WcagCriterionSummary[] = [
     principle: 'Perceivable',
     supportLevel: 'Partially supports',
     notes:
-      'Semantic structure, text alternatives for decorative icons, light and dark themes, and skip navigation are provided. Color contrast is validated in CI but may vary with user theme and Bootstrap tokens.',
+      'Semantic structure, text alternatives for decorative icons, light and dark themes, and skip navigation are provided. Dark-mode links, outline buttons, and the always-dark header current-page item use a 70% tint of the brand purple so purple-on-dark text meets WCAG 2.2 AA. Color contrast is also checked with token-level tests and local npm run a11y:ci scans.',
   },
   {
     principle: 'Operable',

@@ -1,3 +1,5 @@
+@import 'bootstrap/scss/functions';
+
 $primary: #8a2ad8;
 $secondary: #6e5a89;
 $success: #19865f;
@@ -41,9 +43,16 @@ $border-color-dark: #3b2f52;
 $input-placeholder-color-dark: #bcc3ce;
 $input-focus-bg-dark: #212529;
 $input-focus-color-dark: #f8f9fa;
+// Dark-mode purple-on-dark text. Bootstrap's default 40% tint fails WCAG 2.2 AA
+// on outline buttons and the always-dark header current page, and is barely AA
+// on the footer. 70% tint keeps the purple family while matching or beating
+// inactive header-link contrast. Do not change $primary (filled buttons).
+$primary-text-emphasis-dark: tint-color($primary, 70%);
+$secondary-text-emphasis-dark: tint-color($secondary, 70%);
+$link-color-dark: $primary-text-emphasis-dark;
 $navbar-dark-color: rgba($body-color-dark, 0.88);
 $navbar-dark-hover-color: $body-color-dark;
-$navbar-dark-active-color: $primary;
+$navbar-dark-active-color: $link-color-dark;
 $navbar-dark-brand-color: $body-color-dark;
 $navbar-dark-brand-hover-color: $body-color-dark;
 $dropdown-dark-bg: $card-bg-dark;
@@ -66,5 +75,22 @@ $dropdown-dark-link-active-bg: rgba($primary, 0.28);
     --bs-card-color: #{$card-color-dark};
     --bs-card-border-color: #{$border-color-dark};
     --bs-card-cap-bg: rgba(255, 255, 255, 0.04);
+  }
+
+  // Outline variants compile from $theme-colors once; they do not follow dark
+  // emphasis tokens. Resting color/border use the 70% tint; hover/active keep
+  // the filled $primary / $secondary treatment (white on $primary already passes).
+  .btn-outline-primary {
+    --bs-btn-color: #{$primary-text-emphasis-dark};
+    --bs-btn-border-color: #{$primary-text-emphasis-dark};
+    --bs-btn-disabled-color: #{$primary-text-emphasis-dark};
+    --bs-btn-disabled-border-color: #{$primary-text-emphasis-dark};
+  }
+
+  .btn-outline-secondary {
+    --bs-btn-color: #{$secondary-text-emphasis-dark};
+    --bs-btn-border-color: #{$secondary-text-emphasis-dark};
+    --bs-btn-disabled-color: #{$secondary-text-emphasis-dark};
+    --bs-btn-disabled-border-color: #{$secondary-text-emphasis-dark};
   }
 }

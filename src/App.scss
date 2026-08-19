@@ -50,7 +50,7 @@
 .app-nav-link.active {
   opacity: 1;
   font-weight: 600;
-  color: var(--bs-primary) !important;
+  color: var(--bs-navbar-active-color) !important;
 }
 
 .app-navbar-search {
@@ -478,7 +478,7 @@
 .docs-sidebar-link.active,
 .docs-sidebar-link[aria-current='page'] {
   background-color: var(--bs-primary-bg-subtle);
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
   font-weight: 600;
 }
 
