@@ -1,4 +1,4 @@
-import { cleanup, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { useLocation } from 'react-router-dom'
@@ -118,6 +118,20 @@ describe('PackagesIndexPage', () => {
       expect(screen.getByTestId('location-search')).toHaveTextContent('category=automation')
     })
     expect(screen.queryByRole('heading', { name: 'plan-flow' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Clear all' }))
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).toHaveTextContent('')
+    })
+
+    const categoryCheckbox = screen.getAllByRole('checkbox', { name: 'automation (2)' })[0]
+    const tagCheckbox = screen.getAllByRole('checkbox', { name: '#shared (2)' })[0]
+    fireEvent.click(categoryCheckbox)
+    fireEvent.click(tagCheckbox)
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).toHaveTextContent('category=automation')
+      expect(screen.getByTestId('location-search')).toHaveTextContent('tag=shared')
+    })
 
     await user.click(screen.getByRole('button', { name: 'Clear all' }))
     await waitFor(() => {

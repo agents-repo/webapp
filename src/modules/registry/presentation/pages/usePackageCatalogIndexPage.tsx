@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
@@ -81,25 +81,34 @@ export function usePackageCatalogIndexPage(options: {
     errorMessage: catalogErrorMessage,
   })
   const canShowCatalogSourceLink = isSafeExternalHttpUrl(catalogSourceUrl)
-  const searchParamsKey = searchParams.toString()
 
   const filters = useMemo(
     () => ({ ...urlFilters, query: draftQuery }),
     [draftQuery, urlFilters],
   )
+  const filtersRef = useRef(filters)
+  useEffect(() => {
+    filtersRef.current = filters
+  }, [filters])
 
   useEffect(() => {
-    const currentFilters = parsePackageCatalogFilters(new URLSearchParams(searchParamsKey))
-    if (draftQuery.trim() === currentFilters.query.trim()) {
+    if (draftQuery.trim() === urlFilters.query.trim()) {
       return
     }
 
     const timeoutId = window.setTimeout(() => {
       setSearchParams(
-        applyPackageCatalogFiltersToSearchParams(new URLSearchParams(searchParamsKey), {
-          ...currentFilters,
-          query: draftQuery,
-        }),
+        (previousParams) => {
+          const currentFilters = parsePackageCatalogFilters(previousParams)
+          if (draftQuery.trim() === currentFilters.query.trim()) {
+            return previousParams
+          }
+
+          return applyPackageCatalogFiltersToSearchParams(previousParams, {
+            ...currentFilters,
+            query: draftQuery,
+          })
+        },
         { replace: true },
       )
     }, QUERY_DEBOUNCE_MS)
@@ -107,16 +116,18 @@ export function usePackageCatalogIndexPage(options: {
     return () => {
       window.clearTimeout(timeoutId)
     }
-  }, [draftQuery, searchParamsKey, setSearchParams])
+  }, [draftQuery, setSearchParams, urlFilters.query])
 
   const commitFilters = useCallback(
     (nextFilters: PackageCatalogFilters, replace = false) => {
+      filtersRef.current = nextFilters
       setDraftQuery(nextFilters.query)
-      setSearchParams(applyPackageCatalogFiltersToSearchParams(new URLSearchParams(searchParamsKey), nextFilters), {
-        replace,
-      })
+      setSearchParams(
+        (previousParams) => applyPackageCatalogFiltersToSearchParams(previousParams, nextFilters),
+        { replace },
+      )
     },
-    [searchParamsKey, setSearchParams],
+    [setSearchParams],
   )
 
   const listingPackages = useMemo(() => excludeYankedPackages(packages), [packages])
@@ -173,9 +184,9 @@ export function usePackageCatalogIndexPage(options: {
 
   const toggleFilter = useCallback(
     (facet: PackageCatalogFilterFacet, value = '') => {
-      commitFilters(toggleFilterValue(filters, facet, value))
+      commitFilters(toggleFilterValue(filtersRef.current, facet, value))
     },
-    [commitFilters, filters],
+    [commitFilters],
   )
 
   const clearFilters = useCallback(() => {
@@ -184,9 +195,9 @@ export function usePackageCatalogIndexPage(options: {
 
   const filterByOwner = useCallback(
     (owner: string) => {
-      commitFilters({ ...filters, query: `@${owner}` })
+      commitFilters({ ...filtersRef.current, query: `@${owner}` })
     },
-    [commitFilters, filters],
+    [commitFilters],
   )
 
   const toggleSidebarCollapsed = useCallback(() => {

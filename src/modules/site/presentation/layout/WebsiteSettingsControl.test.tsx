@@ -2,6 +2,7 @@ import { cleanup, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
+import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../../registry/application/catalogFilterPreferences'
 import WebsiteSettingsControl from './WebsiteSettingsControl'
 
 class MemoryStorage implements Storage {
@@ -160,6 +161,7 @@ describe('WebsiteSettingsControl save flow', () => {
   it('clears registry caches and notifies parent when clear cache is clicked', async () => {
     const user = userEvent.setup()
     const onSaved = vi.fn()
+    localStorage.setItem(CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY, 'true')
 
     renderWithProviders(<WebsiteSettingsControl onSaved={onSaved} />)
 
@@ -171,5 +173,6 @@ describe('WebsiteSettingsControl save flow', () => {
     expect(mockClearRegistryTagListCache).toHaveBeenCalled()
     expect(mockClearRegistryChatInstructionsCache).toHaveBeenCalled()
     expect(onSaved).toHaveBeenCalled()
+    expect(localStorage.getItem(CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY)).toBe('true')
   })
 })

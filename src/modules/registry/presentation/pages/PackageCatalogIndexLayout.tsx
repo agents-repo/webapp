@@ -27,6 +27,7 @@ export interface PackageCatalogIndexLayoutProps {
 function FilterToggleButtons(options: {
   readonly sidebarVisible: boolean
   readonly selectedFacetCount: number
+  readonly filtersOffcanvasOpen: boolean
   readonly onToggleSidebar: () => void
   readonly onOpenOffcanvas: () => void
 }): ReactNode {
@@ -40,6 +41,7 @@ function FilterToggleButtons(options: {
         variant="outline-secondary"
         size="sm"
         className="d-none d-lg-inline-flex"
+        aria-expanded={options.sidebarVisible}
         onClick={options.onToggleSidebar}
       >
         {options.sidebarVisible ? 'Hide filters' : 'Show filters'}
@@ -51,6 +53,7 @@ function FilterToggleButtons(options: {
         className="d-lg-none"
         onClick={options.onOpenOffcanvas}
         aria-label={filtersLabel}
+        aria-expanded={options.filtersOffcanvasOpen}
       >
         Filters
         {options.selectedFacetCount > 0 ? (
@@ -125,6 +128,7 @@ export function PackageCatalogIndexLayout({
               <FilterToggleButtons
                 sidebarVisible={sidebarVisible}
                 selectedFacetCount={page.selectedFacetCount}
+                filtersOffcanvasOpen={page.filtersOffcanvasOpen}
                 onToggleSidebar={page.toggleSidebarCollapsed}
                 onOpenOffcanvas={() => page.setFiltersOffcanvasOpen(true)}
               />

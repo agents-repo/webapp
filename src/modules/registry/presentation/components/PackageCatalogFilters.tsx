@@ -12,7 +12,11 @@ import {
   type PackageCatalogPopularChip,
   type PackageCatalogSelectedChip,
 } from '../../application/packageCatalogFilters'
-import { getPackageCatalogFacetValueLabel, toPackageCatalogFilterControlId } from './packageCatalogFilterUi'
+import {
+  getPackageCatalogFacetGroupLabel,
+  getPackageCatalogFacetValueLabel,
+  toPackageCatalogFilterControlId,
+} from './packageCatalogFilterUi'
 
 function FacetOptions(options: {
   readonly idPrefix: string
@@ -23,7 +27,7 @@ function FacetOptions(options: {
 }): ReactNode {
   return (
     <fieldset className="border-0 p-0 m-0">
-      <legend className="visually-hidden">{options.facet}</legend>
+      <legend className="visually-hidden">{getPackageCatalogFacetGroupLabel(options.facet)}</legend>
       <Stack gap={2}>
         {options.facetOptions.map((option) => {
           const controlId = toPackageCatalogFilterControlId(options.idPrefix, options.facet, option.value)
@@ -54,9 +58,9 @@ export function PackageCatalogFilterBody(options: {
   const chatWebId = toPackageCatalogFilterControlId(idPrefix, 'chatWeb', '1')
 
   return (
-    <Accordion defaultActiveKey={['category']} alwaysOpen flush>
+    <Accordion id={`${idPrefix}-package-catalog-filters`} defaultActiveKey={['category']} alwaysOpen flush>
       <Accordion.Item eventKey="category">
-        <Accordion.Header>Category</Accordion.Header>
+        <Accordion.Header>{getPackageCatalogFacetGroupLabel('category')}</Accordion.Header>
         <Accordion.Body>
           <FacetOptions
             idPrefix={idPrefix}
@@ -68,7 +72,7 @@ export function PackageCatalogFilterBody(options: {
         </Accordion.Body>
       </Accordion.Item>
       <Accordion.Item eventKey="tag">
-        <Accordion.Header>Tags</Accordion.Header>
+        <Accordion.Header>{getPackageCatalogFacetGroupLabel('tag')}</Accordion.Header>
         <Accordion.Body>
           <FacetOptions
             idPrefix={idPrefix}
@@ -80,7 +84,7 @@ export function PackageCatalogFilterBody(options: {
         </Accordion.Body>
       </Accordion.Item>
       <Accordion.Item eventKey="target">
-        <Accordion.Header>Install targets</Accordion.Header>
+        <Accordion.Header>{getPackageCatalogFacetGroupLabel('target')}</Accordion.Header>
         <Accordion.Body>
           <FacetOptions
             idPrefix={idPrefix}
@@ -92,7 +96,7 @@ export function PackageCatalogFilterBody(options: {
         </Accordion.Body>
       </Accordion.Item>
       <Accordion.Item eventKey="status">
-        <Accordion.Header>Status</Accordion.Header>
+        <Accordion.Header>{getPackageCatalogFacetGroupLabel('status')}</Accordion.Header>
         <Accordion.Body>
           <FacetOptions
             idPrefix={idPrefix}
@@ -104,7 +108,7 @@ export function PackageCatalogFilterBody(options: {
         </Accordion.Body>
       </Accordion.Item>
       <Accordion.Item eventKey="cost">
-        <Accordion.Header>Cost band</Accordion.Header>
+        <Accordion.Header>{getPackageCatalogFacetGroupLabel('cost')}</Accordion.Header>
         <Accordion.Body>
           <FacetOptions
             idPrefix={idPrefix}
@@ -116,7 +120,7 @@ export function PackageCatalogFilterBody(options: {
         </Accordion.Body>
       </Accordion.Item>
       <Accordion.Item eventKey="chatWeb">
-        <Accordion.Header>Use in chat</Accordion.Header>
+        <Accordion.Header>{getPackageCatalogFacetGroupLabel('chatWeb')}</Accordion.Header>
         <Accordion.Body>
           <fieldset className="border-0 p-0 m-0">
             <legend className="visually-hidden">Use in chat</legend>

@@ -35,6 +35,23 @@ function getInstallTargetFacetLabel(value: string): string {
   return value
 }
 
+export function getPackageCatalogFacetGroupLabel(facet: PackageCatalogFilterFacet): string {
+  switch (facet) {
+    case 'category':
+      return 'Category'
+    case 'tag':
+      return 'Tags'
+    case 'target':
+      return 'Install targets'
+    case 'status':
+      return 'Status'
+    case 'cost':
+      return 'Cost band'
+    case 'chatWeb':
+      return 'Use in chat'
+  }
+}
+
 export function getPackageCatalogFacetValueLabel(
   facet: PackageCatalogFilterFacet,
   value: string,
