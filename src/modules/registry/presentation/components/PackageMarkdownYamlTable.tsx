@@ -50,6 +50,31 @@ const scalarText = (value: unknown): string => {
   return ''
 }
 
+const serializeYamlTableRow = (value: unknown): string => {
+  if (value === undefined) {
+    return 'undefined'
+  }
+
+  try {
+    return JSON.stringify(value)
+  } catch {
+    return scalarText(value) || Object.prototype.toString.call(value)
+  }
+}
+
+const keyedYamlTableRows = <T,>(
+  items: readonly T[],
+): readonly { readonly item: T; readonly key: string }[] => {
+  const seen = new Map<string, number>()
+
+  return items.map((item) => {
+    const serialized = serializeYamlTableRow(item)
+    const occurrence = seen.get(serialized) ?? 0
+    seen.set(serialized, occurrence + 1)
+    return { item, key: `${serialized}:${occurrence}` }
+  })
+}
+
 function PackageYamlValue({ value }: { readonly value: unknown }): ReactNode {
   if (value === null || value === undefined) {
     return null
@@ -119,11 +144,11 @@ function PackageYamlMappingArrayTable({ items }: { readonly items: readonly Reco
         </tr>
       </thead>
       <tbody>
-        {items.map((item, rowIndex) => (
-          <tr key={rowIndex}>
-            {keys.map((key) => (
-              <td key={key}>
-                <PackageYamlValue value={item[key]} />
+        {keyedYamlTableRows(items).map(({ item, key }) => (
+          <tr key={key}>
+            {keys.map((columnKey) => (
+              <td key={columnKey}>
+                <PackageYamlValue value={item[columnKey]} />
               </td>
             ))}
           </tr>
@@ -137,8 +162,8 @@ function PackageYamlPrimitiveArrayTable({ items }: { readonly items: readonly un
   return (
     <table>
       <tbody>
-        {items.map((item, rowIndex) => (
-          <tr key={rowIndex}>
+        {keyedYamlTableRows(items).map(({ item, key }) => (
+          <tr key={key}>
             <td>
               <PackageYamlValue value={item} />
             </td>

@@ -122,6 +122,14 @@ describe('PackageMarkdown', () => {
     expect(screen.queryByRole('separator')).not.toBeInTheDocument()
   })
 
+  it('renders duplicate YAML list values as separate table rows', () => {
+    const markdown = ['---', 'tags:', '  - chat', '  - chat', '---', '', '# Overview'].join('\n')
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(screen.getAllByRole('cell', { name: 'chat' })).toHaveLength(2)
+  })
+
   it('renders GFM pipe tables in the markdown body', () => {
     const markdown = ['| Col |', '| --- |', '| cell |'].join('\n')
 
