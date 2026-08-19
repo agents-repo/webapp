@@ -206,7 +206,9 @@ const migrateLocalStorageCaches = async (db: IDBPDatabase<RegistryCacheDbSchema>
 }
 
 const openRegistryCacheDb = async (): Promise<IDBPDatabase<RegistryCacheDbSchema> | null> => {
-  if (typeof globalThis.indexedDB === 'undefined') {
+  const indexedDb = (globalThis as { indexedDB?: IDBFactory }).indexedDB
+
+  if (indexedDb === undefined) {
     return null
   }
 

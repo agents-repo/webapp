@@ -104,8 +104,11 @@ test paths overlap”.
 `sonar.exclusions` also covers SVG and source-map assets (`**/*.svg`,
 `**/*.map`), including `public/favicon.svg`, `public/icons.svg`, and
 `src/assets/logo/agents-repo-logo.svg`. `sonar.cpd.exclusions` covers
-`src/test/` helpers and `src/test/fixtures/` catalog mocks so duplicated
-production-shaped fixture data does not inflate copy-paste findings.
+`src/test/` helpers, `src/test/fixtures/` catalog mocks, co-located
+`*.test.ts` / `*.test.tsx` files, and the bilingual privacy policy content
+files so duplicated production-shaped fixture data, repeated test setup, and
+intentional parallel translations do not inflate copy-paste findings.
+Co-located tests remain in `sonar.sources` for issue detection.
 
 Coverage report paths (`sonar.javascript.lcov.reportPaths`) and other external
 analyzer reports are unsupported under Automatic Analysis. Do not add them
