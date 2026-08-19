@@ -26,7 +26,7 @@ describe('PackagesIndexPage', () => {
     expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View sample-agent' })).toHaveAttribute(
       'href',
-      '/packages/agents-repo/sample-agent',
+      '/packages/agents-repo/sample-agent/',
     )
   })
 })

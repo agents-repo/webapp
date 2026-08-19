@@ -1,6 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { getDocBySlug, getDocDetailPath } from '../../../application/docs/docsManifest.ts'
-import { siteRoutes } from '../../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../../routes/siteRoutes.ts'
 import DocLayout from './DocLayout.tsx'
 import DocMarkdown from './DocMarkdown.tsx'
 
@@ -9,7 +9,7 @@ function DocArticlePage() {
   const entry = slug ? getDocBySlug(slug) : undefined
 
   if (!entry) {
-    return <Navigate to={siteRoutes.docs} replace />
+    return <Navigate to={publicSitePath(siteRoutes.docs)} replace />
   }
 
   const markdownDownloadHref = `${getDocDetailPath(entry.slug)}.md`

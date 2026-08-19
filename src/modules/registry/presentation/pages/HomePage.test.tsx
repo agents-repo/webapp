@@ -134,11 +134,11 @@ describe('HomePage package card owner', () => {
     expect(footer).toHaveTextContent('View')
     expect(screen.getByRole('link', { name: 'View sample-agent' })).toHaveAttribute(
       'href',
-      '/packages/agents-repo/sample-agent',
+      '/packages/agents-repo/sample-agent/',
     )
     expect(screen.getByRole('heading', { name: 'sample-agent' }).querySelector('a')).toHaveAttribute(
       'href',
-      '/packages/agents-repo/sample-agent',
+      '/packages/agents-repo/sample-agent/',
     )
   })
 

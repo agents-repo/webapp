@@ -44,7 +44,7 @@ test.describe('Package pages', () => {
     await waitForCatalogSettled(page)
 
     await page.getByRole('link', { name: 'View sample-agent' }).click()
-    await expect(page).toHaveURL('/packages/agents-repo/sample-agent')
+    await expect(page).toHaveURL('/packages/agents-repo/sample-agent/')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
     await expect(page.getByRole('search')).toHaveCount(0)
     await expect(page.getByRole('link', { name: /View sample-agent on GitHub/ })).toBeVisible()
@@ -52,12 +52,12 @@ test.describe('Package pages', () => {
     await page.goto('/')
     await waitForCatalogSettled(page)
     await page.getByRole('heading', { name: 'sample-agent' }).getByRole('link').click()
-    await expect(page).toHaveURL('/packages/agents-repo/sample-agent')
+    await expect(page).toHaveURL('/packages/agents-repo/sample-agent/')
   })
 
   test('keeps the CLI install popover inside the viewport on the package page', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 640 })
-    await page.goto('/packages/agents-repo/sample-agent')
+    await page.goto('/packages/agents-repo/sample-agent/')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
 
     await page.getByRole('button', { name: 'CLI install for sample-agent' }).click()
@@ -88,7 +88,7 @@ test.describe('Package pages', () => {
       markdown: '# Sample agent body',
     })
 
-    await page.goto('/packages/agents-repo/sample-agent')
+    await page.goto('/packages/agents-repo/sample-agent/')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'README' })).toBeVisible()
     await expect(page.getByRole('img', { name: 'Mermaid diagram' })).toBeVisible()
@@ -109,7 +109,7 @@ test.describe('Package pages', () => {
       markdown: '# Sample agent body',
     })
 
-    await page.goto('/packages/agents-repo/sample-agent')
+    await page.goto('/packages/agents-repo/sample-agent/')
     await expect(page.getByRole('heading', { name: 'README' })).toBeVisible()
     await expect(page.getByRole('img', { name: 'Mermaid diagram' })).toHaveCount(0)
     await expect(page.locator('code.language-mermaid')).toContainText('not a valid mermaid diagram')
@@ -165,7 +165,7 @@ test.describe('Package pages', () => {
       markdown: yamlAgentMarkdown,
     })
 
-    await page.goto('/packages/agents-repo/sample-agent')
+    await page.goto('/packages/agents-repo/sample-agent/')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'README' })).toBeVisible()
 
@@ -182,7 +182,7 @@ test.describe('Package pages', () => {
     await expect(agentMarkdown.getByRole('cell', { name: 'reply', exact: true })).toBeVisible()
     await expect(agentMarkdown.getByRole('heading', { name: 'Overview' })).toBeVisible()
     await expect(agentMarkdown.getByText('Sample agent body')).toBeVisible()
-    await expect(page).toHaveURL('/packages/agents-repo/sample-agent')
+    await expect(page).toHaveURL('/packages/agents-repo/sample-agent/')
   })
 
   test('shows not-found for unknown package paths without redirecting home', async ({ page }) => {

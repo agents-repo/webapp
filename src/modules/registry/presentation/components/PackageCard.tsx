@@ -5,6 +5,7 @@ import { Card, Col, Dropdown, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getNamespacePackagesPath, getPackageDetailPath } from '../../application/packageSiteRoutes'
+import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
 import { getPackageDownloadTargets } from '../pages/homePageCatalogState'
 import PackageCliInstallAction from './PackageCliInstallAction'
 import { PackageDownloadMenu } from './PackageDownloadMenu'
@@ -34,7 +35,7 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
           <Stack direction="horizontal" className="justify-content-between align-items-start">
             <div className="me-2">
               <Card.Title as="h3" className="h6 fw-semibold mb-0 lh-sm">
-                <Link to={detailPath} className="package-card-title-link stretched-link-none">
+                <Link to={publicSitePath(detailPath)} className="package-card-title-link stretched-link-none">
                   {pkg.name}
                 </Link>
               </Card.Title>
@@ -60,7 +61,7 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
                       <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
                       View GitHub profile
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to={namespacePath}>
+                    <Dropdown.Item as={Link} to={publicSitePath(namespacePath)}>
                       <FontAwesomeIcon icon={faFilter} className="me-2" aria-hidden="true" />
                       View packages in this namespace
                     </Dropdown.Item>
@@ -108,7 +109,7 @@ export function PackageCard({ pkg, registryBaseUrl, onFilterByOwner }: PackageCa
             downloadTargets={downloadTargets}
           />
           <Link
-            to={detailPath}
+            to={publicSitePath(detailPath)}
             className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center package-card-action"
             aria-label={`View ${pkg.name}`}
           >

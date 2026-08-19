@@ -5,6 +5,7 @@ import { Form, InputGroup, ListGroup } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { searchDocPages } from '../../../application/docs/docsSearch.ts'
 import type { DocSearchResult } from '../../../application/docs/docsSearch.ts'
+import { publicSitePath } from '../../routes/siteRoutes.ts'
 
 function DocSearch() {
   const navigate = useNavigate()
@@ -40,7 +41,7 @@ function DocSearch() {
 
   const navigateToResult = useCallback(
     (result: DocSearchResult) => {
-      void navigate(result.href)
+      void navigate(publicSitePath(result.href))
       setQuery('')
       setActiveIndex(-1)
       setListFocused(false)
@@ -192,7 +193,7 @@ function DocSearch() {
                 aria-selected={index === activeIndex}
                 action
                 as={Link}
-                to={result.href}
+                to={publicSitePath(result.href)}
                 className={`docs-search-result${index === activeIndex ? ' docs-search-result-active' : ''}`}
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => {

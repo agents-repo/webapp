@@ -3,7 +3,7 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 
 const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
 const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
@@ -67,7 +67,7 @@ function AboutPage() {
               <h2 className="h4">Creator</h2>
               <p className="text-body-secondary">
                 Agents Repo is created and maintained by Maicon, a senior full stack developer based in
-                Portugal, with support from <NavLink to={siteRoutes.community}>collaborators</NavLink>.
+                Portugal, with support from <NavLink to={publicSitePath(siteRoutes.community)}>collaborators</NavLink>.
               </p>
               <div className="d-flex flex-wrap gap-3">
                 <a
@@ -97,9 +97,9 @@ function AboutPage() {
               <h2 className="h4">Get involved</h2>
               <p className="text-body-secondary">
                 Questions, feedback, and contributions are welcome. Reach out on{' '}
-                <NavLink to={siteRoutes.contact}>Contact</NavLink>, see how to contribute on{' '}
-                <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>, or browse all organization repositories
-                on <NavLink to={siteRoutes.repositories}>Repositories</NavLink>. Source code and registry
+                <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink>, see how to contribute on{' '}
+                <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink>, or browse all organization repositories
+                on <NavLink to={publicSitePath(siteRoutes.repositories)}>Repositories</NavLink>. Source code and registry
                 content also live on GitHub:
               </p>
               <ul className="mb-0">

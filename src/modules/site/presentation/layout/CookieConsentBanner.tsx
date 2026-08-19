@@ -14,7 +14,7 @@ import {
   pushConsentUpdateEvent,
 } from '../../application/analytics/googleConsentMode.ts'
 import { loadGoogleTagManager } from '../../application/analytics/googleTagManager.ts'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 import { useCookieConsent } from '../../application/analytics/cookieConsentContext.ts'
 
 function CookieConsentBanner() {
@@ -103,11 +103,11 @@ function CookieConsentBanner() {
         <p className="small text-body-secondary mb-3 mb-md-2">
           We use optional analytics cookies to understand how the site is used. You can accept or
           reject analytics. See our{' '}
-          <NavLink to={siteRoutes.privacy} className="footer-link">
+          <NavLink to={publicSitePath(siteRoutes.privacy)} className="footer-link">
             Privacy policy
           </NavLink>{' '}
           or{' '}
-          <NavLink to={siteRoutes.privacyPtBr} className="footer-link">
+          <NavLink to={publicSitePath(siteRoutes.privacyPtBr)} className="footer-link">
             Política de privacidade
           </NavLink>{' '}
           for details, including your rights in Europe, the United States, and Brazil.

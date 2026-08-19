@@ -5,6 +5,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink, useParams } from 'react-router-dom'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
+import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import {
   findRegistryPackage,
@@ -58,7 +59,7 @@ function PackageDetailHeader(options: {
       </Stack>
       <p className="text-body-secondary mb-2">
         by{' '}
-        <NavLink to={getNamespacePackagesPath(catalogPackage.namespace)}>{catalogPackage.owner}</NavLink>
+        <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>{catalogPackage.owner}</NavLink>
       </p>
       <p className="mb-3">{catalogPackage.description}</p>
       <PackageMetaBadges pkg={catalogPackage} className="flex-wrap mb-3" />
@@ -258,10 +259,10 @@ function PackageDetailLoaded(options: {
         <nav aria-label="Breadcrumb" className="mb-3 package-detail-breadcrumb">
           <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item">
-              <NavLink to={getPackagesIndexPath()}>Packages</NavLink>
+              <NavLink to={publicSitePath(getPackagesIndexPath())}>Packages</NavLink>
             </li>
             <li className="breadcrumb-item">
-              <NavLink to={getNamespacePackagesPath(catalogPackage.namespace)}>
+              <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>
                 {catalogPackage.namespace}
               </NavLink>
             </li>

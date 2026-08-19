@@ -5,7 +5,7 @@ import {
   getDocDetailPath,
   listDocSectionGroups,
 } from '../../../application/docs/docsManifest.ts'
-import { siteRoutes } from '../../routes/siteRoutes.ts'
+import { normalizeSitePathname, publicSitePath, siteRoutes } from '../../routes/siteRoutes.ts'
 import DocSearch from './DocSearch.tsx'
 
 interface DocLayoutProps {
@@ -27,10 +27,10 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
             <Nav className="flex-column gap-1">
               <Nav.Link
                 as={NavLink}
-                to={siteRoutes.docs}
+                to={publicSitePath(siteRoutes.docs)}
                 end
                 className="docs-sidebar-link"
-                aria-current={location.pathname === siteRoutes.docs ? 'page' : undefined}
+                aria-current={normalizeSitePathname(location.pathname) === siteRoutes.docs ? 'page' : undefined}
               >
                 Docs overview
               </Nav.Link>
@@ -43,7 +43,7 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
                     <Nav.Link
                       key={entry.slug}
                       as={NavLink}
-                      to={getDocDetailPath(entry.slug)}
+                      to={publicSitePath(getDocDetailPath(entry.slug))}
                       className="docs-sidebar-link"
                       aria-current={activeSlug === entry.slug ? 'page' : undefined}
                     >

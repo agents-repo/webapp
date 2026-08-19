@@ -4,6 +4,7 @@ import { Badge, Card } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
 import { getRepositoryDetailPath } from '../../application/nestedSiteRoutes.ts'
+import { publicSitePath } from '../routes/siteRoutes.ts'
 import {
   GITHUB_AVATAR_SIZE_PX,
   githubAvatarUrl,
@@ -53,7 +54,7 @@ function PersonCard({ person }: PersonCardProps) {
               <Badge
                 key={`${project.repositorySlug}-${project.role}`}
                 as={NavLink}
-                to={getRepositoryDetailPath(project.repositorySlug)}
+                to={publicSitePath(getRepositoryDetailPath(project.repositorySlug))}
                 bg="light"
                 text="dark"
                 className="fw-normal text-decoration-none"

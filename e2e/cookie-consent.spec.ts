@@ -12,10 +12,10 @@ test.describe('Cookie consent', () => {
 
     const banner = page.getByRole('region', { name: 'Cookie preferences' })
     await expect(banner).toBeVisible()
-    await expect(banner.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', '/privacy')
+    await expect(banner.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', '/privacy/')
     await expect(banner.getByRole('link', { name: 'Política de privacidade' })).toHaveAttribute(
       'href',
-      '/privacidade',
+      '/privacidade/',
     )
   })
 

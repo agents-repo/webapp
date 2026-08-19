@@ -138,16 +138,21 @@ See [privacy.md](privacy.md) and [seo.md](seo.md) for verification steps.
 ## Smoke checks after deploy
 
 1. Open <https://agents-repo.org/>.
-2. Verify deep links: `/about`, `/contact`, `/help-us`, `/repositories`,
-   `/repositories/registry`, `/privacy`, `/privacidade`.
+2. Verify deep links: `/about/`, `/contact/`, `/help-us/`, `/repositories/`,
+   `/repositories/registry/`, `/privacy/`, `/privacidade/` (GitHub Pages 301s the
+   no-slash form to these 200 URLs).
 3. Confirm the registry catalog loads (default proxy source).
 4. Open <https://agents-repo.github.io/> and confirm the browser redirects to
    `https://agents-repo.org/` with the same path.
 5. View page source on the custom domain and confirm canonical URLs use
-   `https://agents-repo.org` on `/` and at least one deep route (for example
-   `/about`).
+   `https://agents-repo.org/` on `/` and a trailing-slash deep route (for example
+   `https://agents-repo.org/about/`).
 6. Check <https://agents-repo.org/robots.txt> and `sitemap.xml` for
-   `agents-repo.org` URLs only (no test or preview origins). Open `sitemap.xml`
+   `agents-repo.org` URLs only (no test or preview origins). Sitemap `<loc>`
+   values for directory routes must end with `/` (for example
+   `https://agents-repo.org/about/`). Optional:
+   `curl -sI https://agents-repo.org/about` returns 301 to `/about/`; `/about/`
+   returns 200. Open `sitemap.xml`
    in a normal browser tab (with the PWA service worker active) and confirm XML
    is shown, not a redirect to home.
 7. If a fix changed tests or workflows without matching deploy path filters,

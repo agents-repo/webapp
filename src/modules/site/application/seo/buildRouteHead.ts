@@ -1,6 +1,6 @@
 import { formatDocumentTitle } from '../accessibility/documentTitleFormat.ts'
 import { getSitePageMeta } from '../accessibility/sitePageMeta.ts'
-import { siteRoutes } from '../../presentation/routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../../presentation/routes/siteRoutes.ts'
 import {
   getOgImageUrl,
   getSiteOrigin,
@@ -71,11 +71,7 @@ function escapeHtml(value: string): string {
 }
 
 function buildCanonicalUrl(origin: string, canonicalPath: string): string {
-  if (canonicalPath === '/') {
-    return `${origin}/`
-  }
-
-  return `${origin}${canonicalPath}`
+  return `${origin}${publicSitePath(canonicalPath)}`
 }
 
 function buildJsonLd(

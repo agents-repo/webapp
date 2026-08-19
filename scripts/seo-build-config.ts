@@ -1,9 +1,19 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { loadEnv } from 'vite'
-import { getSiteRoutePaths as getStaticAndManifestSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
+import {
+  getSiteRoutePaths as getStaticAndManifestSiteRoutePaths,
+  publicSitePath,
+} from '../src/modules/site/presentation/routes/siteRoutes.ts'
 import { GENERATED_PACKAGE_SITE_CATALOG_PATH, GENERATED_PACKAGE_SITE_ROUTES_PATH } from './package-site-routes-path.ts'
 
-export { getSiteRoutePaths } from '../src/modules/site/presentation/routes/siteRoutes.ts'
+export { getSiteRoutePaths, publicSitePath } from '../src/modules/site/presentation/routes/siteRoutes.ts'
+
+export function rewriteSitemapLocsToPublicPaths(xml: string): string {
+  return xml.replace(/<loc>([\s\S]*?)<\/loc>/g, (_match, loc: string) => {
+    const url = new URL(loc.trim())
+    return `<loc>${url.origin}${publicSitePath(url.pathname)}</loc>`
+  })
+}
 
 const defaultSiteOrigin = 'https://agents-repo.org'
 

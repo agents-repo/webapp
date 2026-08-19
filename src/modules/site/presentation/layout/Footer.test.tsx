@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '../../../../test/renderWithProviders.tsx'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 import Footer from './Footer.tsx'
 
 describe('Footer', () => {
@@ -10,7 +10,7 @@ describe('Footer', () => {
 
     expect(screen.getByRole('link', { name: 'Maicon + collaborators' })).toHaveAttribute(
       'href',
-      siteRoutes.community,
+      publicSitePath(siteRoutes.community),
     )
   })
 })

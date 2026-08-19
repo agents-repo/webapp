@@ -2,7 +2,7 @@ import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { getDocDetailPath } from '../../application/docs/docsManifest.ts'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 const REGISTRY_CONTRIBUTING_URL =
@@ -25,10 +25,10 @@ function HelpUsPage() {
               <h2 className="h4">Help us grow</h2>
               <p className="text-body-secondary mb-0">
                 The project needs <strong>agents and flows packages</strong> most. Browse the catalog on{' '}
-                <NavLink to={siteRoutes.home}>Home</NavLink>, then follow the{' '}
-                <NavLink to={getDocDetailPath('submitting-a-package')}>package submission guide</NavLink>.
-                Step-by-step docs live in <NavLink to={siteRoutes.docs}>Docs</NavLink>. Questions and
-                feedback are welcome on <NavLink to={siteRoutes.contact}>Contact</NavLink>.
+                <NavLink to={publicSitePath(siteRoutes.home)}>Home</NavLink>, then follow the{' '}
+                <NavLink to={publicSitePath(getDocDetailPath('submitting-a-package'))}>package submission guide</NavLink>.
+                Step-by-step docs live in <NavLink to={publicSitePath(siteRoutes.docs)}>Docs</NavLink>. Questions and
+                feedback are welcome on <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink>.
               </p>
             </Card.Body>
           </Card>
@@ -46,8 +46,8 @@ function HelpUsPage() {
                   agents-repo/registry
                 </a>, add maintained packages under <code>packages/</code>, and open a pull request from your
                 fork to upstream. Start with{' '}
-                <NavLink to={getDocDetailPath('submitting-a-package')}>Submit a package</NavLink> and{' '}
-                <NavLink to={getDocDetailPath('contributing-packages')}>Contributing packages</NavLink>.
+                <NavLink to={publicSitePath(getDocDetailPath('submitting-a-package'))}>Submit a package</NavLink> and{' '}
+                <NavLink to={publicSitePath(getDocDetailPath('contributing-packages'))}>Contributing packages</NavLink>.
               </p>
               <ul className="mb-0">
                 <li>
@@ -89,7 +89,7 @@ function HelpUsPage() {
               <h2 className="h4">Improve the webapp</h2>
               <p className="text-body-secondary">
                 UI, UX, registry integration, and site docs are welcome. See{' '}
-                <NavLink to={getDocDetailPath('contributing-to-webapp')}>Contributing to webapp</NavLink>{' '}
+                <NavLink to={publicSitePath(getDocDetailPath('contributing-to-webapp'))}>Contributing to webapp</NavLink>{' '}
                 for workflow and validation commands.
               </p>
               <ul className="mb-0">
@@ -142,11 +142,11 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">Related</h2>
               <p className="text-body-secondary mb-0">
-                <NavLink to={siteRoutes.community}>Community</NavLink>,{' '}
-                <NavLink to={siteRoutes.docs}>Docs</NavLink>, organization repositories on{' '}
-                <NavLink to={siteRoutes.repositories}>Repositories</NavLink>, questions on{' '}
-                <NavLink to={siteRoutes.contact}>Contact</NavLink>, and context on{' '}
-                <NavLink to={siteRoutes.about}>About</NavLink>.
+                <NavLink to={publicSitePath(siteRoutes.community)}>Community</NavLink>,{' '}
+                <NavLink to={publicSitePath(siteRoutes.docs)}>Docs</NavLink>, organization repositories on{' '}
+                <NavLink to={publicSitePath(siteRoutes.repositories)}>Repositories</NavLink>, questions on{' '}
+                <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink>, and context on{' '}
+                <NavLink to={publicSitePath(siteRoutes.about)}>About</NavLink>.
               </p>
             </Card.Body>
           </Card>

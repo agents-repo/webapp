@@ -3,7 +3,7 @@ import { Navigate, NavLink, useParams } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
 import { getRepositoryBySlug } from '../../application/repositories/repositoryManifest.ts'
 import type { RepositoryManifestEntry } from '../../application/repositories/repositoryManifest.types.ts'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 
 function RepositoryLinkList({ entry }: { readonly entry: RepositoryManifestEntry }) {
   const links: { href: string; label: string }[] = [
@@ -43,14 +43,14 @@ function RepositoryDetailPage() {
   const entry = slug ? getRepositoryBySlug(slug) : undefined
 
   if (!entry) {
-    return <Navigate to={siteRoutes.repositories} replace />
+    return <Navigate to={publicSitePath(siteRoutes.repositories)} replace />
   }
 
   return (
     <div className="py-5">
       <Container>
         <p className="mb-3">
-          <NavLink to={siteRoutes.repositories}>← All repositories</NavLink>
+          <NavLink to={publicSitePath(siteRoutes.repositories)}>← All repositories</NavLink>
         </p>
 
         <Stack gap={4}>
@@ -119,15 +119,15 @@ function RepositoryDetailPage() {
                 <ul className="mb-0">
                   {entry.docLinks.map((link) => (
                     <li key={link.path}>
-                      <NavLink to={link.path}>{link.label}</NavLink>
+                      <NavLink to={publicSitePath(link.path)}>{link.label}</NavLink>
                     </li>
                   ))}
                 </ul>
               ) : (
                 <p className="text-body-secondary mb-0">
-                  Browse site docs on <NavLink to={siteRoutes.docs}>Docs</NavLink>, including{' '}
-                  <NavLink to="/docs/installing-packages">Installing packages</NavLink> and{' '}
-                  <NavLink to="/docs/cli-commands">CLI command reference</NavLink>. Repository docs remain
+                  Browse site docs on <NavLink to={publicSitePath(siteRoutes.docs)}>Docs</NavLink>, including{' '}
+                  <NavLink to={publicSitePath('/docs/installing-packages')}>Installing packages</NavLink> and{' '}
+                  <NavLink to={publicSitePath('/docs/cli-commands')}>CLI command reference</NavLink>. Repository docs remain
                   on GitHub.
                 </p>
               )}

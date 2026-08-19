@@ -1,7 +1,7 @@
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { listContributors, listMaintainers } from '../../application/people/peopleManifest.ts'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 import PersonCard from '../people/PersonCard.tsx'
 
 function PersonCardGrid({
@@ -35,7 +35,7 @@ function CommunityPage() {
               <p className="text-body-secondary mb-0">
                 These are the people who maintain the Agents Repo platform repositories. Contributors
                 who help through pull requests will appear here as well. If you want to join in, start
-                on <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>.
+                on <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink>.
               </p>
             </Card.Body>
           </Card>
@@ -57,7 +57,7 @@ function CommunityPage() {
                   <p className="text-body-secondary mb-0 text-center">
                     We don't have any contributor yet{' '}
                     <span aria-hidden="true">😢</span>, find how to help us at{' '}
-                    <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>.
+                    <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink>.
                   </p>
                 </Card.Body>
               </Card>
