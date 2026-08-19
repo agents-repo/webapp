@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MemoryStorage } from '../../../test/memoryStorage'
+import { MemoryCacheBackend, type PersistentCacheBackend } from './indexedDbCacheBackend'
 import { createPersistentLruCache, LruCache } from './persistentLruCache'
 
 interface TestEnvelope {
@@ -8,7 +8,6 @@ interface TestEnvelope {
   value: string
 }
 
-const STORAGE_KEY = 'registry.test.persistent-lru.v1'
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
 
 const isTestEnvelope = (value: unknown): value is TestEnvelope => {
@@ -25,13 +24,14 @@ const isTestEnvelope = (value: unknown): value is TestEnvelope => {
   )
 }
 
-const createTestCache = () =>
+const createTestCache = (backend: MemoryCacheBackend<TestEnvelope>) =>
   createPersistentLruCache<TestEnvelope>({
-    storageKey: STORAGE_KEY,
+    storeName: 'catalog',
     maxEntries: 2,
     ttlMs: CACHE_TTL_MS,
     getKey: (envelope) => envelope.cacheKey,
     isEnvelope: isTestEnvelope,
+    backend,
   })
 
 const envelope = (cacheKey: string, value: string, cachedAt = Date.now()): TestEnvelope => ({
@@ -65,12 +65,10 @@ describe('LruCache', () => {
 })
 
 describe('createPersistentLruCache', () => {
+  let backend: MemoryCacheBackend<TestEnvelope>
+
   beforeEach(() => {
-    Object.defineProperty(globalThis, 'localStorage', {
-      configurable: true,
-      writable: true,
-      value: new MemoryStorage(),
-    })
+    backend = new MemoryCacheBackend<TestEnvelope>()
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
   })
@@ -79,48 +77,94 @@ describe('createPersistentLruCache', () => {
     vi.useRealTimers()
   })
 
-  it('persists writes and hydrates every envelope on a memory miss', () => {
-    const writer = createTestCache()
-    writer.write('a', envelope('a', 'alpha'))
-    writer.write('b', envelope('b', 'beta'))
+  it('persists writes and hydrates every envelope on a memory miss', async () => {
+    const writer = createTestCache(backend)
+    await writer.write('a', envelope('a', 'alpha'))
+    await writer.write('b', envelope('b', 'beta'))
 
-    const reader = createTestCache()
-    expect(reader.get('a')).toEqual(envelope('a', 'alpha'))
-    expect(reader.listAll()).toEqual(
+    const reader = createTestCache(backend)
+    await expect(reader.get('a')).resolves.toEqual(envelope('a', 'alpha'))
+    await expect(reader.listAll()).resolves.toEqual(
       expect.arrayContaining([envelope('a', 'alpha'), envelope('b', 'beta')]),
     )
-    expect(reader.listAll()).toHaveLength(2)
+    await expect(reader.listAll()).resolves.toHaveLength(2)
   })
 
-  it('evicts the oldest persisted entry when over maxEntries', () => {
-    const cache = createTestCache()
-    cache.write('a', envelope('a', 'alpha'))
-    cache.write('b', envelope('b', 'beta'))
-    cache.write('c', envelope('c', 'gamma'))
+  it('awaits backend hydrate before treating a read as a miss', async () => {
+    vi.useRealTimers()
+    await backend.replaceAll([{ key: 'a', envelope: envelope('a', 'alpha', Date.now()) }])
 
-    expect(cache.get('a')).toBeNull()
-    expect(cache.get('c')?.value).toBe('gamma')
+    let resolveList: (() => void) | undefined
+    const delayedBackend: PersistentCacheBackend<TestEnvelope> = {
+      listAll: async () => {
+        await new Promise<void>((resolve) => {
+          resolveList = resolve
+        })
+        return backend.listAll()
+      },
+      replaceAll: (entries) => backend.replaceAll(entries),
+      clear: () => backend.clear(),
+    }
 
-    const persisted = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as TestEnvelope[]
+    const cache = createPersistentLruCache<TestEnvelope>({
+      storeName: 'catalog',
+      maxEntries: 2,
+      ttlMs: CACHE_TTL_MS,
+      getKey: (item) => item.cacheKey,
+      isEnvelope: isTestEnvelope,
+      backend: delayedBackend,
+    })
+
+    const pendingGet = cache.get('a')
+    await Promise.resolve()
+    resolveList?.()
+    await expect(pendingGet).resolves.toMatchObject({ value: 'alpha' })
+  })
+
+  it('evicts the oldest persisted entry when over maxEntries', async () => {
+    const cache = createTestCache(backend)
+    await cache.write('a', envelope('a', 'alpha'))
+    await cache.write('b', envelope('b', 'beta'))
+    await cache.write('c', envelope('c', 'gamma'))
+
+    await expect(cache.get('a')).resolves.toBeNull()
+    await expect(cache.get('c')).resolves.toMatchObject({ value: 'gamma' })
+
+    const persisted = await backend.listAll()
     expect(persisted.map((entry) => entry.cacheKey)).toEqual(['b', 'c'])
   })
 
-  it('treats entries older than the TTL as stale', () => {
-    const cache = createTestCache()
-    cache.write('a', envelope('a', 'alpha'))
+  it('treats entries older than the TTL as stale', async () => {
+    const cache = createTestCache(backend)
+    await cache.write('a', envelope('a', 'alpha'))
+    const cached = await cache.get('a')
 
-    expect(cache.isFresh(cache.get('a')?.cachedAt ?? 0)).toBe(true)
+    expect(cache.isFresh(cached?.cachedAt ?? 0)).toBe(true)
 
     vi.setSystemTime(new Date('2026-01-02T00:00:01.000Z'))
-    expect(cache.isFresh(cache.get('a')?.cachedAt ?? 0)).toBe(false)
+    expect(cache.isFresh((await cache.get('a'))?.cachedAt ?? 0)).toBe(false)
   })
 
-  it('clears memory and localStorage', () => {
-    const cache = createTestCache()
-    cache.write('a', envelope('a', 'alpha'))
-    cache.clear()
+  it('clears memory and the persistent backend', async () => {
+    const cache = createTestCache(backend)
+    await cache.write('a', envelope('a', 'alpha'))
+    await cache.clear()
 
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull()
-    expect(cache.get('a')).toBeNull()
+    await expect(backend.listAll()).resolves.toEqual([])
+    await expect(cache.get('a')).resolves.toBeNull()
+  })
+
+  it('treats entries as always fresh when ttlMs is null', async () => {
+    const cache = createPersistentLruCache<TestEnvelope>({
+      storeName: 'catalog',
+      maxEntries: 2,
+      ttlMs: null,
+      getKey: (envelope) => envelope.cacheKey,
+      isEnvelope: isTestEnvelope,
+      backend,
+    })
+    await cache.write('a', envelope('a', 'alpha'))
+    vi.setSystemTime(new Date('2027-01-01T00:00:00.000Z'))
+    expect(cache.isFresh((await cache.get('a'))?.cachedAt ?? 0)).toBe(true)
   })
 })

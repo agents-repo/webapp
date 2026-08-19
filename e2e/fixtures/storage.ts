@@ -17,6 +17,7 @@ export async function clearBrowserStorage(page: Page): Promise<void> {
 
       localStorage.clear()
       sessionStorage.clear()
+      indexedDB.deleteDatabase('agents-repo-webapp-registry')
       localStorage.setItem(consentKey, 'rejected')
       sessionStorage.setItem(marker, '1')
     },

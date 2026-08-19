@@ -38,12 +38,16 @@ const {
   mockSetStoredRegistryBaseUrlOverride,
   mockClearRegistryTagListCache,
   mockClearRegistryCatalogCache,
+  mockClearRegistryPackageDetailCache,
+  mockClearRegistryChatInstructionsCache,
 } = vi.hoisted(() => ({
   mockValidateRegistrySourceUrlForMajorVersionAlias: vi.fn(),
   mockResolveRegistrySourceConfig: vi.fn(),
   mockSetStoredRegistryBaseUrlOverride: vi.fn(),
   mockClearRegistryTagListCache: vi.fn(),
   mockClearRegistryCatalogCache: vi.fn(),
+  mockClearRegistryPackageDetailCache: vi.fn(),
+  mockClearRegistryChatInstructionsCache: vi.fn(),
 }))
 
 vi.mock('../../../registry/application/registrySource', async () => {
@@ -56,6 +60,8 @@ vi.mock('../../../registry/application/registrySource', async () => {
     setStoredRegistryBaseUrlOverride: mockSetStoredRegistryBaseUrlOverride,
     clearRegistryTagListCache: mockClearRegistryTagListCache,
     clearRegistryCatalogCache: mockClearRegistryCatalogCache,
+    clearRegistryPackageDetailCache: mockClearRegistryPackageDetailCache,
+    clearRegistryChatInstructionsCache: mockClearRegistryChatInstructionsCache,
   }
 })
 
@@ -78,8 +84,10 @@ describe('WebsiteSettingsControl save flow', () => {
     mockValidateRegistrySourceUrlForMajorVersionAlias.mockResolvedValue(null)
     mockResolveRegistrySourceConfig.mockResolvedValue(resolvedSource)
     mockSetStoredRegistryBaseUrlOverride.mockImplementation(() => {})
-    mockClearRegistryTagListCache.mockImplementation(() => {})
-    mockClearRegistryCatalogCache.mockImplementation(() => {})
+    mockClearRegistryTagListCache.mockResolvedValue(undefined)
+    mockClearRegistryCatalogCache.mockResolvedValue(undefined)
+    mockClearRegistryPackageDetailCache.mockResolvedValue(undefined)
+    mockClearRegistryChatInstructionsCache.mockResolvedValue(undefined)
   })
 
   afterEach(() => {
@@ -105,6 +113,8 @@ describe('WebsiteSettingsControl save flow', () => {
       expect(mockSetStoredRegistryBaseUrlOverride).toHaveBeenCalledWith('https://example.com/runtime/')
       expect(mockClearRegistryTagListCache).toHaveBeenCalled()
       expect(mockClearRegistryCatalogCache).toHaveBeenCalled()
+      expect(mockClearRegistryPackageDetailCache).toHaveBeenCalled()
+      expect(mockClearRegistryChatInstructionsCache).toHaveBeenCalled()
       expect(mockResolveRegistrySourceConfig).toHaveBeenCalled()
       expect(onSaved).toHaveBeenCalled()
     })
@@ -157,7 +167,9 @@ describe('WebsiteSettingsControl save flow', () => {
     await user.click(screen.getByRole('button', { name: 'Clear cache and reload catalog' }))
 
     expect(mockClearRegistryCatalogCache).toHaveBeenCalled()
+    expect(mockClearRegistryPackageDetailCache).toHaveBeenCalled()
     expect(mockClearRegistryTagListCache).toHaveBeenCalled()
+    expect(mockClearRegistryChatInstructionsCache).toHaveBeenCalled()
     expect(onSaved).toHaveBeenCalled()
   })
 })

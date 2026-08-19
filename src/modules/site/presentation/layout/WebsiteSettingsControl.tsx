@@ -7,6 +7,7 @@ import { externalLinkAccessibleName } from '../../application/accessibility/exte
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
   clearRegistryCatalogCache,
+  clearRegistryChatInstructionsCache,
   clearRegistryPackageDetailCache,
   clearRegistryTagListCache,
   clearStoredRegistryBaseUrlOverride,
@@ -231,9 +232,10 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
           githubRepositoryUrlValidationError: githubRepositoryAliasValidationMessage,
         }))
       } else {
-        clearRegistryTagListCache()
-        clearRegistryCatalogCache()
-        clearRegistryPackageDetailCache()
+        await clearRegistryTagListCache()
+        await clearRegistryCatalogCache()
+        await clearRegistryPackageDetailCache()
+        await clearRegistryChatInstructionsCache()
 
         if (normalizedBaseUrlInput.length === 0) {
           clearStoredRegistryBaseUrlOverride()
@@ -262,9 +264,10 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
   const resetRegistrySettings = async (): Promise<void> => {
     clearStoredRegistryBaseUrlOverride()
     clearStoredRegistryGitHubRepositoryUrlOverride()
-    clearRegistryTagListCache()
-    clearRegistryCatalogCache()
-    clearRegistryPackageDetailCache()
+    await clearRegistryTagListCache()
+    await clearRegistryCatalogCache()
+    await clearRegistryPackageDetailCache()
+    await clearRegistryChatInstructionsCache()
     setModalState((previousValue) => ({
       ...previousValue,
       baseUrlInput: '',
@@ -286,10 +289,11 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
     }
   }
 
-  const clearRegistryCacheAndReload = (): void => {
-    clearRegistryCatalogCache()
-    clearRegistryPackageDetailCache()
-    clearRegistryTagListCache()
+  const clearRegistryCacheAndReload = async (): Promise<void> => {
+    await clearRegistryCatalogCache()
+    await clearRegistryPackageDetailCache()
+    await clearRegistryTagListCache()
+    await clearRegistryChatInstructionsCache()
 
     if (onSaved) {
       onSaved()
@@ -382,14 +386,17 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
                 <section className="mt-4">
                   <h3 className="h6 mb-2">Registry data cache</h3>
                   <p className="small text-body-secondary mb-3">
-                    Clears catalog and tag list data stored in this browser (localStorage), then reloads the
-                    catalog from the configured source. This does not purge Cloudflare proxy cache; if the
-                    catalog ref stays outdated, check the proxy <code>GET /tags</code> response.
+                    Clears catalog, package detail, tag list, and chat instruction data stored in this
+                    browser (IndexedDB), then reloads the catalog from the configured source. This does
+                    not purge Cloudflare proxy cache; if the catalog ref stays outdated, check the proxy{' '}
+                    <code>GET /tags</code> response.
                   </p>
                   <Button
                     type="button"
                     variant="outline-secondary"
-                    onClick={clearRegistryCacheAndReload}
+                    onClick={() => {
+                      void clearRegistryCacheAndReload()
+                    }}
                     disabled={modalState.isSaving}
                   >
                     Clear cache and reload catalog

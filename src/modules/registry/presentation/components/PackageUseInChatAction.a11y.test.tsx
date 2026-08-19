@@ -26,8 +26,8 @@ const instructionsManifest = {
 }
 
 describe('PackageUseInChatAction accessibility', () => {
-  afterEach(() => {
-    resetChatInstructionsCacheForTests()
+  afterEach(async () => {
+    await resetChatInstructionsCacheForTests()
     vi.unstubAllGlobals()
   })
 

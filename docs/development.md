@@ -213,8 +213,8 @@ on CLI releases.
    as a fallback for GitHub-only source URLs. When the default proxy fetch
    source is configured, browse `v2.x` aliases use the same proxy `/tags` listing
    as catalog fetch (not per-browser GitHub API calls). Tag lists are cached for
-   1 hour in a single localStorage entry (`registry.tags.cache.v1`) keyed by
-   repository identity (`owner/repo`) inside the envelope. Alias re-resolution runs
+   1 hour in IndexedDB (`tags` store, database `agents-repo-webapp-registry`)
+   keyed by repository identity (`owner/repo`). Alias re-resolution runs
    when the 24h catalog cache has expired, website settings change, the user
    chooses **Clear cache and reload catalog** in website settings, or a package
    index/detail URL is missing from the loaded catalog (one forced reload per
@@ -224,7 +224,7 @@ on CLI releases.
    `RegistryCatalogProvider` (`presentation/catalog/`) and is reused when
    returning to catalog pages; settings changes trigger a forced reload that
    bypasses warm in-memory catalog cache and tag cache and also clears the
-   package `detail.json` localStorage LRU. A `/packages/:namespace` or
+   package `detail.json` IndexedDB LRU. A `/packages/:namespace` or
    `/packages/:namespace/:packageId` path that is missing from the loaded
    catalog triggers the same forced catalog reload at most once per session
    (it does not clear detail or tag stores). Extra-segment `/packages/*`
@@ -269,9 +269,10 @@ on CLI releases.
    stores the new payload and the updated `ETag`/`Last-Modified` headers.
    Service worker runtime caching is focused to same-origin static assets only.
    Use in chat loads versioned `/pkg/` `instructions.json` and instruction
-   markdown through a session-only in-memory LRU (not localStorage). Repeat
-   opens of the same package version skip the network; a new `latest` URL is a
-   miss. Failed loads are not cached.
+   markdown through the IndexedDB LRU (manifest max 64, markdown max 128).
+   Version-pinned URLs skip the short TTL; latest/short-alias URLs use a 24h
+   TTL. Repeat opens of the same cached URL skip the network. Failed loads are
+   not cached. ZIP artifacts are not stored in IndexedDB.
 - The styling and architecture decisions are documented in
    `docs/styling-and-technology.md` and `docs/architecture/ddd-decision.md`.
 
@@ -282,12 +283,16 @@ After changing cache or service worker behavior, validate locally with:
 1. Start the app with `npm run dev`.
 2. Open browser devtools and inspect Application > Storage and Service Workers.
 3. Confirm first online load populates catalog and cache entries. Inspect
-   Application > Local Storage and confirm the stored envelope contains `etag`
-   or `lastModified` fields when the server returned those headers.
+   Application > IndexedDB > `agents-repo-webapp-registry` (stores `catalog`,
+   `package-detail`, `tags`, `chat-manifest`, `chat-markdown`) and confirm catalog
+   envelopes contain `etag` or `lastModified` fields when the server returned
+   those headers. Preferences (`theme`, `analytics-consent`, registry URL
+   overrides) remain in Application > Local Storage.
 4. Reload and confirm catalog can be served from app cache within 24h (no
    network request visible in the Network tab).
 5. Force-expire the cache by editing `cachedAt` to `0` in the stored envelope
-   (Application > Local Storage), then reload. Confirm the outgoing request
+   (Application > IndexedDB > `agents-repo-webapp-registry` > `catalog`), then
+   reload. Confirm the outgoing request
    carries `If-None-Match` and/or `If-Modified-Since` headers. If the server
    returns `304`, no response body should appear; `cachedAt` should be updated
    in storage. If the server returns `200`, the new payload and headers should

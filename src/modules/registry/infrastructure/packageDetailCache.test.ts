@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { samplePackageDetail } from '../../../test/fixtures/samplePackageDetail'
-import { MemoryStorage } from '../../../test/memoryStorage'
 import {
   buildPackageDetailCacheKey,
   readFreshPackageDetailCache,
@@ -9,33 +8,28 @@ import {
 } from './packageDetailCache'
 
 describe('packageDetailCache', () => {
-  beforeEach(() => {
-    Object.defineProperty(globalThis, 'localStorage', {
-      configurable: true,
-      writable: true,
-      value: new MemoryStorage(),
-    })
-    resetRegistryPackageDetailCacheForTests()
+  beforeEach(async () => {
+    await resetRegistryPackageDetailCacheForTests()
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
   })
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.useRealTimers()
-    resetRegistryPackageDetailCacheForTests()
+    await resetRegistryPackageDetailCacheForTests()
   })
 
-  it('returns fresh detail within 24h and misses after TTL', () => {
+  it('returns fresh detail within 24h and misses after TTL', async () => {
     const cacheKey = buildPackageDetailCacheKey(
       'https://example.test/packages/agents-repo/sample-agent/detail.json',
       'agents-repo/sample-agent',
       '1.0.0',
     )
-    writePackageDetailCache(cacheKey, samplePackageDetail)
+    await writePackageDetailCache(cacheKey, samplePackageDetail)
 
-    expect(readFreshPackageDetailCache(cacheKey)).toEqual(samplePackageDetail)
+    await expect(readFreshPackageDetailCache(cacheKey)).resolves.toEqual(samplePackageDetail)
 
     vi.setSystemTime(new Date('2026-01-02T00:00:01.000Z'))
-    expect(readFreshPackageDetailCache(cacheKey)).toBeNull()
+    await expect(readFreshPackageDetailCache(cacheKey)).resolves.toBeNull()
   })
 })

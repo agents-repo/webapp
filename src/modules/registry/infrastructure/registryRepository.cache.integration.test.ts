@@ -47,13 +47,13 @@ const makeTestPackage = (id: string, name: string, description: string, latest: 
 })
 
 describe('loadRegistryCatalog cache integration', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     Object.defineProperty(globalThis, 'localStorage', {
       configurable: true,
       writable: true,
       value: new MemoryStorage(),
     })
-    resetRegistryCatalogCacheForTests()
+    await resetRegistryCatalogCacheForTests()
     vi.restoreAllMocks()
   })
 
@@ -61,14 +61,14 @@ describe('loadRegistryCatalog cache integration', () => {
     vi.restoreAllMocks()
   })
 
-  it('serves a fresh localStorage catalog when fetch source resolution fails', async () => {
+  it('serves a fresh catalog cache when fetch source resolution fails', async () => {
     const cachedCatalog: RegistryCatalog = {
       schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [makeTestPackage('demo', 'Demo', 'Demo package', '1.0.0')],
     }
 
-    writeCatalogCache(
+    await writeCatalogCache(
       'https://registry-proxy.example.workers.dev/packages/index.json?ref=v1.2.0',
       cachedCatalog,
     )
@@ -108,14 +108,14 @@ describe('loadRegistryCatalog cache integration', () => {
     expect(result.baseUrlRefResolution).toEqual({ alias: '1.x', resolvedRef: 'v1.2.0' })
   })
 
-  it('serves a fresh raw GitHub localStorage catalog when fetch source resolution fails', async () => {
+  it('serves a fresh raw GitHub catalog cache when fetch source resolution fails', async () => {
     const cachedCatalog: RegistryCatalog = {
       schemaVersion: '1.3.0',
       updatedAt: '2026-06-08T02:09:56.645Z',
       packages: [makeTestPackage('demo', 'Demo', 'Demo package', '1.0.0')],
     }
 
-    writeCatalogCache(
+    await writeCatalogCache(
       'https://raw.githubusercontent.com/agents-repo/registry/v2.0.0/packages/index.json',
       cachedCatalog,
     )
@@ -162,7 +162,7 @@ describe('loadRegistryCatalog cache integration', () => {
       packages: [makeTestPackage('main-only', 'Main Only', 'Cached from main branch', '9.9.9')],
     }
 
-    writeCatalogCache(
+    await writeCatalogCache(
       'https://raw.githubusercontent.com/agents-repo/registry/main/packages/index.json',
       mainCatalog,
     )

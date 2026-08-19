@@ -57,8 +57,8 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
-    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockResolvedValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockResolvedValue(null)
 
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 304 }))
 
@@ -97,8 +97,8 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
-    vi.spyOn(registryCatalogCache, 'readStaleCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
+    vi.spyOn(registryCatalogCache, 'readStaleCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
 
     const result = await loadRegistryCatalog()
 
@@ -140,8 +140,8 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
-    vi.spyOn(registryCatalogCache, 'readStaleCatalogCacheEnvelopeForSourceIdentity').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
+    vi.spyOn(registryCatalogCache, 'readStaleCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now() - 48 * 60 * 60 * 1000,
       indexUrl: cachedIndexUrl,
@@ -187,7 +187,7 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now(),
       indexUrl: cachedIndexUrl,
@@ -228,7 +228,7 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now(),
       indexUrl: cachedIndexUrl,
@@ -280,7 +280,7 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now(),
       indexUrl: cachedIndexUrl,
@@ -306,7 +306,7 @@ describe('loadRegistryCatalog', () => {
     const cachedCatalog = makeTestCatalog('1.2.0')
     const networkCatalog = makeTestCatalog('1.3.0')
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
       sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
@@ -329,8 +329,8 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(cachedCatalog)
-    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockResolvedValue(cachedCatalog)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockResolvedValue(null)
 
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify(networkCatalog), {
@@ -350,7 +350,7 @@ describe('loadRegistryCatalog', () => {
     const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
     const cachedCatalog = makeTestCatalog('1.2.0')
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockReturnValue(null)
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
       sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
@@ -373,7 +373,7 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(cachedCatalog)
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockResolvedValue(cachedCatalog)
     vi.spyOn(globalThis, 'fetch')
 
     const result = await loadRegistryCatalog()
@@ -412,8 +412,8 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
-    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockResolvedValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now(),
       indexUrl,
@@ -479,15 +479,15 @@ describe('loadRegistryCatalog', () => {
       githubRepositoryRefResolution: null,
     })
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
-    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockResolvedValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now(),
       indexUrl,
       catalog: staleCatalog,
       etag: '"abc123"',
     })
-    vi.spyOn(registryCatalogCache, 'touchCatalogCache').mockImplementation(() => {})
+    vi.spyOn(registryCatalogCache, 'touchCatalogCache').mockResolvedValue(undefined)
 
     const locationDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'location')
     Object.defineProperty(globalThis, 'location', {
@@ -544,8 +544,8 @@ describe('loadRegistryCatalog', () => {
       new Error('GitHub browse tag resolution failed'),
     )
 
-    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockReturnValue(null)
-    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockReturnValue({
+    vi.spyOn(registryCatalogCache, 'readFreshCatalogCache').mockResolvedValue(null)
+    vi.spyOn(registryCatalogCache, 'readCatalogCacheEnvelope').mockResolvedValue({
       cacheVersion: 1,
       cachedAt: Date.now(),
       indexUrl,

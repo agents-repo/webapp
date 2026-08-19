@@ -1,3 +1,10 @@
+import {
+  getRegistryCacheBackend,
+  type PersistentCacheBackend,
+  type PersistentCacheEntry,
+  type RegistryCacheStoreName,
+} from './indexedDbCacheBackend.ts'
+
 export class LruCache<T> {
   readonly #entries = new Map<string, T>()
   readonly #maxEntries: number
@@ -37,6 +44,17 @@ export class LruCache<T> {
     }
   }
 
+  evictOldest(): string | undefined {
+    const oldestKey = this.#entries.keys().next().value
+
+    if (oldestKey === undefined) {
+      return undefined
+    }
+
+    this.#entries.delete(oldestKey)
+    return oldestKey
+  }
+
   values(): IterableIterator<T> {
     return this.#entries.values()
   }
@@ -46,27 +64,20 @@ export class LruCache<T> {
   }
 }
 
-const getLocalStorage = (): Storage | null => {
-  try {
-    return globalThis.localStorage
-  } catch {
-    return null
-  }
-}
-
 export interface PersistentLruCacheOptions<TEnvelope> {
-  readonly storageKey: string
+  readonly storeName: RegistryCacheStoreName
   readonly maxEntries: number
-  readonly ttlMs: number
+  readonly ttlMs: number | null
   readonly getKey: (envelope: TEnvelope) => string
   readonly isEnvelope: (value: unknown) => value is TEnvelope
+  readonly backend?: PersistentCacheBackend<TEnvelope>
 }
 
 export interface PersistentLruCache<TEnvelope> {
-  get(key: string): TEnvelope | null
-  listAll(): TEnvelope[]
-  write(key: string, envelope: TEnvelope): void
-  clear(): void
+  get(key: string): Promise<TEnvelope | null>
+  listAll(): Promise<TEnvelope[]>
+  write(key: string, envelope: TEnvelope): Promise<void>
+  clear(): Promise<void>
   isFresh(cachedAt: number): boolean
 }
 
@@ -74,46 +85,9 @@ export const createPersistentLruCache = <TEnvelope>(
   options: PersistentLruCacheOptions<TEnvelope>,
 ): PersistentLruCache<TEnvelope> => {
   const memory = new LruCache<TEnvelope>(options.maxEntries)
-
-  const loadPersistentCache = (): TEnvelope[] => {
-    const storage = getLocalStorage()
-
-    if (!storage) {
-      return []
-    }
-
-    try {
-      const rawValue = storage.getItem(options.storageKey)
-
-      if (!rawValue) {
-        return []
-      }
-
-      const parsedValue: unknown = JSON.parse(rawValue)
-
-      if (!Array.isArray(parsedValue)) {
-        return []
-      }
-
-      return parsedValue.filter((item) => options.isEnvelope(item))
-    } catch {
-      return []
-    }
-  }
-
-  const persist = (): void => {
-    const storage = getLocalStorage()
-
-    if (!storage) {
-      return
-    }
-
-    try {
-      storage.setItem(options.storageKey, JSON.stringify(Array.from(memory.values())))
-    } catch {
-      // Ignore quota and serialization errors; caching is best-effort only.
-    }
-  }
+  const backend = options.backend ?? getRegistryCacheBackend(options.storeName, options.isEnvelope)
+  let hydrated = false
+  let hydratePromise: Promise<void> | null = null
 
   const hydrateEntries = (persistentEntries: TEnvelope[]): void => {
     for (const entry of persistentEntries) {
@@ -121,61 +95,84 @@ export const createPersistentLruCache = <TEnvelope>(
     }
   }
 
-  return {
-    get(key: string): TEnvelope | null {
-      const memoryValue = memory.get(key)
+  const ensureHydrated = async (): Promise<void> => {
+    if (hydrated) {
+      return
+    }
 
-      if (memoryValue !== undefined) {
-        return memoryValue
-      }
+    if (hydratePromise) {
+      await hydratePromise
+      return
+    }
 
-      const persistentEntries = loadPersistentCache()
+    hydratePromise = (async () => {
+      const persistentEntries = await backend.listAll()
+      hydrateEntries(persistentEntries.filter((item) => options.isEnvelope(item)))
+      hydrated = true
+    })().finally(() => {
+      hydratePromise = null
+    })
 
-      if (persistentEntries.length === 0) {
-        return null
-      }
+    await hydratePromise
+  }
 
-      hydrateEntries(persistentEntries)
+  const toPersistentEntries = (): PersistentCacheEntry<TEnvelope>[] => {
+    return Array.from(memory.values()).map((envelope) => ({
+      key: options.getKey(envelope),
+      envelope,
+    }))
+  }
 
-      return memory.get(key) ?? null
-    },
-
-    listAll(): TEnvelope[] {
-      const persistentEntries = loadPersistentCache()
-
-      for (const entry of persistentEntries) {
-        const key = options.getKey(entry)
-
-        if (memory.get(key) === undefined) {
-          memory.set(key, entry)
-        }
-      }
-
-      return Array.from(memory.values())
-    },
-
-    write(key: string, envelope: TEnvelope): void {
-      memory.set(key, envelope)
-      persist()
-    },
-
-    clear(): void {
-      memory.clear()
-
-      const storage = getLocalStorage()
-
-      if (!storage) {
+  const persist = async (): Promise<void> => {
+    try {
+      await backend.replaceAll(toPersistentEntries())
+    } catch {
+      if (memory.evictOldest() === undefined) {
         return
       }
 
       try {
-        storage.removeItem(options.storageKey)
+        await backend.replaceAll(toPersistentEntries())
+      } catch {
+        // Ignore quota and serialization errors; caching is best-effort only.
+      }
+    }
+  }
+
+  return {
+    async get(key: string): Promise<TEnvelope | null> {
+      await ensureHydrated()
+      return memory.get(key) ?? null
+    },
+
+    async listAll(): Promise<TEnvelope[]> {
+      await ensureHydrated()
+      return Array.from(memory.values())
+    },
+
+    async write(key: string, envelope: TEnvelope): Promise<void> {
+      await ensureHydrated()
+      memory.set(key, envelope)
+      await persist()
+    },
+
+    async clear(): Promise<void> {
+      memory.clear()
+      hydrated = true
+      hydratePromise = null
+
+      try {
+        await backend.clear()
       } catch {
         // Ignore storage failures; clearing is best-effort only.
       }
     },
 
     isFresh(cachedAt: number): boolean {
+      if (options.ttlMs === null) {
+        return true
+      }
+
       return Date.now() - cachedAt <= options.ttlMs
     },
   }

@@ -258,7 +258,7 @@ const isCrossOriginUrl = (url: string): boolean => {
 
 const buildConditionalHeaders = (
   indexUrl: string,
-  envelope: ReturnType<typeof readCatalogCacheEnvelope>,
+  envelope: RegistryCatalogCacheEnvelope | null,
 ): Record<string, string> => {
   if (isCrossOriginUrl(indexUrl)) {
     return {}
@@ -308,7 +308,7 @@ const fetchCatalogFromNetwork = async (
   }
 }
 
-const readFreshCachedEnvelopeForConfiguredSource = (): RegistryCatalogCacheEnvelope | null => {
+const readFreshCachedEnvelopeForConfiguredSource = async (): Promise<RegistryCatalogCacheEnvelope | null> => {
   const cacheIdentity = getConfiguredSourceCacheIdentity()
 
   if (!cacheIdentity) {
@@ -340,7 +340,7 @@ const buildCatalogLoadResultOnSourceResolutionFailure = async (
   const cacheIdentity = getConfiguredSourceCacheIdentity()
 
   if (cacheIdentity) {
-    const freshEnvelope = readFreshCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+    const freshEnvelope = await readFreshCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
 
     if (freshEnvelope) {
       return buildCatalogLoadResultFromCachedEnvelope(
@@ -352,7 +352,7 @@ const buildCatalogLoadResultOnSourceResolutionFailure = async (
       )
     }
 
-    const staleEnvelope = readStaleCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
+    const staleEnvelope = await readStaleCatalogCacheEnvelopeForSourceIdentity(cacheIdentity)
 
     if (staleEnvelope) {
       return buildCatalogLoadResultFromCachedEnvelope(
@@ -398,7 +398,7 @@ const loadRegistryCatalogFromNetwork = async (
   options: LoadRegistryCatalogOptions,
 ): Promise<RegistryCatalogLoadResult> => {
   const { indexUrl, baseUrl: registryBaseUrl } = fetchSourceConfig
-  const cachedCatalog = options.forceSourceResolution ? null : readFreshCatalogCache(indexUrl)
+  const cachedCatalog = options.forceSourceResolution ? null : await readFreshCatalogCache(indexUrl)
 
   if (cachedCatalog) {
     return {
@@ -410,7 +410,7 @@ const loadRegistryCatalogFromNetwork = async (
     }
   }
 
-  const envelope = readCatalogCacheEnvelope(indexUrl)
+  const envelope = await readCatalogCacheEnvelope(indexUrl)
   const conditionalHeaders = buildConditionalHeaders(indexUrl, envelope)
   let browseMetadata: BrowseCatalogLoadMetadata | undefined
 
@@ -434,7 +434,7 @@ const loadRegistryCatalogFromNetwork = async (
         }
       }
 
-      touchCatalogCache(indexUrl)
+      await touchCatalogCache(indexUrl)
 
       return {
         catalog: envelope.catalog,
@@ -445,7 +445,7 @@ const loadRegistryCatalogFromNetwork = async (
       }
     }
 
-    writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
+    await writeCatalogCache(indexUrl, result.catalog, result.etag, result.lastModified)
 
     return {
       catalog: result.catalog,
@@ -485,7 +485,7 @@ const loadRegistryCatalogFromNetwork = async (
 export const loadRegistryCatalog = async (
   options: LoadRegistryCatalogOptions = {},
 ): Promise<RegistryCatalogLoadResult> => {
-  const freshCachedEnvelope = readFreshCachedEnvelopeForConfiguredSource()
+  const freshCachedEnvelope = await readFreshCachedEnvelopeForConfiguredSource()
 
   if (!options.forceSourceResolution && freshCachedEnvelope) {
     return loadRegistryCatalogFromFreshCache(freshCachedEnvelope, options)

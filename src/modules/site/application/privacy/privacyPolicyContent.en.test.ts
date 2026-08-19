@@ -26,6 +26,9 @@ describe('privacyPolicyContent.en', () => {
     const cookiesSection = privacyPolicyContentEn.sections.find((section) => section.id === 'cookies')
     expect(cookiesSection?.cookieRows?.length).toBeGreaterThan(0)
     expect(cookiesSection?.cookieRows?.some((row) => row.name === 'analytics-consent')).toBe(true)
+    expect(cookiesSection?.cookieRows?.some((row) => row.name === 'agents-repo-webapp-registry')).toBe(
+      true,
+    )
   })
 
   it('has a last updated date', () => {

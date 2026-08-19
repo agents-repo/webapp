@@ -113,6 +113,15 @@ object.
 | `theme` | Color mode preference | No (strictly necessary / preference) |
 | Registry override keys | User-requested catalog source | No (functionality) |
 
+## IndexedDB documented in policy
+
+The public policy table also documents IndexedDB database
+`agents-repo-webapp-registry`:
+
+- Purpose: registry JSON and markdown caches (catalog, detail, tags, chat).
+  ZIP artifacts are not stored.
+- Consent: not required (strictly necessary). Cleared by **Clear cache**.
+
 See `cookieConsent.ts` and existing theme/registry modules for key names.
 
 ## Related docs

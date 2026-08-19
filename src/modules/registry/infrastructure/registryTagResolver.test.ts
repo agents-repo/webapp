@@ -47,8 +47,8 @@ describe('registryTagResolver', () => {
     vi.restoreAllMocks()
   })
 
-  afterEach(() => {
-    clearRegistryTagListCache()
+  afterEach(async () => {
+    await clearRegistryTagListCache()
   })
 
   it('builds registry-proxy tags URL from proxy source base', () => {
@@ -77,7 +77,7 @@ describe('registryTagResolver', () => {
     expect(pickLatestStableTagForMajorVersion(tagNames, 3)).toBeNull()
   })
 
-  it('fetches registry-proxy tags and caches them in localStorage', async () => {
+  it('fetches registry-proxy tags and caches them for the repository key', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
         status: 200,
@@ -96,7 +96,7 @@ describe('registryTagResolver', () => {
     expect(fetchMock).toHaveBeenCalledWith(tagsUrl, { headers: {}, signal: undefined })
   })
 
-  it('fetches GitHub tags and caches them in localStorage', async () => {
+  it('fetches GitHub tags and caches them for the repository key', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify([{ name: 'v1.0.0' }, { name: 'v1.2.0' }]), {
         status: 200,
@@ -144,6 +144,10 @@ describe('registryTagResolver', () => {
     const firstPromise = fetchRegistryRepositoryTagNames(tagsUrl)
     const secondPromise = fetchRegistryRepositoryTagNames(tagsUrl)
 
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
     resolveFetch?.(
       new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
         status: 200,
@@ -168,6 +172,10 @@ describe('registryTagResolver', () => {
     const tagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
     const inFlightPromise = fetchRegistryRepositoryTagNames(tagsUrl)
 
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
     Object.defineProperty(globalThis, 'localStorage', {
       configurable: true,
       get: () => {
@@ -175,7 +183,7 @@ describe('registryTagResolver', () => {
       },
     })
 
-    clearRegistryTagListCache()
+    await clearRegistryTagListCache()
 
     Object.defineProperty(globalThis, 'localStorage', {
       configurable: true,
@@ -184,6 +192,10 @@ describe('registryTagResolver', () => {
     })
 
     const bypassPromise = fetchRegistryRepositoryTagNames(tagsUrl, { bypassCache: true })
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+    })
 
     resolvers[0]?.(
       new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
@@ -214,7 +226,16 @@ describe('registryTagResolver', () => {
 
     const tagsUrl = 'https://api.github.com/repos/agents-repo/registry/tags?per_page=100'
     const cachedPromise = fetchRegistryRepositoryTagNames(tagsUrl)
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
     const bypassPromise = fetchRegistryRepositoryTagNames(tagsUrl, { bypassCache: true })
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+    })
 
     resolvers[0]?.(
       new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
@@ -248,6 +269,10 @@ describe('registryTagResolver', () => {
     const repositoryKey = 'agents-repo/registry'
     const proxyPromise = fetchRegistryRepositoryTagNames(proxyTagsUrl, { repositoryKey })
     const githubPromise = fetchRegistryRepositoryTagNames(githubTagsUrl, { repositoryKey })
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2)
+    })
 
     resolvers[0]?.(
       new Response(JSON.stringify([{ name: 'v1.0.0' }]), {
@@ -287,6 +312,10 @@ describe('registryTagResolver', () => {
     abortedController.abort()
 
     await firstExpectation
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
 
     resolvers[0]?.(
       new Response(JSON.stringify([{ name: 'v1.0.0' }]), {

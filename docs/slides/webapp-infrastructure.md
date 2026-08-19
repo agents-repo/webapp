@@ -102,7 +102,7 @@ Docs-only merges do not redeploy. Agents must not merge to `main`.
 
 - Catalog index: 24h app TTL + conditional GET (`ETag` / `Last-Modified`)
 - Service worker caches same-origin static assets
-- Versioned chat bodies: session memory only (immutable paths)
+- Chat JSON/markdown: IndexedDB LRU (version-pinned URLs skip short TTL)
 
 Privacy/SEO: `docs/privacy.md`, `docs/seo.md`. Not an a11y deep dive here.
 

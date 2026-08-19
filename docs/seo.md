@@ -165,7 +165,7 @@ repository slugs).
   next successful `build:pages`. Scheduled rebuilds are out of scope.
 - Social crawlers read the initial HTML. Client-only meta tags (without build
   injection) are insufficient for link previews.
-- **Clear cache and reload catalog** clears app localStorage only. Browser HTTP
+- **Clear cache and reload catalog** clears app IndexedDB registry stores. Browser HTTP
   cache may still serve catalog and `detail.json` for up to 300 seconds (`max-age`
   from registry-proxy).
 

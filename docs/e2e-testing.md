@@ -19,7 +19,7 @@ See also [testing.md](testing.md) for Vitest conventions.
 | E2E browser | Playwright | **No (local)** | Full routing, real DOM, modal flows, persistence |
 
 Add Playwright coverage when behavior depends on the full browser pipeline
-(routing shell, Bootstrap dropdowns, `localStorage` across reloads, network
+(routing shell, Bootstrap dropdowns, `localStorage`/`IndexedDB` across reloads, network
 mocking at the page boundary). Keep logic in Vitest when possible.
 
 ## First-time setup
@@ -60,7 +60,7 @@ e2e/
 │   ├── catalog-load.ts     # waitForCatalogSettled helper
 │   ├── registry-mock.ts    # GET fulfill helpers + extended test fixture
 │   ├── package-detail.ts   # sample-agent detail.json for package pages
-│   └── storage.ts          # localStorage/sessionStorage isolation
+│   └── storage.ts          # localStorage/sessionStorage/IndexedDB isolation
 ├── e2e-build-guard.setup.ts # Fails fast when port 4173 is not an e2e build
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
@@ -109,7 +109,8 @@ for package detail pages (same pattern as `mockChatPackageArtifacts`).
 Clear browser storage for persistence specs via `clearBrowserStorage(page)` in
 `beforeEach`. It clears on the first navigation only and skips later reloads.
 Relevant keys: `theme`, `registry.source.baseUrlOverride`,
-`registry.catalog.cache.v1`, `analytics-consent`.
+`analytics-consent`. Registry JSON/markdown lives in IndexedDB database
+`agents-repo-webapp-registry`, which the same helper deletes on first navigation.
 
 ### Analytics consent in E2E
 
@@ -142,6 +143,7 @@ in Playwright — use unit tests for GTM injection logic instead.
 
 - [ ] Registry index mocked at the correct full URL
 - [ ] `localStorage` cleared when testing theme or settings persistence
+- [ ] IndexedDB `agents-repo-webapp-registry` cleared on first e2e navigation (`e2e/fixtures/storage.ts`)
 - [ ] Assertions use visible headings/labels, not `document.title` metadata
 - [ ] Spec file named `*.spec.ts` under `e2e/`
 - [ ] No `waitForLoadState('networkidle')` waits
@@ -158,8 +160,9 @@ in Playwright — use unit tests for GTM injection logic instead.
   `PLAYWRIGHT_REUSE_SERVER=true`. The `e2e-guard` setup project checks for
   `dist/e2e-build-marker.json` and fails with an actionable message when the
   marker is missing.
-- **Stale catalog cache:** `clearBrowserStorage(page)` clears
-  `registry.catalog.cache.v1` (and other keys) on the first navigation only.
+- **Stale catalog cache:** `clearBrowserStorage(page)` clears localStorage,
+  sessionStorage, and IndexedDB `agents-repo-webapp-registry` on the first
+  navigation only.
   Specs that need a clean slate should call it in `beforeEach`.
 - **HTML report:** `npm run test:e2e:report` after a failed run
 - **UI mode:** `npm run test:e2e:ui` for step-through debugging

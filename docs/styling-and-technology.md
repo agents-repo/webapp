@@ -11,10 +11,12 @@ and agent/flow accordion markdown parse YAML frontmatter with the `yaml`
 package (YAML 1.2) and render the body with `react-markdown` plus
 `remark-gfm`. Site docs still split frontmatter without a YAML parser. Runtime
 installability and offline support are provided through `vite-plugin-pwa`, and
-registry catalog cache semantics are implemented with a lightweight in-memory
-LRU policy plus persistent browser storage. Catalog index and package
-`detail.json` share that persistent LRU helper in registry infrastructure;
-chat instruction bodies use the in-memory LRU only (no persistence).
+registry JSON/markdown cache semantics are implemented with a lightweight
+in-memory LRU plus IndexedDB persistence via the `idb` package. Catalog index,
+package `detail.json`, repository tags, chat `instructions.json`, and chat
+`.agent.md` share that persistent LRU helper in registry infrastructure.
+ZIP artifacts are not cached. Preferences (`theme`, analytics consent, registry
+URL overrides) stay in localStorage.
 
 ## Styling Policy
 
@@ -55,15 +57,16 @@ conditional GET revalidation to minimize network usage:
   full unconditional GET.
 
 Versioned chat instruction bodies (`instructions.json` and `.agent.md` under
-`/pkg/{namespace}/{package}/{version}/`) and package-page expand markdown use a
-separate **session memory** LRU (32 entries). Repeat opens of the same markdown
-skip the network while the tab stays loaded. This cache is not persisted and
-does not use TTL or conditional GET, because published version folders are
-immutable. Network `fetch` omits `cache: 'no-store'` so browsers can honor
-registry-proxy `Cache-Control: public, max-age=300` for catalog, `detail.json`,
-and expand markdown. Catalog index and package `detail.json` share a 24h
-localStorage LRU helper in registry infrastructure. **Clear cache and reload
-catalog** clears those app stores; it does not bust the HTTP 300s cache.
+`/pkg/` paths) persist in IndexedDB with the same app-owned cache helper.
+Version-pinned URLs (`/versions/<semver>/` or `/pkg/<ns>/<pkg>/<semver>/`) skip
+the short TTL; latest/short-alias URLs use a 24h TTL. Package-page expand
+markdown uses the same chat markdown store when loaded through the chat
+instruction fetchers. Network `fetch` omits `cache: 'no-store'` so browsers can
+honor registry-proxy `Cache-Control: public, max-age=300` for catalog,
+`detail.json`, and markdown. Catalog index and package `detail.json` share a 24h
+IndexedDB LRU helper in registry infrastructure. Tag lists use a 1h TTL keyed by
+repository identity. **Clear cache and reload catalog** clears those IndexedDB
+stores; it does not bust the HTTP 300s cache.
 
 Service worker runtime caching is intentionally focused to same-origin static
 assets. Registry index freshness is owned by the app-layer cache contract, and

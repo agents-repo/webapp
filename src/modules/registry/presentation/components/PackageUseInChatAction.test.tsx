@@ -67,9 +67,9 @@ const textResponse = (text: string, ok = true, status = 200) => ({
 })
 
 describe('PackageUseInChatAction', () => {
-  afterEach(() => {
+  afterEach(async () => {
     cleanup()
-    resetChatInstructionsCacheForTests()
+    await resetChatInstructionsCacheForTests()
     vi.unstubAllGlobals()
   })
 

@@ -35,7 +35,6 @@ import {
 import {
   fetchChatInstructionMarkdown,
   fetchChatInstructionsManifest,
-  readCachedChatInstructionsManifest,
 } from '../../infrastructure/chatInstructionsRepository'
 import { buildRegistryPkgInstructionsUrl } from '../../infrastructure/registrySourceUrl'
 
@@ -368,17 +367,9 @@ function PackageUseInChatAction({
   }, [])
 
   const openModal = () => {
-    const cached = readCachedChatInstructionsManifest(instructionsUrl)
-
     setShowModal(true)
     setLiveMessage('')
     clearCopyFeedback()
-
-    if (cached) {
-      applyManifest(cached, instructionsUrl)
-      return
-    }
-
     setManifest(null)
     setLoadedUrl(null)
     setSelectedKey('')
