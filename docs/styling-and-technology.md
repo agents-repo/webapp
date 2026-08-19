@@ -81,6 +81,12 @@ lets users choose light, dark, or auto. The selected mode is persisted.
 
 Header chrome is intentionally fixed to a dark surface for consistency, while
 page content surfaces (including cards) follow the selected color mode.
+Dark-mode links, outline buttons, and the always-dark header current-page item
+use a 70% tint of `$primary` (`$link-color-dark` / `$primary-text-emphasis-dark`
+in `src/styles/bootstrap-theme.scss`) so purple-on-dark text meets WCAG 2.2 AA.
+Filled `$primary` buttons and badges stay `#8a2ad8`. Bootstrap does not retint
+`.btn-outline-*` for dark mode; those resting color and border tokens are
+overridden under `[data-bs-theme="dark"]`.
 
 Package README and accordion markdown (`PackageMarkdown`) render a closed YAML
 frontmatter mapping as nested HTML tables (two-column key/value tables;

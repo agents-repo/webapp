@@ -105,6 +105,12 @@ and accessible tables for the cookie/storage section.
 
 - Wrap non-essential transitions in `@media (prefers-reduced-motion: no-preference)`
 - Keep `theme-color` meta in sync when the applied Bootstrap theme changes
+- Dark-mode purple-on-dark text (links, outline buttons, always-dark header
+  current page) uses a 70% tint of `$primary` defined in
+  `src/styles/bootstrap-theme.scss`. Do not paint those surfaces with
+  untinted `--bs-primary`. Token-level contrast is asserted in
+  `test/dark-mode-contrast.test.mjs`; rendered contrast is checked with
+  `npm run a11y:ci`.
 
 ## Validation commands
 
