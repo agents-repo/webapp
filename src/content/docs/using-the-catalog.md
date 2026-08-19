@@ -46,7 +46,7 @@ For reproducible projects, prefer pinning the CLI in `devDependencies` and using
 
 ## Website settings
 
-Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). This affects catalog loading in your session only; it does not change CLI config in your repositories.
+Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog. It does not delete ZIP downloads or change analytics/theme preferences.
 
 ## Install the site (PWA)
 

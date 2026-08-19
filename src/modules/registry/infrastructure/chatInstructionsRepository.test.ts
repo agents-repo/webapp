@@ -24,8 +24,8 @@ const jsonOk = (payload: unknown) => ({
 })
 
 describe('chatInstructionsRepository', () => {
-  afterEach(() => {
-    resetChatInstructionsCacheForTests()
+  afterEach(async () => {
+    await resetChatInstructionsCacheForTests()
     vi.unstubAllGlobals()
   })
 

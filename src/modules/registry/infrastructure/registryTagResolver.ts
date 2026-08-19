@@ -1,9 +1,11 @@
 import semver from 'semver'
 
 import { inferRegistryRepositoryIdentity } from './registryMajorVersionRef.ts'
+import { REGISTRY_CACHE_STORES } from './indexedDbCacheBackend.ts'
+import { createPersistentLruCache } from './persistentLruCache.ts'
 
-const TAG_LIST_CACHE_STORAGE_KEY = 'registry.tags.cache.v1'
 const TAG_LIST_CACHE_TTL_MS = 60 * 60 * 1000
+const TAG_LIST_CACHE_MAX_ENTRIES = 32
 
 interface GitHubTagPayload {
   readonly name: string
@@ -17,6 +19,31 @@ interface TagListCacheEnvelope {
 }
 
 const TAG_LIST_CACHE_VERSION = 3
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null
+}
+
+const isTagListCacheEnvelope = (value: unknown): value is TagListCacheEnvelope => {
+  if (!isRecord(value)) {
+    return false
+  }
+
+  return (
+    value.cacheVersion === TAG_LIST_CACHE_VERSION &&
+    typeof value.cachedAt === 'number' &&
+    typeof value.repositoryKey === 'string' &&
+    Array.isArray(value.tagNames)
+  )
+}
+
+const tagListCache = createPersistentLruCache<TagListCacheEnvelope>({
+  storeName: REGISTRY_CACHE_STORES.tags,
+  maxEntries: TAG_LIST_CACHE_MAX_ENTRIES,
+  ttlMs: TAG_LIST_CACHE_TTL_MS,
+  getKey: (envelope) => envelope.repositoryKey,
+  isEnvelope: isTagListCacheEnvelope,
+})
 
 const GITHUB_HOSTNAMES = new Set(['github.com', 'www.github.com', 'raw.githubusercontent.com'])
 
@@ -75,14 +102,6 @@ const recoverTagNamesFromPeerFetches = async (
 
 export const buildRepositoryKey = (owner: string, repo: string): string => `${owner}/${repo}`
 
-const getLocalStorage = (): Storage | null => {
-  try {
-    return globalThis.localStorage
-  } catch {
-    return null
-  }
-}
-
 const parseRepositoryKeyFromTagsUrl = (tagsUrl: string): string | null => {
   try {
     const parsedUrl = new URL(tagsUrl)
@@ -114,76 +133,29 @@ const resolveRepositoryKey = (
   return parseRepositoryKeyFromTagsUrl(tagsUrl)
 }
 
-const readTagListCache = (repositoryKey: string): string[] | null => {
-  const storage = getLocalStorage()
+const readTagListCache = async (repositoryKey: string): Promise<string[] | null> => {
+  const envelope = await tagListCache.get(repositoryKey)
 
-  if (!storage) {
+  if (!envelope || !tagListCache.isFresh(envelope.cachedAt)) {
     return null
   }
 
-  try {
-    const rawValue = storage.getItem(TAG_LIST_CACHE_STORAGE_KEY)
-
-    if (!rawValue) {
-      return null
-    }
-
-    const envelope = JSON.parse(rawValue) as TagListCacheEnvelope
-
-    if (
-      envelope.cacheVersion !== TAG_LIST_CACHE_VERSION ||
-      envelope.repositoryKey !== repositoryKey ||
-      !Array.isArray(envelope.tagNames)
-    ) {
-      return null
-    }
-
-    if (Date.now() - envelope.cachedAt > TAG_LIST_CACHE_TTL_MS) {
-      return null
-    }
-
-    return envelope.tagNames
-  } catch {
-    return null
-  }
+  return envelope.tagNames
 }
 
-const writeTagListCache = (repositoryKey: string, tagNames: string[]): void => {
-  const storage = getLocalStorage()
-
-  if (!storage) {
-    return
-  }
-
-  const envelope: TagListCacheEnvelope = {
+const writeTagListCache = async (repositoryKey: string, tagNames: string[]): Promise<void> => {
+  await tagListCache.write(repositoryKey, {
     cacheVersion: TAG_LIST_CACHE_VERSION,
     cachedAt: Date.now(),
     repositoryKey,
     tagNames,
-  }
-
-  try {
-    storage.setItem(TAG_LIST_CACHE_STORAGE_KEY, JSON.stringify(envelope))
-  } catch {
-    // Ignore storage failures; caching is best-effort.
-  }
+  })
 }
 
-export const clearRegistryTagListCache = (): void => {
+export const clearRegistryTagListCache = async (): Promise<void> => {
   inFlightTagFetchesByTagsUrl.clear()
   inFlightTagFetchesByRepositoryKey.clear()
-
-  const storage = getLocalStorage()
-
-  if (!storage) {
-    return
-  }
-
-  try {
-    storage.removeItem(TAG_LIST_CACHE_STORAGE_KEY)
-  } catch {
-    // Ignore storage failures.
-  }
+  await tagListCache.clear()
 }
 
 export const buildRegistryTagsUrl = (sourceUrl: string, fallbackRepositoryUrl: string): string => {
@@ -282,7 +254,7 @@ const fetchRegistryRepositoryTagNamesFromNetwork = async (
     nextUrl = pageResult.nextUrl
   }
 
-  writeTagListCache(repositoryKey, tagNames)
+  await writeTagListCache(repositoryKey, tagNames)
 
   return tagNames
 }
@@ -342,7 +314,7 @@ export const fetchRegistryRepositoryTagNames = async (
   }
 
   if (!options.bypassCache) {
-    const cachedTagNames = readTagListCache(repositoryKey)
+    const cachedTagNames = await readTagListCache(repositoryKey)
 
     if (cachedTagNames) {
       return cachedTagNames
@@ -362,7 +334,7 @@ export const fetchRegistryRepositoryTagNames = async (
       undefined,
     ).catch(async (error: unknown) => {
       if (!options.bypassCache) {
-        const cachedTagNames = readTagListCache(repositoryKey)
+        const cachedTagNames = await readTagListCache(repositoryKey)
 
         if (cachedTagNames) {
           return cachedTagNames

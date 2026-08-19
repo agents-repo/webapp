@@ -23,8 +23,8 @@ AI-first contributor workflow.
 - Bootstrap, SCSS, React Bootstrap, and Font Awesome React
 - Bootstrap 5.3 color modes with a header dropdown for light, dark, and auto
 - PWA service worker runtime caching through `vite-plugin-pwa`
-- In-app 24h registry index cache semantics using a lightweight in-memory LRU
-  policy + persistent browser storage
+- In-app 24h registry JSON/markdown cache using IndexedDB (`idb`) plus a
+  lightweight in-memory LRU; preferences stay in localStorage
 - ESLint for code linting
 - markdownlint for Markdown quality checks
 
@@ -146,9 +146,9 @@ Registry catalog loading now uses two coordinated cache layers:
   - A package index or detail URL missing from that fresh cache triggers one
     forced catalog reload (re-resolve `v2.x`, bypass tag cache) before
     **Package not found**
-  - Website settings include **Clear cache and reload catalog** to reset
-    `registry.catalog.cache.v1`, `registry.package-detail.cache.v1`, and
-    `registry.tags.cache.v1` in localStorage and force a catalog reload (does
+  - Website settings include **Clear cache and reload catalog** to reset the
+    IndexedDB registry stores (`catalog`, `package-detail`, `tags`,
+    `chat-manifest`, `chat-markdown`) and force a catalog reload (does
     not purge Cloudflare proxy cache or the browser HTTP `max-age=300` cache)
   - If remote refresh fails, stale cached catalog is used when available
   - If refresh fails and no cached catalog exists, the app shows an error alert

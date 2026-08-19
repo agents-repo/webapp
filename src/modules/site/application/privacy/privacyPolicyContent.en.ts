@@ -1,6 +1,6 @@
 import type { PrivacyPolicyContent } from './privacyPolicyContent.types.ts'
 
-export const privacyPolicyLastUpdated = '2026-07-05'
+export const privacyPolicyLastUpdated = '2026-08-19'
 
 export const privacyPolicyContentEn: PrivacyPolicyContent = {
   pageTitle: 'Privacy policy',
@@ -34,6 +34,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       listItems: [
         'Analytics data (only if you accept analytics cookies) through Google Tag Manager and related Google Analytics tags.',
         'Browser local preferences such as theme mode and optional registry source overrides you configure.',
+        'Registry catalog JSON, package detail JSON, tag lists, and chat instruction JSON/markdown cached in IndexedDB so repeat visits can reuse recently fetched registry payloads. This cache is not used for analytics and does not require extra consent.',
         'Your analytics consent choice stored locally so we can remember your preference.',
         'Technical information processed by third-party services we link to (for example GitHub or registry hosts) when you choose to visit them.',
       ],
@@ -44,6 +45,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       listItems: [
         'Operate the site, including catalog browsing, search, downloads, and optional PWA installation.',
         'Remember your theme and registry settings.',
+        'Reuse recently fetched registry JSON and markdown from IndexedDB while you browse.',
         'Measure aggregated site usage when you accept analytics cookies.',
         'Respond to contact and privacy requests you send us.',
       ],
@@ -52,7 +54,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       id: 'cookies',
       title: 'Cookies and similar technologies',
       paragraphs: [
-        'We use browser local storage for preferences and consent. Analytics tags load only after you accept analytics in the cookie banner.',
+        'We use browser local storage for preferences and consent, and IndexedDB for registry JSON and markdown caches. Analytics tags load only after you accept analytics in the cookie banner.',
       ],
       cookieRows: [
         {
@@ -82,6 +84,13 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
           storage: 'localStorage',
           duration: 'Until you clear site data or reset settings.',
           consentRequired: 'No (user-requested functionality).',
+        },
+        {
+          name: 'agents-repo-webapp-registry',
+          purpose: 'Caches registry catalog JSON, package detail JSON, tag lists, and chat instruction JSON/markdown in your browser. ZIP downloads are not stored here. Website settings Clear cache removes these stores.',
+          storage: 'IndexedDB',
+          duration: 'Until TTL expiry, you use Clear cache, or you clear site data. Catalog and detail use 24h freshness; tags use 1h; version-pinned chat payloads skip the short TTL.',
+          consentRequired: 'No (strictly necessary for catalog browsing).',
         },
         {
           name: 'Google Tag Manager / Google Analytics',
@@ -114,6 +123,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       title: 'Retention',
       listItems: [
         'Consent and preference values remain in your browser until you clear them or change your choices.',
+        'Registry IndexedDB caches remain until they expire, you choose Clear cache in website settings, or you clear site data.',
         'Analytics retention follows Google Tag Manager / Google Analytics configuration and policies.',
       ],
     },

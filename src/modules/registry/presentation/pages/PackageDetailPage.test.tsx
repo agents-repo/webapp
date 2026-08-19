@@ -67,7 +67,7 @@ describe('PackageDetailPage', () => {
   })
 
   it('clears a previous detail error and shows loading when the registry base URL changes', async () => {
-    clearRegistryPackageDetailCache()
+    await clearRegistryPackageDetailCache()
     useRegistryCatalogMock.mockReturnValue({
       ...loadedCatalogContext,
       registryBaseUrl: 'https://example.com/registry-failing',
@@ -118,7 +118,7 @@ describe('PackageDetailPage', () => {
         })
       }),
     )
-    clearRegistryPackageDetailCache()
+    await clearRegistryPackageDetailCache()
     useRegistryCatalogMock.mockReturnValue({
       ...loadedCatalogContext,
       registryBaseUrl: 'https://example.com/registry-reloading',

@@ -14,19 +14,19 @@ import {
 import { buildRegistryPackageDetailUrl } from './registrySourceUrl'
 
 describe('packageDetailRepository', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     Object.defineProperty(globalThis, 'localStorage', {
       configurable: true,
       writable: true,
       value: new MemoryStorage(),
     })
     resetPackageDetailRepositoryForTests()
-    resetRegistryPackageDetailCacheForTests()
+    await resetRegistryPackageDetailCacheForTests()
   })
 
-  afterEach(() => {
+  afterEach(async () => {
     resetPackageDetailRepositoryForTests()
-    resetRegistryPackageDetailCacheForTests()
+    await resetRegistryPackageDetailCacheForTests()
     vi.unstubAllGlobals()
   })
 
@@ -68,8 +68,9 @@ describe('packageDetailRepository', () => {
       latest: '9.9.9',
     }
     const pending = loadPackageDetail(options)
-    await Promise.resolve()
-    expect(fetchMock).toHaveBeenCalledTimes(1)
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
 
     const cacheKey = buildPackageDetailCacheKey(
       buildRegistryPackageDetailUrl(options.registryBaseUrl, options.namespace, options.packageId),
@@ -77,13 +78,13 @@ describe('packageDetailRepository', () => {
       options.latest,
     )
 
-    clearRegistryPackageDetailCache()
+    await clearRegistryPackageDetailCache()
     finishFetch?.({
       ok: true,
       json: () => Promise.resolve(samplePackageDetail),
     })
     await expect(pending).resolves.toEqual(samplePackageDetail)
-    expect(readFreshPackageDetailCache(cacheKey)).toBeNull()
+    await expect(readFreshPackageDetailCache(cacheKey)).resolves.toBeNull()
 
     fetchMock.mockResolvedValue({
       ok: true,

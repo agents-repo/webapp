@@ -1,5 +1,6 @@
 import type { RegistryCatalog } from '../domain/package'
-import { createPersistentLruCache } from './persistentLruCache'
+import { REGISTRY_CACHE_STORES } from './indexedDbCacheBackend.ts'
+import { createPersistentLruCache } from './persistentLruCache.ts'
 import { isRegistryCatalog } from './registryCatalogValidation'
 import { extractRegistryRef, refsAreCompatibleForCatalogCacheFallback } from './registryMajorVersionRef'
 import {
@@ -7,10 +8,9 @@ import {
   type RegistrySourceCacheIdentity,
 } from './registrySourceUrl'
 
-const CACHE_STORAGE_KEY = 'registry.catalog.cache.v1'
+export const CATALOG_CACHE_MAX_ENTRIES = 5
 const CACHE_VERSION = 1
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
-const CACHE_MAX_ENTRIES = 5
 
 interface RegistryCatalogCacheEnvelope {
   cacheVersion: number
@@ -41,8 +41,8 @@ const isEnvelope = (value: unknown): value is RegistryCatalogCacheEnvelope => {
 }
 
 const catalogCache = createPersistentLruCache<RegistryCatalogCacheEnvelope>({
-  storageKey: CACHE_STORAGE_KEY,
-  maxEntries: CACHE_MAX_ENTRIES,
+  storeName: REGISTRY_CACHE_STORES.catalog,
+  maxEntries: CATALOG_CACHE_MAX_ENTRIES,
   ttlMs: CACHE_TTL_MS,
   getKey: (envelope) => envelope.indexUrl,
   isEnvelope,
@@ -65,12 +65,11 @@ const envelopeMatchesSourceIdentity = (
   return refsAreCompatibleForCatalogCacheFallback(identity.sourceRef, envelopeRef)
 }
 
-const readCatalogCacheEnvelopeForSourceIdentity = (
+const readCatalogCacheEnvelopeForSourceIdentity = async (
   identity: RegistrySourceCacheIdentity,
   options: { freshOnly: boolean },
-): RegistryCatalogCacheEnvelope | null => {
-  const matchingEnvelopes = catalogCache
-    .listAll()
+): Promise<RegistryCatalogCacheEnvelope | null> => {
+  const matchingEnvelopes = (await catalogCache.listAll())
     .filter(
       (envelope) =>
         envelopeMatchesSourceIdentity(envelope, identity) &&
@@ -81,20 +80,20 @@ const readCatalogCacheEnvelopeForSourceIdentity = (
   return matchingEnvelopes[0] ?? null
 }
 
-export const readFreshCatalogCacheEnvelopeForSourceIdentity = (
+export const readFreshCatalogCacheEnvelopeForSourceIdentity = async (
   identity: RegistrySourceCacheIdentity,
-): RegistryCatalogCacheEnvelope | null => {
+): Promise<RegistryCatalogCacheEnvelope | null> => {
   return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: true })
 }
 
-export const readStaleCatalogCacheEnvelopeForSourceIdentity = (
+export const readStaleCatalogCacheEnvelopeForSourceIdentity = async (
   identity: RegistrySourceCacheIdentity,
-): RegistryCatalogCacheEnvelope | null => {
+): Promise<RegistryCatalogCacheEnvelope | null> => {
   return readCatalogCacheEnvelopeForSourceIdentity(identity, { freshOnly: false })
 }
 
-export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null => {
-  const envelope = catalogCache.get(indexUrl)
+export const readFreshCatalogCache = async (indexUrl: string): Promise<RegistryCatalog | null> => {
+  const envelope = await catalogCache.get(indexUrl)
 
   if (!envelope || !catalogCache.isFresh(envelope.cachedAt)) {
     return null
@@ -103,29 +102,29 @@ export const readFreshCatalogCache = (indexUrl: string): RegistryCatalog | null 
   return envelope.catalog
 }
 
-export const readCatalogCacheEnvelope = (
+export const readCatalogCacheEnvelope = async (
   indexUrl: string,
-): RegistryCatalogCacheEnvelope | null => {
+): Promise<RegistryCatalogCacheEnvelope | null> => {
   return catalogCache.get(indexUrl)
 }
 
-export const touchCatalogCache = (indexUrl: string): void => {
-  const envelope = catalogCache.get(indexUrl)
+export const touchCatalogCache = async (indexUrl: string): Promise<void> => {
+  const envelope = await catalogCache.get(indexUrl)
 
   if (!envelope) {
     return
   }
 
-  catalogCache.write(indexUrl, { ...envelope, cachedAt: Date.now() })
+  await catalogCache.write(indexUrl, { ...envelope, cachedAt: Date.now() })
 }
 
-export const writeCatalogCache = (
+export const writeCatalogCache = async (
   indexUrl: string,
   catalog: RegistryCatalog,
   etag?: string,
   lastModified?: string,
-): void => {
-  catalogCache.write(indexUrl, {
+): Promise<void> => {
+  await catalogCache.write(indexUrl, {
     cacheVersion: CACHE_VERSION,
     cachedAt: Date.now(),
     indexUrl,
@@ -135,10 +134,10 @@ export const writeCatalogCache = (
   })
 }
 
-export const clearRegistryCatalogCache = (): void => {
-  catalogCache.clear()
+export const clearRegistryCatalogCache = async (): Promise<void> => {
+  await catalogCache.clear()
 }
 
-export const resetRegistryCatalogCacheForTests = (): void => {
-  clearRegistryCatalogCache()
+export const resetRegistryCatalogCacheForTests = async (): Promise<void> => {
+  await clearRegistryCatalogCache()
 }

@@ -8,15 +8,15 @@ import {
   writeCachedChatInstructionsManifest,
 } from './chatInstructionsCache'
 
-export { readCachedChatInstructionsManifest } from './chatInstructionsCache'
+export { clearRegistryChatInstructionsCache, readCachedChatInstructionsManifest } from './chatInstructionsCache'
 
 const inflightManifestByUrl = new Map<string, Promise<ChatInstructionsManifest>>()
 const inflightMarkdownByUrl = new Map<string, Promise<string>>()
 
-export const resetChatInstructionsCacheForTests = (): void => {
+export const resetChatInstructionsCacheForTests = async (): Promise<void> => {
   inflightManifestByUrl.clear()
   inflightMarkdownByUrl.clear()
-  resetChatInstructionsLruCacheForTests()
+  await resetChatInstructionsLruCacheForTests()
 }
 
 const loadChatInstructionsManifestFromNetwork = async (
@@ -41,7 +41,7 @@ const loadChatInstructionsManifestFromNetwork = async (
     throw new Error('This package has no chat instructions to copy.')
   }
 
-  writeCachedChatInstructionsManifest(url, parsed)
+  await writeCachedChatInstructionsManifest(url, parsed)
   return parsed
 }
 
@@ -59,7 +59,7 @@ const loadChatInstructionMarkdownFromNetwork = async (url: string): Promise<stri
     throw new Error('Instruction markdown was empty.')
   }
 
-  writeCachedChatInstructionMarkdown(url, markdown)
+  await writeCachedChatInstructionMarkdown(url, markdown)
   return markdown
 }
 
@@ -91,7 +91,7 @@ export const fetchChatInstructionsManifest = async (
 ): Promise<ChatInstructionsManifest> => {
   return getOrLoad(
     url,
-    readCachedChatInstructionsManifest(url),
+    await readCachedChatInstructionsManifest(url),
     inflightManifestByUrl,
     loadChatInstructionsManifestFromNetwork,
     signal,
@@ -104,7 +104,7 @@ export const fetchChatInstructionMarkdown = async (
 ): Promise<string> => {
   return getOrLoad(
     url,
-    readCachedChatInstructionMarkdown(url),
+    await readCachedChatInstructionMarkdown(url),
     inflightMarkdownByUrl,
     loadChatInstructionMarkdownFromNetwork,
     signal,

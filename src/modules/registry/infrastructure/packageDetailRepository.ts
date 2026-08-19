@@ -17,9 +17,9 @@ export const invalidatePackageDetailLoads = (): void => {
   inflightByCacheKey.clear()
 }
 
-export const clearRegistryPackageDetailCache = (): void => {
+export const clearRegistryPackageDetailCache = async (): Promise<void> => {
   invalidatePackageDetailLoads()
-  clearPackageDetailStorage()
+  await clearPackageDetailStorage()
 }
 
 export const resetPackageDetailRepositoryForTests = (): void => {
@@ -61,7 +61,7 @@ export const loadPackageDetail = async (options: {
     `${options.namespace}/${options.packageId}`,
     options.latest,
   )
-  const cached = readFreshPackageDetailCache(cacheKey)
+  const cached = await readFreshPackageDetailCache(cacheKey)
 
   if (cached) {
     return settleWithCallerSignal(cached, options.signal)
@@ -71,9 +71,9 @@ export const loadPackageDetail = async (options: {
   if (!pending) {
     const generation = loadGeneration
     pending = loadPackageDetailFromNetwork(detailUrl)
-      .then((detail) => {
+      .then(async (detail) => {
         if (generation === loadGeneration) {
-          writePackageDetailCache(cacheKey, detail)
+          await writePackageDetailCache(cacheKey, detail)
         }
         return detail
       })

@@ -33,6 +33,7 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       listItems: [
         'Dados de analytics (somente se você aceitar cookies de analytics) por meio do Google Tag Manager e tags relacionadas do Google Analytics.',
         'Preferências locais do navegador, como tema e substituições opcionais da fonte do registry que você configurar.',
+        'JSON do catálogo do registry, JSON de detalhe de pacote, listas de tags e JSON/markdown de instruções de chat armazenados em IndexedDB para reutilizar payloads recentemente baixados. Esse cache não é usado para analytics e não exige consentimento extra.',
         'Sua escolha de consentimento de analytics armazenada localmente para lembrarmos sua preferência.',
         'Informações técnicas processadas por serviços de terceiros que linkamos (por exemplo GitHub ou hosts do registry) quando você opta por visitá-los.',
       ],
@@ -43,6 +44,7 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       listItems: [
         'Operar o site, incluindo navegação no catálogo, busca, downloads e instalação PWA opcional.',
         'Lembrar seu tema e configurações do registry.',
+        'Reutilizar JSON e markdown do registry recentemente obtidos do IndexedDB enquanto você navega.',
         'Medir o uso agregado do site quando você aceita cookies de analytics.',
         'Responder a solicitações de contato e privacidade que você nos enviar.',
       ],
@@ -51,7 +53,7 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       id: 'cookies',
       title: 'Cookies e tecnologias semelhantes',
       paragraphs: [
-        'Usamos armazenamento local do navegador para preferências e consentimento. Tags de analytics são carregadas somente após você aceitar analytics no banner de cookies.',
+        'Usamos armazenamento local do navegador para preferências e consentimento, e IndexedDB para caches de JSON e markdown do registry. Tags de analytics são carregadas somente após você aceitar analytics no banner de cookies.',
       ],
       cookieRows: [
         {
@@ -81,6 +83,13 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
           storage: 'localStorage',
           duration: 'Até você limpar os dados do site ou redefinir configurações.',
           consentRequired: 'Não (funcionalidade solicitada pelo usuário).',
+        },
+        {
+          name: 'agents-repo-webapp-registry',
+          purpose: 'Armazena no navegador JSON do catálogo, JSON de detalhe de pacote, listas de tags e JSON/markdown de instruções de chat. Downloads ZIP não são guardados aqui. Limpar cache em Website settings remove esses stores.',
+          storage: 'IndexedDB',
+          duration: 'Até o TTL expirar, você usar Limpar cache ou limpar os dados do site. Catálogo e detalhe usam 24h; tags usam 1h; payloads de chat com versão fixa não usam o TTL curto.',
+          consentRequired: 'Não (estritamente necessário para navegar no catálogo).',
         },
         {
           name: 'Google Tag Manager / Google Analytics',
@@ -113,6 +122,7 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       title: 'Retenção',
       listItems: [
         'Valores de consentimento e preferências permanecem no seu navegador até você limpá-los ou alterar suas escolhas.',
+        'Caches IndexedDB do registry permanecem até expirarem, você escolher Limpar cache nas configurações do site ou limpar os dados do site.',
         'A retenção de analytics segue a configuração e políticas do Google Tag Manager / Google Analytics.',
       ],
     },

@@ -138,6 +138,11 @@ extract it to a sibling module before testing.
   `src/test/testUtils.ts` in `beforeEach` or `afterEach`. When a test needs an
   isolated `Storage` implementation, use `MemoryStorage` from
   `src/test/memoryStorage.ts`.
+- Vitest registry cache tests use in-memory IndexedDB stand-ins (`import.meta.env.VITEST`
+  / `MODE === 'test'`). Await async reset helpers such as
+  `resetRegistryCatalogCacheForTests()`, `resetRegistryPackageDetailCacheForTests()`,
+  `resetChatInstructionsCacheForTests()`, `clearRegistryTagListCache()`, or
+  `resetRegistryMemoryCachesForTests()`. Do not call `openDB` in unit tests.
 - Use `resetRegistryCatalogCacheForTests()` when testing catalog cache behavior.
 
 ### Component and hook tests
@@ -173,7 +178,8 @@ hard-coded locale strings.
 | Source config | `registrySourceConfig.test.ts`, `resolve.test.ts`, `validateAlias.test.ts` |
 | Catalog validation | `registryCatalogValidation.test.ts` |
 | Catalog cache identity | `registryCatalogCache.test.ts` |
-| Chat session cache | `chatInstructionsCache.test.ts` |
+| IndexedDB cache collectors | `indexedDbCacheBackend.test.ts` |
+| Chat JSON/markdown cache | `chatInstructionsCache.test.ts` |
 | Repository loading | `registryRepository.test.ts`, cache integration |
 | Registry settings (localStorage) | `registrySourceSettings.test.ts` |
 | Package search selectors | `registrySelectors.test.ts` |

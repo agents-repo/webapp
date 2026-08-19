@@ -1,11 +1,11 @@
 import type { PackageDetailDocument } from '../domain/packageDetail'
+import { REGISTRY_CACHE_STORES } from './indexedDbCacheBackend.ts'
 import { isPackageDetailDocument } from './packageDetailValidation'
-import { createPersistentLruCache } from './persistentLruCache'
+import { createPersistentLruCache } from './persistentLruCache.ts'
 
-const CACHE_STORAGE_KEY = 'registry.package-detail.cache.v1'
 const CACHE_VERSION = 1
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000
-const CACHE_MAX_ENTRIES = 20
+export const PACKAGE_DETAIL_CACHE_MAX_ENTRIES = 64
 
 interface PackageDetailCacheEnvelope {
   cacheVersion: number
@@ -32,8 +32,8 @@ const isEnvelope = (value: unknown): value is PackageDetailCacheEnvelope => {
 }
 
 const packageDetailCache = createPersistentLruCache<PackageDetailCacheEnvelope>({
-  storageKey: CACHE_STORAGE_KEY,
-  maxEntries: CACHE_MAX_ENTRIES,
+  storeName: REGISTRY_CACHE_STORES.packageDetail,
+  maxEntries: PACKAGE_DETAIL_CACHE_MAX_ENTRIES,
   ttlMs: CACHE_TTL_MS,
   getKey: (envelope) => envelope.cacheKey,
   isEnvelope,
@@ -47,8 +47,10 @@ export const buildPackageDetailCacheKey = (
   return `${detailUrl}#${packageRef}@${latest}`
 }
 
-export const readFreshPackageDetailCache = (cacheKey: string): PackageDetailDocument | null => {
-  const envelope = packageDetailCache.get(cacheKey)
+export const readFreshPackageDetailCache = async (
+  cacheKey: string,
+): Promise<PackageDetailDocument | null> => {
+  const envelope = await packageDetailCache.get(cacheKey)
 
   if (!envelope || !packageDetailCache.isFresh(envelope.cachedAt)) {
     return null
@@ -57,8 +59,11 @@ export const readFreshPackageDetailCache = (cacheKey: string): PackageDetailDocu
   return envelope.detail
 }
 
-export const writePackageDetailCache = (cacheKey: string, detail: PackageDetailDocument): void => {
-  packageDetailCache.write(cacheKey, {
+export const writePackageDetailCache = async (
+  cacheKey: string,
+  detail: PackageDetailDocument,
+): Promise<void> => {
+  await packageDetailCache.write(cacheKey, {
     cacheVersion: CACHE_VERSION,
     cachedAt: Date.now(),
     cacheKey,
@@ -66,10 +71,10 @@ export const writePackageDetailCache = (cacheKey: string, detail: PackageDetailD
   })
 }
 
-export const clearRegistryPackageDetailCache = (): void => {
-  packageDetailCache.clear()
+export const clearRegistryPackageDetailCache = async (): Promise<void> => {
+  await packageDetailCache.clear()
 }
 
-export const resetRegistryPackageDetailCacheForTests = (): void => {
-  clearRegistryPackageDetailCache()
+export const resetRegistryPackageDetailCacheForTests = async (): Promise<void> => {
+  await clearRegistryPackageDetailCache()
 }

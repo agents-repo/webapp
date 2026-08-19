@@ -43,8 +43,8 @@ describe('validateRegistrySourceUrlForMajorVersionAlias', () => {
     vi.restoreAllMocks()
   })
 
-  afterEach(() => {
-    clearRegistryTagListCache()
+  afterEach(async () => {
+    await clearRegistryTagListCache()
     vi.restoreAllMocks()
   })
 
