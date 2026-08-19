@@ -166,7 +166,10 @@ hard-coded locale strings.
 - Some tests disable `color-contrast` because jsdom does not evaluate contrast.
   Token-level dark-mode contrast for links, outline buttons, and the always-dark
   header current page is asserted in `test/dark-mode-contrast.test.mjs` (included
-  in `npm run test:sync`). Rendered contrast is checked via `npm run a11y:ci`.
+  in `npm run test:sync`). That test compiles `bootstrap-theme.scss` and checks
+  `[data-bs-theme=dark] .btn-outline-*` custom properties against the 70% tint
+  tokens, not merely that those class names appear after the first dark-mode
+  block. Rendered contrast is checked via `npm run a11y:ci`.
   See [accessibility.md](accessibility.md).
 
 ## Coverage map

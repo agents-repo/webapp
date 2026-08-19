@@ -43,14 +43,10 @@ function parseCssColor(value) {
   throw new Error(`Unsupported color: ${value}`)
 }
 
-function parseProbeColors(css) {
-  const start = css.indexOf('#contrast-probe')
-  assert.ok(start >= 0, 'missing #contrast-probe')
-  const open = css.indexOf('{', start)
-  const close = css.indexOf('}', open)
+function parseColorDeclarations(block) {
   const colors = new Map()
 
-  for (const declaration of css.slice(open + 1, close).split(';')) {
+  for (const declaration of block.split(';')) {
     const trimmed = declaration.trim()
     if (trimmed.length === 0) {
       continue
@@ -61,6 +57,22 @@ function parseProbeColors(css) {
   }
 
   return colors
+}
+
+function parseProbeColors(css) {
+  const start = css.indexOf('#contrast-probe')
+  assert.ok(start >= 0, 'missing #contrast-probe')
+  const open = css.indexOf('{', start)
+  const close = css.indexOf('}', open)
+  return parseColorDeclarations(css.slice(open + 1, close))
+}
+
+function parseScopedRuleColors(css, selectorRegex, missingMessage) {
+  const match = css.match(selectorRegex)
+  assert.ok(match, missingMessage)
+  const open = match[0].indexOf('{')
+  const close = match[0].lastIndexOf('}')
+  return parseColorDeclarations(match[0].slice(open + 1, close))
 }
 
 function composite(foreground, alpha, background) {
@@ -76,6 +88,12 @@ describe('dark-mode contrast tokens', () => {
   --probe-secondary-emphasis: #{$secondary-text-emphasis-dark};
   --probe-navbar-active: #{$navbar-dark-active-color};
   --probe-primary: #{$primary};
+  --probe-body-bg-dark: #{$body-bg-dark};
+  --probe-body-bg-light: #{$body-bg};
+  --probe-body-color-dark: #{$body-color-dark};
+  --probe-card-bg: #{$card-bg-dark};
+  --probe-tertiary-bg: #{$body-tertiary-bg-dark};
+  --probe-primary-bg-subtle: #{$primary-bg-subtle-dark};
 }
 `,
     {
@@ -92,13 +110,15 @@ describe('dark-mode contrast tokens', () => {
     return color
   }
 
-  const bodyBg = [20, 16, 29]
-  const cardBg = [27, 22, 40]
+  const bodyBg = probe('--probe-body-bg-dark')
+  const cardBg = probe('--probe-card-bg')
+  // Matches [data-bs-theme="dark"] .card --bs-card-cap-bg in bootstrap-theme.scss.
   const cardCap = composite([255, 255, 255], 0.04, cardBg)
-  const footerTertiary = [42.5, 47.5, 52.5]
+  const footerTertiary = probe('--probe-tertiary-bg')
+  // Matches .app-navbar background-color in App.scss (not a Sass token).
   const navbarOpaque = [19, 15, 27]
-  const navbarOverLight = composite(navbarOpaque, 0.88, [251, 248, 255])
-  const bodyColorDark = [243, 236, 255]
+  const navbarOverLight = composite(navbarOpaque, 0.88, probe('--probe-body-bg-light'))
+  const bodyColorDark = probe('--probe-body-color-dark')
 
   it('does not use untinted primary for dark links or navbar active', () => {
     const primary = probe('--probe-primary')
@@ -136,6 +156,11 @@ describe('dark-mode contrast tokens', () => {
     }
   })
 
+  it('meets WCAG 2.2 AA for docs sidebar current page on primary subtle', () => {
+    const ratio = contrastRatio(probe('--probe-emphasis'), probe('--probe-primary-bg-subtle'))
+    assert.ok(ratio >= 4.5, `docs current page contrast ${ratio.toFixed(2)}`)
+  })
+
   it('makes header current page at least as readable as inactive nav', () => {
     const inactive = composite(composite(bodyColorDark, 0.88, navbarOpaque), 0.88, navbarOpaque)
     const active = probe('--probe-navbar-active')
@@ -154,12 +179,29 @@ describe('dark-mode contrast tokens', () => {
   })
 
   it('overrides dark outline button tokens in compiled CSS', () => {
-    const darkThemeIndex = compiled.css.indexOf('[data-bs-theme=dark]')
-    const quotedDarkThemeIndex = compiled.css.indexOf('[data-bs-theme="dark"]')
-    const themeBlockStart = darkThemeIndex >= 0 ? darkThemeIndex : quotedDarkThemeIndex
-    assert.ok(themeBlockStart >= 0, 'missing dark theme block')
-    const themeBlock = compiled.css.slice(themeBlockStart)
-    assert.ok(themeBlock.includes('btn-outline-primary'))
-    assert.ok(themeBlock.includes('btn-outline-secondary'))
+    // Bootstrap emits .btn-outline-* after the first [data-bs-theme=dark] root
+    // block. Match the scoped override, not a substring of that later base class.
+    const primaryRule = parseScopedRuleColors(
+      compiled.css,
+      /\[data-bs-theme=(?:"dark"|dark)\]\s*\.btn-outline-primary\s*\{[^}]+\}/,
+      'missing dark-theme .btn-outline-primary override',
+    )
+    const secondaryRule = parseScopedRuleColors(
+      compiled.css,
+      /\[data-bs-theme=(?:"dark"|dark)\]\s*\.btn-outline-secondary\s*\{[^}]+\}/,
+      'missing dark-theme .btn-outline-secondary override',
+    )
+    const link = probe('--probe-link')
+    const secondary = probe('--probe-secondary-emphasis')
+
+    for (const property of [
+      '--bs-btn-color',
+      '--bs-btn-border-color',
+      '--bs-btn-disabled-color',
+      '--bs-btn-disabled-border-color',
+    ]) {
+      assert.deepEqual(primaryRule.get(property), link, `outline-primary ${property}`)
+      assert.deepEqual(secondaryRule.get(property), secondary, `outline-secondary ${property}`)
+    }
   })
 })
