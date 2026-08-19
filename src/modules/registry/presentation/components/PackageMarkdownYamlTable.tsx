@@ -4,6 +4,13 @@ interface PackageMarkdownYamlTableProps {
   readonly data: Readonly<Record<string, unknown>>
 }
 
+interface YamlTableRenderContext {
+  readonly ancestors: ReadonlySet<object>
+  readonly depth: number
+}
+
+const YAML_TABLE_MAX_DEPTH = 32
+
 const isPlainObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -75,9 +82,34 @@ const keyedYamlTableRows = <T,>(
   })
 }
 
-function PackageYamlValue({ value }: { readonly value: unknown }): ReactNode {
+function childRenderContext(
+  value: object,
+  context: YamlTableRenderContext,
+): YamlTableRenderContext {
+  const ancestors = new Set(context.ancestors)
+  ancestors.add(value)
+  return { ancestors, depth: context.depth + 1 }
+}
+
+function PackageYamlValue({
+  value,
+  context,
+}: {
+  readonly value: unknown
+  readonly context: YamlTableRenderContext
+}): ReactNode {
   if (value === null || value === undefined) {
     return null
+  }
+
+  if (context.depth > YAML_TABLE_MAX_DEPTH) {
+    return null
+  }
+
+  if (typeof value === 'object') {
+    if (context.ancestors.has(value)) {
+      return null
+    }
   }
 
   if (Array.isArray(value)) {
@@ -85,15 +117,16 @@ function PackageYamlValue({ value }: { readonly value: unknown }): ReactNode {
       return null
     }
 
+    const nestedContext = childRenderContext(value, context)
     if (isMappingArray(value)) {
-      return <PackageYamlMappingArrayTable items={value} />
+      return <PackageYamlMappingArrayTable items={value} context={nestedContext} />
     }
 
-    return <PackageYamlPrimitiveArrayTable items={value} />
+    return <PackageYamlPrimitiveArrayTable items={value} context={nestedContext} />
   }
 
   if (isPlainObject(value)) {
-    return <PackageYamlMappingTable data={value} />
+    return <PackageYamlMappingTable data={value} context={childRenderContext(value, context)} />
   }
 
   const text = scalarText(value)
@@ -104,7 +137,13 @@ function PackageYamlValue({ value }: { readonly value: unknown }): ReactNode {
   return <>{text}</>
 }
 
-function PackageYamlMappingTable({ data }: { readonly data: Readonly<Record<string, unknown>> }) {
+function PackageYamlMappingTable({
+  data,
+  context,
+}: {
+  readonly data: Readonly<Record<string, unknown>>
+  readonly context: YamlTableRenderContext
+}) {
   const entries = Object.entries(data)
   if (entries.length === 0) {
     return null
@@ -117,7 +156,7 @@ function PackageYamlMappingTable({ data }: { readonly data: Readonly<Record<stri
           <tr key={key}>
             <th scope="row">{key}</th>
             <td>
-              <PackageYamlValue value={nested} />
+              <PackageYamlValue value={nested} context={context} />
             </td>
           </tr>
         ))}
@@ -126,7 +165,13 @@ function PackageYamlMappingTable({ data }: { readonly data: Readonly<Record<stri
   )
 }
 
-function PackageYamlMappingArrayTable({ items }: { readonly items: readonly Record<string, unknown>[] }) {
+function PackageYamlMappingArrayTable({
+  items,
+  context,
+}: {
+  readonly items: readonly Record<string, unknown>[]
+  readonly context: YamlTableRenderContext
+}) {
   const keys = mappingArrayKeys(items)
   if (keys.length === 0) {
     return null
@@ -148,7 +193,7 @@ function PackageYamlMappingArrayTable({ items }: { readonly items: readonly Reco
           <tr key={key}>
             {keys.map((columnKey) => (
               <td key={columnKey}>
-                <PackageYamlValue value={item[columnKey]} />
+                <PackageYamlValue value={item[columnKey]} context={context} />
               </td>
             ))}
           </tr>
@@ -158,14 +203,20 @@ function PackageYamlMappingArrayTable({ items }: { readonly items: readonly Reco
   )
 }
 
-function PackageYamlPrimitiveArrayTable({ items }: { readonly items: readonly unknown[] }) {
+function PackageYamlPrimitiveArrayTable({
+  items,
+  context,
+}: {
+  readonly items: readonly unknown[]
+  readonly context: YamlTableRenderContext
+}) {
   return (
     <table>
       <tbody>
         {keyedYamlTableRows(items).map(({ item, key }) => (
           <tr key={key}>
             <td>
-              <PackageYamlValue value={item} />
+              <PackageYamlValue value={item} context={context} />
             </td>
           </tr>
         ))}
@@ -175,7 +226,7 @@ function PackageYamlPrimitiveArrayTable({ items }: { readonly items: readonly un
 }
 
 function PackageMarkdownYamlTable({ data }: PackageMarkdownYamlTableProps) {
-  return <PackageYamlMappingTable data={data} />
+  return <PackageYamlValue value={data} context={{ ancestors: new Set(), depth: 0 }} />
 }
 
 export default PackageMarkdownYamlTable

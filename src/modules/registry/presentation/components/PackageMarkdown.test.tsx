@@ -122,6 +122,41 @@ describe('PackageMarkdown', () => {
     expect(screen.queryByRole('separator')).not.toBeInTheDocument()
   })
 
+  it('omits cyclic YAML aliases instead of overflowing the call stack', () => {
+    const markdown = [
+      '---',
+      'node: &node',
+      '  name: root',
+      '  child: *node',
+      '---',
+      '',
+      '# Overview',
+    ].join('\n')
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(screen.getByRole('rowheader', { name: 'name' })).toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: 'root' })).toBeInTheDocument()
+    expect(screen.getByRole('rowheader', { name: 'child' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Overview' })).toBeInTheDocument()
+  })
+
+  it('still renders shared YAML aliases that are not cyclic', () => {
+    const markdown = [
+      '---',
+      'owner: &owner',
+      '  name: Ada',
+      'maintainer: *owner',
+      '---',
+      '',
+      '# Overview',
+    ].join('\n')
+
+    render(<PackageMarkdown markdown={markdown} />)
+
+    expect(screen.getAllByRole('cell', { name: 'Ada' })).toHaveLength(2)
+  })
+
   it('renders duplicate YAML list values as separate table rows', () => {
     const markdown = ['---', 'tags:', '  - chat', '  - chat', '---', '', '# Overview'].join('\n')
 
