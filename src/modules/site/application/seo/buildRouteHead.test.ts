@@ -14,7 +14,7 @@ describe('getRouteHeadData', () => {
   it('uses absolute canonical and OG image URLs', () => {
     const head = getRouteHeadData(siteRoutes.about, 'https://agents-repo.org')
 
-    expect(head.canonicalUrl).toBe('https://agents-repo.org/about')
+    expect(head.canonicalUrl).toBe('https://agents-repo.org/about/')
     expect(head.ogUrl).toBe(head.canonicalUrl)
     expect(head.ogImage).toBe('https://agents-repo.org/og-image.jpg')
     expect(head.ogImage).toMatch(/^https:\/\//)

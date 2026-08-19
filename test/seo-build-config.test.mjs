@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, it } from 'node:test'
 import {
   resolveBuildSiteOrigin,
   resolveViteSiteUrl,
+  rewriteSitemapLocsToPublicPaths,
 } from '../scripts/seo-build-config.ts'
 import { previewTestOrigin } from '../scripts/crawl-file-origins.mjs'
 
@@ -45,5 +46,21 @@ describe('seo-build-config', () => {
   it('falls back to the default origin when no env value is set', () => {
     assert.equal(resolveBuildSiteOrigin('no-env-file-mode'), productionOrigin)
     assert.equal(resolveViteSiteUrl('no-env-file-mode'), undefined)
+  })
+
+  it('rewrites sitemap locs onto trailing-slash directory URLs', () => {
+    const xml = [
+      `<url><loc>${productionOrigin}/</loc></url>`,
+      `<url><loc>${productionOrigin}/about</loc></url>`,
+      `<url><loc>${productionOrigin}/about/</loc></url>`,
+      `<url><loc>${productionOrigin}/docs/foo.md</loc></url>`,
+    ].join('')
+
+    const rewritten = rewriteSitemapLocsToPublicPaths(xml)
+
+    assert.equal(rewritten.includes(`<loc>${productionOrigin}/</loc>`), true)
+    assert.equal(rewritten.includes(`<loc>${productionOrigin}/about/</loc>`), true)
+    assert.equal(rewritten.includes(`<loc>${productionOrigin}/about</loc>`), false)
+    assert.equal(rewritten.includes(`<loc>${productionOrigin}/docs/foo.md</loc>`), true)
   })
 })

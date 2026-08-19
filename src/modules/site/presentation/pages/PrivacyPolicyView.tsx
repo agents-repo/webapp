@@ -1,7 +1,7 @@
 import { Card, Container, Stack, Table } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import type { PrivacyPolicyContent } from '../../application/privacy/privacyPolicyContent.types.ts'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 
 interface PrivacyPolicyViewProps {
   readonly content: PrivacyPolicyContent
@@ -12,7 +12,7 @@ function PrivacyPolicyView({ content }: PrivacyPolicyViewProps) {
     <div className="py-5">
       <Container>
         <p className="mb-3">
-          <NavLink to={content.languageLinkPath} className="footer-link">
+          <NavLink to={publicSitePath(content.languageLinkPath)} className="footer-link">
             {content.languageLinkLabel}
           </NavLink>
         </p>
@@ -65,7 +65,7 @@ function PrivacyPolicyView({ content }: PrivacyPolicyViewProps) {
                 ) : null}
                 {section.id === 'contact' ? (
                   <p className="mb-0 mt-3">
-                    <NavLink to={siteRoutes.contact} className="footer-link">
+                    <NavLink to={publicSitePath(siteRoutes.contact)} className="footer-link">
                       {content.contactLinkLabel}
                     </NavLink>
                   </p>

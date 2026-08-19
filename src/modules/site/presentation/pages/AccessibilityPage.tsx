@@ -7,7 +7,7 @@ import {
   accessibilityStatementReportDate,
   wcagCriterionSummaries,
 } from '../../application/accessibility/accessibilityStatementContent'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 
 function AccessibilityPage() {
   return (
@@ -113,7 +113,7 @@ function AccessibilityPage() {
               <h2 className="h4">Feedback and contact</h2>
               <p className="text-body-secondary mb-0">
                 If you encounter accessibility barriers on this site, please reach out through the{' '}
-                <NavLink to={siteRoutes.contact}>Contact</NavLink> page. Include the page URL, your
+                <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink> page. Include the page URL, your
                 browser and assistive technology, and a description of the issue.
               </p>
             </Card.Body>

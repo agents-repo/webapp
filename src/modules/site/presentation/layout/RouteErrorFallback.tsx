@@ -1,6 +1,6 @@
 import { Button, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 
 interface RouteErrorFallbackProps {
   readonly onRetry: () => void
@@ -19,7 +19,7 @@ function RouteErrorFallback({ onRetry }: RouteErrorFallbackProps) {
           <Button type="button" variant="primary" onClick={onRetry}>
             Try again
           </Button>
-          <Link to={siteRoutes.home} className="btn btn-outline-secondary">
+          <Link to={publicSitePath(siteRoutes.home)} className="btn btn-outline-secondary">
             Go to home
           </Link>
         </div>

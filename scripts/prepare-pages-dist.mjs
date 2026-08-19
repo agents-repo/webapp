@@ -11,6 +11,7 @@ import {
   getBuildSiteRoutePaths,
   readGeneratedPackageSiteCatalog,
   resolveBuildSiteOrigin,
+  rewriteSitemapLocsToPublicPaths,
 } from './seo-build-config.ts';
 import {
   parsePrefetchModeArg,
@@ -80,5 +81,11 @@ writeFileSync(
   injectLegacyDomainRedirectIntoHtml(injectSpaFallbackHeadIntoHtml(baseHtml)),
 );
 writeFileSync(resolve(distDir, '.nojekyll'), '');
+
+const sitemapPath = resolve(distDir, 'sitemap.xml');
+if (existsSync(sitemapPath)) {
+  const sitemap = readFileSync(sitemapPath, 'utf8');
+  writeFileSync(sitemapPath, rewriteSitemapLocsToPublicPaths(sitemap));
+}
 
 console.log('Prepared dist/ for GitHub Pages (.nojekyll, 404.html, route HTML).');

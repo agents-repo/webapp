@@ -2,6 +2,7 @@ import { Badge, Card } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import type { RepositoryManifestEntry } from '../../application/repositories/repositoryManifest.types.ts'
 import { getRepositoryDetailPath } from '../../application/nestedSiteRoutes.ts'
+import { publicSitePath } from '../routes/siteRoutes.ts'
 
 interface RepositoryCardProps {
   readonly entry: RepositoryManifestEntry
@@ -42,7 +43,7 @@ function RepositoryCard({ entry }: RepositoryCardProps) {
             </Badge>
           ))}
         </div>
-        <NavLink to={getRepositoryDetailPath(entry.slug)} className="stretched-link">
+        <NavLink to={publicSitePath(getRepositoryDetailPath(entry.slug))} className="stretched-link">
           View {entry.name} repository page
         </NavLink>
       </Card.Body>

@@ -5,7 +5,7 @@ import { GITHUB_AVATAR_SIZE_PX, githubAvatarUrl, githubProfileUrl } from '../../
 import { listMaintainers } from '../../application/people/peopleManifest.ts'
 import { getRepositoryBySlug } from '../../application/repositories/repositoryManifest.ts'
 import { getRepositoryDetailPath } from '../../application/nestedSiteRoutes.ts'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 import CommunityPage from './CommunityPage.tsx'
 
 describe('CommunityPage', () => {
@@ -40,14 +40,14 @@ describe('CommunityPage', () => {
 
       expect(
         screen.getByRole('link', { name: `${repository.name} · ${project.role}` }),
-      ).toHaveAttribute('href', getRepositoryDetailPath(project.repositorySlug))
+      ).toHaveAttribute('href', publicSitePath(getRepositoryDetailPath(project.repositorySlug)))
     }
 
     expect(screen.getByText(/We don't have any contributor yet/)).toBeInTheDocument()
     const helpUsLinks = screen.getAllByRole('link', { name: 'Help Us' })
     expect(helpUsLinks.length).toBeGreaterThanOrEqual(1)
     for (const link of helpUsLinks) {
-      expect(link).toHaveAttribute('href', siteRoutes.helpUs)
+      expect(link).toHaveAttribute('href', publicSitePath(siteRoutes.helpUs))
     }
   })
 })

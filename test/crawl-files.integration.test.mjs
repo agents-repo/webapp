@@ -10,8 +10,7 @@ import {
   requireDistCrawlFiles,
   someUrlHasHostname,
 } from '../scripts/crawl-file-url-validation.mjs'
-import { resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
-import { getBuildSiteRoutePaths } from '../scripts/seo-build-config.ts'
+import { getBuildSiteRoutePaths, publicSitePath, resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { previewTestHostname } from '../scripts/crawl-file-origins.mjs'
 
 const distDir = resolve(process.cwd(), 'dist')
@@ -51,11 +50,14 @@ function assertCrawlFilesMatchOrigin(origin) {
   assert.equal(entries.length, routes.length)
 
   for (const route of routes) {
-    const loc = route === '/' ? `${origin}/` : `${origin}${route}`
+    const loc = `${origin}${publicSitePath(route)}`
     const entry = entries.find((item) => item.loc === loc)
     assert.ok(entry, `missing sitemap entry for ${loc}`)
     assert.equal(entry.changefreq, 'monthly')
     assert.equal(entry.priority, route === '/' ? '1.0' : '0.8')
+    if (route !== '/') {
+      assert.ok(loc.endsWith('/'), `non-home sitemap loc must end with /: ${loc}`)
+    }
   }
 
   assert.ok(robots.includes('User-agent: *'))

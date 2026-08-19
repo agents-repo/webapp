@@ -3,6 +3,7 @@ import type { Components } from 'react-markdown'
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Link } from 'react-router-dom'
+import { publicSitePath } from '../../routes/siteRoutes.ts'
 import { isInternalSiteHref } from './docInternalHref.ts'
 
 type DocMarkdownAnchorProps = ComponentProps<'a'>
@@ -10,7 +11,7 @@ type DocMarkdownAnchorProps = ComponentProps<'a'>
 function DocMarkdownAnchor({ href, children, ...props }: DocMarkdownAnchorProps) {
   if (href && isInternalSiteHref(href)) {
     return (
-      <Link to={href} {...props}>
+      <Link to={publicSitePath(href)} {...props}>
         {children}
       </Link>
     )

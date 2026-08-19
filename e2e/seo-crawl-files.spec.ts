@@ -40,7 +40,8 @@ test.describe('SEO crawl files', () => {
     expect(body).toContain('<loc>https://agents-repo.org/</loc>')
 
     for (const route of nonHomeRoutes) {
-      expect(body).toContain(`${route}</loc>`)
+      expect(body).toContain(`${route}/</loc>`)
+      expect(body).not.toContain(`${route}</loc>`)
     }
   })
 

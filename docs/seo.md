@@ -40,10 +40,22 @@ JSON-LD `codeRepository` from `VITE_REGISTRY_GITHUB_REPOSITORY_URL` for the
 build mode (not a hardcoded default). `404.html` uses a
 separate `noindex` fallback head for unknown paths.
 
+**Public URL form (GitHub Pages):** Directory routes are emitted as
+`dist/<segments>/index.html`. GitHub Pages **301s** `/about` to `/about/` (the
+200 URL). Canonical, `og:url`, JSON-LD `url`, sitemap `<loc>`, and in-app
+`Link`/`NavLink`/`Navigate` hrefs MUST use that trailing-slash form via
+`publicSitePath()` in `siteRoutes.ts`. Home stays `/`. File URLs stay unslashed
+(`/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/docs/<slug>.md`). Route ids
+(`siteRoutes`, `canonicalPath`, `getBuildSiteRoutePaths()`) stay unslashed so
+`prepare-pages-dist.mjs` can write folder HTML. `prepare-pages-dist.mjs` also
+rewrites sitemap `<loc>` values after `vite build` in case `vite-plugin-sitemap`
+strips trailing slashes.
+
 **Crawl files:** `vite-plugin-sitemap` in `vite.config.ts` generates
 `dist/sitemap.xml` and `dist/robots.txt` at the end of `vite build`. Routes come
-from `getBuildSiteRoutePaths()` via `dynamicRoutes` (static/docs/repository
-routes plus package index, namespace, and detail paths from the fetched catalog);
+from `getBuildSiteRoutePaths()` via `dynamicRoutes` mapped with `publicSitePath()`
+(static/docs/repository routes plus package index, namespace, and detail paths
+from the fetched catalog);
 `hostname` uses `VITE_SITE_URL`
 through `scripts/seo-build-config.ts` (shared with `prepare-pages-dist.mjs`) so
 `.env` values match the client bundle.
@@ -79,7 +91,7 @@ These patterns already help SEO and must stay in place:
 
 | Pattern | Implementation |
 | --- | --- |
-| Self-referential canonical (absolute URL) | `buildRouteHead()` → `<link rel="canonical">` |
+| Self-referential canonical (absolute URL) | `buildRouteHead()` + `publicSitePath()` |
 | `og:url` matches canonical | Same builder function |
 | Absolute `og:image` | `{siteOrigin}/og-image.jpg` (1200×630 JPEG) |
 | OG image dimensions and alt | `og:image:width`, `og:image:height`, `og:image:alt` |
@@ -110,8 +122,8 @@ When adding a public route:
    ensure manifest entries supply descriptions for detail routes
 4. `RouteDocumentTitle` reads `getSitePageMeta()` — no per-page title hook required
 5. Run `npm run build:pages` and confirm the new route appears in `dist/sitemap.xml`
-   and, for nested paths, under `dist/<segments>/index.html` from
-   `prepare-pages-dist.mjs`
+   with a trailing-slash `<loc>` (except `/` and file URLs) and, for nested paths,
+   under `dist/<segments>/index.html` from `prepare-pages-dist.mjs`
 6. Run `npm run a11y:ci` locally to verify Lighthouse SEO on the new route
 
 Unknown `/repositories/:slug` values are not listed in `getSiteRoutePaths()`;

@@ -1,5 +1,6 @@
 import { Card, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { publicSitePath } from '../../routes/siteRoutes.ts'
 import {
   getDocDetailPath,
   listDocManifestEntries,
@@ -30,7 +31,7 @@ function DocIndexPage() {
                 <Card key={entry.slug}>
                   <Card.Body>
                     <h3 className="h5 mb-2">
-                      <Link to={getDocDetailPath(entry.slug)}>{entry.title}</Link>
+                      <Link to={publicSitePath(getDocDetailPath(entry.slug))}>{entry.title}</Link>
                     </h3>
                     <p className="text-body-secondary mb-0">{entry.description}</p>
                   </Card.Body>

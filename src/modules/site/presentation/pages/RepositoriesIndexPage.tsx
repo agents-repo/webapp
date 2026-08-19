@@ -2,7 +2,7 @@ import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
 import { listRepositoryManifestEntries } from '../../application/repositories/repositoryManifest.ts'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 import RepositoryCard from '../repositories/RepositoryCard.tsx'
 
 const ORG_CONTRIBUTING_URL = 'https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md'
@@ -78,9 +78,9 @@ function RepositoriesIndexPage() {
                 >
                   contributing guide
                 </a>
-                , see how to help on <NavLink to={siteRoutes.helpUs}>Help Us</NavLink>, or browse package
-                ideas on <NavLink to={siteRoutes.home}>Home</NavLink>. Read the site{' '}
-                <NavLink to={siteRoutes.docs}>Docs</NavLink> for catalog, CLI, and contribution docs.
+                , see how to help on <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink>, or browse package
+                ideas on <NavLink to={publicSitePath(siteRoutes.home)}>Home</NavLink>. Read the site{' '}
+                <NavLink to={publicSitePath(siteRoutes.docs)}>Docs</NavLink> for catalog, CLI, and contribution docs.
               </p>
             </Card.Body>
           </Card>

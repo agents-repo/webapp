@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { socialLinks } from '../../application/community/socialLinks'
 import SocialExternalLink from '../layout/SocialExternalLink'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 
 const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
 const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
@@ -131,7 +131,7 @@ function ContactPage() {
               <h2 className="h4">Creator</h2>
               <p className="text-body-secondary">
                 Maicon is the creator and maintainer of Agents Repo, a senior full stack developer based
-                in Portugal, with support from <NavLink to={siteRoutes.community}>collaborators</NavLink>.
+                in Portugal, with support from <NavLink to={publicSitePath(siteRoutes.community)}>collaborators</NavLink>.
               </p>
               <div className="d-flex flex-wrap gap-3">
                 <a
@@ -176,8 +176,8 @@ function ContactPage() {
             <Card.Body>
               <h2 className="h4">Related</h2>
               <p className="text-body-secondary mb-0">
-                See how to contribute on <NavLink to={siteRoutes.helpUs}>Help Us</NavLink> or read more
-                about the project on <NavLink to={siteRoutes.about}>About</NavLink>.
+                See how to contribute on <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink> or read more
+                about the project on <NavLink to={publicSitePath(siteRoutes.about)}>About</NavLink>.
               </p>
             </Card.Body>
           </Card>

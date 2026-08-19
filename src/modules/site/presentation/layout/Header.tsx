@@ -5,7 +5,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 import PwaInstallControl from './PwaInstallControl'
 import ThemeModeDropdown from './ThemeModeDropdown'
 import WebsiteSettingsControl from './WebsiteSettingsControl'
@@ -29,7 +29,7 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
       aria-label="Primary"
     >
       <Container className="gap-2 app-navbar-main">
-        <Navbar.Brand as={NavLink} to={siteRoutes.home} className="d-flex align-items-center gap-2 fw-semibold">
+        <Navbar.Brand as={NavLink} to={publicSitePath(siteRoutes.home)} className="d-flex align-items-center gap-2 fw-semibold">
           <img src={brandLogo} width="30" height="30" alt="Agents Repo logo" />
           <span>Agents Repo</span>
         </Navbar.Brand>
@@ -42,31 +42,31 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
 
         <Navbar.Collapse id="site-navbar-nav">
           <Nav className="ms-lg-auto align-items-lg-center gap-lg-2 flex-column flex-lg-row pt-2 pt-lg-0" navbar>
-            <Nav.Link as={NavLink} to={siteRoutes.home} end className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.home)} end className="app-nav-link px-2">
               <FontAwesomeIcon icon={faHouse} className="me-1" aria-hidden="true" />
               Home
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.packages} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.packages)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faBoxesStacked} className="me-1" aria-hidden="true" />
               Packages
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.about} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.about)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faCircleInfo} className="me-1" aria-hidden="true" />
               About
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.community} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.community)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faUsers} className="me-1" aria-hidden="true" />
               Community
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.docs} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.docs)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faBook} className="me-1" aria-hidden="true" />
               Docs
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.contact} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.contact)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faEnvelope} className="me-1" aria-hidden="true" />
               Contact
             </Nav.Link>
-            <Nav.Link as={NavLink} to={siteRoutes.helpUs} className="app-nav-link px-2">
+            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.helpUs)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faHandsHelping} className="me-1" aria-hidden="true" />
               Help Us
             </Nav.Link>

@@ -18,7 +18,7 @@ import { NavLink } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { useCookieConsent } from '../../application/analytics/cookieConsentContext'
 import { socialLinks } from '../../application/community/socialLinks'
-import { siteRoutes } from '../routes/siteRoutes'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
 import SocialExternalLink from './SocialExternalLink'
 
 function Footer() {
@@ -32,27 +32,27 @@ function Footer() {
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Product</h2>
             <nav aria-label="Footer: Product">
               <div className="d-flex flex-column gap-2">
-                <NavLink to={siteRoutes.home} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.home)} className="footer-link">
                   <FontAwesomeIcon icon={faHouse} className="me-2" aria-hidden="true" />
                   Home
                 </NavLink>
-                <NavLink to={siteRoutes.packages} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.packages)} className="footer-link">
                   <FontAwesomeIcon icon={faBoxesStacked} className="me-2" aria-hidden="true" />
                   Packages
                 </NavLink>
-                <NavLink to={siteRoutes.about} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.about)} className="footer-link">
                   <FontAwesomeIcon icon={faCircleInfo} className="me-2" aria-hidden="true" />
                   About
                 </NavLink>
-                <NavLink to={siteRoutes.community} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.community)} className="footer-link">
                   <FontAwesomeIcon icon={faUsers} className="me-2" aria-hidden="true" />
                   Community
                 </NavLink>
-                <NavLink to={siteRoutes.docs} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.docs)} className="footer-link">
                   <FontAwesomeIcon icon={faBook} className="me-2" aria-hidden="true" />
                   Docs
                 </NavLink>
-                <NavLink to={siteRoutes.repositories} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.repositories)} className="footer-link">
                   <FontAwesomeIcon icon={faCodeBranch} className="me-2" aria-hidden="true" />
                   Repositories
                 </NavLink>
@@ -64,11 +64,11 @@ function Footer() {
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Connect</h2>
             <nav aria-label="Footer: Connect">
               <div className="d-flex flex-column gap-2">
-                <NavLink to={siteRoutes.contact} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.contact)} className="footer-link">
                   <FontAwesomeIcon icon={faEnvelope} className="me-2" aria-hidden="true" />
                   Contact
                 </NavLink>
-                <NavLink to={siteRoutes.helpUs} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.helpUs)} className="footer-link">
                   <FontAwesomeIcon icon={faHandsHelping} className="me-2" aria-hidden="true" />
                   Help Us
                 </NavLink>
@@ -83,15 +83,15 @@ function Footer() {
             <h2 className="h6 text-uppercase text-body-secondary mb-3 footer-column-title">Legal</h2>
             <nav aria-label="Footer: Legal">
               <div className="d-flex flex-column gap-2 mb-3">
-                <NavLink to={siteRoutes.accessibility} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.accessibility)} className="footer-link">
                   <FontAwesomeIcon icon={faUniversalAccess} className="me-2" aria-hidden="true" />
                   Accessibility
                 </NavLink>
-                <NavLink to={siteRoutes.privacy} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.privacy)} className="footer-link">
                   <FontAwesomeIcon icon={faUserShield} className="me-2" aria-hidden="true" />
                   Privacy
                 </NavLink>
-                <NavLink to={siteRoutes.privacyPtBr} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.privacyPtBr)} className="footer-link">
                   <FontAwesomeIcon icon={faUserShield} className="me-2" aria-hidden="true" />
                   Privacidade
                 </NavLink>
@@ -121,7 +121,7 @@ function Footer() {
             <div className="footer-credits-row">
               <p className="mb-0 text-body-secondary text-center">
                 Made with <FontAwesomeIcon icon={faHeart} className="text-danger mx-1" aria-hidden="true" /> by{' '}
-                <NavLink to={siteRoutes.community} className="footer-link">
+                <NavLink to={publicSitePath(siteRoutes.community)} className="footer-link">
                   Maicon + collaborators
                 </NavLink>.
               </p>

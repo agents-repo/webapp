@@ -3,7 +3,7 @@ import { cleanup, fireEvent, screen } from '@testing-library/react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/renderWithProviders.tsx'
 import CookieConsentBanner from './CookieConsentBanner.tsx'
-import { siteRoutes } from '../routes/siteRoutes.ts'
+import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 import { clearTestStorage } from '../../../../test/testUtils.ts'
 import * as googleTagManager from '../../application/analytics/googleTagManager.ts'
 import * as googleConsentMode from '../../application/analytics/googleConsentMode.ts'
@@ -59,10 +59,13 @@ describe('CookieConsentBanner', () => {
     renderWithProviders(<CookieConsentBanner />)
 
     expect(screen.getByRole('region', { name: 'Cookie preferences' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', siteRoutes.privacy)
+    expect(screen.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute(
+      'href',
+      publicSitePath(siteRoutes.privacy),
+    )
     expect(screen.getByRole('link', { name: 'Política de privacidade' })).toHaveAttribute(
       'href',
-      siteRoutes.privacyPtBr,
+      publicSitePath(siteRoutes.privacyPtBr),
     )
   })
 

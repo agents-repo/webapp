@@ -54,6 +54,18 @@ describe('pushAnalyticsPageView', () => {
     })
   })
 
+  it('normalizes trailing-slash pathnames onto the unslashed page_path', async () => {
+    pushAnalyticsPageView(`${siteRoutes.about}/`, '?tab=1')
+    await flushMicrotasks()
+
+    expect(window.dataLayer).toContainEqual({
+      event: 'page_view',
+      page_path: siteRoutes.about,
+      page_location: `${window.location.origin}${siteRoutes.about}/?tab=1`,
+      page_title: 'Agents Repo',
+    })
+  })
+
   it('no-ops when consent is revoked before the microtask runs', async () => {
     pushAnalyticsPageView(siteRoutes.about)
     clearAnalyticsConsent()
