@@ -116,12 +116,72 @@ test.describe('Package pages', () => {
   })
 
   test('expands agent markdown on the package page', async ({ page }) => {
+    const yamlReadme = [
+      '---',
+      'name: sample-readme',
+      'description: README metadata',
+      'inputs:',
+      '  - name: readme-input',
+      '    type: string',
+      '    description: README input description.',
+      'outputs:',
+      '  - name: readme-output',
+      '    type: string',
+      '    description: README output description.',
+      '---',
+      '',
+      '# sample-agent',
+      '',
+      'A sample README.',
+    ].join('\n')
+    const yamlAgentMarkdown = [
+      '---',
+      'name: sample-agent',
+      'description: A sample agent.',
+      'version: 1.0.0',
+      'license: MIT',
+      'inputs:',
+      '  - name: user-message',
+      '    type: string',
+      '    description: The user question.',
+      'outputs:',
+      '  - name: reply',
+      '    type: string',
+      '    description: Conversational reply.',
+      '---',
+      '',
+      '# Overview',
+      '',
+      'Sample agent body',
+    ].join('\n')
+
+    await mockPackageDetailArtifacts(page, {
+      detailUrl: sampleAgentDetailUrl,
+      detail: {
+        ...sampleAgentPackageDetail,
+        readmeMarkdown: yamlReadme,
+      },
+      markdownUrl: sampleAgentMarkdownUrl,
+      markdown: yamlAgentMarkdown,
+    })
+
     await page.goto('/packages/agents-repo/sample-agent')
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'README' })).toBeVisible()
 
+    const readmeSection = page.getByRole('heading', { name: 'README' }).locator('..')
+    await expect(readmeSection.getByRole('cell', { name: 'sample-readme', exact: true })).toBeVisible()
+    await expect(readmeSection.getByRole('columnheader', { name: 'name' })).toHaveCount(2)
+    await expect(readmeSection.getByRole('cell', { name: 'readme-input', exact: true })).toBeVisible()
+    await expect(readmeSection.getByRole('cell', { name: 'readme-output', exact: true })).toBeVisible()
+
     await page.getByRole('button', { name: /A sample agent/ }).click()
-    await expect(page.getByText('Sample agent body')).toBeVisible()
+    const agentMarkdown = page.locator('.package-instruction-accordion .package-detail-markdown')
+    await expect(agentMarkdown.getByRole('cell', { name: 'sample-agent', exact: true })).toBeVisible()
+    await expect(agentMarkdown.getByRole('cell', { name: 'user-message', exact: true })).toBeVisible()
+    await expect(agentMarkdown.getByRole('cell', { name: 'reply', exact: true })).toBeVisible()
+    await expect(agentMarkdown.getByRole('heading', { name: 'Overview' })).toBeVisible()
+    await expect(agentMarkdown.getByText('Sample agent body')).toBeVisible()
     await expect(page).toHaveURL('/packages/agents-repo/sample-agent')
   })
 

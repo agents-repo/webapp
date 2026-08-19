@@ -73,6 +73,19 @@ render through `PackageMarkdown` as images (not as inline SVG):
 Site docs (`DocMarkdown`) do not render mermaid. Fence language `flowchart`
 stays a plain code block.
 
+### Package markdown tables
+
+YAML frontmatter and GFM pipe tables in `PackageMarkdown` use HTML `<table>`
+markup:
+
+- Mapping keys use `<th scope="row">`
+- Nested arrays of objects use `<th scope="col">` for column headers
+- Nested arrays of primitives use a single `<th scope="col">Value</th>` column header
+- Nested tables are allowed so `inputs` and `outputs` stay structured
+
+Site docs keep GFM tables only; they do not display YAML frontmatter as a
+table.
+
 ### Cookie consent banner
 
 The analytics consent banner (`CookieConsentBanner.tsx`) must:

@@ -147,6 +147,26 @@
 
 .package-detail-markdown {
   max-width: 48rem;
+  overflow-x: auto;
+}
+
+.docs-markdown table,
+.package-detail-markdown table {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.docs-markdown th,
+.docs-markdown td,
+.package-detail-markdown th,
+.package-detail-markdown td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--bs-border-color);
+}
+
+.package-detail-markdown table table {
+  width: auto;
+  margin-bottom: 0;
 }
 
 .package-detail-markdown pre {
@@ -487,17 +507,6 @@
   border-radius: 0.375rem;
   background-color: var(--bs-tertiary-bg);
   overflow-x: auto;
-}
-
-.docs-markdown table {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.docs-markdown th,
-.docs-markdown td {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--bs-border-color);
 }
 
 .person-card-avatar {
