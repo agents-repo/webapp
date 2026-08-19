@@ -189,6 +189,7 @@ hard-coded locale strings.
 | Repository loading | `registryRepository.test.ts`, cache integration |
 | Registry settings (localStorage) | `registrySourceSettings.test.ts` |
 | Package search selectors | `registrySelectors.test.ts` |
+| Packages listing filters | `packageCatalogFilters.test.ts` |
 | URL safety | `urlSafety.test.ts` |
 | Site page meta | `sitePageMeta.test.ts` |
 | SEO head builder and meta | `buildRouteHead.test.ts`, `siteSeoMeta.test.ts`, `SiteHead.test.tsx` |

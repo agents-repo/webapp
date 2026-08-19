@@ -33,7 +33,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       ],
       listItems: [
         'Analytics data (only if you accept analytics cookies) through Google Tag Manager and related Google Analytics tags.',
-        'Browser local preferences such as theme mode and optional registry source overrides you configure.',
+        'Browser local preferences such as theme mode, catalog filter sidebar collapsed state, and optional registry source overrides you configure.',
         'Registry catalog JSON, package detail JSON, tag lists, and chat instruction JSON/markdown cached in IndexedDB so repeat visits can reuse recently fetched registry payloads. This cache is not used for analytics and does not require extra consent.',
         'Your analytics consent choice stored locally so we can remember your preference.',
         'Technical information processed by third-party services we link to (for example GitHub or registry hosts) when you choose to visit them.',
@@ -44,7 +44,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       title: 'How we use data',
       listItems: [
         'Operate the site, including catalog browsing, search, downloads, and optional PWA installation.',
-        'Remember your theme and registry settings.',
+        'Remember your theme, catalog filter sidebar, and registry settings.',
         'Reuse recently fetched registry JSON and markdown from IndexedDB while you browse.',
         'Measure aggregated site usage when you accept analytics cookies.',
         'Respond to contact and privacy requests you send us.',
@@ -67,6 +67,13 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
         {
           name: 'theme',
           purpose: 'Stores your light, dark, or auto theme preference.',
+          storage: 'localStorage',
+          duration: 'Until you clear site data.',
+          consentRequired: 'No (preference).',
+        },
+        {
+          name: 'catalog.filters.sidebarCollapsed',
+          purpose: 'Stores whether the packages listing filter sidebar is collapsed on large screens.',
           storage: 'localStorage',
           duration: 'Until you clear site data.',
           consentRequired: 'No (preference).',

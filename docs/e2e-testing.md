@@ -66,6 +66,7 @@ e2e/
 ├── home-search.spec.ts
 ├── navigation.spec.ts
 ├── packages.spec.ts
+├── catalog-filters.spec.ts
 ├── seo-crawl-files.spec.ts
 ├── cookie-consent.spec.ts
 ├── theme-mode.spec.ts
@@ -109,7 +110,8 @@ for package detail pages (same pattern as `mockChatPackageArtifacts`).
 Clear browser storage for persistence specs via `clearBrowserStorage(page)` in
 `beforeEach`. It clears on the first navigation only and skips later reloads.
 Relevant keys: `theme`, `registry.source.baseUrlOverride`,
-`analytics-consent`. Registry JSON/markdown lives in IndexedDB database
+`analytics-consent`, `catalog.filters.sidebarCollapsed`. Registry JSON/markdown
+lives in IndexedDB database
 `agents-repo-webapp-registry`, which the same helper deletes on first navigation.
 
 ### Analytics consent in E2E

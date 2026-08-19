@@ -16,7 +16,7 @@ in-memory LRU plus IndexedDB persistence via the `idb` package. Catalog index,
 package `detail.json`, repository tags, chat `instructions.json`, and chat
 `.agent.md` share that persistent LRU helper in registry infrastructure.
 ZIP artifacts are not cached. Preferences (`theme`, analytics consent, registry
-URL overrides) stay in localStorage.
+URL overrides, `catalog.filters.sidebarCollapsed`) stay in localStorage.
 
 ## Styling Policy
 

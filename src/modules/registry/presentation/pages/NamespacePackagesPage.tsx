@@ -44,7 +44,7 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
   const layoutProps = {
     setHeaderSearchSlot,
     title: `${namespaceValue} packages`,
-    lead: `Published packages in the ${namespaceValue} namespace. Search is limited to this namespace.`,
+    lead: `Published packages in the ${namespaceValue} namespace. Search and filters are limited to this namespace.`,
     resultsHeading: (trimmedQuery: string) =>
       trimmedQuery ? `Search results for "${trimmedQuery}"` : `${namespaceValue} packages`,
     searchInputId: `namespace-packages-search-${namespaceValue}`,

@@ -111,7 +111,11 @@ object.
 | --- | --- | --- |
 | `analytics-consent` | Remember Accept/Reject | No (required to store choice) |
 | `theme` | Color mode preference | No (strictly necessary / preference) |
+| `catalog.filters.sidebarCollapsed` | Packages filter sidebar collapsed | No (preference) |
 | Registry override keys | User-requested catalog source | No (functionality) |
+
+**Clear cache** does not remove preference keys such as `theme` or
+`catalog.filters.sidebarCollapsed`.
 
 ## IndexedDB documented in policy
 

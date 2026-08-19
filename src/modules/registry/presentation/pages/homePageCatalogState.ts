@@ -108,13 +108,16 @@ export const getCatalogResultsSummary = ({
   catalog,
   filteredCount,
   isLoading,
+  listingCount,
 }: {
   catalog: RegistryCatalog | null
   filteredCount: number
   isLoading: boolean
+  listingCount?: number
 }): string => {
   if (catalog) {
-    return `Showing ${filteredCount} of ${catalog.packages.length} packages`
+    const totalCount = listingCount ?? catalog.packages.length
+    return `Showing ${filteredCount} of ${totalCount} packages`
   }
 
   if (isLoading) {
