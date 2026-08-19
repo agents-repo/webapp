@@ -87,7 +87,16 @@ export const createPersistentLruCache = <TEnvelope>(
   const memory = new LruCache<TEnvelope>(options.maxEntries)
   const backend = options.backend ?? getRegistryCacheBackend(options.storeName, options.isEnvelope)
   let hydrated = false
-  let hydratePromise: Promise<void> | null = null
+  let exclusive: Promise<void> = Promise.resolve()
+
+  const runExclusive = async <T>(operation: () => Promise<T>): Promise<T> => {
+    const run = exclusive.then(operation, operation)
+    exclusive = run.then(
+      () => undefined,
+      () => undefined,
+    )
+    return run
+  }
 
   const hydrateEntries = (persistentEntries: TEnvelope[]): void => {
     for (const entry of persistentEntries) {
@@ -100,20 +109,9 @@ export const createPersistentLruCache = <TEnvelope>(
       return
     }
 
-    if (hydratePromise) {
-      await hydratePromise
-      return
-    }
-
-    hydratePromise = (async () => {
-      const persistentEntries = await backend.listAll()
-      hydrateEntries(persistentEntries.filter((item) => options.isEnvelope(item)))
-      hydrated = true
-    })().finally(() => {
-      hydratePromise = null
-    })
-
-    await hydratePromise
+    const persistentEntries = await backend.listAll()
+    hydrateEntries(persistentEntries.filter((item) => options.isEnvelope(item)))
+    hydrated = true
   }
 
   const toPersistentEntries = (): PersistentCacheEntry<TEnvelope>[] => {
@@ -141,31 +139,38 @@ export const createPersistentLruCache = <TEnvelope>(
 
   return {
     async get(key: string): Promise<TEnvelope | null> {
-      await ensureHydrated()
-      return memory.get(key) ?? null
+      return runExclusive(async () => {
+        await ensureHydrated()
+        return memory.get(key) ?? null
+      })
     },
 
     async listAll(): Promise<TEnvelope[]> {
-      await ensureHydrated()
-      return Array.from(memory.values())
+      return runExclusive(async () => {
+        await ensureHydrated()
+        return Array.from(memory.values())
+      })
     },
 
     async write(key: string, envelope: TEnvelope): Promise<void> {
-      await ensureHydrated()
-      memory.set(key, envelope)
-      await persist()
+      await runExclusive(async () => {
+        await ensureHydrated()
+        memory.set(key, envelope)
+        await persist()
+      })
     },
 
     async clear(): Promise<void> {
-      memory.clear()
-      hydrated = true
-      hydratePromise = null
+      await runExclusive(async () => {
+        memory.clear()
+        hydrated = true
 
-      try {
-        await backend.clear()
-      } catch {
-        // Ignore storage failures; clearing is best-effort only.
-      }
+        try {
+          await backend.clear()
+        } catch {
+          // Ignore storage failures; clearing is best-effort only.
+        }
+      })
     },
 
     isFresh(cachedAt: number): boolean {

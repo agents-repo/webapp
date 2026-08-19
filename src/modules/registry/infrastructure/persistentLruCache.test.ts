@@ -154,6 +154,88 @@ describe('createPersistentLruCache', () => {
     await expect(cache.get('a')).resolves.toBeNull()
   })
 
+  it('does not let an in-flight hydrate repopulate memory after clear', async () => {
+    vi.useRealTimers()
+    const stored = envelope('a', 'alpha', Date.now())
+    await backend.replaceAll([{ key: 'a', envelope: stored }])
+
+    let resolveList: (() => void) | undefined
+    let listStarted!: () => void
+    const listStartedPromise = new Promise<void>((resolve) => {
+      listStarted = resolve
+    })
+    const delayedBackend: PersistentCacheBackend<TestEnvelope> = {
+      listAll: async () => {
+        listStarted()
+        await new Promise<void>((resolve) => {
+          resolveList = resolve
+        })
+        return backend.listAll()
+      },
+      replaceAll: (entries) => backend.replaceAll(entries),
+      clear: () => backend.clear(),
+    }
+
+    const cache = createPersistentLruCache<TestEnvelope>({
+      storeName: 'catalog',
+      maxEntries: 2,
+      ttlMs: CACHE_TTL_MS,
+      getKey: (item) => item.cacheKey,
+      isEnvelope: isTestEnvelope,
+      backend: delayedBackend,
+    })
+
+    const pendingList = cache.listAll()
+    await listStartedPromise
+    const pendingClear = cache.clear()
+    resolveList?.()
+
+    await expect(pendingList).resolves.toEqual([stored])
+    await pendingClear
+    await expect(backend.listAll()).resolves.toEqual([])
+    await expect(cache.get('a')).resolves.toBeNull()
+  })
+
+  it('does not let an in-flight persist restore entries after clear', async () => {
+    vi.useRealTimers()
+
+    let resolveReplace: (() => void) | undefined
+    let replaceStarted!: () => void
+    const replaceStartedPromise = new Promise<void>((resolve) => {
+      replaceStarted = resolve
+    })
+    const delayedBackend: PersistentCacheBackend<TestEnvelope> = {
+      listAll: () => backend.listAll(),
+      replaceAll: async (entries) => {
+        replaceStarted()
+        await new Promise<void>((resolve) => {
+          resolveReplace = resolve
+        })
+        return backend.replaceAll(entries)
+      },
+      clear: () => backend.clear(),
+    }
+
+    const cache = createPersistentLruCache<TestEnvelope>({
+      storeName: 'catalog',
+      maxEntries: 2,
+      ttlMs: CACHE_TTL_MS,
+      getKey: (item) => item.cacheKey,
+      isEnvelope: isTestEnvelope,
+      backend: delayedBackend,
+    })
+
+    const pendingWrite = cache.write('a', envelope('a', 'alpha'))
+    await replaceStartedPromise
+    const pendingClear = cache.clear()
+    resolveReplace?.()
+
+    await pendingWrite
+    await pendingClear
+    await expect(backend.listAll()).resolves.toEqual([])
+    await expect(cache.get('a')).resolves.toBeNull()
+  })
+
   it('treats entries as always fresh when ttlMs is null', async () => {
     const cache = createPersistentLruCache<TestEnvelope>({
       storeName: 'catalog',
