@@ -24,7 +24,7 @@ describe('isRouteLoadErrorVisible', () => {
   it('returns true when main contains a route load error marker', () => {
     const main = document.createElement('main')
     const error = document.createElement('div')
-    error.setAttribute('data-route-load-error', '')
+    error.dataset.routeLoadError = ''
     main.append(error)
 
     expect(isRouteLoadErrorVisible(main)).toBe(true)
@@ -49,7 +49,7 @@ describe('getRouteAnnouncementMessage', () => {
   it('announces load failure when route error fallback is visible', () => {
     const main = document.createElement('main')
     const error = document.createElement('div')
-    error.setAttribute('data-route-load-error', '')
+    error.dataset.routeLoadError = ''
     main.append(error)
 
     expect(getRouteAnnouncementMessage('About', main)).toBe('Failed to load About')
