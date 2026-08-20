@@ -46,6 +46,8 @@ describe('socialLinks', () => {
     }
 
     expect(twitterSite).toBe('@AgentsRepo')
-    expect(twitterSite).toBe(`@${new URL(xHref).pathname.split('/').filter(Boolean)[0]}`)
+    expect(twitterSite).toBe(
+      `@${new URL(xHref).pathname.split('/').find((segment) => segment.length > 0)}`,
+    )
   })
 })

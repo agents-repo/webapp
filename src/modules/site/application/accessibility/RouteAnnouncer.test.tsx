@@ -181,7 +181,7 @@ describe('RouteAnnouncer', () => {
 
     const liveRegion = document.querySelector('[aria-live="polite"]')
     const errorFallback = document.createElement('div')
-    errorFallback.setAttribute('data-route-load-error', '')
+    errorFallback.dataset.routeLoadError = ''
     main?.append(errorFallback)
 
     act(() => {

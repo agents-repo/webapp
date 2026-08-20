@@ -109,13 +109,13 @@ describe('getSystemAppliedThemeMode', () => {
 
 describe('applyThemeMode', () => {
   beforeEach(() => {
-    document.documentElement.removeAttribute('data-bs-theme')
+    delete document.documentElement.dataset.bsTheme
     document.querySelector('meta[name="theme-color"]')?.remove()
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
-    document.documentElement.removeAttribute('data-bs-theme')
+    delete document.documentElement.dataset.bsTheme
     document.querySelector('meta[name="theme-color"]')?.remove()
   })
 

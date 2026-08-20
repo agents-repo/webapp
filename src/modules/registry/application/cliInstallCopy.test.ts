@@ -20,7 +20,7 @@ describe('cliInstallCopy', () => {
       "npx agents-repo install 'evil;curl|sh/foo'",
     )
     expect(buildCliInstallCommand("agents-repo/o'reilly")).toBe(
-      "npx agents-repo install 'agents-repo/o'\\''reilly'",
+      String.raw`npx agents-repo install 'agents-repo/o'\''reilly'`,
     )
   })
 
