@@ -79,7 +79,7 @@ describe('loadRegistryCatalog cache integration', () => {
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=1.x',
       indexPath: 'packages/index.json',

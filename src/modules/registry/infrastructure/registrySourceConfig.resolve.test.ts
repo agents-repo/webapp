@@ -89,8 +89,8 @@ describe('resolveRegistrySourceConfig', () => {
     expect(fetchSpy).toHaveBeenCalled()
     expect(source.baseUrlRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
     expect(source.githubRepositoryRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
-    expect(source.baseUrl).toBe('https://registry-proxy.maiconfz.workers.dev/?ref=v2.0.0')
-    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.0.0')
+    expect(source.baseUrl).toBe('https://registry.agents-repo.org/?ref=v2.0.0')
+    expect(source.indexUrl).toBe('https://registry.agents-repo.org/packages/index.json?ref=v2.0.0')
     expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.0.0')
   })
 
@@ -165,7 +165,7 @@ describe('resolveRegistrySourceConfig', () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const url = getFetchInputUrl(input)
 
-      if (url.includes('registry-proxy')) {
+      if (url.includes('registry.agents-repo.org')) {
         return Promise.resolve(
           new Response(JSON.stringify([{ name: 'v2.0.0' }, { name: 'v1.2.0' }]), {
             status: 200,
@@ -180,7 +180,7 @@ describe('resolveRegistrySourceConfig', () => {
     const source = await resolveRegistrySourceConfig()
 
     expect(source.baseUrlRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
-    expect(source.indexUrl).toBe('https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.0.0')
+    expect(source.indexUrl).toBe('https://registry.agents-repo.org/packages/index.json?ref=v2.0.0')
     expect(source.githubRepositoryRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
     expect(source.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.0.0')
   })

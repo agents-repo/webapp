@@ -38,7 +38,7 @@ describe('loadRegistryCatalog', () => {
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=v1.2.0',
       indexPath: 'packages/index.json',
@@ -78,7 +78,7 @@ describe('loadRegistryCatalog', () => {
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=1.x',
       indexPath: 'packages/index.json',
@@ -121,7 +121,7 @@ describe('loadRegistryCatalog', () => {
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=1.x',
       indexPath: 'packages/index.json',
@@ -173,7 +173,7 @@ describe('loadRegistryCatalog', () => {
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v1.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v1.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=v1.2.0',
       indexPath: 'packages/index.json',
@@ -207,16 +207,16 @@ describe('loadRegistryCatalog', () => {
   })
 
   it('returns a fresh cached catalog without network when a fresh envelope exists', async () => {
-    const cachedIndexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.0.0'
+    const cachedIndexUrl = 'https://registry.agents-repo.org/packages/index.json?ref=v2.0.0'
     const cachedCatalog = makeTestCatalog('2.0.0')
 
     const resolveFetchSourceConfig = vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig')
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
-      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      sourceUrl: 'https://registry.agents-repo.org?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v2.0.0',
+      baseUrl: 'https://registry.agents-repo.org/?ref=v2.0.0',
       indexPath: 'packages/index.json',
       indexUrl: cachedIndexUrl,
       sourceMode: 'configured',
@@ -243,7 +243,7 @@ describe('loadRegistryCatalog', () => {
     expect(result.catalog).toEqual(cachedCatalog)
     expect(result.cacheState).toBe('fresh')
     expect(result.indexUrl).toBe(cachedIndexUrl)
-    expect(result.registryBaseUrl).toBe('https://registry-proxy.maiconfz.workers.dev/?ref=v2.0.0')
+    expect(result.registryBaseUrl).toBe('https://registry.agents-repo.org/?ref=v2.0.0')
     expect(result.errorMessage).toBeUndefined()
     expect(result.baseUrlRefResolution).toEqual({ alias: 'v2.x', resolvedRef: 'v2.0.0' })
     expect(result.githubRepositoryUrl).toBe('https://github.com/agents-repo/registry/tree/v2.0.0')
@@ -261,7 +261,7 @@ describe('loadRegistryCatalog', () => {
 
     vi.spyOn(registrySourceConfig, 'getRegistrySourceConfig').mockReturnValue({
       sourceUrl: 'https://registry-proxy.example.workers.dev?ref=1.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: 'https://registry-proxy.example.workers.dev?ref=1.x',
       baseUrl: 'https://registry-proxy.example.workers.dev/?ref=1.x',
       indexPath: 'packages/index.json',
@@ -302,17 +302,17 @@ describe('loadRegistryCatalog', () => {
   })
 
   it('fetches from the network when forced resolution is requested even if indexUrl cache is warm', async () => {
-    const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
+    const indexUrl = 'https://registry.agents-repo.org/packages/index.json?ref=v1.2.0'
     const cachedCatalog = makeTestCatalog('1.2.0')
     const networkCatalog = makeTestCatalog('1.3.0')
 
     vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
-      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      sourceUrl: 'https://registry.agents-repo.org?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0',
+      baseUrl: 'https://registry.agents-repo.org/?ref=v1.2.0',
       indexPath: 'packages/index.json',
       indexUrl,
       sourceMode: 'configured',
@@ -347,16 +347,16 @@ describe('loadRegistryCatalog', () => {
   })
 
   it('returns a fresh cached catalog when browse resolution fails after forced resolution', async () => {
-    const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
+    const indexUrl = 'https://registry.agents-repo.org/packages/index.json?ref=v1.2.0'
     const cachedCatalog = makeTestCatalog('1.2.0')
 
     vi.spyOn(registryCatalogCache, 'readFreshCatalogCacheEnvelopeForSourceIdentity').mockResolvedValue(null)
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
-      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      sourceUrl: 'https://registry.agents-repo.org?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0',
+      baseUrl: 'https://registry.agents-repo.org/?ref=v1.2.0',
       indexPath: 'packages/index.json',
       indexUrl,
       sourceMode: 'configured',
@@ -388,14 +388,14 @@ describe('loadRegistryCatalog', () => {
   })
 
   it('skips conditional headers for cross-origin catalog refresh', async () => {
-    const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
+    const indexUrl = 'https://registry.agents-repo.org/packages/index.json?ref=v1.2.0'
     const staleCatalog = makeTestCatalog()
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
-      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      sourceUrl: 'https://registry.agents-repo.org?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0',
+      baseUrl: 'https://registry.agents-repo.org/?ref=v1.2.0',
       indexPath: 'packages/index.json',
       indexUrl,
       sourceMode: 'configured',
@@ -521,14 +521,14 @@ describe('loadRegistryCatalog', () => {
   })
 
   it('returns stale fallback when network fetch fails and browse metadata rejects', async () => {
-    const indexUrl = 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v1.2.0'
+    const indexUrl = 'https://registry.agents-repo.org/packages/index.json?ref=v1.2.0'
     const staleCatalog = makeTestCatalog()
 
     vi.spyOn(registrySourceConfig, 'resolveRegistryFetchSourceConfig').mockResolvedValue({
-      sourceUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
-      configuredBaseUrl: 'https://registry-proxy.maiconfz.workers.dev?ref=v2.x',
+      sourceUrl: 'https://registry.agents-repo.org?ref=v2.x',
+      configuredBaseUrl: 'https://registry.agents-repo.org?ref=v2.x',
       runtimeBaseUrlOverride: null,
-      baseUrl: 'https://registry-proxy.maiconfz.workers.dev/?ref=v1.2.0',
+      baseUrl: 'https://registry.agents-repo.org/?ref=v1.2.0',
       indexPath: 'packages/index.json',
       indexUrl,
       sourceMode: 'configured',

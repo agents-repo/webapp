@@ -257,8 +257,8 @@ on CLI releases.
    structure and a valid index payload at `VITE_REGISTRY_INDEX_PATH`
    (default `packages/index.json`).
 - Default configured source is
-   `https://registry-proxy.maiconfz.workers.dev?ref=v2.x`, which composes to
-   `https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.x`
+   `https://registry.agents-repo.org?ref=v2.x`, which composes to
+   `https://registry.agents-repo.org/packages/index.json?ref=v2.x`
    before major-version alias resolution. At catalog load time, `v2.x` resolves
    to the latest stable v2 release tag (for example `v2.0.0`).
 - Package artifact URLs use namespaced paths:
