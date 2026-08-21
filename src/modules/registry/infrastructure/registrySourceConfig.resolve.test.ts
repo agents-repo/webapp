@@ -56,6 +56,14 @@ const isGitHubTagsApiRequestUrl = (url: string): boolean => {
   }
 }
 
+const isRegistryOriginRequestUrl = (url: string): boolean => {
+  try {
+    return new URL(url).hostname === 'registry.agents-repo.org'
+  } catch {
+    return false
+  }
+}
+
 describe('resolveRegistrySourceConfig', () => {
   beforeEach(() => {
     Object.defineProperty(globalThis, 'localStorage', {
@@ -165,7 +173,7 @@ describe('resolveRegistrySourceConfig', () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const url = getFetchInputUrl(input)
 
-      if (url.includes('registry.agents-repo.org')) {
+      if (isRegistryOriginRequestUrl(url)) {
         return Promise.resolve(
           new Response(JSON.stringify([{ name: 'v2.0.0' }, { name: 'v1.2.0' }]), {
             status: 200,
