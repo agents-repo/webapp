@@ -201,10 +201,11 @@ on CLI releases.
    across reloads.
 - The header includes an install-app control (download icon). Chromium browsers
    show **Install app** when `beforeinstallprompt` fires and may also show their
-   address-bar install icon (the app does not call `preventDefault`). Browsers
-   without that event show **How to install this site**, which opens a short
-   modal with platform steps and a link to Using the catalog. The control is
-   hidden when the app is already installed, while Chromium is still waiting
+   address-bar install icon (the app does not call `preventDefault`). If the
+   in-app `prompt()` call fails, the header control stays so the user can retry.
+   Browsers without that event show **How to install this site**, which opens a
+   short modal with platform steps and a link to Using the catalog. The control
+   is hidden when the app is already installed, while Chromium is still waiting
    for install criteria, or in local `dev` without a production service worker.
 - The header now includes a settings cog control next to color mode. It opens a
    website settings modal with two independent registry URL overrides:
