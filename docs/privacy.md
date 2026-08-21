@@ -126,6 +126,16 @@ The public policy table also documents IndexedDB database
   ZIP artifacts are not stored.
 - Consent: not required (strictly necessary). Cleared by **Clear cache**.
 
+## Cache Storage documented in policy
+
+The public policy table also documents PWA Cache Storage names
+`html-pages-cache` and `app-static-runtime-cache`:
+
+- Purpose: HTML documents (network-first, 1-day offline) and same-origin static
+  assets (up to 7 days).
+- Consent: not required (strictly necessary). **Clear cache** does not remove
+  these stores; clear site data or unregister the service worker.
+
 See `cookieConsent.ts` and existing theme/registry modules for key names.
 
 ## Related docs

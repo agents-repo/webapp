@@ -54,8 +54,9 @@ function AboutPage() {
                   <p className="text-body-secondary mb-0">
                     The app loads a registry index from a configurable source URL, applies an app-owned
                     freshness and caching policy, and serves cached catalog data when remote refresh is
-                    unavailable. A PWA service worker caches same-origin static assets so the site remains
-                    usable offline after the first visit.
+                    unavailable. A PWA service worker fetches HTML from the network first (with a 1-day
+                    offline fallback) and caches same-origin static assets so the site remains usable
+                    offline after the first visit.
                   </p>
                 </Card.Body>
               </Card>

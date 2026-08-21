@@ -28,7 +28,7 @@
     "agents:install": "agents-repo install",
     "agents:update": "agents-repo update",
     "agents:ci": "agents-repo ci",
-    "test:sync": "node --experimental-strip-types --test test/sync-ide-instructions.test.mjs test/eslint-fs-filename-rule.test.mjs test/seo-build-config.test.mjs test/crawl-file-url-validation.test.mjs test/commit-analyzer-rules.test.mjs test/prefetch-package-site-routes.test.mjs test/dark-mode-contrast.test.mjs",
+    "test:sync": "node --experimental-strip-types --test test/sync-ide-instructions.test.mjs test/eslint-fs-filename-rule.test.mjs test/seo-build-config.test.mjs test/pwa-workbox.test.mjs test/crawl-file-url-validation.test.mjs test/commit-analyzer-rules.test.mjs test/prefetch-package-site-routes.test.mjs test/dark-mode-contrast.test.mjs",
     "test:crawl-files": "node --experimental-strip-types --test test/crawl-files.integration.test.mjs",
     "assert:production-crawl-origin": "node --experimental-strip-types scripts/assert-production-crawl-origin.mjs",
     "test": "npm run test:sync && vitest run",

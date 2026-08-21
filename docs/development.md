@@ -272,7 +272,9 @@ on CLI releases.
    sends `If-None-Match` and/or `If-Modified-Since` request headers. A `304 Not
    Modified` response resets the TTL with zero body downloaded; a `200` response
    stores the new payload and the updated `ETag`/`Last-Modified` headers.
-   Service worker runtime caching is focused to same-origin static assets only.
+   Service worker HTML navigations use NetworkFirst (1-day offline fallback).
+   Same-origin static assets use a 7-day runtime cache. HTTP `Cache-Control`
+   stays GitHub Pages defaults (typically `max-age=600`).
    Use in chat loads versioned `/pkg/` `instructions.json` and instruction
    markdown through the IndexedDB LRU (manifest max 64, markdown max 128).
    Version-pinned URLs skip the short TTL; latest/short-alias URLs use a 24h
@@ -306,8 +308,13 @@ After changing cache or service worker behavior, validate locally with:
    catalog is used when available.
 7. Simulate network failure with no cached catalog and confirm an error alert is
    shown.
-8. Verify service worker is active and runtime caches include same-origin static
-   assets.
+8. For production service worker behavior, run `npm run build:pages && npm run
+   preview` (Vite `dev` does not register the production worker). Verify the
+   worker is active, Cache Storage includes `html-pages-cache` and
+   `app-static-runtime-cache`, and a second load of `/` goes to the network (or
+   GitHub Pages HTTP revalidation), not the precached SPA shell.
+9. Open `/sitemap.xml` and `/robots.txt` in the same tab after the worker is
+   active and confirm XML/text, not a redirect to the home SPA.
 
 ## PWA Install Validation
 

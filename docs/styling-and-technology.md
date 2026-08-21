@@ -68,10 +68,22 @@ IndexedDB LRU helper in registry infrastructure. Tag lists use a 1h TTL keyed by
 repository identity. **Clear cache and reload catalog** clears those IndexedDB
 stores; it does not bust the HTTP 300s cache.
 
-Service worker runtime caching is intentionally focused to same-origin static
-assets. Registry index freshness is owned by the app-layer cache contract, and
-broad interception of GET requests is intentionally avoided to reduce stale-data
-risk.
+Service worker caching is split on purpose:
+
+- HTML document navigations use `NetworkFirst` (`html-pages-cache`, 1-day
+  expiration) so repeat visits load current HTML when online. GitHub Pages HTTP
+  `Cache-Control` (typically `max-age=600`) still applies to those network
+  fetches. The webapp does not set or overlay HTTP cache headers.
+- Hashed JS/CSS/images stay in the Workbox precache (filename cache-busting).
+  Extra same-origin static assets, including mermaid, use runtime
+  `StaleWhileRevalidate` (7 days).
+- `/sitemap.xml`, `/robots.txt`, `/llms.txt`, and `/docs/*.md` are excluded from
+  the HTML NetworkFirst matcher so crawl files are never replaced by the SPA
+  shell. `navigateFallback` is disabled because generateSW would register it
+  before runtime routes and freeze HTML again.
+
+Registry index freshness is owned by the app-layer cache contract. Broad
+interception of GET requests is still avoided for registry JSON.
 
 The app currently uses Font Awesome React components for navigation and status
 icons instead of introducing a separate in-house icon system.

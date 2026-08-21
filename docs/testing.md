@@ -195,6 +195,7 @@ hard-coded locale strings.
 | SEO head builder and meta | `buildRouteHead.test.ts`, `siteSeoMeta.test.ts`, `SiteHead.test.tsx` |
 | Theme mode persistence | `themeMode.test.ts` |
 | PWA install helpers | `pwaInstall.test.ts` |
+| PWA Workbox matchers | `test/pwa-workbox.test.mjs` |
 | External link accessible names | `externalLink.test.ts` |
 | Site UI a11y smoke | `Header`, `Footer`, `WebsiteSettingsControl`, `AccessibilityPage` |
 | Dark-mode contrast tokens | `test/dark-mode-contrast.test.mjs` |

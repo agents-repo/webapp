@@ -171,9 +171,22 @@ Avoid merging to `main` until the rollback workflow completes.
 
 ## PWA and service worker notes
 
-The production build includes a service worker for same-origin static assets.
-`/sitemap.xml` and `/robots.txt` are excluded from the navigation fallback
-(`navigateFallbackDenylist`) so browser requests receive the static crawl files
-instead of the SPA shell. Hashed asset
+The production build includes a service worker. HTML document navigations use
+`NetworkFirst` (1-day offline fallback in `html-pages-cache`). Hashed assets
+stay in the precache; extra same-origin scripts, styles, fonts, and images use
+`StaleWhileRevalidate` (7 days).
+
+HTTP `Cache-Control` is **GitHub Pages’ own policy** (typically `max-age=600`
+for HTML, hashed assets, and `sw.js`). This repository does not set `_headers`
+or other origin-header overlays. The 1-day cap is the **service-worker HTML
+cache only**.
+
+`/sitemap.xml`, `/robots.txt`, `/llms.txt`, and `/docs/*.md` are excluded from
+the HTML NetworkFirst matcher so browser requests receive the static crawl files
+instead of the SPA shell. `navigateFallback` is **disabled**: Workbox
+`generateSW` registers that NavigationRoute before runtime caching, which would
+serve frozen `index.html` for every visit. `directoryIndex` is also disabled so
+`/` is not rewritten onto a precached shell. Offline HTML comes from
+`html-pages-cache` (pages fetched in the last day). Hashed asset
 filenames provide cache busting on new releases. For local service worker
 debugging steps, see [development.md](development.md).

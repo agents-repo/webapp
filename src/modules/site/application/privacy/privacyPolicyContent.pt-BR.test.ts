@@ -24,15 +24,17 @@ describe('privacyPolicyContent.pt-BR', () => {
 
   it('defines cookie table rows', () => {
     const cookiesSection = privacyPolicyContentPtBr.sections.find((section) => section.id === 'cookies')
-    expect(cookiesSection?.cookieRows?.length).toBeGreaterThan(0)
-    expect(cookiesSection?.cookieRows?.some((row) => row.name === 'analytics-consent')).toBe(true)
-    expect(cookiesSection?.cookieRows?.some((row) => row.name === 'theme')).toBe(true)
-    expect(cookiesSection?.cookieRows?.some((row) => row.name === 'catalog.filters.sidebarCollapsed')).toBe(
-      true,
-    )
-    expect(cookiesSection?.cookieRows?.some((row) => row.name === 'agents-repo-webapp-registry')).toBe(
-      true,
-    )
+    const cookieNames = cookiesSection?.cookieRows?.map((row) => row.name) ?? []
+    const expectedNames = [
+      'analytics-consent',
+      'theme',
+      'catalog.filters.sidebarCollapsed',
+      'agents-repo-webapp-registry',
+      'html-pages-cache and app-static-runtime-cache',
+    ]
+
+    expect(cookieNames.length).toBeGreaterThan(0)
+    expect(cookieNames).toEqual(expect.arrayContaining(expectedNames))
   })
 
   it('uses Portuguese table headers', () => {
