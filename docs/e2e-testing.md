@@ -64,6 +64,7 @@ e2e/
 ├── e2e-build-guard.setup.ts # Fails fast when port 4173 is not an e2e build
 ├── home-catalog.spec.ts
 ├── home-search.spec.ts
+├── header-nav.spec.ts
 ├── navigation.spec.ts
 ├── packages.spec.ts
 ├── catalog-filters.spec.ts

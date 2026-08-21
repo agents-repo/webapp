@@ -239,6 +239,13 @@ on CLI releases.
    paths stay on not-found without that reload.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
    collapsed behind a hamburger toggle.
+- Header text destinations at `lg+` are Packages, Docs, About (dropdown), and
+   Help Us, then the icon cluster (install, website settings, color mode). The
+   brand wordmark is the Home link; it does not use selected-nav styling or
+   `aria-current` (same pattern as GitHub / npm / MDN / React.dev). About,
+   Community, and Contact are grouped under the About dropdown on large
+   viewports and listed as flat links in the collapsed navbar. Repositories and
+   legal pages stay in the footer.
 - Header chrome remains intentionally dark across all modes, while page
    content (including cards) follows the selected color mode. Current-page
    header links use the dark-mode link/emphasis tint, not untinted `$primary`.
