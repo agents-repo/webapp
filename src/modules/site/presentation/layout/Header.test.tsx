@@ -37,13 +37,28 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: /Agents Repo/ })).not.toHaveAttribute('aria-current')
   })
 
-  it('marks Community header links as the current page', () => {
-    renderWithProviders(<Header />, { initialEntries: [publicSitePath(siteRoutes.community)] })
+  for (const entry of [siteRoutes.community, publicSitePath(siteRoutes.community)]) {
+    it(`marks Community header links as the current page for ${entry}`, () => {
+      renderWithProviders(<Header />, { initialEntries: [entry] })
 
-    const communityLinks = screen.getAllByRole('link', { name: 'Community' })
-    expect(communityLinks.length).toBeGreaterThan(0)
-    for (const link of communityLinks) {
-      expect(link).toHaveAttribute('aria-current', 'page')
-    }
+      const communityLinks = screen.getAllByRole('link', { name: 'Community' })
+      expect(communityLinks.length).toBeGreaterThan(0)
+      for (const link of communityLinks) {
+        expect(link).toHaveAttribute('aria-current', 'page')
+      }
+    })
+  }
+
+  it('announces the About toggle as the current section on grouped routes', () => {
+    renderWithProviders(<Header />, { initialEntries: [siteRoutes.community] })
+
+    expect(screen.getByRole('button', { name: /About\(current\)/ })).toBeInTheDocument()
+  })
+
+  it('does not announce the About toggle as current on other routes', () => {
+    renderWithProviders(<Header />)
+
+    expect(screen.getByRole('button', { name: 'About' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /About\(current\)/ })).not.toBeInTheDocument()
   })
 })

@@ -66,6 +66,7 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
                 <>
                   <FontAwesomeIcon icon={faCircleInfo} className="me-1" aria-hidden="true" />
                   About
+                  {aboutNavActive ? <span className="visually-hidden">(current)</span> : null}
                 </>
               }
               className="d-none d-lg-block app-about-nav"
@@ -73,30 +74,40 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
               menuVariant="dark"
               align="end"
             >
-              {aboutNavItems.map((item) => (
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={publicSitePath(item.to)}
-                  key={item.to}
-                  aria-current={currentPath === item.to ? 'page' : undefined}
-                >
-                  <FontAwesomeIcon icon={item.icon} className="me-2" aria-hidden="true" />
-                  {item.label}
-                </NavDropdown.Item>
-              ))}
+              {aboutNavItems.map((item) => {
+                const itemCurrent = currentPath === item.to
+
+                return (
+                  <NavDropdown.Item
+                    as={Link}
+                    to={publicSitePath(item.to)}
+                    key={item.to}
+                    className={itemCurrent ? 'active' : undefined}
+                    aria-current={itemCurrent ? 'page' : undefined}
+                  >
+                    <FontAwesomeIcon icon={item.icon} className="me-2" aria-hidden="true" />
+                    {item.label}
+                  </NavDropdown.Item>
+                )
+              })}
             </NavDropdown>
-            {aboutNavItems.map((item) => (
-              <Nav.Link
-                key={item.to}
-                as={NavLink}
-                to={publicSitePath(item.to)}
-                className="app-nav-link px-2 d-lg-none"
-                aria-current={currentPath === item.to ? 'page' : undefined}
-              >
-                <FontAwesomeIcon icon={item.icon} className="me-1" aria-hidden="true" />
-                {item.label}
-              </Nav.Link>
-            ))}
+            {aboutNavItems.map((item) => {
+              const itemCurrent = currentPath === item.to
+
+              return (
+                <Nav.Link
+                  key={item.to}
+                  as={Link}
+                  to={publicSitePath(item.to)}
+                  className="app-nav-link px-2 d-lg-none"
+                  active={itemCurrent}
+                  aria-current={itemCurrent ? 'page' : undefined}
+                >
+                  <FontAwesomeIcon icon={item.icon} className="me-1" aria-hidden="true" />
+                  {item.label}
+                </Nav.Link>
+              )
+            })}
             <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.helpUs)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faHandsHelping} className="me-1" aria-hidden="true" />
               Help Us

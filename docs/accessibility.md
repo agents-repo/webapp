@@ -52,7 +52,10 @@ Every routed page should:
 - From `lg` up, About / Community / Contact live in a Bootstrap `NavDropdown`
   labelled **About**. Open it with Enter or Space, move with arrow keys, and
   close with Escape. The toggle uses current-page styling when any grouped
-  route is active; the matching menu item sets `aria-current="page"`.
+  route is active, and includes visually hidden **(current)** immediately after
+  **About** so the section is announced while the menu is closed. The matching menu item sets
+  `aria-current="page"` from slash-normalized path matching (`/community` and
+  `/community/` both count).
 - Below `lg`, those three destinations are flat links in the hamburger. Do not
   nest the dropdown inside the collapsed navbar.
 
