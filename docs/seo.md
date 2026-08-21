@@ -63,17 +63,21 @@ The plugin also injects `<link rel="sitemap" href="/sitemap.xml">` into
 `index.html`. `SiteHead` emits `noindex` for unknown paths at runtime (matching
 the `404.html` fallback).
 
-**Browser access:** The PWA service worker excludes `/sitemap.xml` and
-`/robots.txt` from `navigateFallback` (`navigateFallbackDenylist` in
+**Browser access:** The PWA service worker excludes `/sitemap.xml`,
+`/robots.txt`, `/llms.txt`, and `/docs/*.md` from HTML `NetworkFirst` caching
+(`isHtmlNavigationRequest` in `scripts/pwa-workbox.ts`, wired in
 `vite.config.ts`) so browser navigation serves the static crawl files instead of
-the SPA shell. These files are generated after the service worker manifest is
-built, so they are not precached via `includeAssets`. `npm run dev` does not
+the SPA shell. `navigateFallback` is disabled so those files are not replaced by
+precached `index.html`. These files are
+generated after the service worker manifest is built, so they are not
+precached via `includeAssets`. `npm run dev` does not
 generate crawl files; use `npm run build:pages && npm run preview` to test
 locally.
 
-**Validation:** `npm run test:crawl-files` verifies `dist/sitemap.xml` and
-`dist/robots.txt` after `npm run build:pages`. It is read-only against `./dist`
-and must not run `vite build` or otherwise mutate build output. Origin
+**Validation:** `npm run test:crawl-files` verifies `dist/sitemap.xml`,
+`dist/robots.txt`, and `dist/sw.js` after `npm run build:pages`. It is read-only
+against `./dist` and must not run `vite build` or otherwise mutate build
+output. Origin
 resolution for `VITE_SITE_URL` is covered by `test/seo-build-config.test.mjs`
 in `npm run test`. Deploy workflows run `npm run assert:production-crawl-origin`
 before publish.
@@ -147,9 +151,9 @@ manifest (`getSiteRoutePaths()`). Raw markdown is served at `/docs/<slug>.md`
 (copied during `npm run build`). `llms.txt` at the site root lists all site doc
 `.md` URLs for agents.
 
-The PWA service worker denies `navigateFallback` for `/llms.txt` and
-`/docs/*.md` (see `vite.config.ts`) so browsers fetch static files instead of
-the SPA shell.
+The PWA service worker excludes `/llms.txt` and `/docs/*.md` from HTML
+`NetworkFirst` matching (see `scripts/pwa-workbox.ts`) so browsers fetch
+static files instead of the SPA shell.
 
 Unknown `/docs/:slug` values redirect to `/docs` (same pattern as unlisted
 repository slugs).
@@ -262,7 +266,7 @@ npm run a11y:ci
 | Command | Purpose |
 | --- | --- |
 | `npm run test` | Unit tests including `test/seo-build-config.test.mjs` (origin resolution) |
-| `npm run test:crawl-files` | Read-only crawl-file check in `dist/` after `build:pages` |
+| `npm run test:crawl-files` | Read-only crawl-file and `dist/sw.js` check after `build:pages` |
 | `npm run build:pages` | Route HTML injection plus `vite-plugin-sitemap` crawl files |
 | `npm run a11y:ci` | Lighthouse accessibility **and SEO** (min 0.9 each) + pa11y |
 

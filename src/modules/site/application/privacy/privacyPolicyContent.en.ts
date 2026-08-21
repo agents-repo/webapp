@@ -1,6 +1,6 @@
 import type { PrivacyPolicyContent } from './privacyPolicyContent.types.ts'
 
-export const privacyPolicyLastUpdated = '2026-08-19'
+export const privacyPolicyLastUpdated = '2026-08-21'
 
 export const privacyPolicyContentEn: PrivacyPolicyContent = {
   pageTitle: 'Privacy policy',
@@ -35,6 +35,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
         'Analytics data (only if you accept analytics cookies) through Google Tag Manager and related Google Analytics tags.',
         'Browser local preferences such as theme mode, catalog filter sidebar collapsed state, and optional registry source overrides you configure.',
         'Registry catalog JSON, package detail JSON, tag lists, and chat instruction JSON/markdown cached in IndexedDB so repeat visits can reuse recently fetched registry payloads. This cache is not used for analytics and does not require extra consent.',
+        'HTML documents and same-origin static assets cached by the PWA service worker in Cache Storage so repeat visits and offline use can reuse recently fetched site files. This cache is not used for analytics and does not require extra consent.',
         'Your analytics consent choice stored locally so we can remember your preference.',
         'Technical information processed by third-party services we link to (for example GitHub or registry hosts) when you choose to visit them.',
       ],
@@ -46,6 +47,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
         'Operate the site, including catalog browsing, search, downloads, and optional PWA installation.',
         'Remember your theme, catalog filter sidebar, and registry settings.',
         'Reuse recently fetched registry JSON and markdown from IndexedDB while you browse.',
+        'Serve current HTML when you are online and keep a short offline copy of pages and static assets in the service worker.',
         'Measure aggregated site usage when you accept analytics cookies.',
         'Respond to contact and privacy requests you send us.',
       ],
@@ -54,7 +56,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       id: 'cookies',
       title: 'Cookies and similar technologies',
       paragraphs: [
-        'We use browser local storage for preferences and consent, and IndexedDB for registry JSON and markdown caches. Analytics tags load only after you accept analytics in the cookie banner.',
+        'We use browser local storage for preferences and consent, IndexedDB for registry JSON and markdown caches, and Cache Storage for the PWA service worker. Analytics tags load only after you accept analytics in the cookie banner.',
       ],
       cookieRows: [
         {
@@ -100,6 +102,15 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
           consentRequired: 'No (strictly necessary for catalog browsing).',
         },
         {
+          name: 'html-pages-cache and app-static-runtime-cache',
+          purpose:
+            'Service worker Cache Storage for HTML documents (network-first, 1 day offline) and same-origin static assets (up to 7 days). ZIP downloads and registry JSON are not stored here. Website settings Clear cache does not remove these stores; clear site data or unregister the service worker.',
+          storage: 'Cache Storage',
+          duration:
+            'HTML up to 1 day; static assets up to 7 days or until a new service worker activates.',
+          consentRequired: 'No (strictly necessary for site operation and offline fallback).',
+        },
+        {
           name: 'Google Tag Manager / Google Analytics',
           purpose: 'Aggregated usage analytics when you accept analytics cookies.',
           storage: 'Cookies and similar technologies set by Google',
@@ -131,6 +142,7 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
       listItems: [
         'Consent and preference values remain in your browser until you clear them or change your choices.',
         'Registry IndexedDB caches remain until they expire, you choose Clear cache in website settings, or you clear site data.',
+        'Service worker Cache Storage remains until the HTML or asset TTL expires, a new service worker replaces the caches, or you clear site data.',
         'Analytics retention follows Google Tag Manager / Google Analytics configuration and policies.',
       ],
     },

@@ -25,6 +25,7 @@
     "vite.config.ts",
     "vitest.a11y.config.ts",
     "scripts/seo-build-config.ts",
+    "scripts/pwa-workbox.ts",
     "scripts/package-site-routes-path.ts",
     "src/modules/registry/application/packageSiteRoutes.ts",
     "src/modules/registry/application/runtimePackageCatalog.ts",

@@ -153,10 +153,12 @@ Registry catalog loading now uses two coordinated cache layers:
   - If remote refresh fails, stale cached catalog is used when available
   - If refresh fails and no cached catalog exists, the app shows an error alert
 - Service worker runtime cache:
-  - Focused caching for same-origin static assets only
+  - HTML document navigations use NetworkFirst (1-day offline fallback)
+  - Same-origin static assets use StaleWhileRevalidate (7 days)
+  - HTTP `Cache-Control` stays GitHub Pages defaults (typically `max-age=600`)
 
 This keeps registry freshness decisions in app logic while still improving
-offline resilience for app assets.
+offline resilience for app HTML and assets.
 
 ## GitHub CLI
 

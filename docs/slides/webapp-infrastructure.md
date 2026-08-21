@@ -101,7 +101,8 @@ Docs-only merges do not redeploy. Agents must not merge to `main`.
 # Cache and PWA (high level)
 
 - Catalog index: 24h app TTL + conditional GET (`ETag` / `Last-Modified`)
-- Service worker caches same-origin static assets
+- Service worker: HTML NetworkFirst (1-day offline); hashed assets precached
+- HTTP `Cache-Control`: GitHub Pages defaults (typically `max-age=600`)
 - Chat JSON/markdown: IndexedDB LRU (version-pinned URLs skip short TTL)
 
 Privacy/SEO: `docs/privacy.md`, `docs/seo.md`. Not an a11y deep dive here.
