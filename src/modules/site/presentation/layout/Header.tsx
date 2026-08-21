@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react'
-import { faBook, faBoxesStacked, faCircleInfo, faEnvelope, faHandsHelping, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faBook, faBoxesStacked, faCircleInfo, faEnvelope, faHandsHelping, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Container, Nav, Navbar } from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
+import { normalizeSitePathname, publicSitePath, siteRoutes } from '../routes/siteRoutes'
 import PwaInstallControl from './PwaInstallControl'
 import ThemeModeDropdown from './ThemeModeDropdown'
 import WebsiteSettingsControl from './WebsiteSettingsControl'
@@ -16,7 +16,17 @@ interface HeaderProps {
   readonly registryCatalogStatusNote?: RegistryCatalogStatusNote | null
 }
 
+const aboutNavItems = [
+  { to: siteRoutes.about, label: 'About', icon: faCircleInfo },
+  { to: siteRoutes.community, label: 'Community', icon: faUsers },
+  { to: siteRoutes.contact, label: 'Contact', icon: faEnvelope },
+] as const
+
 function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote }: HeaderProps) {
+  const location = useLocation()
+  const currentPath = normalizeSitePathname(location.pathname)
+  const aboutNavActive = aboutNavItems.some((item) => currentPath === item.to)
+
   return (
     <Navbar
       sticky="top"
@@ -29,7 +39,7 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
       aria-label="Primary"
     >
       <Container className="gap-2 app-navbar-main">
-        <Navbar.Brand as={NavLink} to={publicSitePath(siteRoutes.home)} className="d-flex align-items-center gap-2 fw-semibold">
+        <Navbar.Brand as={Link} to={publicSitePath(siteRoutes.home)} className="d-flex align-items-center gap-2 fw-semibold">
           <img src={brandLogo} width="30" height="30" alt="Agents Repo logo" />
           <span>Agents Repo</span>
         </Navbar.Brand>
@@ -42,30 +52,62 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
 
         <Navbar.Collapse id="site-navbar-nav">
           <Nav className="ms-lg-auto align-items-lg-center gap-lg-2 flex-column flex-lg-row pt-2 pt-lg-0" navbar>
-            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.home)} end className="app-nav-link px-2">
-              <FontAwesomeIcon icon={faHouse} className="me-1" aria-hidden="true" />
-              Home
-            </Nav.Link>
             <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.packages)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faBoxesStacked} className="me-1" aria-hidden="true" />
               Packages
-            </Nav.Link>
-            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.about)} className="app-nav-link px-2">
-              <FontAwesomeIcon icon={faCircleInfo} className="me-1" aria-hidden="true" />
-              About
-            </Nav.Link>
-            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.community)} className="app-nav-link px-2">
-              <FontAwesomeIcon icon={faUsers} className="me-1" aria-hidden="true" />
-              Community
             </Nav.Link>
             <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.docs)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faBook} className="me-1" aria-hidden="true" />
               Docs
             </Nav.Link>
-            <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.contact)} className="app-nav-link px-2">
-              <FontAwesomeIcon icon={faEnvelope} className="me-1" aria-hidden="true" />
-              Contact
-            </Nav.Link>
+            <NavDropdown
+              id="site-about-nav"
+              title={
+                <>
+                  <FontAwesomeIcon icon={faCircleInfo} className="me-1" aria-hidden="true" />
+                  About
+                  {aboutNavActive ? <span className="visually-hidden">(current)</span> : null}
+                </>
+              }
+              className="d-none d-lg-block app-about-nav"
+              active={aboutNavActive}
+              menuVariant="dark"
+              align="end"
+            >
+              {aboutNavItems.map((item) => {
+                const itemCurrent = currentPath === item.to
+
+                return (
+                  <NavDropdown.Item
+                    as={Link}
+                    to={publicSitePath(item.to)}
+                    key={item.to}
+                    className={itemCurrent ? 'active' : undefined}
+                    aria-current={itemCurrent ? 'page' : undefined}
+                  >
+                    <FontAwesomeIcon icon={item.icon} className="me-2" aria-hidden="true" />
+                    {item.label}
+                  </NavDropdown.Item>
+                )
+              })}
+            </NavDropdown>
+            {aboutNavItems.map((item) => {
+              const itemCurrent = currentPath === item.to
+
+              return (
+                <Nav.Link
+                  key={item.to}
+                  as={Link}
+                  to={publicSitePath(item.to)}
+                  className="app-nav-link px-2 d-lg-none"
+                  active={itemCurrent}
+                  aria-current={itemCurrent ? 'page' : undefined}
+                >
+                  <FontAwesomeIcon icon={item.icon} className="me-1" aria-hidden="true" />
+                  {item.label}
+                </Nav.Link>
+              )
+            })}
             <Nav.Link as={NavLink} to={publicSitePath(siteRoutes.helpUs)} className="app-nav-link px-2">
               <FontAwesomeIcon icon={faHandsHelping} className="me-1" aria-hidden="true" />
               Help Us

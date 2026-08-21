@@ -34,7 +34,8 @@
   align-items: center;
 }
 
-.app-nav-link {
+.app-nav-link,
+.app-about-nav > .nav-link {
   font-size: 0.95rem;
   opacity: 0.88;
 
@@ -43,11 +44,18 @@
   }
 }
 
-.app-nav-link:hover {
+.app-about-nav > .nav-link {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.app-nav-link:hover,
+.app-about-nav > .nav-link:hover {
   opacity: 1;
 }
 
-.app-nav-link.active {
+.app-nav-link.active,
+.app-about-nav > .nav-link.active {
   opacity: 1;
   font-weight: 600;
   color: var(--bs-navbar-active-color) !important;

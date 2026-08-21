@@ -44,6 +44,21 @@ Every routed page should:
    this site** for the guidance modal. Those names must stay distinct.
 6. Use `externalLinkAccessibleName()` for links that open in a new tab
 
+### Header navigation
+
+- The brand wordmark is a Home `Link`. It does not set `aria-current` and does
+  not use `.app-nav-link.active` styling. Home is announced by `document.title`
+  and the page `h1`.
+- From `lg` up, About / Community / Contact live in a Bootstrap `NavDropdown`
+  labelled **About**. Open it with Enter or Space, move with arrow keys, and
+  close with Escape. The toggle uses current-page styling when any grouped
+  route is active, and includes visually hidden **(current)** immediately after
+  **About** so the section is announced while the menu is closed. The matching menu item sets
+  `aria-current="page"` from slash-normalized path matching (`/community` and
+  `/community/` both count).
+- Below `lg`, those three destinations are flat links in the hamburger. Do not
+  nest the dropdown inside the collapsed navbar.
+
 ### Forms
 
 - Associate every input with a visible or visually hidden `Form.Label`
