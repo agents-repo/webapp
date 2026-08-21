@@ -21,7 +21,6 @@ export function usePwaInstall() {
         return
       }
 
-      event.preventDefault()
       setInstallPromptEvent(event)
     }
 
@@ -46,9 +45,9 @@ export function usePwaInstall() {
     try {
       const outcome = await runPwaInstallPrompt(deferredPrompt)
 
-      // prompt() consumes the deferred beforeinstallprompt event; drop it so we
-      // do not offer install again until the browser fires a new one.
-      if (deferredPrompt) {
+      // prompt() consumes the event only after it shows the chooser. Keep the
+      // deferred prompt when prompt() fails so Chromium users can retry.
+      if (outcome === 'accepted' || outcome === 'dismissed') {
         setInstallPromptEvent(null)
       }
 

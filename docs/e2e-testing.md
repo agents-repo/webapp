@@ -187,7 +187,7 @@ can be tracked as a separate issue.
 
 | Scenario | Reason to defer |
 | --- | --- |
-| PWA install button visibility | Requires `beforeinstallprompt`; unit tests cover `usePwaInstall` |
+| PWA install button visibility | Chromium-only native prompt; unit tests cover prompt and how-to |
 | Sticky header search on scroll | Scroll timing + viewport coupling |
 | Mobile navbar collapse | Add later with a mobile viewport project |
 | GitHub Pages `404.html` deep links | Needs `build:pages` + `serve` parity |

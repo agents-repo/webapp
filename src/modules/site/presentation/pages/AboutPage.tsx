@@ -40,7 +40,7 @@ function AboutPage() {
                     <li>Download packages for supported install targets</li>
                     <li>Copy CLI install commands from package cards (<code>npx agents-repo install …</code>)</li>
                     <li>Configure the registry source from Website settings in the header</li>
-                    <li>Install the site as an app from the header when your browser supports it</li>
+                    <li>Install the site as an app from the header or the browser install UI, or follow in-header instructions when the browser cannot install it natively</li>
                     <li>Open package sources on GitHub for deeper inspection</li>
                   </ul>
                 </Card.Body>

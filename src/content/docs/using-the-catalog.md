@@ -1,6 +1,6 @@
 ---
 title: Using the catalog
-description: Search, package cards, in-app package pages, Use in chat, downloads, CLI commands from the UI, and website settings.
+description: Search, package cards, in-app package pages, Use in chat, downloads, CLI commands from the UI, website settings, and PWA install.
 order: 30
 section: Catalog
 ---
@@ -63,7 +63,15 @@ Use **Website settings** in the header to point the browser at a different regis
 
 ## Install the site (PWA)
 
-When your browser supports it, use **Install app** in the header to add agents-repo.org as an installed web app.
+You can add agents-repo.org as an installed web app when the browser supports it:
+
+- **Chrome, Edge, and other Chromium browsers:** use **Install app** in the header, or the install icon in the address bar, after the site meets install criteria.
+- **Safari on iPhone or iPad:** open Share and choose Add to Home Screen.
+- **Safari on Mac:** choose File, then Add to Dock.
+- **Firefox on Android:** open the browser menu and choose Install.
+- **Firefox on desktop:** there is no native install from the web app manifest. The header **How to install this site** control explains this. Windows Firefox may offer Taskbar Tabs, which is not a PWA. A third-party extension can add Firefox desktop install, but it is not part of this site.
+
+The header install control is hidden when the site is already running as an installed app.
 
 ## Next steps
 

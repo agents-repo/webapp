@@ -39,7 +39,9 @@ Every routed page should:
    until hover, keyboard focus (`:focus-visible`), or `aria-expanded`. When
    `aria-label` also includes the package name, the visible label must be a
    contiguous prefix of that name (WCAG 2.5.3 Label in Name), for example
-   `Use in chat for {name}`.
+   `Use in chat for {name}`. The header PWA control is icon-only: **Install
+   Agents Repo app** when a native prompt is available, and **How to install
+   this site** for the guidance modal. Those names must stay distinct.
 6. Use `externalLinkAccessibleName()` for links that open in a new tab
 
 ### Forms
@@ -56,6 +58,8 @@ Every routed page should:
 
 - Announce search or filter result changes with `aria-live="polite"`
 - Use `aria-busy` while async actions such as PWA install are in progress
+- The PWA how-to-install dialog uses Bootstrap `Modal` (focus trap while open)
+  with a labelled close control
 - Use `<output>` for status messages (copy confirmation, loading) instead of
   `role="status"`. `<output>` has an implicit status role and is more reliable
   across assistive technologies and devices.

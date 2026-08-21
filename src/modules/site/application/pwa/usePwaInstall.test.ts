@@ -46,13 +46,19 @@ describe('usePwaInstall', () => {
 
     expect(result.current.canInstall).toBe(false)
 
+    const event = createInstallPromptEvent()
+    const preventDefault = vi.fn()
+    event.preventDefault = preventDefault
+
     act(() => {
-      globalThis.window.dispatchEvent(createInstallPromptEvent())
+      globalThis.window.dispatchEvent(event)
     })
 
     await waitFor(() => {
       expect(result.current.canInstall).toBe(true)
     })
+
+    expect(preventDefault).not.toHaveBeenCalled()
   })
 
   it('clears the deferred prompt after a successful install prompt', async () => {
@@ -74,6 +80,46 @@ describe('usePwaInstall', () => {
 
     expect(mockRunPwaInstallPrompt).toHaveBeenCalled()
     expect(result.current.canInstall).toBe(false)
+  })
+
+  it('clears the deferred prompt after the user dismisses the chooser', async () => {
+    mockRunPwaInstallPrompt.mockResolvedValue('dismissed')
+
+    const { result } = renderHook(() => usePwaInstall())
+
+    act(() => {
+      globalThis.window.dispatchEvent(createInstallPromptEvent())
+    })
+
+    await waitFor(() => {
+      expect(result.current.canInstall).toBe(true)
+    })
+
+    await act(async () => {
+      await result.current.promptInstall()
+    })
+
+    expect(result.current.canInstall).toBe(false)
+  })
+
+  it('keeps the deferred prompt when prompt() is unavailable', async () => {
+    mockRunPwaInstallPrompt.mockResolvedValue('unavailable')
+
+    const { result } = renderHook(() => usePwaInstall())
+
+    act(() => {
+      globalThis.window.dispatchEvent(createInstallPromptEvent())
+    })
+
+    await waitFor(() => {
+      expect(result.current.canInstall).toBe(true)
+    })
+
+    await act(async () => {
+      await expect(result.current.promptInstall()).resolves.toBe('unavailable')
+    })
+
+    expect(result.current.canInstall).toBe(true)
   })
 
   it('clears the deferred prompt when the appinstalled event fires', async () => {
