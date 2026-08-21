@@ -76,6 +76,10 @@ describe('pwa-workbox matchers', () => {
       isHtmlNavigationRequest(context({ pathname: '/', destination: 'script' })),
       false,
     )
+    assert.equal(
+      isHtmlNavigationRequest(context({ pathname: '/', method: 'GET' })),
+      false,
+    )
   })
 
   it('matches same-origin static assets and skips JSON', () => {
@@ -111,6 +115,11 @@ describe('pwa-workbox matchers', () => {
         true,
         pathname,
       )
+      assert.equal(
+        isHtmlNavigationRequest(context({ pathname, mode: 'navigate' })),
+        false,
+        pathname,
+      )
     }
   })
 
@@ -118,9 +127,10 @@ describe('pwa-workbox matchers', () => {
     const source = isHtmlNavigationRequest.toString()
 
     assert.equal(source.includes('isCrawlFilePath'), false)
-    assert.equal(source.includes('sitemap'), true)
-    assert.equal(source.includes('robots'), true)
-    assert.equal(source.includes('llms'), true)
+    assert.equal(source.includes('CRAWL_FILE_NAVIGATE_DENYLIST'), false)
+    for (const pattern of CRAWL_FILE_NAVIGATE_DENYLIST) {
+      assert.equal(source.includes(pattern.source), true, pattern.source)
+    }
   })
 
   it('does not glob HTML into the service worker precache', () => {

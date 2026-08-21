@@ -105,12 +105,13 @@ suites:
 | Pattern | Purpose |
 | --- | --- |
 | `test/*.test.mjs` | Repo tooling and build-config tests |
-| `test/*.integration.test.mjs` | Post-build, read-only `dist/` crawl checks |
+| `test/*.integration.test.mjs` | Post-build, read-only `dist/` crawl and service worker checks |
 
 Build-artifact tests must not mutate `./dist`. Run `npm run build:pages` first,
-then `npm run test:crawl-files`. Deploy workflows publish the same `dist/`
-output; tests that rebuild into `./dist` would corrupt crawl files before
-deploy.
+then `npm run test:crawl-files`. That command checks crawl files and the
+generated `dist/sw.js` (no HTML precache, no `NavigationRoute`, NetworkFirst
+HTML cache). Deploy workflows publish the same `dist/` output; tests that
+rebuild into `./dist` would corrupt crawl files before deploy.
 
 When logic is trapped in private page helpers (for example inside `HomePage.tsx`),
 extract it to a sibling module before testing.
@@ -196,6 +197,7 @@ hard-coded locale strings.
 | Theme mode persistence | `themeMode.test.ts` |
 | PWA install helpers | `pwaInstall.test.ts` |
 | PWA Workbox matchers | `test/pwa-workbox.test.mjs` |
+| Generated PWA service worker | `test/pwa-sw.integration.test.mjs` (after `build:pages`) |
 | External link accessible names | `externalLink.test.ts` |
 | Site UI a11y smoke | `Header`, `Footer`, `WebsiteSettingsControl`, `AccessibilityPage` |
 | Dark-mode contrast tokens | `test/dark-mode-contrast.test.mjs` |
