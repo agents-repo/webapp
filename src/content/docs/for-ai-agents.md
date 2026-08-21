@@ -48,13 +48,13 @@ curl -fsSL 'https://agents-repo.org/llms.txt'
 Registry index (default production ref via proxy — your environment may differ):
 
 ```bash
-curl -fsSL 'https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.x'
+curl -fsSL 'https://registry.agents-repo.org/packages/index.json?ref=v2.x'
 ```
 
 Latest-snapshot package detail for in-app pages (replace namespace and package id):
 
 ```bash
-curl -fsSL 'https://registry-proxy.maiconfz.workers.dev/packages/<namespace>/<package-id>/detail.json?ref=v2.x'
+curl -fsSL 'https://registry.agents-repo.org/packages/<namespace>/<package-id>/detail.json?ref=v2.x'
 ```
 
 `detail.json` is generated for the latest snapshot and may include `readmeMarkdown`. CLI install does not fetch it; it uses `versions/manifest.json` and target ZIPs. Normative package rules remain in [registry specs](https://github.com/agents-repo/registry/tree/main/specs).

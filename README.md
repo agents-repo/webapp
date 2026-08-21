@@ -88,7 +88,7 @@ Build-time variables remain:
 
 - `VITE_REGISTRY_REPOSITORY_URL`: source URL input. This may be a GitHub
   repository URL or a direct source endpoint URL. Default:
-  `https://registry-proxy.maiconfz.workers.dev?ref=v2.x`
+  `https://registry.agents-repo.org?ref=v2.x`
 - `VITE_REGISTRY_BASE_URL`: optional direct base URL override for fetches.
   If omitted, the source URL is used as the base URL (GitHub URLs are normalized to raw content).
 - `VITE_REGISTRY_INDEX_PATH`: relative index path. Default:
@@ -107,7 +107,7 @@ With defaults, the configured source uses the `v2.x` major-version line alias.
 At catalog load time this resolves to the latest stable release tag (for example
 `v2.0.0`). Before resolution, the index URL is composed as:
 
-`https://registry-proxy.maiconfz.workers.dev/packages/index.json?ref=v2.x`
+`https://registry.agents-repo.org/packages/index.json?ref=v2.x`
 
 Query parameters on the source URL are preserved when composing the index URL,
 except when GitHub URLs are normalized to raw content URLs.
