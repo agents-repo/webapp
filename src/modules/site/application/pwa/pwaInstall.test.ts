@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   detectInstalledPwaState,
+  detectNativeInstallPromptSupport,
   isBeforeInstallPromptEvent,
+  resolvePwaInstallGuidance,
   runPwaInstallPrompt,
 } from './pwaInstall'
 
@@ -68,6 +70,87 @@ describe('pwaInstall', () => {
 
       await expect(runPwaInstallPrompt(installPromptEvent)).resolves.toBe('dismissed')
       expect(installPromptEvent.prompt).toHaveBeenCalledOnce()
+    })
+
+    it('returns unavailable when prompt throws', async () => {
+      const installPromptEvent = new Event('beforeinstallprompt') as Event & {
+        prompt: () => Promise<void>
+        userChoice: Promise<{ outcome: 'accepted'; platform: string }>
+      }
+      installPromptEvent.prompt = vi.fn().mockRejectedValue(new Error('prompt failed'))
+      installPromptEvent.userChoice = Promise.resolve({ outcome: 'accepted', platform: 'web' })
+
+      await expect(runPwaInstallPrompt(installPromptEvent)).resolves.toBe('unavailable')
+    })
+  })
+
+  describe('detectNativeInstallPromptSupport', () => {
+    it('is true when onbeforeinstallprompt exists on the target', () => {
+      expect(detectNativeInstallPromptSupport({ onbeforeinstallprompt: null })).toBe(true)
+    })
+
+    it('is false when the target has no install prompt property', () => {
+      expect(detectNativeInstallPromptSupport({})).toBe(false)
+    })
+  })
+
+  describe('resolvePwaInstallGuidance', () => {
+    it('prefers iOS Share over Firefox branding', () => {
+      expect(
+        resolvePwaInstallGuidance({
+          userAgent:
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/128.0 Mobile/15E148 Safari/605.1.15',
+          maxTouchPoints: 5,
+        }),
+      ).toBe('ios-share')
+    })
+
+    it('treats iPadOS desktop-class Safari as iOS Share', () => {
+      expect(
+        resolvePwaInstallGuidance({
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+          maxTouchPoints: 5,
+        }),
+      ).toBe('ios-share')
+    })
+
+    it('resolves Firefox on Android', () => {
+      expect(
+        resolvePwaInstallGuidance({
+          userAgent: 'Mozilla/5.0 (Android 14; Mobile; rv:128.0) Gecko/128.0 Firefox/128.0',
+          maxTouchPoints: 5,
+        }),
+      ).toBe('firefox-android')
+    })
+
+    it('resolves Firefox on desktop', () => {
+      expect(
+        resolvePwaInstallGuidance({
+          userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0',
+          maxTouchPoints: 0,
+        }),
+      ).toBe('firefox-desktop')
+    })
+
+    it('resolves Safari on macOS', () => {
+      expect(
+        resolvePwaInstallGuidance({
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+          maxTouchPoints: 0,
+        }),
+      ).toBe('safari-macos')
+    })
+
+    it('does not treat Chrome as Safari', () => {
+      expect(
+        resolvePwaInstallGuidance({
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          maxTouchPoints: 0,
+        }),
+      ).toBe('generic')
     })
   })
 })

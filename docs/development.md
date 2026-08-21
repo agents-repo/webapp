@@ -199,10 +199,13 @@ on CLI releases.
    page links on desktop, with light, dark, and auto choices shown in menu
    items. Auto follows system color preference and the selected value persists
    across reloads.
-- The header includes an install-app control (download icon) when the browser
-   exposes a deferred PWA install prompt. The button is hidden when the app is
-   already installed or install is unavailable (for example in local dev without
-   a production service worker).
+- The header includes an install-app control (download icon). Chromium browsers
+   show **Install app** when `beforeinstallprompt` fires and may also show their
+   address-bar install icon (the app does not call `preventDefault`). Browsers
+   without that event show **How to install this site**, which opens a short
+   modal with platform steps and a link to Using the catalog. The control is
+   hidden when the app is already installed, while Chromium is still waiting
+   for install criteria, or in local `dev` without a production service worker.
 - The header now includes a settings cog control next to color mode. It opens a
    website settings modal with two independent registry URL overrides:
   - **Registry base URL override** for catalog fetching (GitHub URLs
@@ -318,16 +321,18 @@ After changing cache or service worker behavior, validate locally with:
 
 ## PWA Install Validation
 
-Validate the in-app install control with a production build (Chromium-based
-browsers):
+Validate install discoverability with a production build:
 
-1. Run `npm run build && npm run preview`.
-2. Open the preview URL in a fresh profile or after clearing site data.
-3. Confirm the header shows the install control (download icon) once install
-   criteria are met.
-4. Click the control and complete the browser install prompt.
+1. Run `npm run build:pages && npm run preview`.
+2. Open the preview URL in a fresh Chromium profile or after clearing site data.
+3. Confirm the browser can show its address-bar install icon, and that the
+   header shows **Install app** once install criteria are met.
+4. Click the header control and complete the browser install prompt.
 5. Confirm the control disappears after install, or when reopening the app in
    standalone mode.
+6. In Firefox desktop, confirm the header shows **How to install this site**,
+   the modal explains that Firefox cannot install from the manifest, and the
+   learn-more link opens Using the catalog. There is no native PWA install.
 
 ## Cache and Service Worker Reset
 

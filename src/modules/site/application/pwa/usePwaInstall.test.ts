@@ -46,13 +46,19 @@ describe('usePwaInstall', () => {
 
     expect(result.current.canInstall).toBe(false)
 
+    const event = createInstallPromptEvent()
+    const preventDefault = vi.fn()
+    event.preventDefault = preventDefault
+
     act(() => {
-      globalThis.window.dispatchEvent(createInstallPromptEvent())
+      globalThis.window.dispatchEvent(event)
     })
 
     await waitFor(() => {
       expect(result.current.canInstall).toBe(true)
     })
+
+    expect(preventDefault).not.toHaveBeenCalled()
   })
 
   it('clears the deferred prompt after a successful install prompt', async () => {

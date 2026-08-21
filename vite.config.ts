@@ -69,7 +69,9 @@ export default defineConfig(({ mode }) => {
           'og-image.png',
           'site.webmanifest',
           'web-app-manifest-192x192.png',
+          'web-app-manifest-192x192-any.png',
           'web-app-manifest-512x512.png',
+          'web-app-manifest-512x512-any.png',
         ],
         includeManifestIcons: false,
         workbox: {

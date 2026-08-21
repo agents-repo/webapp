@@ -195,7 +195,8 @@ hard-coded locale strings.
 | Site page meta | `sitePageMeta.test.ts` |
 | SEO head builder and meta | `buildRouteHead.test.ts`, `siteSeoMeta.test.ts`, `SiteHead.test.tsx` |
 | Theme mode persistence | `themeMode.test.ts` |
-| PWA install helpers | `pwaInstall.test.ts` |
+| PWA install helpers | `pwaInstall.test.ts`, `usePwaInstall.test.ts` |
+| PWA install header control | `PwaInstallControl.test.tsx`, `PwaInstallControl.a11y.test.tsx` |
 | PWA Workbox matchers | `test/pwa-workbox.test.mjs` |
 | Generated PWA service worker | `test/pwa-sw.integration.test.mjs` (after `build:pages`) |
 | External link accessible names | `externalLink.test.ts` |

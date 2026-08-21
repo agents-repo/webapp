@@ -21,7 +21,6 @@ export function usePwaInstall() {
         return
       }
 
-      event.preventDefault()
       setInstallPromptEvent(event)
     }
 
