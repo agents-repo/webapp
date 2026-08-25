@@ -84,6 +84,7 @@ function RegistryCatalogProvider({
   const [fetchedDownloadStatsById, setFetchedDownloadStatsById] = useState<PackageDownloadStatsById>(
     EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
   )
+  const [downloadStatsRegistryBaseUrl, setDownloadStatsRegistryBaseUrl] = useState('')
   const abortControllerRef = useRef<AbortController | null>(null)
   const inFlightRef = useRef<{ readonly promise: Promise<void>; readonly force: boolean } | null>(null)
 
@@ -200,6 +201,7 @@ function RegistryCatalogProvider({
     }).then((stats) => {
       if (!abortController.signal.aborted) {
         setFetchedDownloadStatsById(stats)
+        setDownloadStatsRegistryBaseUrl(trimmedBaseUrl)
       }
     })
 
@@ -208,9 +210,11 @@ function RegistryCatalogProvider({
     }
   }, [registryBaseUrl])
 
-  const downloadStatsById = registryBaseUrl.trim()
-    ? fetchedDownloadStatsById
-    : EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID
+  const trimmedRegistryBaseUrl = registryBaseUrl.trim()
+  const downloadStatsById =
+    trimmedRegistryBaseUrl && trimmedRegistryBaseUrl === downloadStatsRegistryBaseUrl
+      ? fetchedDownloadStatsById
+      : EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID
 
   const value = useMemo<RegistryCatalogContextValue>(
     () => ({

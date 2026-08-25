@@ -3,8 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import RegistryCatalogProvider from './RegistryCatalogProvider'
 import { useRegistryCatalog } from './registryCatalogContext'
+import { getPackageDownloadStats } from '../../application/packageDownloadStats'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
 import { loadRegistryDownloadStats } from '../../infrastructure/registryDownloadStats'
+import { packageDownloadStatsKey } from '../../domain/downloadStats'
 import { sampleCatalogLoadResult } from '../../../../test/fixtures/homePageTestFixtures'
 
 vi.mock('../../infrastructure/registryRepository', () => ({
@@ -223,5 +225,99 @@ describe('RegistryCatalogProvider', () => {
 
     await screen.findByText('settled')
     expect(screen.getByText('forced')).toBeInTheDocument()
+  })
+
+  it('clears download stats before the next registry URL finishes loading', async () => {
+    const previousStats = new Map([
+      [
+        packageDownloadStatsKey('agents-repo', 'sample-agent'),
+        {
+          namespace: 'agents-repo',
+          package: 'sample-agent',
+          downloads: 12,
+          downloads7d: 2,
+          downloads30d: 6,
+          downloads365d: 10,
+        },
+      ],
+    ])
+    const nextStats = new Map([
+      [
+        packageDownloadStatsKey('agents-repo', 'sample-agent'),
+        {
+          namespace: 'agents-repo',
+          package: 'sample-agent',
+          downloads: 99,
+          downloads7d: 4,
+          downloads30d: 20,
+          downloads365d: 80,
+        },
+      ],
+    ])
+    let resolveNextStats: ((stats: typeof nextStats) => void) | undefined
+    loadRegistryDownloadStatsMock.mockResolvedValueOnce(previousStats)
+    loadRegistryDownloadStatsMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveNextStats = resolve
+        }),
+    )
+    loadRegistryCatalogMock.mockResolvedValueOnce(sampleCatalogLoadResult)
+    loadRegistryCatalogMock.mockResolvedValueOnce({
+      ...sampleCatalogLoadResult,
+      registryBaseUrl: 'https://other.example.com/registry',
+      indexUrl: 'https://other.example.com/index.json',
+    })
+
+    function StatsConsumer() {
+      const { catalog, isLoading, downloadStatsById } = useRegistryCatalog()
+      const stats = catalog
+        ? getPackageDownloadStats(downloadStatsById, catalog.packages[0].namespace, catalog.packages[0].package)
+        : null
+
+      return (
+        <p>
+          {isLoading ? 'loading' : 'settled'}:{stats?.downloads ?? 'none'}
+        </p>
+      )
+    }
+
+    const { rerender } = render(
+      <RegistryCatalogProvider
+        registrySettingsVersion={0}
+        onCatalogStatusNoteChange={onCatalogStatusNoteChange}
+      >
+        <StatsConsumer />
+      </RegistryCatalogProvider>,
+    )
+
+    await screen.findByText('settled:12')
+
+    rerender(
+      <RegistryCatalogProvider
+        registrySettingsVersion={1}
+        onCatalogStatusNoteChange={onCatalogStatusNoteChange}
+      >
+        <StatsConsumer />
+      </RegistryCatalogProvider>,
+    )
+
+    await waitFor(() => {
+      expect(loadRegistryCatalogMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          forceSourceResolution: true,
+          bypassTagCache: true,
+        }),
+      )
+    })
+    await screen.findByText('settled:0')
+    expect(loadRegistryDownloadStatsMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        registryBaseUrl: 'https://other.example.com/registry',
+      }),
+    )
+
+    resolveNextStats?.(nextStats)
+    await screen.findByText('settled:99')
   })
 })
