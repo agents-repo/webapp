@@ -106,6 +106,13 @@ norm. When bumping `ACTIONLINT_VERSION` in `scripts/lint-workflows.mjs`, replace
 remove the previous version's checksums file. Keep the same pin across
 organization repositories.
 
+Workflows MUST set a top-level `permissions:` block (typically `contents: read`)
+so CodeQL `actions/missing-workflow-permissions` stays clear. Raise permissions
+on a job only when that job needs more (for example `pull-requests: read` on the
+PR path-filter job). GitHub **default setup** CodeQL jobs cannot be retried from
+the Actions UI when action download fails; push a commit on the task branch to
+re-run them.
+
 ## SonarQube Cloud
 
 Automatic Analysis reads [`.sonarcloud.properties`](../.sonarcloud.properties)
