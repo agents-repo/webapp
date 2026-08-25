@@ -153,6 +153,8 @@ extract it to a sibling module before testing.
   specific starting route is required.
 - Prefer `userEvent.setup()` over `fireEvent` for interactions.
 - Query priority: role → label → text → test id (last resort).
+- When a component test stubs globals, call `cleanup()` before
+  `vi.unstubAllGlobals()` so React cannot schedule work after jsdom teardown.
 
 ### Date and locale assertions
 
