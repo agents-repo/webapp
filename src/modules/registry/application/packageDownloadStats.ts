@@ -2,8 +2,6 @@ import { excludeYankedPackages } from './packageCatalogFilters'
 import type { RegistryPackage } from '../domain/package'
 import {
   DEFAULT_DOWNLOAD_STATS_PERIOD,
-  DOWNLOAD_STATS_PERIODS,
-  EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
   emptyPackageDownloadStats,
   isDownloadStatsPeriod,
   packageDownloadStatsKey,
@@ -16,10 +14,13 @@ export const HOME_POPULAR_PACKAGE_LIMIT = 6
 
 export {
   DEFAULT_DOWNLOAD_STATS_PERIOD,
-  DOWNLOAD_STATS_PERIODS,
-  EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
   isDownloadStatsPeriod,
 }
+
+export {
+  DOWNLOAD_STATS_PERIODS,
+  EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
+} from '../domain/downloadStats'
 
 const downloadCountFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 })
 

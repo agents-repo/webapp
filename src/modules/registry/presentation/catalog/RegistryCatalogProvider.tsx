@@ -81,7 +81,7 @@ function RegistryCatalogProvider({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [hasCompletedForcedReload, setHasCompletedForcedReload] = useState(false)
-  const [fetchedDownloadStatsById, setDownloadStatsById] = useState<PackageDownloadStatsById>(
+  const [fetchedDownloadStatsById, setFetchedDownloadStatsById] = useState<PackageDownloadStatsById>(
     EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
   )
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -199,7 +199,7 @@ function RegistryCatalogProvider({
       signal: abortController.signal,
     }).then((stats) => {
       if (!abortController.signal.aborted) {
-        setDownloadStatsById(stats)
+        setFetchedDownloadStatsById(stats)
       }
     })
 
