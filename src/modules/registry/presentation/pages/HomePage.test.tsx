@@ -62,7 +62,7 @@ describe('HomePage catalog loading', () => {
     expect(await screen.findByRole('heading', { name: /Most downloaded in the last year/ })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View all packages' })).toHaveAttribute('href', '/packages/')
-    expect(container.querySelector('details.package-download-stats-card')).not.toBeNull()
+    expect(screen.getByRole('button', { name: '0 downloads for sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Toggle category filter/ })).not.toBeInTheDocument()

@@ -42,9 +42,12 @@ Every routed page should:
    `Use in chat for {name}`. The header PWA control is icon-only: **Install
    Agents Repo app** when a native prompt is available, and **How to install
    this site** for the guidance modal. Those names must stay distinct.
-6. Package card download windows use a native `<details>` disclosure. Hover and
-   `:focus-within` on the card reveal the same window counts as opening the
-   disclosure; keyboard and touch still use the native summary toggle.
+6. Package card download windows use a link-styled button under the status
+   badge. Hover (unless `prefers-reduced-motion: reduce`), keyboard focus, or
+   click opens an Overlay popover with the four window counts. Click or tap
+   pins the popover until Escape, an outside click (`rootClose`), or a second
+   click. The visible label `{N} downloads` is a prefix of `{N} downloads for
+   {name}` (WCAG 2.5.3). Card-wide hover does not reveal the windows.
 7. Use `externalLinkAccessibleName()` for links that open in a new tab
 
 ### Header navigation

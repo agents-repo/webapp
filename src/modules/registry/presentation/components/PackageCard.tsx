@@ -85,7 +85,15 @@ export function PackageCard({
                 </Dropdown>
               </Card.Subtitle>
             </div>
-            <PackageStatusBadge status={pkg.status} />
+            <div className="d-flex flex-column align-items-center text-center flex-shrink-0">
+              <PackageStatusBadge status={pkg.status} />
+              <PackageDownloadStatsSummary
+                stats={getPackageDownloadStats(downloadStatsById, pkg.namespace, pkg.package)}
+                packageName={pkg.name}
+                variant="card"
+                controlId={packageSlug}
+              />
+            </div>
           </Stack>
         </Card.Header>
 
@@ -93,11 +101,6 @@ export function PackageCard({
           <Card.Text as="p" className="small text-body-secondary mb-0 package-description">
             {pkg.description}
           </Card.Text>
-          <PackageDownloadStatsSummary
-            stats={getPackageDownloadStats(downloadStatsById, pkg.namespace, pkg.package)}
-            packageName={pkg.name}
-            variant="card"
-          />
           <PackageMetaBadges pkg={pkg} onToggleFacet={onToggleFacet} isFacetSelected={isFacetSelected} />
         </Card.Body>
 

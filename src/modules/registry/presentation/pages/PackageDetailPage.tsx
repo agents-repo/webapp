@@ -292,23 +292,28 @@ function PackageDetailLoaded(options: {
               <PackageDetailMetadataCard catalogPackage={catalogPackage} detail={detail} />
             </Col>
             <Col md={6}>
-              <PackageDetailVersionsCard detail={detail} isDetailLoading={isDetailLoading} />
+              <Row className="g-3">
+                <Col xs={12} md={6}>
+                  <PackageDetailVersionsCard detail={detail} isDetailLoading={isDetailLoading} />
+                </Col>
+                <Col xs={12} md={6}>
+                  <Card className="h-100 border-secondary-subtle">
+                    <Card.Body>
+                      <PackageDownloadStatsSummary
+                        stats={getPackageDownloadStats(
+                          downloadStatsById,
+                          catalogPackage.namespace,
+                          catalogPackage.package,
+                        )}
+                        packageName={catalogPackage.name}
+                        variant="detail"
+                      />
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
             </Col>
           </Row>
-
-          <Card className="border-secondary-subtle">
-            <Card.Body>
-              <PackageDownloadStatsSummary
-                stats={getPackageDownloadStats(
-                  downloadStatsById,
-                  catalogPackage.namespace,
-                  catalogPackage.package,
-                )}
-                packageName={catalogPackage.name}
-                variant="detail"
-              />
-            </Card.Body>
-          </Card>
 
           {visibleDetailError ? <Alert variant="warning">{visibleDetailError}</Alert> : null}
 

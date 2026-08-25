@@ -32,9 +32,12 @@ on smaller screens. Yanked packages stay hidden on those listings.
 Use the header search on large screens to filter packages by name or
 description. Review status badges and target compatibility before installing.
 
-Package cards show the all-time download count. Open the native disclosure
-(or hover / keyboard-focus the card) for last 7, 30, and 365 day counts. The
-package page repeats those four windows in a **Downloads** section.
+Package cards show the all-time download count under the status badge. Hover,
+keyboard-focus, or click that count for last 7, 30, and 365 day windows (click
+or tap keeps the panel open until you press Escape, click outside, or click
+the count again). If you prefer reduced motion, hover does not open the
+panel; focus, click, and keyboard still do. The package page shows those four
+windows in a **Downloads** section beside **Versions**.
 
 ## Download and CLI actions
 

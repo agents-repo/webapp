@@ -153,28 +153,13 @@
   overflow: hidden;
 }
 
-.package-download-stats-card {
-  position: relative;
-  z-index: 1;
+.package-download-stats-trigger {
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
-.package-download-stats-summary {
-  cursor: pointer;
-}
-
-.package-download-stats-windows {
-  display: none;
-}
-
-.package-download-stats-card[open] .package-download-stats-windows,
-.package-card:hover .package-download-stats-windows,
-.package-card:focus-within .package-download-stats-windows {
-  display: block;
-}
-
-.package-card:hover .package-download-stats-card > :not(summary),
-.package-card:focus-within .package-download-stats-card > :not(summary) {
-  display: block;
+.package-download-stats-popover {
+  max-width: min(100vw - 2rem, 16rem);
 }
 
 .package-detail-markdown {
