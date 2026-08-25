@@ -1,0 +1,17 @@
+{
+  "name": "agents-repo/webapp",
+  "install": "bash .cursor/install.sh",
+  "ports": [
+    {
+      "name": "Vite dev server",
+      "port": 5173
+    }
+  ],
+  "terminals": [
+    {
+      "name": "webapp-dev",
+      "command": "bash .cursor/dev-server.sh",
+      "description": "Vite dev server at http://localhost:5173. The catalog is fetched from registry.agents-repo.org."
+    }
+  ]
+}

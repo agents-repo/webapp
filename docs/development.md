@@ -29,6 +29,15 @@ corepack prepare npm@12.0.1 --activate
 npm install
 ```
 
+### Cursor Cloud
+
+Cloud Agents use `.cursor/environment.json` and `.cursor/install.sh` (same
+pinned Node/npm, then `HUSKY=0 npm ci`). `/exec-daemon/node` (Node 22) may
+precede nvm on `PATH`; prepend the pinned Node bin before `npm run env:check`
+and other scripts. The Vite dev server is the `webapp-dev` terminal on
+`http://localhost:5173`. See the **Cursor Cloud environment** section in
+`.github/copilot-instructions.md`.
+
 ### Install script approvals (npm 12)
 
 npm 12 requires explicit approval for dependency install scripts. Approved
