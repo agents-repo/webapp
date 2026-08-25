@@ -11,6 +11,10 @@ export const DOWNLOAD_STATS_PERIOD_LABELS: Readonly<Record<DownloadStatsPeriod, 
   '365d': 'Last 365 days',
 }
 
+export function formatDownloadStatsPeriodFilterLabel(period: DownloadStatsPeriod): string {
+  return `Downloads (${DOWNLOAD_STATS_PERIOD_LABELS[period]})`
+}
+
 export interface PackageDownloadStats {
   readonly namespace: string
   readonly package: string

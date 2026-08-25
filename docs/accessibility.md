@@ -47,7 +47,9 @@ Every routed page should:
    click opens an Overlay popover with the four window counts. Click or tap
    pins the popover until Escape, an outside click (`rootClose`), or a second
    click. The visible label `{N} downloads` is a prefix of `{N} downloads for
-   {name}` (WCAG 2.5.3). Card-wide hover does not reveal the windows.
+   {name}` (WCAG 2.5.3). Card-wide hover does not reveal the windows. On the
+   package page, the **Downloads** section lists each window label and count on
+   the same line.
 7. Use `externalLinkAccessibleName()` for links that open in a new tab
 
 ### Header navigation
@@ -73,7 +75,10 @@ Every routed page should:
 - Packages listing filters use labeled checkboxes with unique `id`s for the
   desktop sidebar (`sidebar-`) and mobile Offcanvas (`offcanvas-`) copies.
   Offcanvas provides a focus trap while it is open. Result counts stay on
-  `#catalog-results-summary` with `aria-live="polite"`.
+  `#catalog-results-summary` with `aria-live="polite"`. The download-window
+  sort next to Hide filters / Show filters is a labelled select whose options
+  are **Downloads (All time)**, **Downloads (Last 7 days)**,
+  **Downloads (Last 30 days)**, and **Downloads (Last 365 days)**.
 
 ### Dynamic content
 

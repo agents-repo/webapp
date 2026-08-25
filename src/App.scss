@@ -153,6 +153,28 @@
   overflow: hidden;
 }
 
+.package-download-stats-detail dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.package-download-stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: 0.75rem;
+}
+
+.package-download-stats-row dt,
+.package-download-stats-row dd {
+  margin-bottom: 0;
+}
+
+.package-download-stats-row dd {
+  font-variant-numeric: tabular-nums;
+}
+
 .package-download-stats-trigger {
   white-space: nowrap;
   line-height: 1.2;

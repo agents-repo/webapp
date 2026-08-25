@@ -50,7 +50,7 @@ describe('PackageDownloadStatsSummary', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders stacked download windows on the package detail variant', () => {
+  it('renders download window labels and counts on the same row on the package detail variant', () => {
     render(
       <PackageDownloadStatsSummary
         stats={sampleStats}
@@ -60,14 +60,18 @@ describe('PackageDownloadStatsSummary', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Downloads' })).toBeInTheDocument()
-    expect(screen.getByText('All time')).toBeInTheDocument()
-    expect(screen.getByText('Last 7 days')).toBeInTheDocument()
-    expect(screen.getByText('Last 30 days')).toBeInTheDocument()
-    expect(screen.getByText('Last 365 days')).toBeInTheDocument()
-    expect(screen.getByText('12')).toBeInTheDocument()
-    expect(screen.getByText('1')).toBeInTheDocument()
-    expect(screen.getByText('3')).toBeInTheDocument()
-    expect(screen.getByText('10')).toBeInTheDocument()
+    expect(screen.getByText('All time').closest('.package-download-stats-row')).toHaveTextContent(
+      /All time\s*12/,
+    )
+    expect(screen.getByText('Last 7 days').closest('.package-download-stats-row')).toHaveTextContent(
+      /Last 7 days\s*1/,
+    )
+    expect(screen.getByText('Last 30 days').closest('.package-download-stats-row')).toHaveTextContent(
+      /Last 30 days\s*3/,
+    )
+    expect(screen.getByText('Last 365 days').closest('.package-download-stats-row')).toHaveTextContent(
+      /Last 365 days\s*10/,
+    )
   })
 
   it('keeps window counts out of the document until the card control opens', () => {

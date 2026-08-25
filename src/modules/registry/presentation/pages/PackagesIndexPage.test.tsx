@@ -244,6 +244,13 @@ describe('PackagesIndexPage', () => {
     )
 
     await screen.findByRole('heading', { name: 'review-agent' })
+    expect(screen.getByLabelText('Sort packages by download window')).toHaveDisplayValue(
+      'Downloads (All time)',
+    )
+    expect(screen.getByRole('option', { name: 'Downloads (All time)' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Downloads (Last 7 days)' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Downloads (Last 30 days)' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Downloads (Last 365 days)' })).toBeInTheDocument()
     const cardNames = () =>
       [...container.querySelectorAll('.package-card h3')].map((heading) => heading.textContent)
     expect(cardNames()).toEqual(['legacy-helper', 'review-agent', 'plan-flow'])

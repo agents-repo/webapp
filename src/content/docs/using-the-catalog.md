@@ -23,11 +23,12 @@ search, filters, and download-window sort are stored in the page URL so you
 can reload or share the view.
 
 On [Packages](/packages) and namespace listings, sort packages by download
-window (**All time**, **Last 7 days**, **Last 30 days**, **Last 365 days**).
-The default is all time. Sorting does not hide packages. Popular category and
-tag chips sit above the cards. The full checkbox groups are in a collapsible
-sidebar on large screens (Hide filters / Show filters) and in a Filters panel
-on smaller screens. Yanked packages stay hidden on those listings.
+window (**Downloads (All time)**, **Downloads (Last 7 days)**,
+**Downloads (Last 30 days)**, **Downloads (Last 365 days)**). The default is
+all time. Sorting does not hide packages. Popular category and tag chips sit
+above the cards. The full checkbox groups are in a collapsible sidebar on
+large screens (Hide filters / Show filters) and in a Filters panel on smaller
+screens. Yanked packages stay hidden on those listings.
 
 Use the header search on large screens to filter packages by name or
 description. Review status badges and target compatibility before installing.
@@ -37,7 +38,8 @@ keyboard-focus, or click that count for last 7, 30, and 365 day windows (click
 or tap keeps the panel open until you press Escape, click outside, or click
 the count again). If you prefer reduced motion, hover does not open the
 panel; focus, click, and keyboard still do. The package page shows those four
-windows in a **Downloads** section beside **Versions**.
+windows in a **Downloads** section beside **Versions**, with each window label
+and count on the same line.
 
 ## Download and CLI actions
 

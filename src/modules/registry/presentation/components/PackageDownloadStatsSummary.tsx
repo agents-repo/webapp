@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Button, Overlay, Popover } from 'react-bootstrap'
 import {
   formatPackageDownloadCount,
@@ -54,11 +54,11 @@ function PackageDownloadStatsDetail(options: {
     >
       <h2 className="h4">Downloads</h2>
       <dl className="mb-0 small">
-        {windowItems.map((item, index) => (
-          <Fragment key={item.period}>
+        {windowItems.map((item) => (
+          <div key={item.period} className="package-download-stats-row">
             <dt>{item.label}</dt>
-            <dd className={index === windowItems.length - 1 ? 'mb-0' : 'mb-2'}>{item.count}</dd>
-          </Fragment>
+            <dd>{item.count}</dd>
+          </div>
         ))}
       </dl>
     </section>

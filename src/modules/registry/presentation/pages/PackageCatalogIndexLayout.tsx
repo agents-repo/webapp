@@ -3,7 +3,7 @@ import { Badge, Button, Col, Container, Form, Offcanvas, Row, Stack } from 'reac
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
 import {
   DOWNLOAD_STATS_PERIODS,
-  DOWNLOAD_STATS_PERIOD_LABELS,
+  formatDownloadStatsPeriodFilterLabel,
   type DownloadStatsPeriod,
 } from '../../domain/downloadStats'
 import {
@@ -140,7 +140,7 @@ export function PackageCatalogIndexLayout({
                   >
                     {DOWNLOAD_STATS_PERIODS.map((period) => (
                       <option key={period} value={period}>
-                        {DOWNLOAD_STATS_PERIOD_LABELS[period]}
+                        {formatDownloadStatsPeriodFilterLabel(period)}
                       </option>
                     ))}
                   </Form.Select>

@@ -59,6 +59,12 @@ test.describe('Catalog filters', () => {
     await page.goto('/packages?period=7d')
     await waitForCatalogSettled(page)
 
+    await expect(page.getByLabel('Sort packages by download window')).toHaveValue('7d')
+    await expect(page.getByRole('option', { name: 'Downloads (All time)' })).toBeAttached()
+    await expect(page.getByRole('option', { name: 'Downloads (Last 7 days)' })).toBeAttached()
+    await expect(page.getByRole('option', { name: 'Downloads (Last 30 days)' })).toBeAttached()
+    await expect(page.getByRole('option', { name: 'Downloads (Last 365 days)' })).toBeAttached()
+
     await page.locator('label[for="sidebar-category-agent"]').click()
     await expect(page).toHaveURL(/period=7d/)
     await expect(page).toHaveURL(/category=agent/)
