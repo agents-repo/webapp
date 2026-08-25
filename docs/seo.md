@@ -273,6 +273,10 @@ npm run a11y:ci
 `a11y:ci` is named for historical reasons; it also asserts the Lighthouse SEO
 category locally. It is not part of PR baseline CI due to runtime cost.
 
+PR baseline CI runs `build:pages` and `test:crawl-files` only when site/build
+paths change. Local SEO validation still uses the full list above. Release and
+deploy workflows keep Pages/crawl as the safety net.
+
 ### Manual verification
 
 After `build:pages`, inspect `dist/about/index.html` (or another route) and

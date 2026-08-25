@@ -73,6 +73,14 @@ after `build:pages`. For routing, registry integration, or modal flows, also run
 `npm run test:e2e` locally (requires `npx playwright install chromium` once per
 machine). E2E is not part of PR baseline CI — see [e2e-testing.md](e2e-testing.md).
 
+PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
+typecheck, and unit tests. Chrome/`slides:check`, `agents:ci`, and
+`build:pages` plus `test:crawl-files` run only when matching paths change
+(organization [PR baseline extras](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)).
+Local handoff still uses the full command list above. Release, Pages deploy,
+and Deploy Webapp keep Pages/crawl as the skip safety net. Do not add
+`agents:ci` to those workflows.
+
 Use `npm run build` for a standard production build (includes `sitemap.xml` and
 `robots.txt` via `vite-plugin-sitemap`). Use `npm run build:pages` when
 validating the GitHub Pages output (adds per-route HTML injection, `.nojekyll`,
@@ -97,6 +105,13 @@ norm. When bumping `ACTIONLINT_VERSION` in `scripts/lint-workflows.mjs`, replace
 [actionlint GitHub release](https://github.com/rhysd/actionlint/releases) and
 remove the previous version's checksums file. Keep the same pin across
 organization repositories.
+
+Workflows MUST set a top-level `permissions:` block (typically `contents: read`)
+so CodeQL `actions/missing-workflow-permissions` stays clear. Raise permissions
+on a job only when that job needs more (for example `pull-requests: read` on the
+PR path-filter job). GitHub **default setup** CodeQL jobs cannot be retried from
+the Actions UI when action download fails; push a commit on the task branch to
+re-run them.
 
 ## SonarQube Cloud
 
