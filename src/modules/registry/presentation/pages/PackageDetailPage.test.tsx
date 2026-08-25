@@ -67,6 +67,11 @@ describe('PackageDetailPage', () => {
       '/packages/?tag=sample',
     )
     expect(await screen.findByText('A sample README.')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Downloads' })).toBeInTheDocument()
+    expect(screen.getByText('All time')).toBeInTheDocument()
+    expect(screen.getByText('Last 7 days')).toBeInTheDocument()
+    expect(screen.getByText('Last 30 days')).toBeInTheDocument()
+    expect(screen.getByText('Last 365 days')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: /A sample agent/ }))
     await waitFor(() => {

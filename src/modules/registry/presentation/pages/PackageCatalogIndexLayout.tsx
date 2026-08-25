@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react'
-import { Badge, Button, Col, Container, Offcanvas, Row, Stack } from 'react-bootstrap'
+import { Badge, Button, Col, Container, Form, Offcanvas, Row, Stack } from 'react-bootstrap'
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
+import {
+  DOWNLOAD_STATS_PERIODS,
+  formatDownloadStatsPeriodFilterLabel,
+  type DownloadStatsPeriod,
+} from '../../domain/downloadStats'
 import {
   PackageCatalogFilterBody,
   PackageCatalogFilterChips,
@@ -125,13 +130,29 @@ export function PackageCatalogIndexLayout({
               </p>
             </Col>
             <Col lg={4} className="text-lg-end">
-              <FilterToggleButtons
-                sidebarVisible={sidebarVisible}
-                selectedFacetCount={page.selectedFacetCount}
-                filtersOffcanvasOpen={page.filtersOffcanvasOpen}
-                onToggleSidebar={page.toggleSidebarCollapsed}
-                onOpenOffcanvas={() => page.setFiltersOffcanvasOpen(true)}
-              />
+              <Stack direction="horizontal" gap={2} className="justify-content-lg-end flex-wrap">
+                <Form.Group controlId="package-catalog-download-period" className="mb-0">
+                  <Form.Label className="visually-hidden">Sort packages by download window</Form.Label>
+                  <Form.Select
+                    size="sm"
+                    value={page.downloadPeriod}
+                    onChange={(event) => page.setDownloadPeriod(event.target.value as DownloadStatsPeriod)}
+                  >
+                    {DOWNLOAD_STATS_PERIODS.map((period) => (
+                      <option key={period} value={period}>
+                        {formatDownloadStatsPeriodFilterLabel(period)}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                <FilterToggleButtons
+                  sidebarVisible={sidebarVisible}
+                  selectedFacetCount={page.selectedFacetCount}
+                  filtersOffcanvasOpen={page.filtersOffcanvasOpen}
+                  onToggleSidebar={page.toggleSidebarCollapsed}
+                  onOpenOffcanvas={() => page.setFiltersOffcanvasOpen(true)}
+                />
+              </Stack>
             </Col>
           </Row>
 

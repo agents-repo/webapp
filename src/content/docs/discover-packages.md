@@ -7,8 +7,8 @@ section: Catalog
 
 ## On the website
 
-1. Open [Home](/) and search or scroll the catalog.
-2. Open [Packages](/packages) to search and filter by category, tags, install
+1. Open [Home](/) and search (search navigates to [Packages](/packages)) or browse the most-downloaded slice.
+2. Open [Packages](/packages) to search, sort by download window, and filter by category, tags, install
    targets, status, cost band, or Use in chat. Filters apply to the website
    catalog only; they are not CLI search flags.
 3. Open a package card (**View** or the title) to read the in-app package page. That page loads `detail.json` for the latest snapshot, including README when `readmeMarkdown` is present.

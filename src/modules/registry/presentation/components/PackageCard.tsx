@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getNamespacePackagesPath, getPackageDetailPath } from '../../application/packageSiteRoutes'
 import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
+import { getPackageDownloadStats } from '../../application/packageDownloadStats'
 import { getPackageDownloadTargets } from '../pages/homePageCatalogState'
+import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import { PackageDownloadStatsSummary } from './PackageDownloadStatsSummary'
 import PackageCliInstallAction from './PackageCliInstallAction'
 import { PackageDownloadMenu } from './PackageDownloadMenu'
 import { PackageMetaBadges } from './PackageMetaBadges'
@@ -28,6 +31,7 @@ export function PackageCard({
   onToggleFacet,
   isFacetSelected,
 }: PackageCardProps) {
+  const { downloadStatsById } = useRegistryCatalog()
   const packageSlug = toPackageSlug(pkg.namespace, pkg.package)
   const downloadTargets = getPackageDownloadTargets(pkg, registryBaseUrl)
   const detailPath = getPackageDetailPath(pkg.namespace, pkg.package)
@@ -81,7 +85,15 @@ export function PackageCard({
                 </Dropdown>
               </Card.Subtitle>
             </div>
-            <PackageStatusBadge status={pkg.status} />
+            <div className="d-flex flex-column align-items-center text-center flex-shrink-0">
+              <PackageStatusBadge status={pkg.status} />
+              <PackageDownloadStatsSummary
+                stats={getPackageDownloadStats(downloadStatsById, pkg.namespace, pkg.package)}
+                packageName={pkg.name}
+                variant="card"
+                controlId={packageSlug}
+              />
+            </div>
           </Stack>
         </Card.Header>
 

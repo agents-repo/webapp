@@ -104,7 +104,9 @@ test('example', async ({ page }) => {
 ```
 
 Use `mockRegistryIndex(page, catalog, indexUrl)` when a spec needs a custom
-index URL (for example website settings override tests). Use
+index URL (for example website settings override tests). The shared fixture also
+mocks `GET {registryBaseUrl}/stats`. Use `mockRegistryStats(page, stats, statsUrl)`
+when a spec needs custom download counts. Use
 `mockPackageDetailArtifacts(page, { detailUrl, detail, markdownUrl, markdown })`
 for package detail pages (same pattern as `mockChatPackageArtifacts`).
 

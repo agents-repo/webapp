@@ -193,6 +193,9 @@ hard-coded locale strings.
 | Registry settings (localStorage) | `registrySourceSettings.test.ts` |
 | Package search selectors | `registrySelectors.test.ts` |
 | Packages listing filters | `packageCatalogFilters.test.ts` |
+| Download stats merge and sort | `packageDownloadStats.test.ts` |
+| Download stats client | `registryDownloadStats.test.ts` |
+| Download stats card/detail UI | `PackageDownloadStatsSummary.test.tsx` |
 | URL safety | `urlSafety.test.ts` |
 | Site page meta | `sitePageMeta.test.ts` |
 | SEO head builder and meta | `buildRouteHead.test.ts`, `siteSeoMeta.test.ts`, `SiteHead.test.tsx` |

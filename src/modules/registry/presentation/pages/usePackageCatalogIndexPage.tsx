@@ -5,6 +5,7 @@ import {
   getInitialCatalogFiltersSidebarCollapsed,
   persistCatalogFiltersSidebarCollapsed,
 } from '../../application/catalogFilterPreferences'
+import { CATALOG_SEARCH_DEBOUNCE_MS } from '../../application/catalogSearch'
 import {
   applyPackageCatalogFiltersToSearchParams,
   collectPackageCatalogFacets,
@@ -19,6 +20,12 @@ import {
   type PackageCatalogFilterFacet,
   type PackageCatalogFilters,
 } from '../../application/packageCatalogFilters'
+import {
+  applyDownloadStatsPeriodToSearchParams,
+  parseDownloadStatsPeriod,
+  sortPackagesByDownloadPeriod,
+} from '../../application/packageDownloadStats'
+import type { DownloadStatsPeriod } from '../../domain/downloadStats'
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { PackageCatalogSearch } from '../components/PackageCatalogSearch'
@@ -26,7 +33,6 @@ import { useStickySearch } from '../components/useStickySearch'
 import { getCatalogAlertState, getCatalogResultsSummary } from './homePageCatalogState'
 
 const STICKY_SEARCH_THRESHOLD = 180
-const QUERY_DEBOUNCE_MS = 300
 
 function toggleFilterValue(
   filters: PackageCatalogFilters,
@@ -63,9 +69,11 @@ export function usePackageCatalogIndexPage(options: {
     registryBaseUrl,
     errorMessage: catalogErrorMessage,
     isLoading: isCatalogLoading,
+    downloadStatsById,
   } = useRegistryCatalog()
   const [searchParams, setSearchParams] = useSearchParams()
   const urlFilters = useMemo(() => parsePackageCatalogFilters(searchParams), [searchParams])
+  const downloadPeriod = useMemo(() => parseDownloadStatsPeriod(searchParams), [searchParams])
   const [draftQuery, setDraftQuery] = useState(urlFilters.query)
   const [previousUrlQuery, setPreviousUrlQuery] = useState(urlFilters.query)
   if (urlFilters.query !== previousUrlQuery) {
@@ -111,7 +119,7 @@ export function usePackageCatalogIndexPage(options: {
         },
         { replace: true },
       )
-    }, QUERY_DEBOUNCE_MS)
+    }, CATALOG_SEARCH_DEBOUNCE_MS)
 
     return () => {
       window.clearTimeout(timeoutId)
@@ -133,8 +141,13 @@ export function usePackageCatalogIndexPage(options: {
   const listingPackages = useMemo(() => excludeYankedPackages(packages), [packages])
 
   const filteredPackages = useMemo(
-    () => filterPackageCatalog(listingPackages, filters),
-    [filters, listingPackages],
+    () =>
+      sortPackagesByDownloadPeriod(
+        filterPackageCatalog(listingPackages, filters),
+        downloadStatsById,
+        downloadPeriod,
+      ),
+    [downloadPeriod, downloadStatsById, filters, listingPackages],
   )
 
   const facets = useMemo(
@@ -208,6 +221,16 @@ export function usePackageCatalogIndexPage(options: {
     })
   }, [])
 
+  const setDownloadPeriod = useCallback(
+    (period: DownloadStatsPeriod) => {
+      setSearchParams(
+        (previousParams) => applyDownloadStatsPeriodToSearchParams(previousParams, period),
+        { replace: true },
+      )
+    },
+    [setSearchParams],
+  )
+
   const isFacetSelected = useCallback(
     (facet: 'category' | 'tag', value: string) => {
       if (facet === 'category') {
@@ -242,6 +265,8 @@ export function usePackageCatalogIndexPage(options: {
     clearFilters,
     filterByOwner,
     isFacetSelected,
+    downloadPeriod,
+    setDownloadPeriod,
     showLoadingSpinner: isCatalogLoading && !catalog,
   }
 }

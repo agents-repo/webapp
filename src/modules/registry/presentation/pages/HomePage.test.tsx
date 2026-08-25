@@ -1,6 +1,7 @@
-import { cleanup, screen } from '@testing-library/react'
+import { cleanup, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import HomePage from './HomePage'
@@ -17,6 +18,24 @@ vi.mock('../catalog/registryCatalogContext', () => ({
 }))
 
 const useRegistryCatalogMock = vi.mocked(useRegistryCatalog)
+
+function LocationProbe() {
+  const location = useLocation()
+  return <div data-testid="location">{`${location.pathname}${location.search}`}</div>
+}
+
+function renderHomeAtRoot() {
+  return renderWithProviders(
+    <>
+      <LocationProbe />
+      <Routes>
+        <Route path="/" element={<HomePage setHeaderSearchSlot={() => {}} />} />
+        <Route path="/packages" element={<p>packages index</p>} />
+      </Routes>
+    </>,
+    { initialEntries: ['/'] },
+  )
+}
 
 describe('HomePage catalog loading', () => {
   afterEach(() => {
@@ -35,12 +54,15 @@ describe('HomePage catalog loading', () => {
     expect(screen.queryByRole('heading', { name: 'sample-agent' })).not.toBeInTheDocument()
   })
 
-  it('shows package cards after the catalog loads', async () => {
+  it('shows popular package cards after the catalog loads', async () => {
     useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
 
     const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Most downloaded in the last year/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'View all packages' })).toHaveAttribute('href', '/packages/')
+    expect(screen.getByRole('button', { name: '0 downloads for sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Toggle category filter/ })).not.toBeInTheDocument()
@@ -57,21 +79,6 @@ describe('HomePage catalog loading', () => {
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
 
-  it('shows the empty-state card during reload when search has no matches', async () => {
-    const user = userEvent.setup()
-    useRegistryCatalogMock.mockReturnValue(reloadingCatalogContext)
-
-    const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
-
-    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
-    await user.type(searchInput, 'no-match-query')
-
-    expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
-    expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 0 of 1 packages')).toBeInTheDocument()
-    expect(screen.getByText('No packages match your current search.')).toBeInTheDocument()
-  })
-
   it('does not show the loading spinner when catalog loading failed', () => {
     useRegistryCatalogMock.mockReturnValue(unavailableCatalogContext)
 
@@ -81,6 +88,54 @@ describe('HomePage catalog loading', () => {
     expect(screen.getByText('No catalog data available.')).toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
+  })
+})
+
+describe('HomePage search', () => {
+  afterEach(() => {
+    cleanup()
+    vi.clearAllMocks()
+  })
+
+  it('navigates to the packages index after a debounced query', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderHomeAtRoot()
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.type(searchInput, 'demo-flow')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=demo-flow')
+    })
+  })
+
+  it('navigates immediately on search submit', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderHomeAtRoot()
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.type(searchInput, 'sample-agent{Enter}')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=sample-agent')
+    })
+  })
+
+  it('stays on home when the query is empty', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderHomeAtRoot()
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.type(searchInput, '   {Enter}')
+
+    expect(screen.getByTestId('location')).toHaveTextContent('/')
+    expect(screen.getByRole('heading', { name: /Most downloaded in the last year/ })).toBeInTheDocument()
   })
 })
 
@@ -108,6 +163,21 @@ describe('HomePage package card owner', () => {
     expect(subtitle).not.toBeNull()
     expect(subtitle?.querySelector('.badge')).toBeNull()
     expect(subtitle?.textContent).toMatch(/^by\s+agents-repo/)
+  })
+
+  it('navigates owner filters to the packages search URL', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderHomeAtRoot()
+
+    await screen.findByRole('heading', { name: 'sample-agent' })
+    await user.click(screen.getByRole('button', { name: 'Actions for owner agents-repo' }))
+    await user.click(screen.getByRole('button', { name: 'Filter packages by this owner' }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=%40agents-repo')
+    })
   })
 
   it('shows Use in chat when chatWeb is true', async () => {

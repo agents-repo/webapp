@@ -109,6 +109,8 @@ export function CatalogResultsPanel(options: {
   readonly hasCatalog: boolean
   readonly registryBaseUrl: string
   readonly onFilterByOwner: (owner: string) => void
+  readonly resultsActions?: ReactNode
+  readonly emptyMatchMessage?: string
 }): ReactNode {
   return (
     <section className="py-4 py-lg-5">
@@ -132,6 +134,11 @@ export function CatalogResultsPanel(options: {
               {options.catalogResultsSummary}
             </p>
           </Col>
+          {options.resultsActions ? (
+            <Col lg={4} className="text-lg-end">
+              {options.resultsActions}
+            </Col>
+          ) : null}
         </Row>
 
         {options.catalogAlertState ? (
@@ -154,7 +161,10 @@ export function CatalogResultsPanel(options: {
             />
 
             {options.filteredPackages.length === 0 ? (
-              <EmptyCatalogState hasCatalog={options.hasCatalog} />
+              <EmptyCatalogState
+                hasCatalog={options.hasCatalog}
+                emptyMatchMessage={options.emptyMatchMessage}
+              />
             ) : null}
           </>
         )}

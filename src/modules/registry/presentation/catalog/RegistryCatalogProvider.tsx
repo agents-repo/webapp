@@ -7,6 +7,8 @@ import {
   setRuntimePackageCatalog,
 } from '../../application/runtimePackageCatalog'
 import type { RegistryCatalog } from '../../domain/package'
+import { EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID, type PackageDownloadStatsById } from '../../domain/downloadStats'
+import { loadRegistryDownloadStats } from '../../infrastructure/registryDownloadStats'
 import {
   loadRegistryCatalog,
   type RegistryCatalogLoadResult,
@@ -79,6 +81,10 @@ function RegistryCatalogProvider({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [hasCompletedForcedReload, setHasCompletedForcedReload] = useState(false)
+  const [fetchedDownloadStatsById, setFetchedDownloadStatsById] = useState<PackageDownloadStatsById>(
+    EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
+  )
+  const [downloadStatsRegistryBaseUrl, setDownloadStatsRegistryBaseUrl] = useState('')
   const abortControllerRef = useRef<AbortController | null>(null)
   const inFlightRef = useRef<{ readonly promise: Promise<void>; readonly force: boolean } | null>(null)
 
@@ -182,6 +188,34 @@ function RegistryCatalogProvider({
     })
   }, [catalog, githubRepositoryUrl, isLoading])
 
+  useEffect(() => {
+    const trimmedBaseUrl = registryBaseUrl.trim()
+    if (!trimmedBaseUrl) {
+      return
+    }
+
+    const abortController = new AbortController()
+    void loadRegistryDownloadStats({
+      registryBaseUrl: trimmedBaseUrl,
+      signal: abortController.signal,
+    }).then((stats) => {
+      if (!abortController.signal.aborted) {
+        setFetchedDownloadStatsById(stats)
+        setDownloadStatsRegistryBaseUrl(trimmedBaseUrl)
+      }
+    })
+
+    return () => {
+      abortController.abort()
+    }
+  }, [registryBaseUrl])
+
+  const trimmedRegistryBaseUrl = registryBaseUrl.trim()
+  const downloadStatsById =
+    trimmedRegistryBaseUrl && trimmedRegistryBaseUrl === downloadStatsRegistryBaseUrl
+      ? fetchedDownloadStatsById
+      : EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID
+
   const value = useMemo<RegistryCatalogContextValue>(
     () => ({
       catalog,
@@ -192,11 +226,13 @@ function RegistryCatalogProvider({
       errorMessage,
       isLoading,
       hasCompletedForcedReload,
+      downloadStatsById,
       reloadCatalog,
     }),
     [
       cacheState,
       catalog,
+      downloadStatsById,
       errorMessage,
       githubRepositoryUrl,
       hasCompletedForcedReload,

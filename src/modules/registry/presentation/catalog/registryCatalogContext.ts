@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react'
 
 import type { CatalogCacheState } from '../../application/catalogCacheState'
 import type { RegistryCatalog } from '../../domain/package'
+import type { PackageDownloadStatsById } from '../../domain/downloadStats'
 
 export interface RegistryCatalogContextValue {
   readonly catalog: RegistryCatalog | null
@@ -12,6 +13,7 @@ export interface RegistryCatalogContextValue {
   readonly errorMessage: string | null
   readonly isLoading: boolean
   readonly hasCompletedForcedReload: boolean
+  readonly downloadStatsById: PackageDownloadStatsById
   readonly reloadCatalog: () => Promise<void>
 }
 
