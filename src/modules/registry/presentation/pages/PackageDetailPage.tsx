@@ -19,7 +19,9 @@ import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '.
 import type { PackageDetailDocument } from '../../domain/packageDetail'
 import { loadPackageDetail } from '../../infrastructure/packageDetailRepository'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
+import { getPackageDownloadStats } from '../../application/packageDownloadStats'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import { PackageDownloadStatsSummary } from '../components/PackageDownloadStatsSummary'
 import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
 import PackageCliInstallAction from '../components/PackageCliInstallAction'
 import { PackageDownloadMenu } from '../components/PackageDownloadMenu'
@@ -214,6 +216,7 @@ function PackageDetailLoaded(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
+  const { downloadStatsById } = useRegistryCatalog()
   const detailRequestKey = `${catalogPackage.namespace}/${catalogPackage.package}/${catalogPackage.latest}::${registryBaseUrl}`
   const [detail, setDetail] = useState<PackageDetailDocument | null>(null)
   const [detailError, setDetailError] = useState<string | null>(null)
@@ -292,6 +295,20 @@ function PackageDetailLoaded(options: {
               <PackageDetailVersionsCard detail={detail} isDetailLoading={isDetailLoading} />
             </Col>
           </Row>
+
+          <Card className="border-secondary-subtle">
+            <Card.Body>
+              <PackageDownloadStatsSummary
+                stats={getPackageDownloadStats(
+                  downloadStatsById,
+                  catalogPackage.namespace,
+                  catalogPackage.package,
+                )}
+                packageName={catalogPackage.name}
+                variant="detail"
+              />
+            </Card.Body>
+          </Card>
 
           {visibleDetailError ? <Alert variant="warning">{visibleDetailError}</Alert> : null}
 

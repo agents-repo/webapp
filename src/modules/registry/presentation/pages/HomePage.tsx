@@ -1,9 +1,12 @@
 import type { ReactNode } from 'react'
 import { Badge, Col, Container, Row, Stack } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
+import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
+import { getPackagesIndexPath } from '../../application/packageSiteRoutes'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { CatalogResultsPanel } from '../components/PackageCatalogResults'
-import { useCatalogIndexPage } from './useCatalogIndexPage'
+import { useHomeHeroSearch } from './useHomeHeroSearch'
 
 interface HomePageProps {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
@@ -11,15 +14,11 @@ interface HomePageProps {
 
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
   const { catalog } = useRegistryCatalog()
-  const page = useCatalogIndexPage({
+  const page = useHomeHeroSearch({
     catalog,
-    packages: catalog?.packages ?? [],
     searchInputId: 'registry-package-search',
     setHeaderSearchSlot,
   })
-  const resultsHeading = page.trimmedQuery
-    ? `Search results for "${page.trimmedQuery}"`
-    : 'Recently updated packages'
 
   return (
     <>
@@ -49,7 +48,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       </section>
 
       <CatalogResultsPanel
-        resultsHeading={resultsHeading}
+        resultsHeading="Most downloaded in the last year"
         schemaVersion={catalog?.schemaVersion}
         catalogResultsSummary={page.catalogResultsSummary}
         catalogAlertState={page.catalogAlertState}
@@ -57,10 +56,16 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
         canShowCatalogSourceLink={page.canShowCatalogSourceLink}
         catalogErrorMessage={page.catalogErrorMessage}
         showLoadingSpinner={page.showLoadingSpinner}
-        filteredPackages={page.filteredPackages}
+        filteredPackages={page.popularPackages}
         hasCatalog={catalog !== null}
         registryBaseUrl={page.registryBaseUrl}
-        onFilterByOwner={(owner) => page.setQuery(`@${owner}`)}
+        onFilterByOwner={page.filterByOwner}
+        resultsActions={
+          <Link to={publicSitePath(getPackagesIndexPath())} className="btn btn-outline-primary btn-sm">
+            View all packages
+          </Link>
+        }
+        emptyMatchMessage="No packages are available in the catalog yet."
       />
     </>
   )

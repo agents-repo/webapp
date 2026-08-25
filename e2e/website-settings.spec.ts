@@ -1,7 +1,8 @@
-import { test, expect, mockRegistryIndex } from './fixtures/registry-mock'
+import { test, expect, mockRegistryIndex, mockRegistryStats } from './fixtures/registry-mock'
 import {
   alternateOverrideCatalog,
   E2E_OVERRIDE_INDEX_URL,
+  E2E_OVERRIDE_REGISTRY_BASE_URL,
 } from './fixtures/catalog'
 import { clearBrowserStorage } from './fixtures/storage'
 import { waitForCatalogSettled } from './fixtures/catalog-load'
@@ -24,6 +25,7 @@ test.describe('Website settings', () => {
 
   test('reloads catalog after saving a valid override', async ({ page }) => {
     await mockRegistryIndex(page, alternateOverrideCatalog, E2E_OVERRIDE_INDEX_URL)
+    await mockRegistryStats(page, { packages: [] }, `${E2E_OVERRIDE_REGISTRY_BASE_URL}/stats`)
 
     await page.goto('/')
     await waitForCatalogSettled(page)

@@ -54,4 +54,13 @@ test.describe('Catalog filters', () => {
     await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible()
     await expect(page.locator('#offcanvas-category-agent')).toBeVisible()
   })
+
+  test('keeps the download period when a filter chip is selected', async ({ page }) => {
+    await page.goto('/packages?period=7d')
+    await waitForCatalogSettled(page)
+
+    await page.locator('label[for="sidebar-category-agent"]').click()
+    await expect(page).toHaveURL(/period=7d/)
+    await expect(page).toHaveURL(/category=agent/)
+  })
 })

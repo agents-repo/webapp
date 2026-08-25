@@ -158,6 +158,21 @@ describe('parsePackageCatalogFilters and applyPackageCatalogFiltersToSearchParam
     )
     expect(serialized.toString()).toBe('utm=keep')
   })
+
+  it('preserves period across filter rewrites', () => {
+    const serialized = applyPackageCatalogFiltersToSearchParams(
+      new URLSearchParams('period=7d&q=review'),
+      {
+        ...EMPTY_PACKAGE_CATALOG_FILTERS,
+        query: 'review',
+        categories: ['automation'],
+      },
+    )
+
+    expect(serialized.get('period')).toBe('7d')
+    expect(serialized.get('q')).toBe('review')
+    expect(serialized.get('category')).toBe('automation')
+  })
 })
 
 describe('toggle and selection helpers', () => {

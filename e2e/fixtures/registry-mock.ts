@@ -1,7 +1,9 @@
 import { test as base, type Page } from '@playwright/test'
 import {
   E2E_REGISTRY_INDEX_URL,
+  E2E_REGISTRY_STATS_URL,
   searchableCatalog,
+  searchableCatalogStats,
   type E2eRegistryCatalog,
 } from './catalog'
 
@@ -27,6 +29,17 @@ async function fulfillGet(
       contentType: options.contentType,
       body: options.body,
     })
+  })
+}
+
+export async function mockRegistryStats(
+  page: Page,
+  stats: { readonly packages: readonly unknown[] } = searchableCatalogStats,
+  statsUrl: string = E2E_REGISTRY_STATS_URL,
+): Promise<void> {
+  await fulfillGet(page, statsUrl, {
+    contentType: 'application/json',
+    body: JSON.stringify(stats),
   })
 }
 
@@ -117,6 +130,7 @@ export const test = base.extend<{ catalog: E2eRegistryCatalog }>({
   },
   page: async ({ page, catalog }, use) => {
     await mockRegistryIndex(page, catalog)
+    await mockRegistryStats(page)
     await use(page)
   },
 })

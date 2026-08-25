@@ -192,4 +192,90 @@ describe('PackagesIndexPage', () => {
     expect(await screen.findByText('No packages match your current search or filters.')).toBeInTheDocument()
     expect(screen.queryByText('No packages match your current search.')).not.toBeInTheDocument()
   })
+
+  it('sorts packages by the selected download window', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: filterableRegistryCatalog,
+      downloadStatsById: new Map([
+        [
+          'agents-repo/review-agent',
+          {
+            namespace: 'agents-repo',
+            package: 'review-agent',
+            downloads: 10,
+            downloads7d: 1,
+            downloads30d: 8,
+            downloads365d: 9,
+          },
+        ],
+        [
+          'agents-repo/plan-flow',
+          {
+            namespace: 'agents-repo',
+            package: 'plan-flow',
+            downloads: 5,
+            downloads7d: 20,
+            downloads30d: 4,
+            downloads365d: 5,
+          },
+        ],
+        [
+          'other-org/legacy-helper',
+          {
+            namespace: 'other-org',
+            package: 'legacy-helper',
+            downloads: 100,
+            downloads7d: 0,
+            downloads30d: 2,
+            downloads365d: 80,
+          },
+        ],
+      ]),
+    })
+
+    const { container } = renderWithProviders(
+      <>
+        <LocationSearch />
+        <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+      </>,
+      { initialEntries: ['/packages'] },
+    )
+
+    await screen.findByRole('heading', { name: 'review-agent' })
+    const cardNames = () =>
+      [...container.querySelectorAll('.package-card h3')].map((heading) => heading.textContent)
+    expect(cardNames()).toEqual(['legacy-helper', 'review-agent', 'plan-flow'])
+
+    await user.selectOptions(screen.getByLabelText('Sort packages by download window'), '7d')
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).toHaveTextContent('period=7d')
+    })
+    expect(cardNames()).toEqual(['plan-flow', 'review-agent', 'legacy-helper'])
+  })
+
+  it('keeps period in the URL when a filter chip is committed', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: filterableRegistryCatalog,
+    })
+
+    renderWithProviders(
+      <>
+        <LocationSearch />
+        <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+      </>,
+      { initialEntries: ['/packages?period=30d'] },
+    )
+
+    await screen.findByRole('heading', { name: 'review-agent' })
+    await user.click(screen.getAllByRole('checkbox', { name: 'automation (2)' })[0])
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).toHaveTextContent('period=30d')
+      expect(screen.getByTestId('location-search')).toHaveTextContent('category=automation')
+    })
+  })
 })

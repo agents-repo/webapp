@@ -6,6 +6,7 @@ import { Form, InputGroup } from 'react-bootstrap'
 export interface PackageCatalogSearchProps {
   readonly query: string
   readonly onQueryChange: (query: string) => void
+  readonly onSubmit?: (query: string) => void
   readonly inputId: string
   readonly ariaLabel?: string
 }
@@ -13,11 +14,20 @@ export interface PackageCatalogSearchProps {
 export function PackageCatalogSearch({
   query,
   onQueryChange,
+  onSubmit,
   inputId,
   ariaLabel = 'Search packages',
 }: PackageCatalogSearchProps): ReactNode {
   return (
-    <Form role="search" aria-label={ariaLabel} className="w-100" onSubmit={(event) => event.preventDefault()}>
+    <Form
+      role="search"
+      aria-label={ariaLabel}
+      className="w-100"
+      onSubmit={(event) => {
+        event.preventDefault()
+        onSubmit?.(query)
+      }}
+    >
       <Form.Label htmlFor={inputId} className="visually-hidden">
         Search registry packages
       </Form.Label>

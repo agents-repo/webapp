@@ -1,5 +1,6 @@
 import type { RegistryCatalogContextValue } from '../../modules/registry/presentation/catalog/registryCatalogContext'
 import type { RegistryCatalogLoadResult } from '../../modules/registry/infrastructure/registryRepository'
+import { EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID } from '../../modules/registry/domain/downloadStats'
 import { sampleRegistryCatalog } from './sampleRegistryCatalog'
 
 export const sampleCatalogLoadResult: RegistryCatalogLoadResult = {
@@ -24,6 +25,7 @@ export const loadedCatalogContext: RegistryCatalogContextValue = {
   errorMessage: sampleCatalogLoadResult.errorMessage ?? null,
   isLoading: false,
   hasCompletedForcedReload: false,
+  downloadStatsById: EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
   reloadCatalog: noopReloadCatalog,
 }
 
@@ -36,6 +38,7 @@ export const loadingCatalogContext: RegistryCatalogContextValue = {
   errorMessage: null,
   isLoading: true,
   hasCompletedForcedReload: false,
+  downloadStatsById: EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
   reloadCatalog: noopReloadCatalog,
 }
 

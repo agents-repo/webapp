@@ -12,6 +12,8 @@ test.describe('Home catalog', () => {
     await expect(
       page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
     ).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Most downloaded in the last year/ })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'View all packages' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'sample-agent' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Download sample-agent' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'CLI install for sample-agent' })).toBeVisible()

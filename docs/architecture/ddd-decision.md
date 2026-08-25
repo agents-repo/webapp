@@ -9,8 +9,9 @@ presentation concerns separated when those layers are useful for the feature.
 ## Current Module Boundaries
 
 - `src/modules/registry/` owns registry package data, selectors, repository
-  adapters, the landing catalog, and in-app package index and detail pages
-  (`/packages`, `/packages/:namespace`, `/packages/:namespace/:packageId`).
+  adapters, download stats fetching, the landing catalog, and in-app package
+  index and detail pages (`/packages`, `/packages/:namespace`,
+  `/packages/:namespace/:packageId`).
 - `src/modules/site/` owns the shared site shell, routes, and generic site
   pages. Package SEO helpers in `site` read the runtime catalog snapshot from
   the registry module.
@@ -22,6 +23,10 @@ presentation concerns separated when those layers are useful for the feature.
   application, and UI concerns in presentation.
 - Keep cache adapters and remote-fetch fallback policies in infrastructure so
   presentation and application layers consume a stable loading contract.
+- Fetch registry download stats in infrastructure (`registryDownloadStats.ts`).
+  Merge, sort, and Home popular-package selection live in application
+  (`packageDownloadStats.ts`). Do not put download counts on `RegistryPackage`
+  catalog validation or `index.json`.
 - Shared persistent LRU and abort helpers for registry caches and fetches live
   in registry infrastructure (`persistentLruCache.ts`, `indexedDbCacheBackend.ts`,
   `callerAbort.ts`). IndexedDB access stays in that backend; presentation must

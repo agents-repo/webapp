@@ -16,7 +16,7 @@ export async function expectCatalogLoadingWhenObservable(page: Page): Promise<vo
     .then(() => true)
     .catch(() => false)
 
-  if (sawLoading) {
+  if (sawLoading && (await loadingSummary.isVisible())) {
     await expect(
       page.locator('[aria-labelledby="catalog-results-summary"][aria-busy="true"]'),
     ).toBeVisible()

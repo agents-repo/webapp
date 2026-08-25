@@ -32,6 +32,7 @@ export interface E2eRegistryCatalog {
 /** Index URL resolved when the app is built with `.env.e2e` / `vite --mode e2e`. */
 export const E2E_REGISTRY_INDEX_URL = 'https://e2e.local/registry/packages/index.json'
 export const E2E_REGISTRY_BASE_URL = 'https://e2e.local/registry'
+export const E2E_REGISTRY_STATS_URL = `${E2E_REGISTRY_BASE_URL}/stats`
 
 export const searchableCatalog: E2eRegistryCatalog = {
   schemaVersion: '1.3.0',
@@ -85,6 +86,35 @@ export const searchableCatalog: E2eRegistryCatalog = {
       category: 'tool',
       estimateOverallCost: { band: 'moderate' },
       installTargets: [{ id: 'github-copilot', status: 'experimental' }],
+    },
+  ],
+}
+
+export const searchableCatalogStats = {
+  packages: [
+    {
+      namespace: 'agents-repo',
+      package: 'sample-agent',
+      downloads: 120,
+      downloads_7d: 8,
+      downloads_30d: 40,
+      downloads_365d: 110,
+    },
+    {
+      namespace: 'agents-repo',
+      package: 'demo-flow',
+      downloads: 40,
+      downloads_7d: 25,
+      downloads_30d: 30,
+      downloads_365d: 35,
+    },
+    {
+      namespace: 'other-org',
+      package: 'legacy-tool',
+      downloads: 9,
+      downloads_7d: 0,
+      downloads_30d: 1,
+      downloads_365d: 9,
     },
   ],
 }

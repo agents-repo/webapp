@@ -33,6 +33,8 @@ describe('HomePage accessibility', () => {
 
     const results = await axe(container, axeOptions)
     expect(results.violations).toHaveLength(0)
+    expect(container.querySelector('details.package-download-stats-card')).not.toBeNull()
+    expect(container.querySelector('details.package-download-stats-card summary')).not.toBeNull()
   })
 
   it('has no detectable accessibility violations while the catalog is loading', async () => {

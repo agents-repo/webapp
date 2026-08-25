@@ -4,13 +4,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import RegistryCatalogProvider from './RegistryCatalogProvider'
 import { useRegistryCatalog } from './registryCatalogContext'
 import { loadRegistryCatalog } from '../../infrastructure/registryRepository'
+import { loadRegistryDownloadStats } from '../../infrastructure/registryDownloadStats'
 import { sampleCatalogLoadResult } from '../../../../test/fixtures/homePageTestFixtures'
 
 vi.mock('../../infrastructure/registryRepository', () => ({
   loadRegistryCatalog: vi.fn(),
 }))
 
+vi.mock('../../infrastructure/registryDownloadStats', () => ({
+  loadRegistryDownloadStats: vi.fn(),
+}))
+
 const loadRegistryCatalogMock = vi.mocked(loadRegistryCatalog)
+const loadRegistryDownloadStatsMock = vi.mocked(loadRegistryDownloadStats)
 
 function CatalogConsumer() {
   const { catalog, isLoading } = useRegistryCatalog()
@@ -27,6 +33,7 @@ describe('RegistryCatalogProvider', () => {
 
   beforeEach(() => {
     loadRegistryCatalogMock.mockResolvedValue(sampleCatalogLoadResult)
+    loadRegistryDownloadStatsMock.mockResolvedValue(new Map())
     onCatalogStatusNoteChange.mockReset()
   })
 
@@ -48,6 +55,13 @@ describe('RegistryCatalogProvider', () => {
     await screen.findByText('sample-agent')
 
     expect(loadRegistryCatalogMock).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(loadRegistryDownloadStatsMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          registryBaseUrl: sampleCatalogLoadResult.registryBaseUrl,
+        }),
+      )
+    })
     expect(loadRegistryCatalogMock.mock.calls.at(-1)?.[0]?.forceSourceResolution).toBeUndefined()
     expect(loadRegistryCatalogMock.mock.calls.at(-1)?.[0]?.bypassTagCache).toBeUndefined()
   })

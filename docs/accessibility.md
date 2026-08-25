@@ -42,7 +42,10 @@ Every routed page should:
    `Use in chat for {name}`. The header PWA control is icon-only: **Install
    Agents Repo app** when a native prompt is available, and **How to install
    this site** for the guidance modal. Those names must stay distinct.
-6. Use `externalLinkAccessibleName()` for links that open in a new tab
+6. Package card download windows use a native `<details>` disclosure. Hover and
+   `:focus-within` on the card reveal the same window counts as opening the
+   disclosure; keyboard and touch still use the native summary toggle.
+7. Use `externalLinkAccessibleName()` for links that open in a new tab
 
 ### Header navigation
 

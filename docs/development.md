@@ -177,11 +177,13 @@ on CLI releases.
 
 ## Current UI State
 
-- The landing page and `/packages` indexes load registry package cards from a
-  configured index source URL and show an error alert if no catalog data can be
-  loaded. `/packages` is the crawlable all-packages index (distinct heading from
-  Home) with URL-backed search and filters. `/packages/:namespace` is the same
-  search and filters, scoped to that namespace.
+- The landing page shows a first slice of packages most downloaded in the last
+  year (with catalog loading and source chrome) and a **View all packages**
+  link to `/packages`. Home search navigates to `/packages?q=…`; an empty query
+  stays on Home. `/packages` is the crawlable all-packages index (distinct
+  heading from Home) with URL-backed search, download-window sort, and filters.
+  `/packages/:namespace` is the same search, sort, and filters, scoped to that
+  namespace.
   `/packages/:namespace/:packageId` is the latest-only package detail page.
 - Package card footer actions (CLI, Use in chat, Download, View) include short
   visible labels. **View** and the card title open the in-app package page.
