@@ -87,6 +87,11 @@ For UI or accessibility changes, also run `npm run test:a11y`. See
 
 If a command cannot be run, explicitly say why in the handoff.
 
+Local handoff keeps this full set. PR baseline CI path-filters Chrome/`slides:check`,
+`agents:ci`, and Pages/crawl extras. npm lockfiles do **not** trigger `agents:ci`.
+See the organization
+[PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
+
 ## Pre-ready handoff
 
 Before handoff on a task branch, agents MUST complete the organization

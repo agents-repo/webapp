@@ -24,7 +24,7 @@ scale, not monorepo ceremony.
 
 | Command | When to use |
 | --- | --- |
-| `npm run test` | Full suite — **same as PR baseline CI** |
+| `npm run test` | Full suite — **local handoff and PR baseline always-on tests** |
 | `npm run test:a11y` | UI or accessibility changes only — faster feedback |
 | `npm run test:watch` | Local TDD while writing tests |
 | `npm run test:e2e` | Playwright browser specs — **local only** |
@@ -36,6 +36,13 @@ scale, not monorepo ceremony.
 
 For dependency or router changes, also run `npm run test:e2e` locally (Playwright;
 not part of PR baseline CI).
+
+PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
+typecheck, and `npm run test`. Chrome/`slides:check`, `agents:ci`, and
+`build:pages` plus `test:crawl-files` are path-filtered extras. See
+[CONTRIBUTING.md](../.github/CONTRIBUTING.md) and the organization
+[PR baseline extras policy](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
+Local handoff still runs the full validation set, including Pages/crawl.
 
 Optional local coverage (not enforced in CI):
 

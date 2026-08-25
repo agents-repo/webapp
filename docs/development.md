@@ -73,6 +73,14 @@ after `build:pages`. For routing, registry integration, or modal flows, also run
 `npm run test:e2e` locally (requires `npx playwright install chromium` once per
 machine). E2E is not part of PR baseline CI — see [e2e-testing.md](e2e-testing.md).
 
+PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
+typecheck, and unit tests. Chrome/`slides:check`, `agents:ci`, and
+`build:pages` plus `test:crawl-files` run only when matching paths change
+(organization [PR baseline extras](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)).
+Local handoff still uses the full command list above. Release, Pages deploy,
+and Deploy Webapp keep Pages/crawl as the skip safety net. Do not add
+`agents:ci` to those workflows.
+
 Use `npm run build` for a standard production build (includes `sitemap.xml` and
 `robots.txt` via `vite-plugin-sitemap`). Use `npm run build:pages` when
 validating the GitHub Pages output (adds per-route HTML injection, `.nojekyll`,
