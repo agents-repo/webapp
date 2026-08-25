@@ -66,11 +66,11 @@ test('scripts/slides.mjs turns slides on and pages off', () => {
   assert.equal(matches.pages, false);
 });
 
-test('matcher script under scripts turns pages on', () => {
+test('matcher script turns every extra this job defines on', () => {
   const matches = matchPathGroups(['scripts/ci-pr-path-filters.mjs']);
+  assert.equal(matches.slides, true);
+  assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
-  assert.equal(matches.slides, false);
-  assert.equal(matches.agents, false);
 });
 
 test('pr-baseline.yml turns every extra this job defines on', () => {
