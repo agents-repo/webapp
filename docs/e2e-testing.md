@@ -188,6 +188,11 @@ Run `npm run test:e2e` when changing UI flows, routing, or registry
 integration. It is recommended but not a required CI gate. Future CI adoption
 can be tracked as a separate issue.
 
+`navigation.spec.ts` asserts that a header click to another pathname resets
+`window.scrollY` to 0. Same-path catalog pagination stays in
+`catalog-pagination.spec.ts` and must keep moving to `#catalog-results-summary`,
+not the window top.
+
 ## E2E backlog (deferred)
 
 | Scenario | Reason to defer |

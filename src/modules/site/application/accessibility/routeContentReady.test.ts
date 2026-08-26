@@ -1,8 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { waitFor } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import {
   getRouteAnnouncementMessage,
   isMainRouteContentReady,
   isRouteLoadErrorVisible,
+  whenMainRouteContentReady,
 } from './routeContentReady'
 
 describe('isMainRouteContentReady', () => {
@@ -17,6 +19,45 @@ describe('isMainRouteContentReady', () => {
     const main = document.createElement('main')
 
     expect(isMainRouteContentReady(main)).toBe(true)
+  })
+})
+
+describe('whenMainRouteContentReady', () => {
+  it('runs immediately when main is already ready', () => {
+    const main = document.createElement('main')
+    main.id = 'main-content'
+    document.body.append(main)
+    const onReady = vi.fn()
+
+    try {
+      const stop = whenMainRouteContentReady(onReady)
+      expect(onReady).toHaveBeenCalledTimes(1)
+      stop()
+    } finally {
+      main.remove()
+    }
+  })
+
+  it('waits until aria-busy is cleared', async () => {
+    const main = document.createElement('main')
+    main.id = 'main-content'
+    main.setAttribute('aria-busy', 'true')
+    document.body.append(main)
+    const onReady = vi.fn()
+
+    try {
+      const stop = whenMainRouteContentReady(onReady)
+      expect(onReady).not.toHaveBeenCalled()
+
+      main.removeAttribute('aria-busy')
+
+      await waitFor(() => {
+        expect(onReady).toHaveBeenCalledTimes(1)
+      })
+      stop()
+    } finally {
+      main.remove()
+    }
   })
 })
 
