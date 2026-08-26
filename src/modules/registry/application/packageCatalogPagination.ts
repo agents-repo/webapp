@@ -2,7 +2,7 @@ export const PACKAGE_CATALOG_PAGE_SIZE = 9
 export const PACKAGE_CATALOG_PAGE_PARAM = 'page'
 export const PACKAGE_CATALOG_PAGINATION_ELLIPSIS_AFTER = 7
 
-export type PackageCatalogPageItem = number | 'ellipsis'
+export type PackageCatalogPageItem = number | 'ellipsis-start' | 'ellipsis-end'
 
 export function parsePackageCatalogPage(searchParams: URLSearchParams): number {
   const raw = (searchParams.get(PACKAGE_CATALOG_PAGE_PARAM) ?? '').trim()
@@ -91,7 +91,7 @@ export function getPackageCatalogPaginationItems(
 
   const items: PackageCatalogPageItem[] = [1]
   if (windowStart > 2) {
-    items.push('ellipsis')
+    items.push('ellipsis-start')
   }
 
   for (let page = windowStart; page <= windowEnd; page += 1) {
@@ -99,7 +99,7 @@ export function getPackageCatalogPaginationItems(
   }
 
   if (windowEnd < pageCount - 1) {
-    items.push('ellipsis')
+    items.push('ellipsis-end')
   }
 
   items.push(pageCount)

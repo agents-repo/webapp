@@ -46,9 +46,9 @@ export function PackageCatalogPagination(options: {
             <span className="visually-hidden">Previous</span>
           </Pagination.Item>
         )}
-        {getPackageCatalogPaginationItems(currentPage, pageCount).map((item, index) => {
-          if (item === 'ellipsis') {
-            return <Pagination.Ellipsis key={`ellipsis-${index}`} disabled />
+        {getPackageCatalogPaginationItems(currentPage, pageCount).map((item) => {
+          if (item === 'ellipsis-start' || item === 'ellipsis-end') {
+            return <Pagination.Ellipsis key={item} disabled />
           }
 
           if (item === currentPage) {

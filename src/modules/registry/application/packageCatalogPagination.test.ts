@@ -58,8 +58,16 @@ describe('packageCatalogPagination', () => {
     expect(getPackageCatalogPaginationItems(1, 1)).toEqual([])
     expect(getPackageCatalogPaginationItems(2, 3)).toEqual([1, 2, 3])
     expect(getPackageCatalogPaginationItems(1, 7)).toEqual([1, 2, 3, 4, 5, 6, 7])
-    expect(getPackageCatalogPaginationItems(1, 10)).toEqual([1, 2, 3, 'ellipsis', 10])
-    expect(getPackageCatalogPaginationItems(5, 10)).toEqual([1, 'ellipsis', 4, 5, 6, 'ellipsis', 10])
-    expect(getPackageCatalogPaginationItems(10, 10)).toEqual([1, 'ellipsis', 8, 9, 10])
+    expect(getPackageCatalogPaginationItems(1, 10)).toEqual([1, 2, 3, 'ellipsis-end', 10])
+    expect(getPackageCatalogPaginationItems(5, 10)).toEqual([
+      1,
+      'ellipsis-start',
+      4,
+      5,
+      6,
+      'ellipsis-end',
+      10,
+    ])
+    expect(getPackageCatalogPaginationItems(10, 10)).toEqual([1, 'ellipsis-start', 8, 9, 10])
   })
 })
