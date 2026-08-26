@@ -67,6 +67,18 @@ Every routed page should:
 - Below `lg`, those three destinations are flat links in the hamburger. Do not
   nest the dropdown inside the collapsed navbar.
 
+### Docs navigation
+
+- From `lg` up, docs search and topics live in a sticky sidebar (`nav` labelled
+  **Docs**).
+- Below `lg`, that sidebar is hidden (`d-none d-lg-block`). Search stays in the
+  article column. **Browse docs** opens an Offcanvas titled **Docs**
+  (`aria-expanded` / `aria-controls`) with a focus trap. The inner nav is
+  labelled **Docs topics**. Choosing a topic closes the drawer.
+- Desktop sidebar and mobile Offcanvas are mutually hidden with `d-none` /
+  `d-lg-none` (same pattern as catalog Filters). jsdom does not apply those
+  utilities, so tests should expect two search landmarks.
+
 ### Forms
 
 - Associate every input with a visible or visually hidden `Form.Label`

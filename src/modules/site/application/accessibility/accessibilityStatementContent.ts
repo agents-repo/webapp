@@ -1,4 +1,4 @@
-export const accessibilityStatementReportDate = '2026-08-19'
+export const accessibilityStatementReportDate = '2026-08-26'
 
 export const accessibilityConformanceSummary = {
   productName: 'Agents Repo web application',
@@ -27,7 +27,7 @@ export const wcagCriterionSummaries: readonly WcagCriterionSummary[] = [
     principle: 'Operable',
     supportLevel: 'Partially supports',
     notes:
-      'Keyboard access, visible focus styles, route announcements, and reduced-motion preferences are supported. Mobile search is not duplicated in the sticky header below the large breakpoint. Packages listing filters use labeled checkboxes and a mobile Offcanvas with a focus trap.',
+      'Keyboard access, visible focus styles, route announcements, and reduced-motion preferences are supported. Mobile search is not duplicated in the sticky header below the large breakpoint. Packages listing filters use labeled checkboxes and a mobile Offcanvas with a focus trap. Site docs use a desktop sidebar and a mobile Offcanvas (Browse docs) with a focus trap; search stays in the article column below `lg`.',
   },
   {
     principle: 'Understandable',

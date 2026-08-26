@@ -1,12 +1,11 @@
-import type { ReactNode } from 'react'
-import { Col, Container, Nav, Row } from 'react-bootstrap'
-import { NavLink, useLocation } from 'react-router-dom'
-import {
-  getDocDetailPath,
-  listDocSectionGroups,
-} from '../../../application/docs/docsManifest.ts'
-import { normalizeSitePathname, publicSitePath, siteRoutes } from '../../routes/siteRoutes.ts'
+import { useState, type ReactNode } from 'react'
+import { Button, Col, Container, Offcanvas, Row } from 'react-bootstrap'
+import { useLocation } from 'react-router-dom'
 import DocSearch from './DocSearch.tsx'
+import DocsNav from './DocsNav.tsx'
+
+const DOCS_NAV_OFFCANVAS_ID = 'docs-nav-offcanvas'
+const DOCS_NAV_OFFCANVAS_TITLE_ID = 'docs-nav-offcanvas-title'
 
 interface DocLayoutProps {
   readonly children: ReactNode
@@ -15,51 +14,61 @@ interface DocLayoutProps {
 
 function DocLayout({ children, activeSlug }: DocLayoutProps) {
   const location = useLocation()
-  const sectionGroups = listDocSectionGroups()
+  const [docsNavOpen, setDocsNavOpen] = useState(false)
+  const [docsNavPath, setDocsNavPath] = useState(location.pathname)
+  const offcanvasOpen = docsNavOpen && docsNavPath === location.pathname
 
   return (
     <div className="py-5">
       <Container>
         <Row className="g-4">
-        <Col lg={3} xl={3}>
-          <nav className="docs-sidebar" aria-label="Docs">
-            <DocSearch key={location.pathname} />
-            <Nav className="flex-column gap-1">
-              <Nav.Link
-                as={NavLink}
-                to={publicSitePath(siteRoutes.docs)}
-                end
-                className="docs-sidebar-link"
-                aria-current={normalizeSitePathname(location.pathname) === siteRoutes.docs ? 'page' : undefined}
-              >
-                Docs overview
-              </Nav.Link>
-            </Nav>
-            {sectionGroups.map((group) => (
-              <div key={group.section} className="docs-sidebar-section mt-3">
-                <h2 className="h6 text-uppercase text-body-secondary px-2 mb-2">{group.section}</h2>
-                <Nav className="flex-column gap-1">
-                  {group.entries.map((entry) => (
-                    <Nav.Link
-                      key={entry.slug}
-                      as={NavLink}
-                      to={publicSitePath(getDocDetailPath(entry.slug))}
-                      className="docs-sidebar-link"
-                      aria-current={activeSlug === entry.slug ? 'page' : undefined}
-                    >
-                      {entry.title}
-                    </Nav.Link>
-                  ))}
-                </Nav>
+          <Col lg={3} xl={3} className="d-none d-lg-block">
+            <nav className="docs-sidebar" aria-label="Docs">
+              <DocSearch key={`sidebar-${location.pathname}`} />
+              <DocsNav activeSlug={activeSlug} />
+            </nav>
+          </Col>
+          <Col lg={9} xl={8}>
+            <div className="docs-mobile-toolbar d-flex d-lg-none align-items-start gap-2 mb-3">
+              <div className="docs-mobile-toolbar__search flex-grow-1 min-w-0">
+                <DocSearch key={`mobile-${location.pathname}`} />
               </div>
-            ))}
-          </nav>
-        </Col>
-        <Col lg={9} xl={8}>
-          <article className="docs-article">{children}</article>
-        </Col>
+              <Button
+                type="button"
+                variant="outline-secondary"
+                size="sm"
+                className="flex-shrink-0"
+                aria-expanded={offcanvasOpen}
+                aria-controls={DOCS_NAV_OFFCANVAS_ID}
+                onClick={() => {
+                  setDocsNavPath(location.pathname)
+                  setDocsNavOpen(true)
+                }}
+              >
+                Browse docs
+              </Button>
+            </div>
+            <article className="docs-article">{children}</article>
+          </Col>
         </Row>
       </Container>
+      <Offcanvas
+        show={offcanvasOpen}
+        onHide={() => setDocsNavOpen(false)}
+        placement="start"
+        className="d-lg-none"
+        id={DOCS_NAV_OFFCANVAS_ID}
+        aria-labelledby={DOCS_NAV_OFFCANVAS_TITLE_ID}
+      >
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title id={DOCS_NAV_OFFCANVAS_TITLE_ID}>Docs</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <nav aria-label="Docs topics">
+            <DocsNav activeSlug={activeSlug} />
+          </nav>
+        </Offcanvas.Body>
+      </Offcanvas>
     </div>
   )
 }
