@@ -22,8 +22,12 @@ package name, owner, description, and tags. Filtering a card by owner from
 Home opens Packages with `q=@owner`. The crawlable [Packages](/packages) index
 uses the same search fields plus category, and adds store-style filters for
 category, tags, install targets, status, cost band, and Use in chat. Selected
-search, filters, and download-window sort are stored in the page URL so you
-can reload or share the view.
+search, filters, download-window sort, and result page are stored in the page
+URL so you can reload or share the view. The packages index and namespace
+listings show numbered page navigation when more than 9 packages match. Each
+page has 9 cards. `page` is omitted when you are on page 1. Changing search,
+filters, or download-window sort returns to page 1. Home stays an unpaginated
+popular slice.
 
 On [Packages](/packages) and namespace listings, sort packages by download
 window (**Downloads (All time)**, **Downloads (Last 7 days)**,

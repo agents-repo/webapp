@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { useLocation } from 'react-router-dom'
@@ -8,6 +8,7 @@ import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import PackagesIndexPage from './PackagesIndexPage'
 import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixtures'
 import { filterableRegistryCatalog } from '../../../../test/fixtures/filterableRegistryCatalog'
+import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
@@ -283,6 +284,98 @@ describe('PackagesIndexPage', () => {
     await waitFor(() => {
       expect(screen.getByTestId('location-search')).toHaveTextContent('period=30d')
       expect(screen.getByTestId('location-search')).toHaveTextContent('category=automation')
+    })
+  })
+
+  it('paginates filtered cards and omits the pager when results fit on one page', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: createPaginatedRegistryCatalog(),
+    })
+
+    renderWithProviders(
+      <>
+        <LocationSearch />
+        <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+      </>,
+      { initialEntries: ['/packages'] },
+    )
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-01' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'page-agent-09' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'page-agent-10' })).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 1–9 of 13 packages')).toBeInTheDocument()
+    const pagination = screen.getByRole('navigation', { name: 'Package results pages' })
+    expect(pagination).toBeInTheDocument()
+
+    await user.click(within(pagination).getByRole('link', { name: '2' }))
+    expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'page-agent-01' })).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 10–13 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByTestId('location-search')).toHaveTextContent('page=2')
+    expect(document.activeElement).toHaveAttribute('id', 'catalog-results-summary')
+  })
+
+  it('clamps out-of-range page values and drops page when filters or period change', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: createPaginatedRegistryCatalog(),
+    })
+
+    const { unmount } = renderWithProviders(
+      <>
+        <LocationSearch />
+        <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+      </>,
+      { initialEntries: ['/packages?page=99'] },
+    )
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).toHaveTextContent('page=2')
+    })
+    unmount()
+
+    renderWithProviders(
+      <>
+        <LocationSearch />
+        <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+      </>,
+      { initialEntries: ['/packages?page=2'] },
+    )
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
+    await user.click(screen.getAllByRole('checkbox', { name: 'flow (1)' })[0])
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).not.toHaveTextContent('page=')
+      expect(screen.getByTestId('location-search')).toHaveTextContent('category=flow')
+    })
+    expect(screen.queryByRole('navigation', { name: 'Package results pages' })).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 1 of 13 packages')).toBeInTheDocument()
+  })
+
+  it('drops page when the download window changes', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: createPaginatedRegistryCatalog(),
+    })
+
+    renderWithProviders(
+      <>
+        <LocationSearch />
+        <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+      </>,
+      { initialEntries: ['/packages?page=2'] },
+    )
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
+    await user.selectOptions(screen.getByLabelText('Sort packages by download window'), '7d')
+    await waitFor(() => {
+      expect(screen.getByTestId('location-search')).toHaveTextContent('period=7d')
+      expect(screen.getByTestId('location-search')).not.toHaveTextContent('page=')
     })
   })
 })

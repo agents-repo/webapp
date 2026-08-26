@@ -1,4 +1,5 @@
 import type { RegistryPackage } from '../domain/package'
+import { PACKAGE_CATALOG_PAGE_PARAM } from './packageCatalogPagination'
 
 export const PACKAGE_CATALOG_STATUS_FILTER_VALUES = ['active', 'deprecated', 'archived'] as const
 export type PackageCatalogStatusFilter = (typeof PACKAGE_CATALOG_STATUS_FILTER_VALUES)[number]
@@ -385,7 +386,7 @@ export const applyPackageCatalogFiltersToSearchParams = (
   const next = new URLSearchParams()
 
   for (const [key, value] of searchParams.entries()) {
-    if (!isKnownFilterParamKey(key)) {
+    if (!isKnownFilterParamKey(key) && key !== PACKAGE_CATALOG_PAGE_PARAM) {
       next.append(key, value)
     }
   }

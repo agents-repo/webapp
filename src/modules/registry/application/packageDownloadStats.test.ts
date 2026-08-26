@@ -40,6 +40,17 @@ describe('packageDownloadStats', () => {
     expect(allTime.get('q')).toBe('review')
   })
 
+  it('drops page when the download window changes and keeps filters', () => {
+    const next = applyDownloadStatsPeriodToSearchParams(
+      new URLSearchParams('q=review&category=automation&page=3'),
+      '7d',
+    )
+    expect(next.get('page')).toBeNull()
+    expect(next.get('period')).toBe('7d')
+    expect(next.get('q')).toBe('review')
+    expect(next.get('category')).toBe('automation')
+  })
+
   it('sorts by the selected window, then all-time, then package id', () => {
     const packages = filterableRegistryCatalog.packages.filter((pkg) => pkg.status !== 'yanked')
     const statsById = statsByIdFrom([

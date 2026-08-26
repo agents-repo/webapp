@@ -109,13 +109,19 @@ export const getCatalogResultsSummary = ({
   filteredCount,
   isLoading,
   listingCount,
+  pageWindow,
 }: {
   catalog: RegistryCatalog | null
   filteredCount: number
   isLoading: boolean
   listingCount?: number
+  pageWindow?: { readonly start: number; readonly end: number } | null
 }): string => {
   if (catalog) {
+    if (pageWindow) {
+      return `Showing ${pageWindow.start}–${pageWindow.end} of ${filteredCount} packages`
+    }
+
     const totalCount = listingCount ?? catalog.packages.length
     return `Showing ${filteredCount} of ${totalCount} packages`
   }

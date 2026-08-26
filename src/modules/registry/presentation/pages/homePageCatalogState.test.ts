@@ -145,6 +145,18 @@ describe('getCatalogResultsSummary', () => {
       }),
     ).toBe('Showing 1 of 3 packages')
   })
+
+  it('states the visible window when the listing is paginated', () => {
+    expect(
+      getCatalogResultsSummary({
+        catalog: sampleRegistryCatalog,
+        filteredCount: 30,
+        isLoading: false,
+        listingCount: 48,
+        pageWindow: { start: 13, end: 24 },
+      }),
+    ).toBe('Showing 13–24 of 30 packages')
+  })
 })
 
 describe('getPackageDownloadTargets', () => {

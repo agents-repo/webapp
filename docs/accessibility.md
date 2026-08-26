@@ -88,7 +88,11 @@ Every routed page should:
 - Packages listing filters use labeled checkboxes with unique `id`s for the
   desktop sidebar (`sidebar-`) and mobile Offcanvas (`offcanvas-`) copies.
   Offcanvas provides a focus trap while it is open. Result counts stay on
-  `#catalog-results-summary` with `aria-live="polite"`. The download-window
+  `#catalog-results-summary` with `aria-live="polite"`. When the filtered list
+  is longer than 9 packages, numbered pagination (`nav` labelled **Package
+  results pages**) slices the grid. The current page uses `aria-current="page"`.
+  After a page-link activation, focus and scroll move to
+  `#catalog-results-summary` (`tabIndex={-1}`). The download-window
   sort next to Hide filters / Show filters is a labelled select whose options
   are **Downloads (All time)**, **Downloads (Last 7 days)**,
   **Downloads (Last 30 days)**, and **Downloads (Last 365 days)**.

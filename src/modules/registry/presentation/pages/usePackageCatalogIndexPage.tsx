@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
   getInitialCatalogFiltersSidebarCollapsed,
@@ -25,6 +25,15 @@ import {
   parseDownloadStatsPeriod,
   sortPackagesByDownloadPeriod,
 } from '../../application/packageDownloadStats'
+import {
+  applyPackageCatalogPageToSearchParams,
+  clampPackageCatalogPage,
+  getPackageCatalogPageCount,
+  getPackageCatalogPageWindow,
+  PACKAGE_CATALOG_PAGE_SIZE,
+  parsePackageCatalogPage,
+  slicePackageCatalogPage,
+} from '../../application/packageCatalogPagination'
 import type { DownloadStatsPeriod } from '../../domain/downloadStats'
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
@@ -72,8 +81,10 @@ export function usePackageCatalogIndexPage(options: {
     downloadStatsById,
   } = useRegistryCatalog()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { pathname } = useLocation()
   const urlFilters = useMemo(() => parsePackageCatalogFilters(searchParams), [searchParams])
   const downloadPeriod = useMemo(() => parseDownloadStatsPeriod(searchParams), [searchParams])
+  const requestedPage = useMemo(() => parsePackageCatalogPage(searchParams), [searchParams])
   const [draftQuery, setDraftQuery] = useState(urlFilters.query)
   const [previousUrlQuery, setPreviousUrlQuery] = useState(urlFilters.query)
   if (urlFilters.query !== previousUrlQuery) {
@@ -149,6 +160,39 @@ export function usePackageCatalogIndexPage(options: {
       ),
     [downloadPeriod, downloadStatsById, filters, listingPackages],
   )
+  const catalogPageCount = getPackageCatalogPageCount(filteredPackages.length)
+  const catalogPage = clampPackageCatalogPage(requestedPage, catalogPageCount)
+  const pagedPackages = useMemo(
+    () => slicePackageCatalogPage(filteredPackages, catalogPage),
+    [catalogPage, filteredPackages],
+  )
+  const shouldFocusResultsSummaryRef = useRef(false)
+
+  useEffect(() => {
+    if (!catalog) {
+      return
+    }
+
+    const nextParams = applyPackageCatalogPageToSearchParams(searchParams, catalogPage)
+    if (nextParams.toString() === searchParams.toString()) {
+      return
+    }
+
+    setSearchParams(nextParams, { replace: true })
+  }, [catalog, catalogPage, searchParams, setSearchParams])
+
+  useEffect(() => {
+    if (!shouldFocusResultsSummaryRef.current) {
+      return
+    }
+
+    shouldFocusResultsSummaryRef.current = false
+    const summary = document.getElementById('catalog-results-summary')
+    if (summary && typeof summary.scrollIntoView === 'function') {
+      summary.scrollIntoView({ block: 'start' })
+    }
+    summary?.focus()
+  }, [catalogPage])
 
   const facets = useMemo(
     () => collectPackageCatalogFacets(listingPackages, filters),
@@ -173,6 +217,7 @@ export function usePackageCatalogIndexPage(options: {
     filteredCount: filteredPackages.length,
     isLoading: isCatalogLoading,
     listingCount: listingPackages.length,
+    pageWindow: getPackageCatalogPageWindow(filteredPackages.length, catalogPage),
   })
 
   const searchControl = useMemo(
@@ -249,6 +294,15 @@ export function usePackageCatalogIndexPage(options: {
     canShowCatalogSourceLink,
     catalogResultsSummary,
     filteredPackages,
+    pagedPackages,
+    catalogPage,
+    catalogPageCount,
+    catalogPathname: pathname,
+    searchParams,
+    showCatalogPagination: filteredPackages.length > PACKAGE_CATALOG_PAGE_SIZE,
+    onCatalogPageNavigate: () => {
+      shouldFocusResultsSummaryRef.current = true
+    },
     facets,
     filters,
     popularChips,

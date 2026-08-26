@@ -173,6 +173,22 @@ describe('parsePackageCatalogFilters and applyPackageCatalogFiltersToSearchParam
     expect(serialized.get('q')).toBe('review')
     expect(serialized.get('category')).toBe('automation')
   })
+
+  it('drops page across filter rewrites and keeps period', () => {
+    const serialized = applyPackageCatalogFiltersToSearchParams(
+      new URLSearchParams('period=7d&page=3&q=review'),
+      {
+        ...EMPTY_PACKAGE_CATALOG_FILTERS,
+        query: 'review',
+        categories: ['automation'],
+      },
+    )
+
+    expect(serialized.get('page')).toBeNull()
+    expect(serialized.get('period')).toBe('7d')
+    expect(serialized.get('q')).toBe('review')
+    expect(serialized.get('category')).toBe('automation')
+  })
 })
 
 describe('toggle and selection helpers', () => {
