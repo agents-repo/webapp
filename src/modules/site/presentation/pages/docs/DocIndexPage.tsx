@@ -18,7 +18,7 @@ function DocIndexPage() {
       <p className="text-body-secondary lead">
         Learn how to browse the catalog, install packages with the CLI, contribute to the registry, and
         fetch stable markdown for AI agents. {totalPages} topics are available; pick a page from the
-        sidebar or below.
+        sidebar, Browse docs, or the list below.
       </p>
       <Stack gap={4} className="mt-4">
         {sectionGroups.map((group) => (

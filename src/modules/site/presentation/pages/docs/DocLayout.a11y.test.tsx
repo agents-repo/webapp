@@ -1,14 +1,33 @@
-import { cleanup, screen } from '@testing-library/react'
+import { cleanup, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useNavigate } from 'react-router-dom'
 import { afterEach, describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../../test/renderWithProviders.tsx'
 import DocLayout from './DocLayout.tsx'
 
+function HistoryBackButton() {
+  const navigate = useNavigate()
+  return (
+    <button type="button" onClick={() => void navigate(-1)}>
+      History back
+    </button>
+  )
+}
+
 const axeOptions = {
   rules: {
     'color-contrast': { enabled: false },
+    // Sidebar and mobile copies are mutually `display: none` in the browser.
+    // jsdom does not apply Bootstrap utilities, so both search landmarks exist.
+    'landmark-unique': { enabled: false },
   },
+}
+
+function getSearchCombobox() {
+  const inputs = screen.getAllByRole('combobox', { name: 'Search docs' })
+  expect(inputs.length).toBeGreaterThan(0)
+  return inputs[0]
 }
 
 describe('DocLayout accessibility', () => {
@@ -24,11 +43,76 @@ describe('DocLayout accessibility', () => {
       { initialEntries: ['/docs/getting-started'] },
     )
 
-    expect(screen.getByRole('search', { name: 'Search docs' })).toBeInTheDocument()
-    expect(screen.getByRole('combobox', { name: 'Search docs' })).toBeInTheDocument()
+    expect(screen.getAllByRole('search', { name: 'Search docs' })).toHaveLength(2)
+    expect(screen.getAllByRole('combobox', { name: 'Search docs' })).toHaveLength(2)
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute(
+      'aria-controls',
+      'docs-nav-offcanvas',
+    )
 
     const results = await axe(container, axeOptions)
     expect(results.violations).toHaveLength(0)
+  })
+
+  it('opens the docs Offcanvas from Browse docs', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <DocLayout>
+        <h1>Test article</h1>
+      </DocLayout>,
+      { initialEntries: ['/docs'] },
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Browse docs' }))
+
+    expect(screen.getByRole('dialog', { name: 'Docs' })).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Docs topics' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('collapses the Offcanvas when a topic is chosen', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <DocLayout>
+        <h1>Test article</h1>
+      </DocLayout>,
+      { initialEntries: ['/docs'] },
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Browse docs' }))
+    await user.click(
+      within(screen.getByRole('dialog', { name: 'Docs' })).getByRole('link', { name: 'Getting started' }),
+    )
+
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('does not reopen the Offcanvas after browser back', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <DocLayout>
+        <h1>Test article</h1>
+        <HistoryBackButton />
+      </DocLayout>,
+      { initialEntries: ['/docs/getting-started'] },
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Browse docs' }))
+    await user.click(
+      within(screen.getByRole('dialog', { name: 'Docs' })).getByRole('link', {
+        name: 'Ecosystem overview',
+      }),
+    )
+
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'false')
+
+    await user.click(screen.getByRole('button', { name: 'History back' }))
+
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('dialog', { name: 'Docs' })).not.toBeInTheDocument()
   })
 
   it('shows search results and live status when typing', async () => {
@@ -41,7 +125,7 @@ describe('DocLayout accessibility', () => {
       { initialEntries: ['/docs'] },
     )
 
-    const input = screen.getByRole('combobox', { name: 'Search docs' })
+    const input = getSearchCombobox()
     await user.type(input, 'doctor diagnostics')
 
     expect(screen.getByRole('listbox', { name: 'Doc search results' })).toBeInTheDocument()
@@ -59,7 +143,7 @@ describe('DocLayout accessibility', () => {
       { initialEntries: ['/docs'] },
     )
 
-    const input = screen.getByRole('combobox', { name: 'Search docs' })
+    const input = getSearchCombobox()
     await user.type(input, '   ')
     expect(input).toHaveValue('   ')
     expect(screen.queryByRole('listbox', { name: 'Doc search results' })).not.toBeInTheDocument()

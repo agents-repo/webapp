@@ -68,6 +68,7 @@ e2e/
 ├── navigation.spec.ts
 ├── packages.spec.ts
 ├── catalog-filters.spec.ts
+├── docs-nav.spec.ts
 ├── seo-crawl-files.spec.ts
 ├── cookie-consent.spec.ts
 ├── theme-mode.spec.ts

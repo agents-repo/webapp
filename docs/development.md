@@ -264,7 +264,10 @@ on CLI releases.
    (it does not clear detail or tag stores). Extra-segment `/packages/*`
    paths stay on not-found without that reload.
 - The shared header uses a mobile-first navbar: below `lg` navigation is
-   collapsed behind a hamburger toggle.
+  collapsed behind a hamburger toggle.
+- Site docs use the same `lg` breakpoint: below `lg` the topic list is in a
+  **Browse docs** Offcanvas and search stays above the article; from `lg` up
+  the sticky sidebar shows search and topics.
 - Header text destinations at `lg+` are Packages, Docs, About (dropdown), and
    Help Us, then the icon cluster (install, website settings, color mode). The
    brand wordmark is the Home link; it does not use selected-nav styling or

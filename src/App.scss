@@ -426,6 +426,14 @@
   padding-bottom: 1rem;
 }
 
+.docs-mobile-toolbar {
+  min-width: 0;
+
+  .docs-search {
+    margin-bottom: 0;
+  }
+}
+
 // Docs search: use theme secondary for borders (see $secondary in bootstrap-theme.scss).
 // Default --bs-border-color ($border-color) is too faint on the light body background.
 .docs-search {
