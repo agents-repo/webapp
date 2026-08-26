@@ -10,7 +10,7 @@ test.describe('Catalog pagination', () => {
 
     await expect(page.getByRole('heading', { name: 'page-agent-01' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'page-agent-13' })).toHaveCount(0)
-    await expect(page.getByText('Showing 1–12 of 13 packages')).toBeVisible()
+    await expect(page.getByText('Showing 1–9 of 13 packages')).toBeVisible()
     await expect(page.getByRole('navigation', { name: 'Package results pages' })).toBeVisible()
 
     await page.getByRole('navigation', { name: 'Package results pages' }).getByRole('link', { name: '2', exact: true }).click()
@@ -23,10 +23,10 @@ test.describe('Catalog pagination', () => {
     await expect(page).toHaveURL(/page=2/)
     await expect(page.getByRole('heading', { name: 'page-agent-13' })).toBeVisible()
 
-    await page.locator('label[for="sidebar-category-agent"]').click()
-    await expect(page).toHaveURL(/category=agent/)
+    await page.locator('label[for="sidebar-category-flow"]').click()
+    await expect(page).toHaveURL(/category=flow/)
     await expect(page).not.toHaveURL(/page=/)
     await expect(page.getByRole('navigation', { name: 'Package results pages' })).toHaveCount(0)
-    await expect(page.getByText('Showing 12 of 13 packages')).toBeVisible()
+    await expect(page.getByText('Showing 1 of 13 packages')).toBeVisible()
   })
 })

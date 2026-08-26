@@ -89,7 +89,7 @@ Every routed page should:
   desktop sidebar (`sidebar-`) and mobile Offcanvas (`offcanvas-`) copies.
   Offcanvas provides a focus trap while it is open. Result counts stay on
   `#catalog-results-summary` with `aria-live="polite"`. When the filtered list
-  is longer than 12 packages, numbered pagination (`nav` labelled **Package
+  is longer than 9 packages, numbered pagination (`nav` labelled **Package
   results pages**) slices the grid. The current page uses `aria-current="page"`.
   After a page-link activation, focus and scroll move to
   `#catalog-results-summary` (`tabIndex={-1}`). The download-window

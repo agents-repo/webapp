@@ -303,16 +303,16 @@ describe('PackagesIndexPage', () => {
     )
 
     expect(await screen.findByRole('heading', { name: 'page-agent-01' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'page-agent-12' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'page-agent-13' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 1–12 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'page-agent-09' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'page-agent-10' })).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 1–9 of 13 packages')).toBeInTheDocument()
     const pagination = screen.getByRole('navigation', { name: 'Package results pages' })
     expect(pagination).toBeInTheDocument()
 
     await user.click(within(pagination).getByRole('link', { name: '2' }))
     expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'page-agent-01' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 13–13 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByText('Showing 10–13 of 13 packages')).toBeInTheDocument()
     expect(screen.getByTestId('location-search')).toHaveTextContent('page=2')
     expect(document.activeElement).toHaveAttribute('id', 'catalog-results-summary')
   })
@@ -347,13 +347,13 @@ describe('PackagesIndexPage', () => {
     )
 
     expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
-    await user.click(screen.getAllByRole('checkbox', { name: 'agent (12)' })[0])
+    await user.click(screen.getAllByRole('checkbox', { name: 'flow (1)' })[0])
     await waitFor(() => {
       expect(screen.getByTestId('location-search')).not.toHaveTextContent('page=')
-      expect(screen.getByTestId('location-search')).toHaveTextContent('category=agent')
+      expect(screen.getByTestId('location-search')).toHaveTextContent('category=flow')
     })
     expect(screen.queryByRole('navigation', { name: 'Package results pages' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 12 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByText('Showing 1 of 13 packages')).toBeInTheDocument()
   })
 
   it('drops page when the download window changes', async () => {

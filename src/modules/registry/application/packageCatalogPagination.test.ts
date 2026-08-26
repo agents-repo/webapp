@@ -43,15 +43,15 @@ describe('packageCatalogPagination', () => {
 
   it('slices the filtered list to the current page window', () => {
     const items = Array.from({ length: 13 }, (_, index) => index + 1)
-    expect(slicePackageCatalogPage(items, 1)).toEqual(items.slice(0, 12))
-    expect(slicePackageCatalogPage(items, 2)).toEqual([13])
-    expect(slicePackageCatalogPage(items, 99)).toEqual([13])
+    expect(slicePackageCatalogPage(items, 1)).toEqual(items.slice(0, 9))
+    expect(slicePackageCatalogPage(items, 2)).toEqual([10, 11, 12, 13])
+    expect(slicePackageCatalogPage(items, 99)).toEqual([10, 11, 12, 13])
   })
 
   it('returns a visible window only when results exceed one page', () => {
-    expect(getPackageCatalogPageWindow(12, 1)).toBeNull()
-    expect(getPackageCatalogPageWindow(13, 1)).toEqual({ start: 1, end: 12 })
-    expect(getPackageCatalogPageWindow(13, 2)).toEqual({ start: 13, end: 13 })
+    expect(getPackageCatalogPageWindow(9, 1)).toBeNull()
+    expect(getPackageCatalogPageWindow(13, 1)).toEqual({ start: 1, end: 9 })
+    expect(getPackageCatalogPageWindow(13, 2)).toEqual({ start: 10, end: 13 })
   })
 
   it('lists every page until ellipsis is needed', () => {

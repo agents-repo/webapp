@@ -102,7 +102,7 @@ describe('NamespacePackagesPage', () => {
     expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'page-agent-01' })).not.toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Package results pages' })).toBeInTheDocument()
-    expect(screen.getByText('Showing 13–13 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByText('Showing 10–13 of 13 packages')).toBeInTheDocument()
   })
 
   it('keeps the namespace layout loading while a missing namespace is rechecked', () => {
