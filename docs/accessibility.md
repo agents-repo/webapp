@@ -74,7 +74,8 @@ Every routed page should:
 - Below `lg`, that sidebar is hidden (`d-none d-lg-block`). Search stays in the
   article column. **Browse docs** opens an Offcanvas titled **Docs**
   (`aria-expanded` / `aria-controls`) with a focus trap. The inner nav is
-  labelled **Docs topics**. Choosing a topic closes the drawer.
+  labelled **Docs topics**. Choosing a topic closes the drawer. It stays closed
+  after in-docs navigation, including browser Back or Forward.
 - Desktop sidebar and mobile Offcanvas are mutually hidden with `d-none` /
   `d-lg-none` (same pattern as catalog Filters). jsdom does not apply those
   utilities, so tests should expect two search landmarks.

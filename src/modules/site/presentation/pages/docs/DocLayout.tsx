@@ -16,7 +16,11 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
   const location = useLocation()
   const [docsNavOpen, setDocsNavOpen] = useState(false)
   const [docsNavPath, setDocsNavPath] = useState(location.pathname)
-  const offcanvasOpen = docsNavOpen && docsNavPath === location.pathname
+
+  if (docsNavPath !== location.pathname) {
+    setDocsNavPath(location.pathname)
+    setDocsNavOpen(false)
+  }
 
   return (
     <div className="py-5">
@@ -38,12 +42,9 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
                 variant="outline-secondary"
                 size="sm"
                 className="flex-shrink-0"
-                aria-expanded={offcanvasOpen}
+                aria-expanded={docsNavOpen}
                 aria-controls={DOCS_NAV_OFFCANVAS_ID}
-                onClick={() => {
-                  setDocsNavPath(location.pathname)
-                  setDocsNavOpen(true)
-                }}
+                onClick={() => setDocsNavOpen(true)}
               >
                 Browse docs
               </Button>
@@ -53,7 +54,7 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
         </Row>
       </Container>
       <Offcanvas
-        show={offcanvasOpen}
+        show={docsNavOpen}
         onHide={() => setDocsNavOpen(false)}
         placement="start"
         className="d-lg-none"

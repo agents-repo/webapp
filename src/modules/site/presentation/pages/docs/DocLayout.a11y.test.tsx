@@ -1,9 +1,19 @@
 import { cleanup, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useNavigate } from 'react-router-dom'
 import { afterEach, describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../../test/renderWithProviders.tsx'
 import DocLayout from './DocLayout.tsx'
+
+function HistoryBackButton() {
+  const navigate = useNavigate()
+  return (
+    <button type="button" onClick={() => void navigate(-1)}>
+      History back
+    </button>
+  )
+}
 
 const axeOptions = {
   rules: {
@@ -77,6 +87,32 @@ describe('DocLayout accessibility', () => {
     )
 
     expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('does not reopen the Offcanvas after browser back', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <DocLayout>
+        <h1>Test article</h1>
+        <HistoryBackButton />
+      </DocLayout>,
+      { initialEntries: ['/docs/getting-started'] },
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Browse docs' }))
+    await user.click(
+      within(screen.getByRole('dialog', { name: 'Docs' })).getByRole('link', {
+        name: 'Ecosystem overview',
+      }),
+    )
+
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'false')
+
+    await user.click(screen.getByRole('button', { name: 'History back' }))
+
+    expect(screen.getByRole('button', { name: 'Browse docs' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('dialog', { name: 'Docs' })).not.toBeInTheDocument()
   })
 
   it('shows search results and live status when typing', async () => {

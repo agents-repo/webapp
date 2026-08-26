@@ -24,6 +24,21 @@ test.describe('Docs navigation', () => {
     await expect(page.getByRole('dialog', { name: 'Docs' })).toHaveCount(0)
   })
 
+  test('keeps the mobile docs offcanvas closed after browser back', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 800 })
+    await page.goto('/docs/getting-started')
+
+    await page.getByRole('button', { name: 'Browse docs' }).click()
+    await page.getByRole('dialog', { name: 'Docs' }).getByRole('link', { name: 'Ecosystem overview' }).click()
+    await expect(page).toHaveURL(/\/docs\/ecosystem-overview\/?$/)
+    await expect(page.getByRole('dialog', { name: 'Docs' })).toHaveCount(0)
+
+    await page.goBack()
+    await expect(page).toHaveURL(/\/docs\/getting-started\/?$/)
+    await expect(page.getByRole('heading', { name: 'Getting started', level: 1 })).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Docs' })).toHaveCount(0)
+  })
+
   test('keeps the desktop sidebar without the Browse docs button', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/docs')
