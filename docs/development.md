@@ -204,8 +204,8 @@ on CLI releases.
 - The landing page shows a first slice of packages most downloaded in the last
   year (with catalog loading and source chrome) and **View all packages**
   links to `/packages`: one in the results heading row and a larger CTA below
-  the package cards. Catalog schema version is not shown on Home or Packages
-  listings. Home search navigates to `/packages?q=…`; an empty query
+  the package cards (or the empty-catalog message). Catalog schema version is
+  not shown on Home or Packages listings. Home search navigates to `/packages?q=…`; an empty query
   stays on Home. `/packages` is the crawlable all-packages index (distinct
   heading from Home) with URL-backed search, download-window sort, and filters.
   `/packages/:namespace` is the same search, sort, and filters, scoped to that

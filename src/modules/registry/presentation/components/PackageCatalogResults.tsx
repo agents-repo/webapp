@@ -158,9 +158,9 @@ export function CatalogResultsPanel(options: {
                 hasCatalog={options.hasCatalog}
                 emptyMatchMessage={options.emptyMatchMessage}
               />
-            ) : (
-              options.resultsFooter
-            )}
+            ) : null}
+
+            {options.resultsFooter}
           </>
         )}
       </Container>

@@ -90,7 +90,10 @@ describe('HomePage catalog loading', () => {
 
     expect(screen.getByText('No catalog data available')).toBeInTheDocument()
     expect(screen.getByText('No catalog data available.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'View all packages' })).toHaveAttribute('href', '/packages/')
+    const viewAllPackagesLinks = screen.getAllByRole('link', { name: 'View all packages' })
+    expect(viewAllPackagesLinks).toHaveLength(2)
+    expect(viewAllPackagesLinks[0]).toHaveAttribute('href', '/packages/')
+    expect(viewAllPackagesLinks[1]).toHaveAttribute('href', '/packages/')
     expect(screen.queryByText(/schema v/)).not.toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
