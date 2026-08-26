@@ -89,6 +89,11 @@ const renderCatalogStatusNote = (note: RegistryCatalogStatusNote): ReactNode => 
       </span>
     ) : null}
     <span className="opacity-75"> ({note.statusTag})</span>
+    {note.schemaVersion ? (
+      <Badge bg="secondary" pill className="fw-normal ms-1">
+        schema v{note.schemaVersion}
+      </Badge>
+    ) : null}
   </p>
 )
 

@@ -112,14 +112,7 @@ export function PackageCatalogIndexLayout({
         <Container>
           <Row className="align-items-end mb-3 g-2">
             <Col lg={8}>
-              <h2 className="h3 mb-1 d-flex align-items-center gap-2 flex-wrap">
-                {resultsHeading(page.trimmedQuery)}
-                {catalog?.schemaVersion ? (
-                  <Badge bg="secondary" pill className="fw-normal">
-                    schema v{catalog.schemaVersion}
-                  </Badge>
-                ) : null}
-              </h2>
+              <h2 className="h3 mb-1">{resultsHeading(page.trimmedQuery)}</h2>
               <p
                 id="catalog-results-summary"
                 className="text-body-secondary mb-0 small"

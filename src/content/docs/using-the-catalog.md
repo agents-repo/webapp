@@ -6,8 +6,11 @@ section: Catalog
 ---
 
 The catalog on [Home](/) shows a first slice of packages most downloaded in
-the last year, with a **View all packages** link to the crawlable
-[Packages](/packages) index. Each card shows metadata, status, supported
+the last year, with **View all packages** links to the crawlable
+[Packages](/packages) index (one in the results heading row, and a larger
+button below the package cards or empty-catalog message). Catalog schema
+version is shown in
+**Website settings**, not on Home or Packages listings. Each card shows metadata, status, supported
 install targets, download counts, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). **View** and the package title open the in-app
 package page. **View on GitHub** is on that page. On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
 
@@ -73,7 +76,7 @@ For reproducible projects, prefer pinning the CLI in `devDependencies` and using
 
 ## Website settings
 
-Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog. It does not delete ZIP downloads or change analytics, theme, or catalog filter sidebar preferences.
+Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). The modal also shows catalog source status, including the loaded catalog schema version. This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog. It does not delete ZIP downloads or change analytics, theme, or catalog filter sidebar preferences.
 
 ## Install the site (PWA)
 

@@ -12,6 +12,14 @@ test.describe('Website settings', () => {
     await clearBrowserStorage(page)
   })
 
+  test('shows catalog schema version in website settings', async ({ page }) => {
+    await page.goto('/')
+    await waitForCatalogSettled(page)
+    await page.getByRole('button', { name: 'Open website settings' }).click()
+
+    await expect(page.getByText('schema v1.3.0')).toBeVisible()
+  })
+
   test('shows validation error for invalid registry URL', async ({ page }) => {
     await page.goto('/')
     await waitForCatalogSettled(page)

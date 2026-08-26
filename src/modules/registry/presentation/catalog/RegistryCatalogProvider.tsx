@@ -59,6 +59,7 @@ const applyCatalogLoadResult = (
       : 'Registry catalog unavailable from ',
     sourceUrl: result.indexUrl,
     statusTag: noteStatusTag,
+    schemaVersion: result.catalog?.schemaVersion,
     baseUrlRefResolution: result.baseUrlRefResolution ?? null,
     githubRepositoryRefResolution: result.githubRepositoryRefResolution ?? null,
   })

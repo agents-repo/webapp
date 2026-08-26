@@ -7,6 +7,7 @@ export interface RegistryCatalogStatusNote {
   readonly summaryText: string
   readonly sourceUrl: string
   readonly statusTag: string
+  readonly schemaVersion?: string
   readonly baseUrlRefResolution?: RegistryRefResolutionNote | null
   readonly githubRepositoryRefResolution?: RegistryRefResolutionNote | null
 }

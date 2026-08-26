@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { Alert, Badge, Card, Col, Container, Row } from 'react-bootstrap'
+import { Alert, Card, Col, Container, Row } from 'react-bootstrap'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getCatalogAlertState } from '../pages/homePageCatalogState'
@@ -98,7 +98,6 @@ export function PackageCatalogGrid(options: {
 
 export function CatalogResultsPanel(options: {
   readonly resultsHeading: string
-  readonly schemaVersion?: string
   readonly catalogResultsSummary: string
   readonly catalogAlertState: NonNullable<ReturnType<typeof getCatalogAlertState>> | null
   readonly catalogSourceUrl: string
@@ -110,6 +109,7 @@ export function CatalogResultsPanel(options: {
   readonly registryBaseUrl: string
   readonly onFilterByOwner: (owner: string) => void
   readonly resultsActions?: ReactNode
+  readonly resultsFooter?: ReactNode
   readonly emptyMatchMessage?: string
 }): ReactNode {
   return (
@@ -117,14 +117,7 @@ export function CatalogResultsPanel(options: {
       <Container>
         <Row className="align-items-end mb-3 g-2">
           <Col lg={8}>
-            <h2 className="h3 mb-1 d-flex align-items-center gap-2 flex-wrap">
-              {options.resultsHeading}
-              {options.schemaVersion ? (
-                <Badge bg="secondary" pill className="fw-normal">
-                  schema v{options.schemaVersion}
-                </Badge>
-              ) : null}
-            </h2>
+            <h2 className="h3 mb-1">{options.resultsHeading}</h2>
             <p
               id="catalog-results-summary"
               className="text-body-secondary mb-0 small"
@@ -166,6 +159,8 @@ export function CatalogResultsPanel(options: {
                 emptyMatchMessage={options.emptyMatchMessage}
               />
             ) : null}
+
+            {options.resultsFooter}
           </>
         )}
       </Container>

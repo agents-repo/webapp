@@ -21,6 +21,7 @@ test.describe('Package pages', () => {
     await waitForCatalogSettled(page)
 
     await expect(page.getByRole('heading', { name: 'All packages', level: 1 })).toBeVisible()
+    await expect(page.getByText(/schema v/)).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'sample-agent' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'demo-flow' })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'legacy-tool' })).toBeVisible()
