@@ -1,4 +1,5 @@
 import { excludeYankedPackages } from './packageCatalogFilters'
+import { PACKAGE_CATALOG_PAGE_PARAM } from './packageCatalogPagination'
 import type { RegistryPackage } from '../domain/package'
 import {
   DEFAULT_DOWNLOAD_STATS_PERIOD,
@@ -115,6 +116,7 @@ export function applyDownloadStatsPeriodToSearchParams(
   period: DownloadStatsPeriod,
 ): URLSearchParams {
   const next = new URLSearchParams(searchParams)
+  next.delete(PACKAGE_CATALOG_PAGE_PARAM)
   if (period === DEFAULT_DOWNLOAD_STATS_PERIOD) {
     next.delete('period')
   } else {

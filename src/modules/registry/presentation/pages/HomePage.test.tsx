@@ -12,6 +12,7 @@ import {
   unavailableCatalogContext,
 } from '../../../../test/fixtures/homePageTestFixtures'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
+import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -71,6 +72,19 @@ describe('HomePage catalog loading', () => {
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Toggle category filter/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Hide filters|Show filters|Filters/ })).not.toBeInTheDocument()
+  })
+
+  it('does not paginate the home popular slice', async () => {
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: createPaginatedRegistryCatalog(),
+    })
+
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-01' })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(6)
+    expect(screen.queryByRole('navigation', { name: 'Package results pages' })).not.toBeInTheDocument()
   })
 
   it('keeps package cards visible during a settings reload', async () => {

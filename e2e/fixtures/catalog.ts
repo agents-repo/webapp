@@ -119,6 +119,37 @@ export const searchableCatalogStats = {
   ],
 }
 
+export function createPaginatedE2eCatalog(packageCount = 13): E2eRegistryCatalog {
+  const packages: E2eRegistryPackage[] = Array.from({ length: packageCount }, (_, index) => {
+    const sequence = String(index + 1).padStart(2, '0')
+    const name = `page-agent-${sequence}`
+    const isLast = index === packageCount - 1
+    return {
+      id: `agents-repo/${name}`,
+      namespace: 'agents-repo',
+      package: name,
+      name,
+      description: `Paginated E2E fixture package ${sequence}.`,
+      owner: 'agents-repo',
+      latest: '1.0.0',
+      tags: isLast ? ['paged', 'last'] : ['paged'],
+      status: 'active',
+      category: isLast ? 'flow' : 'agent',
+      estimateOverallCost: { band: 'low' },
+      installTargets: [{ id: 'cursor', status: 'supported' }],
+    }
+  })
+
+  return {
+    schemaVersion: '1.4.0',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    aliases: Object.fromEntries(packages.map((pkg) => [pkg.package, pkg.id])),
+    packages,
+  }
+}
+
+export const paginatedCatalog = createPaginatedE2eCatalog()
+
 export const alternateOverrideCatalog: E2eRegistryCatalog = {
   schemaVersion: '1.3.0',
   updatedAt: '2026-02-01T00:00:00.000Z',

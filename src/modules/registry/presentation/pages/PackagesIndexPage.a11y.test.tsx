@@ -6,6 +6,7 @@ import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import PackagesIndexPage from './PackagesIndexPage'
 import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixtures'
+import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
 
 const axeOptions = {
   rules: {
@@ -41,5 +42,23 @@ describe('PackagesIndexPage accessibility', () => {
     expect(document.querySelector('#offcanvas-category-agent')).not.toBeNull()
     const openResults = await axe(dialog, axeOptions)
     expect(openResults.violations).toHaveLength(0)
+  })
+
+  it('exposes numbered pagination without accessibility violations', async () => {
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: createPaginatedRegistryCatalog(),
+    })
+
+    const { container } = renderWithProviders(
+      <PackagesIndexPage setHeaderSearchSlot={() => {}} />,
+      { initialEntries: ['/packages'] },
+    )
+    await screen.findByRole('heading', { name: 'page-agent-01' })
+
+    const pagination = screen.getByRole('navigation', { name: 'Package results pages' })
+    expect(pagination.querySelector('[aria-current="page"]')).toHaveTextContent('1')
+    const results = await axe(container, axeOptions)
+    expect(results.violations).toHaveLength(0)
   })
 })

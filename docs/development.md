@@ -207,9 +207,10 @@ on CLI releases.
   the package cards (or the empty-catalog message). Catalog schema version is
   not shown on Home or Packages listings. Home search navigates to `/packages?q=…`; an empty query
   stays on Home. `/packages` is the crawlable all-packages index (distinct
-  heading from Home) with URL-backed search, download-window sort, and filters.
-  `/packages/:namespace` is the same search, sort, and filters, scoped to that
-  namespace.
+  heading from Home) with URL-backed search, download-window sort, filters, and
+  numbered pagination when more than 12 packages match (`page` in the query
+  string, omitted on page 1). `/packages/:namespace` is the same search, sort,
+  filters, and pagination, scoped to that namespace.
   `/packages/:namespace/:packageId` is the latest-only package detail page.
 - Package card footer actions (CLI, Use in chat, Download, View) include short
   visible labels. **View** and the card title open the in-app package page.

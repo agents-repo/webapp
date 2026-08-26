@@ -16,6 +16,7 @@ import {
   EmptyCatalogState,
   PackageCatalogGrid,
 } from '../components/PackageCatalogResults'
+import { PackageCatalogPagination } from '../components/PackageCatalogPagination'
 import { usePackageCatalogIndexPage } from './usePackageCatalogIndexPage'
 
 export interface PackageCatalogIndexLayoutProps {
@@ -71,6 +72,48 @@ function FilterToggleButtons(options: {
   )
 }
 
+function PackageCatalogListingColumn(options: {
+  readonly page: ReturnType<typeof usePackageCatalogIndexPage>
+  readonly sidebarVisible: boolean
+  readonly hasCatalog: boolean
+}): ReactNode {
+  const { page, sidebarVisible, hasCatalog } = options
+  return (
+    <Col lg={sidebarVisible ? 9 : 12}>
+      <PackageCatalogFilterChips
+        popularChips={page.popularChips}
+        facets={page.facets}
+        filters={page.filters}
+        onToggle={page.toggleFilter}
+        onClear={page.clearFilters}
+      />
+      <PackageCatalogGrid
+        packages={page.pagedPackages}
+        registryBaseUrl={page.registryBaseUrl}
+        onFilterByOwner={page.filterByOwner}
+        onToggleFacet={(facet, value) => page.toggleFilter(facet, value)}
+        isFacetSelected={page.isFacetSelected}
+        xl={sidebarVisible ? 2 : 3}
+      />
+      {page.showCatalogPagination ? (
+        <PackageCatalogPagination
+          currentPage={page.catalogPage}
+          pageCount={page.catalogPageCount}
+          pathname={page.catalogPathname}
+          searchParams={page.searchParams}
+          onNavigate={page.onCatalogPageNavigate}
+        />
+      ) : null}
+      {page.filteredPackages.length === 0 ? (
+        <EmptyCatalogState
+          hasCatalog={hasCatalog}
+          emptyMatchMessage="No packages match your current search or filters."
+        />
+      ) : null}
+    </Col>
+  )
+}
+
 export function PackageCatalogIndexLayout({
   setHeaderSearchSlot,
   title,
@@ -118,6 +161,7 @@ export function PackageCatalogIndexLayout({
                 className="text-body-secondary mb-0 small"
                 aria-live="polite"
                 aria-atomic="true"
+                tabIndex={-1}
               >
                 {page.catalogResultsSummary}
               </p>
@@ -173,29 +217,11 @@ export function PackageCatalogIndexLayout({
                   />
                 </Col>
               ) : null}
-              <Col lg={sidebarVisible ? 9 : 12}>
-                <PackageCatalogFilterChips
-                  popularChips={page.popularChips}
-                  facets={page.facets}
-                  filters={page.filters}
-                  onToggle={page.toggleFilter}
-                  onClear={page.clearFilters}
-                />
-                <PackageCatalogGrid
-                  packages={page.filteredPackages}
-                  registryBaseUrl={page.registryBaseUrl}
-                  onFilterByOwner={page.filterByOwner}
-                  onToggleFacet={(facet, value) => page.toggleFilter(facet, value)}
-                  isFacetSelected={page.isFacetSelected}
-                  xl={sidebarVisible ? 2 : 3}
-                />
-                {page.filteredPackages.length === 0 ? (
-                  <EmptyCatalogState
-                    hasCatalog={catalog !== null}
-                    emptyMatchMessage="No packages match your current search or filters."
-                  />
-                ) : null}
-              </Col>
+              <PackageCatalogListingColumn
+                page={page}
+                sidebarVisible={sidebarVisible}
+                hasCatalog={catalog !== null}
+              />
             </Row>
           )}
         </Container>

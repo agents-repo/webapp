@@ -109,6 +109,11 @@ These patterns already help SEO and must stay in place:
 | JSON-LD `SoftwareSourceCode` | Package detail; `codeRepository` when a GitHub browse URL exists |
 | JSON-LD `WebPage` | Other public routes |
 
+Catalog listing query params (`q`, filters, `period`, `page`) are client
+listing state. They are not extra CollectionPage routes. Do not emit GitHub
+Pages HTML shells or sitemap entries for `?page=N`. Package **detail** paths
+remain the per-item crawl surface.
+
 Do **not** block JavaScript or CSS in `robots.txt` — Google needs assets to
 render pages.
 
