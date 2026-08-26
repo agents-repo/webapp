@@ -175,4 +175,23 @@ describe('WebsiteSettingsControl save flow', () => {
     expect(onSaved).toHaveBeenCalled()
     expect(localStorage.getItem(CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY)).toBe('true')
   })
+
+  it('shows schema version from the catalog status note', async () => {
+    const user = userEvent.setup()
+
+    renderWithProviders(
+      <WebsiteSettingsControl
+        registryCatalogStatusNote={{
+          summaryText: 'Updated 1 Jan 2026 with 1 packages from ',
+          sourceUrl: 'https://example.com/index.json',
+          statusTag: 'cached',
+          schemaVersion: '1.3.0',
+        }}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Open website settings' }))
+
+    expect(screen.getByText('schema v1.3.0')).toBeInTheDocument()
+  })
 })

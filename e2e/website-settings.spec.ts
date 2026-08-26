@@ -17,6 +17,8 @@ test.describe('Website settings', () => {
     await waitForCatalogSettled(page)
     await page.getByRole('button', { name: 'Open website settings' }).click()
 
+    await expect(page.getByText('schema v1.3.0')).toBeVisible()
+
     await page.getByLabel('Registry base URL override').fill('not-a-valid-url')
     await page.getByRole('button', { name: 'Save changes' }).click()
 

@@ -202,8 +202,10 @@ on CLI releases.
 ## Current UI State
 
 - The landing page shows a first slice of packages most downloaded in the last
-  year (with catalog loading and source chrome) and a **View all packages**
-  link to `/packages`. Home search navigates to `/packages?q=…`; an empty query
+  year (with catalog loading and source chrome) and **View all packages**
+  links to `/packages`: one in the results heading row and a larger CTA below
+  the package cards. Catalog schema version is not shown on Home or Packages
+  listings. Home search navigates to `/packages?q=…`; an empty query
   stays on Home. `/packages` is the crawlable all-packages index (distinct
   heading from Home) with URL-backed search, download-window sort, and filters.
   `/packages/:namespace` is the same search, sort, and filters, scoped to that
@@ -304,7 +306,7 @@ on CLI releases.
 - Package artifact URLs use namespaced paths:
    `packages/<namespace>/<package-id>/versions/<version>/<version>-<target>.zip`.
 - Website settings modal shows catalog source status details, including updated
-   date, package count, source URL, and cache/failure tag.
+   date, package count, source URL, catalog schema version, and cache/failure tag.
 - Registry catalog loading uses a 24h app-owned cache policy with conditional
    GET revalidation. While the catalog cache is still fresh, tag resolution and
    catalog network requests are skipped; resolved refs are inferred from the

@@ -59,9 +59,13 @@ describe('HomePage catalog loading', () => {
 
     const { container } = renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    expect(await screen.findByRole('heading', { name: /Most downloaded in the last year/ })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Most downloaded in the last year' })).toBeInTheDocument()
+    expect(screen.queryByText(/schema v/)).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'View all packages' })).toHaveAttribute('href', '/packages/')
+    const viewAllPackagesLinks = screen.getAllByRole('link', { name: 'View all packages' })
+    expect(viewAllPackagesLinks).toHaveLength(2)
+    expect(viewAllPackagesLinks[0]).toHaveAttribute('href', '/packages/')
+    expect(viewAllPackagesLinks[1]).toHaveAttribute('href', '/packages/')
     expect(screen.getByRole('button', { name: '0 downloads for sample-agent' })).toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
@@ -86,6 +90,8 @@ describe('HomePage catalog loading', () => {
 
     expect(screen.getByText('No catalog data available')).toBeInTheDocument()
     expect(screen.getByText('No catalog data available.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'View all packages' })).toHaveAttribute('href', '/packages/')
+    expect(screen.queryByText(/schema v/)).not.toBeInTheDocument()
     expect(container.querySelector('.catalog-loading-spinner')).not.toBeInTheDocument()
     expect(container.querySelector('[aria-busy="true"]')).not.toBeInTheDocument()
   })
@@ -135,7 +141,7 @@ describe('HomePage search', () => {
     await user.type(searchInput, '   {Enter}')
 
     expect(screen.getByTestId('location')).toHaveTextContent('/')
-    expect(screen.getByRole('heading', { name: /Most downloaded in the last year/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeInTheDocument()
   })
 })
 

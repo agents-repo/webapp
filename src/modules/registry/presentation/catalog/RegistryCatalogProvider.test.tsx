@@ -66,6 +66,11 @@ describe('RegistryCatalogProvider', () => {
     })
     expect(loadRegistryCatalogMock.mock.calls.at(-1)?.[0]?.forceSourceResolution).toBeUndefined()
     expect(loadRegistryCatalogMock.mock.calls.at(-1)?.[0]?.bypassTagCache).toBeUndefined()
+    expect(onCatalogStatusNoteChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        schemaVersion: sampleCatalogLoadResult.catalog?.schemaVersion,
+      }),
+    )
   })
 
   it('forces reload when registry settings version changes', async () => {
@@ -160,6 +165,7 @@ describe('RegistryCatalogProvider', () => {
       expect.objectContaining({
         summaryText: 'Registry catalog unavailable from ',
         sourceUrl: '',
+        schemaVersion: undefined,
       }),
     )
     expect(warnSpy).toHaveBeenCalledTimes(1)

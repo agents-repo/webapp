@@ -19,6 +19,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
     searchInputId: 'registry-package-search',
     setHeaderSearchSlot,
   })
+  const packagesIndexPath = publicSitePath(getPackagesIndexPath())
 
   return (
     <>
@@ -49,7 +50,6 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
       <CatalogResultsPanel
         resultsHeading="Most downloaded in the last year"
-        schemaVersion={catalog?.schemaVersion}
         catalogResultsSummary={page.catalogResultsSummary}
         catalogAlertState={page.catalogAlertState}
         catalogSourceUrl={page.catalogSourceUrl}
@@ -61,9 +61,16 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
         registryBaseUrl={page.registryBaseUrl}
         onFilterByOwner={page.filterByOwner}
         resultsActions={
-          <Link to={publicSitePath(getPackagesIndexPath())} className="btn btn-outline-primary btn-sm">
+          <Link to={packagesIndexPath} className="btn btn-outline-primary btn-sm">
             View all packages
           </Link>
+        }
+        resultsFooter={
+          <div className="d-flex justify-content-center mt-4">
+            <Link to={packagesIndexPath} className="btn btn-outline-primary">
+              View all packages
+            </Link>
+          </div>
         }
         emptyMatchMessage="No packages are available in the catalog yet."
       />
