@@ -31,9 +31,7 @@ function readStoredRouteScrollPositions(): Record<string, number> {
 }
 
 function getMemoryPositions(): Record<string, number> {
-  if (memoryPositions === null) {
-    memoryPositions = readStoredRouteScrollPositions()
-  }
+  memoryPositions ??= readStoredRouteScrollPositions()
 
   return memoryPositions
 }
