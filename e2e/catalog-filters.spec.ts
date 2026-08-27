@@ -2,6 +2,23 @@ import { test, expect } from './fixtures/registry-mock'
 import { waitForCatalogSettled } from './fixtures/catalog-load'
 
 test.describe('Catalog filters', () => {
+  test('expands the URL-selected facet group on landing', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto('/packages?tag=shared')
+    await waitForCatalogSettled(page)
+
+    const sidebarFilters = page.locator('#sidebar-package-catalog-filters')
+    await expect(sidebarFilters.getByRole('button', { name: 'Category' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+    await expect(sidebarFilters.getByRole('button', { name: 'Tags' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+    await expect(page.locator('#sidebar-tag-shared')).toBeVisible()
+  })
+
   test('filters /packages by category and restores the URL after reload', async ({ page }) => {
     await page.goto('/packages')
     await waitForCatalogSettled(page)
