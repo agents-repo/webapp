@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { Badge, Col, Container, Row, Stack } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import brandLogo from '../../../../../assets/logo/agents-repo-logo.svg'
+import { applyHashTargetScroll } from '../../../../site/application/accessibility/routeScroll'
 import { publicSitePath, siteRoutes } from '../../../../site/presentation/routes/siteRoutes'
 import { getPackagesIndexPath } from '../../../application/packageSiteRoutes'
 import { CLI_QUICKSTART_ID, HOME_HERO_HEADING } from './homeLandingCopy'
@@ -12,8 +13,10 @@ export interface HomeHeroSectionProps {
 }
 
 function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) {
+  const location = useLocation()
   const packagesIndexPath = publicSitePath(getPackagesIndexPath())
-  const cliQuickstartHref = `${publicSitePath(siteRoutes.home)}#${CLI_QUICKSTART_ID}`
+  const cliQuickstartHash = `#${CLI_QUICKSTART_ID}`
+  const cliQuickstartHref = `${publicSitePath(siteRoutes.home)}${cliQuickstartHash}`
 
   return (
     <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
@@ -35,7 +38,15 @@ function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) 
                 <Link to={packagesIndexPath} className="btn btn-primary">
                   Browse packages
                 </Link>
-                <Link to={cliQuickstartHref} className="btn btn-outline-primary">
+                <Link
+                  to={cliQuickstartHref}
+                  className="btn btn-outline-primary"
+                  onClick={() => {
+                    if (location.hash === cliQuickstartHash) {
+                      applyHashTargetScroll(cliQuickstartHash)
+                    }
+                  }}
+                >
                   Use the CLI
                 </Link>
               </div>

@@ -56,7 +56,25 @@ function RouteScrollManager() {
 
     if (isInitialRenderRef.current) {
       isInitialRenderRef.current = false
-      return
+      if (location.hash.length <= 1) {
+        return
+      }
+
+      const initialRequest = {}
+      pendingRequestRef.current = initialRequest
+      const initialHash = location.hash
+      const applyInitialHashIfCurrent = (): void => {
+        if (pendingRequestRef.current !== initialRequest) {
+          return
+        }
+
+        applyHashTargetScroll(initialHash)
+      }
+      const stopWaitingForInitialHash = whenMainRouteContentReady(applyInitialHashIfCurrent)
+      return () => {
+        pendingRequestRef.current = null
+        stopWaitingForInitialHash()
+      }
     }
 
     if (!pathnameChanged && !hashChanged) {
