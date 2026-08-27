@@ -37,7 +37,8 @@ window (**Downloads (All time)**, **Downloads (Last 7 days)**,
 all time. Sorting does not hide packages. Popular category and tag chips sit
 above the cards. The full checkbox groups are in a collapsible sidebar on
 large screens (Hide filters / Show filters) and in a Filters panel on smaller
-screens. Yanked packages stay hidden on those listings.
+screens. Facet groups that already have a selected value in the URL start
+expanded. Yanked packages stay hidden on those listings.
 
 Use the header search on large screens to filter packages by name or
 description. Review status badges and target compatibility before installing.

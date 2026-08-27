@@ -93,6 +93,7 @@ describe('PackagesIndexPage', () => {
     expect(screen.getByRole('heading', { name: 'plan-flow' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'legacy-helper' })).not.toBeInTheDocument()
     expect(screen.getByTestId('location-search')).toHaveTextContent('tag=shared')
+    expect(screen.getAllByRole('button', { name: 'Tags' })[0]).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getAllByRole('checkbox', { name: 'automation (1)' }).length).toBeGreaterThan(0)
     expect(screen.getAllByRole('checkbox', { name: 'assistant (1)' }).length).toBeGreaterThan(0)
   })

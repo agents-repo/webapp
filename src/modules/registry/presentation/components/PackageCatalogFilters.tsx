@@ -15,6 +15,7 @@ import {
 import {
   getPackageCatalogFacetGroupLabel,
   getPackageCatalogFacetValueLabel,
+  getPackageCatalogFilterAccordionActiveKeys,
   toPackageCatalogFilterControlId,
 } from './packageCatalogFilterUi'
 
@@ -58,7 +59,12 @@ export function PackageCatalogFilterBody(options: {
   const chatWebId = toPackageCatalogFilterControlId(idPrefix, 'chatWeb', '1')
 
   return (
-    <Accordion id={`${idPrefix}-package-catalog-filters`} defaultActiveKey={['category']} alwaysOpen flush>
+    <Accordion
+      id={`${idPrefix}-package-catalog-filters`}
+      defaultActiveKey={getPackageCatalogFilterAccordionActiveKeys(filters)}
+      alwaysOpen
+      flush
+    >
       <Accordion.Item eventKey="category">
         <Accordion.Header>{getPackageCatalogFacetGroupLabel('category')}</Accordion.Header>
         <Accordion.Body>

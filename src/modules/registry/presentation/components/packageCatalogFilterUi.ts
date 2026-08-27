@@ -1,6 +1,9 @@
 import { INSTALL_TARGET_IDS, type InstallTargetId } from '../../domain/package'
 import { getInstallTargetLabel } from '../../application/installTargets'
-import type { PackageCatalogFilterFacet } from '../../application/packageCatalogFilters'
+import type {
+  PackageCatalogFilterFacet,
+  PackageCatalogFilters,
+} from '../../application/packageCatalogFilters'
 
 export function toPackageCatalogFilterControlId(
   idPrefix: string,
@@ -33,6 +36,29 @@ function getInstallTargetFacetLabel(value: string): string {
   }
 
   return value
+}
+
+export function getPackageCatalogFilterAccordionActiveKeys(
+  filters: PackageCatalogFilters,
+): string[] {
+  const keys = ['category']
+  if (filters.tags.length > 0) {
+    keys.push('tag')
+  }
+  if (filters.targets.length > 0) {
+    keys.push('target')
+  }
+  if (filters.statuses.length > 0) {
+    keys.push('status')
+  }
+  if (filters.costBands.length > 0) {
+    keys.push('cost')
+  }
+  if (filters.chatWebOnly) {
+    keys.push('chatWeb')
+  }
+
+  return keys
 }
 
 export function getPackageCatalogFacetGroupLabel(facet: PackageCatalogFilterFacet): string {
