@@ -1,29 +1,22 @@
 export function isMainRouteContentReady(mainContent: HTMLElement | null): boolean {
-  return mainContent?.getAttribute('aria-busy') !== 'true'
-}
-
-export function whenMainRouteContentReady(onReady: () => void): () => void {
-  const run = (): boolean => {
-    if (!isMainRouteContentReady(document.getElementById('main-content'))) {
-      return false
-    }
-
-    onReady()
+  if (mainContent === null) {
     return true
   }
 
-  if (run()) {
-    return () => {}
-  }
+  return mainContent.getAttribute('aria-busy') !== 'true'
+}
 
+export function whenMainRouteContentReady(onReady: () => void): () => void {
   const mainContent = document.getElementById('main-content')
-  if (!mainContent) {
+  if (mainContent === null || isMainRouteContentReady(mainContent)) {
+    onReady()
     return () => {}
   }
 
   const observer = new MutationObserver(() => {
-    if (run()) {
+    if (isMainRouteContentReady(document.getElementById('main-content'))) {
       observer.disconnect()
+      onReady()
     }
   })
 

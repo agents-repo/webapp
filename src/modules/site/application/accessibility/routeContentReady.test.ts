@@ -20,6 +20,10 @@ describe('isMainRouteContentReady', () => {
 
     expect(isMainRouteContentReady(main)).toBe(true)
   })
+
+  it('returns true when main is missing', () => {
+    expect(isMainRouteContentReady(null)).toBe(true)
+  })
 })
 
 describe('whenMainRouteContentReady', () => {
@@ -58,6 +62,15 @@ describe('whenMainRouteContentReady', () => {
     } finally {
       main.remove()
     }
+  })
+
+  it('runs immediately when #main-content is missing', () => {
+    const onReady = vi.fn()
+
+    const stop = whenMainRouteContentReady(onReady)
+
+    expect(onReady).toHaveBeenCalledTimes(1)
+    stop()
   })
 })
 

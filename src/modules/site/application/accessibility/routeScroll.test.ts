@@ -5,6 +5,7 @@ import {
   applyWindowScroll,
   getLocationHashTargetId,
   getRouteScrollPosition,
+  resetRouteScrollPositions,
   writeRouteScrollPosition,
 } from './routeScroll'
 
@@ -24,6 +25,8 @@ describe('getLocationHashTargetId', () => {
 describe('route scroll positions', () => {
   afterEach(() => {
     sessionStorage.removeItem(ROUTE_SCROLL_STORAGE_KEY)
+    resetRouteScrollPositions()
+    vi.restoreAllMocks()
   })
 
   it('stores and reads a position for a history key', () => {
@@ -44,6 +47,16 @@ describe('route scroll positions', () => {
     expect(getRouteScrollPosition('key-0')).toBeUndefined()
     expect(getRouteScrollPosition('key-1')).toBe(1)
     expect(getRouteScrollPosition('key-50')).toBe(50)
+  })
+
+  it('keeps positions in memory when sessionStorage persist fails', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota')
+    })
+
+    writeRouteScrollPosition('abc', 420)
+
+    expect(getRouteScrollPosition('abc')).toBe(420)
   })
 })
 

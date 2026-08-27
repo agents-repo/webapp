@@ -15,31 +15,42 @@ function RouteScrollManager() {
   const pathnameRef = useRef(location.pathname)
   const hashRef = useRef(location.hash)
   const locationKeyRef = useRef(location.key)
-  const navigationTypeRef = useRef(navigationType)
   const pendingRequestRef = useRef<object | null>(null)
 
   useLayoutEffect(() => {
-    locationKeyRef.current = location.key
-    navigationTypeRef.current = navigationType
-  }, [location.key, navigationType])
+    const { history } = globalThis.window
+    const previousRestoration = history.scrollRestoration
 
-  useLayoutEffect(() => {
+    try {
+      history.scrollRestoration = 'manual'
+    } catch {
+      // Some test environments expose History without scrollRestoration.
+    }
+
     const saveCurrentPosition = (): void => {
       writeRouteScrollPosition(locationKeyRef.current, globalThis.window.scrollY)
     }
 
-    globalThis.window.addEventListener('scroll', saveCurrentPosition, { passive: true })
     globalThis.window.addEventListener('pagehide', saveCurrentPosition)
 
     return () => {
-      globalThis.window.removeEventListener('scroll', saveCurrentPosition)
+      if (previousRestoration === 'auto' || previousRestoration === 'manual') {
+        history.scrollRestoration = previousRestoration
+      }
       globalThis.window.removeEventListener('pagehide', saveCurrentPosition)
     }
   }, [])
 
   useLayoutEffect(() => {
+    const previousKey = locationKeyRef.current
     const pathnameChanged = pathnameRef.current !== location.pathname
     const hashChanged = hashRef.current !== location.hash
+
+    if (!isInitialRenderRef.current) {
+      writeRouteScrollPosition(previousKey, globalThis.window.scrollY)
+    }
+
+    locationKeyRef.current = location.key
     pathnameRef.current = location.pathname
     hashRef.current = location.hash
 
@@ -54,8 +65,8 @@ function RouteScrollManager() {
 
     const request = {}
     pendingRequestRef.current = request
-    const action = navigationTypeRef.current
-    const historyKey = locationKeyRef.current
+    const action = navigationType
+    const historyKey = location.key
     const nextHash = location.hash
 
     const applyIfCurrent = (): void => {
@@ -86,7 +97,7 @@ function RouteScrollManager() {
       pendingRequestRef.current = null
       stopWaiting()
     }
-  }, [location.hash, location.pathname])
+  }, [location.hash, location.pathname, location.key, navigationType])
 
   return null
 }

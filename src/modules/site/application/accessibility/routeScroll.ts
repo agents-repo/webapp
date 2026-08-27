@@ -3,7 +3,9 @@ const MAX_STORED_POSITIONS = 50
 
 const INSTANT_SCROLL_BEHAVIOR = 'instant' satisfies ScrollBehavior
 
-function readRouteScrollPositions(): Record<string, number> {
+let memoryPositions: Record<string, number> | null = null
+
+function readStoredRouteScrollPositions(): Record<string, number> {
   try {
     const raw = globalThis.sessionStorage.getItem(ROUTE_SCROLL_STORAGE_KEY)
     if (!raw) {
@@ -28,20 +30,32 @@ function readRouteScrollPositions(): Record<string, number> {
   }
 }
 
+function getMemoryPositions(): Record<string, number> {
+  if (memoryPositions === null) {
+    memoryPositions = readStoredRouteScrollPositions()
+  }
+
+  return memoryPositions
+}
+
 function persistRouteScrollPositions(positions: Record<string, number>): void {
   try {
     globalThis.sessionStorage.setItem(ROUTE_SCROLL_STORAGE_KEY, JSON.stringify(positions))
   } catch {
-    // Ignore quota or private-mode failures; in-memory navigation still works for the tab.
+    // Ignore quota or private-mode failures; the in-memory map still restores in this tab.
   }
 }
 
+export function resetRouteScrollPositions(): void {
+  memoryPositions = null
+}
+
 export function getRouteScrollPosition(historyKey: string): number | undefined {
-  return readRouteScrollPositions()[historyKey]
+  return getMemoryPositions()[historyKey]
 }
 
 export function writeRouteScrollPosition(historyKey: string, top: number): void {
-  const positions = readRouteScrollPositions()
+  const positions = getMemoryPositions()
   if (Object.hasOwn(positions, historyKey)) {
     delete positions[historyKey]
   }
