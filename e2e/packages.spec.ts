@@ -190,7 +190,7 @@ test.describe('Package pages', () => {
     await page.goto('/packages/agents-repo/not-a-real-package')
     await expect(page.getByRole('heading', { name: 'Package not found', level: 1 })).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
+      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
     ).toHaveCount(0)
 
     await page.goto('/packages/missing-ns/also-missing/extra')

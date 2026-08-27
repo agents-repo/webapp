@@ -14,7 +14,7 @@ const nonHomeRoutes = [
   '/privacidade',
 ] as const
 
-const homeHeading = 'Explore ready-to-use agents and flows'
+const homeHeading = 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 async function waitForActiveServiceWorker(page: Page): Promise<void> {
   await expect

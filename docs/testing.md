@@ -215,6 +215,7 @@ hard-coded locale strings.
 | Site UI a11y smoke | `Header`, `Footer`, `WebsiteSettingsControl`, `AccessibilityPage` |
 | Dark-mode contrast tokens | `test/dark-mode-contrast.test.mjs` |
 | HomePage a11y smoke | `HomePage` |
+| Home CLI quickstart copy | `HomeCliQuickstartSection.test.tsx` |
 | Package pages | `PackagesIndexPage`, `NamespacePackagesPage`, `PackageDetailPage` |
 
 ### Prioritized backlog

@@ -10,8 +10,15 @@ test.describe('Home catalog', () => {
     await waitForCatalogSettled(page)
 
     await expect(
-      page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
+      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
     ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).toBeVisible()
+    await expect(page.getByTestId('home-cli-init-terminal')).toContainText(
+      'npx agents-repo init --targets github-copilot claude-code cursor openai-codex',
+    )
+    await expect(page.getByTestId('home-cli-install-terminal')).toContainText(
+      'npx agents-repo install agents-repo/some-package',
+    )
     await expect(page.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeVisible()
     const viewAllPackagesLinks = page.getByRole('link', { name: 'View all packages' })
     await expect(viewAllPackagesLinks).toHaveCount(2)
@@ -21,6 +28,24 @@ test.describe('Home catalog', () => {
     await expect(page.getByRole('heading', { name: 'sample-agent' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Download sample-agent' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'CLI install for sample-agent' })).toBeVisible()
+  })
+
+  test('scrolls to the CLI quickstart from a hash URL and the hero control', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 360 })
+    await page.goto('/#cli-quickstart')
+
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).toBeInViewport()
+
+    await page.goto('/')
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).not.toBeInViewport()
+
+    await page.getByRole('link', { name: 'Use the CLI' }).click()
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).toBeInViewport()
+
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).not.toBeInViewport()
+    await page.getByRole('link', { name: 'Use the CLI' }).click()
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).toBeInViewport()
   })
 
   test('keeps the CLI install popover inside the viewport', async ({ page }) => {

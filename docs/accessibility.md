@@ -55,9 +55,10 @@ Every routed page should:
 
 ### Route scroll
 
-`RouteScrollManager` owns window scroll on client-side route changes. Focusing
-`#main-content` does not reset scroll: the app-shell `main` is persistent and
-tall, so `focus()` uses a nearest policy.
+`RouteScrollManager` owns window scroll on client-side route changes and on the
+initial client load when the URL includes a hash. Focusing `#main-content` does
+not reset scroll: the app-shell `main` is persistent and tall, so `focus()` uses
+a nearest policy.
 
 - Link clicks and `navigate()` to a different pathname start at the top of the
   window (`behavior: instant`).
@@ -69,10 +70,12 @@ tall, so `focus()` uses a nearest policy.
 - Same-path query changes (catalog search, filters, pagination, download
   period) do not move the window. Catalog pagination still scrolls and focuses
   `#catalog-results-summary`.
-- A hash on a new pathname or a same-path hash change scrolls to the matching
-  element when it exists; otherwise the window stays at the top. Same-path hash
+- A hash on the initial client load, a new pathname, or a same-path hash change
+  scrolls to the matching element when it exists; otherwise the window stays at
+  the top. Initial load without a hash does not move the window. Same-path hash
   changes are not treated as query-only no-ops. Hash restore on Back/Forward
-  uses the saved offset, not the fragment.
+  uses the saved offset, not the fragment. Home's **Use the CLI** control also
+  re-applies the `#cli-quickstart` scroll when the hash is already present.
 - Lazy routes wait until `main` is not `aria-busy` before restoring or
   applying a hash target.
 

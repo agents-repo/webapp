@@ -191,7 +191,8 @@ can be tracked as a separate issue.
 `navigation.spec.ts` asserts that a header click to another pathname resets
 `window.scrollY` to 0. Same-path catalog pagination stays in
 `catalog-pagination.spec.ts` and must keep moving to `#catalog-results-summary`,
-not the window top.
+not the window top. `home-catalog.spec.ts` asserts that `/#cli-quickstart` and
+Home's **Use the CLI** control bring the CLI heading into view.
 
 ## E2E backlog (deferred)
 

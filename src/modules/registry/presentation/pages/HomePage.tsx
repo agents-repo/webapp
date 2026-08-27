@@ -1,11 +1,16 @@
 import type { ReactNode } from 'react'
-import { Badge, Col, Container, Row, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import brandLogo from '../../../../assets/logo/agents-repo-logo.svg'
 import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
 import { getPackagesIndexPath } from '../../application/packageSiteRoutes'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { CatalogResultsPanel } from '../components/PackageCatalogResults'
+import HomeCliQuickstartSection from '../components/homeLanding/HomeCliQuickstartSection'
+import HomeContributeSection from '../components/homeLanding/HomeContributeSection'
+import HomeHeroSection from '../components/homeLanding/HomeHeroSection'
+import HomeHowItWorksSection from '../components/homeLanding/HomeHowItWorksSection'
+import HomeSupportedToolsSection from '../components/homeLanding/HomeSupportedToolsSection'
+import HomeUseInChatSection from '../components/homeLanding/HomeUseInChatSection'
+import HomeValueSection from '../components/homeLanding/HomeValueSection'
 import { useHomeHeroSearch } from './useHomeHeroSearch'
 
 interface HomePageProps {
@@ -23,30 +28,12 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
 
   return (
     <>
-      <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
-        <Container>
-          <Row className="justify-content-center">
-            <Col xl={8} className="text-center">
-              <Stack gap={3} className="align-items-center">
-                <img src={brandLogo} width="72" height="72" alt="Agents Repo brand symbol" />
-                <Badge bg="primary" pill>
-                  Curated package registry
-                </Badge>
-                <h1 className="display-5 fw-semibold mb-0">
-                  Explore ready-to-use agents and flows
-                </h1>
-                <p className="lead fs-6 text-body-secondary mb-0">
-                  Browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex—ready
-                  for direct use in your projects, with quick metadata from the registry index.
-                </p>
-                <div className={`w-100 hero-search${page.stickySearch ? ' d-lg-none' : ''}`}>
-                  {page.searchControl}
-                </div>
-              </Stack>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+      <HomeHeroSection searchControl={page.searchControl} stickySearch={page.stickySearch} />
+      <HomeSupportedToolsSection />
+      <HomeValueSection />
+      <HomeHowItWorksSection />
+      <HomeCliQuickstartSection />
+      <HomeUseInChatSection />
 
       <CatalogResultsPanel
         resultsHeading="Most downloaded in the last year"
@@ -74,6 +61,8 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
         }
         emptyMatchMessage="No packages are available in the catalog yet."
       />
+
+      <HomeContributeSection />
     </>
   )
 }

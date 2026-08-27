@@ -86,6 +86,23 @@ describe('RouteScrollManager', () => {
     expect(scrollTo).not.toHaveBeenCalled()
   })
 
+  it('scrolls to a hash target on the initial render', async () => {
+    const { scrollTo } = installScrollMock()
+    const scrollIntoView = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      writable: true,
+      value: scrollIntoView,
+    })
+
+    renderWithProviders(<RouteScrollHarness />, { initialEntries: ['/docs#section'] })
+
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start', behavior: 'instant' })
+    })
+    expect(scrollTo).not.toHaveBeenCalled()
+  })
+
   it('resets window scroll on a PUSH pathname change', async () => {
     const { scrollTo, setScrollY } = installScrollMock()
     const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
