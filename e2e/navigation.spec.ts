@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures/registry-mock'
+import { waitForCatalogSettled } from './fixtures/catalog-load'
 
 const routeHeadings = [
   { path: '/', heading: 'Explore ready-to-use agents and flows' },
@@ -50,5 +51,18 @@ test.describe('Navigation', () => {
     await page.goto('/repositories/foo/bar')
 
     await expect(page.getByRole('heading', { name: 'Repositories', level: 1 })).toBeVisible()
+  })
+
+  test('resets window scroll when navigating to another page', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 360 })
+    await page.goto('/')
+    await waitForCatalogSettled(page)
+    await page.getByRole('heading', { name: 'sample-agent' }).scrollIntoViewIfNeeded()
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+
+    await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Packages' }).click()
+
+    await expect(page.getByRole('heading', { name: 'All packages', level: 1 })).toBeVisible()
+    await expect.poll(async () => page.evaluate(() => window.scrollY)).toBe(0)
   })
 })

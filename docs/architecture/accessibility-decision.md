@@ -21,7 +21,9 @@ automated regression checks in pull request CI.
    - Lighthouse CI + `pa11y-ci` via `npm run a11y:ci` (local validation only)
 4. **Public transparency:** HTML Accessibility Conformance Report at `/accessibility`,
    linked from the footer Legal column only
-5. **SPA behavior:** Skip link, per-route `document.title`, route announcer with focus on `#main-content`
+5. **SPA behavior:** Skip link, per-route `document.title`, route announcer
+   with focus on `#main-content`, and window scroll reset/restore on pathname
+   changes
 
 ## Rationale
 

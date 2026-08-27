@@ -2,6 +2,7 @@ import { lazy, Suspense, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AnalyticsRouteTracker from './modules/site/application/analytics/AnalyticsRouteTracker'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
+import RouteScrollManager from './modules/site/application/accessibility/RouteScrollManager'
 import RouteDocumentTitle from './modules/site/application/accessibility/RouteDocumentTitle'
 import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
@@ -123,6 +124,7 @@ function App() {
         <div className="app-shell">
           <SkipLink />
           <RouteAnnouncer />
+          <RouteScrollManager />
           <RouteDocumentTitle />
           <AnalyticsRouteTracker />
           <SiteHead />

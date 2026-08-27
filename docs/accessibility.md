@@ -16,6 +16,7 @@ Reusable helpers live in `src/modules/site/application/accessibility/`:
 | --- | --- |
 | `SkipLink.tsx` | App shell; first keyboard focus target |
 | `RouteAnnouncer.tsx` | Announces route changes and focuses `#main-content` |
+| `RouteScrollManager.tsx` | Resets or restores window scroll on pathname changes |
 | `RouteDocumentTitle.tsx` | Sets `document.title` on pathname change for all routes |
 | `useDocumentTitle.ts` | Optional title helper for isolated views or tests |
 | `sitePageMeta.ts` | Route titles and announcement labels |
@@ -51,6 +52,29 @@ Every routed page should:
    package page, the **Downloads** section lists each window label and count on
    the same line.
 7. Use `externalLinkAccessibleName()` for links that open in a new tab
+
+### Route scroll
+
+`RouteScrollManager` owns window scroll on client-side route changes. Focusing
+`#main-content` does not reset scroll: the app-shell `main` is persistent and
+tall, so `focus()` uses a nearest policy.
+
+- Link clicks and `navigate()` to a different pathname start at the top of the
+  window (`behavior: instant`).
+- Browser Back and Forward restore the last saved `window.scrollY` for that
+  history entry (`location.key`). Positions are snapshotted when leaving a
+  history entry (and on `pagehide`), kept in memory for the tab, and mirrored to
+  `sessionStorage` when available. The manager sets `history.scrollRestoration`
+  to `manual` so native restoration cannot race the custom POP restore.
+- Same-path query changes (catalog search, filters, pagination, download
+  period) do not move the window. Catalog pagination still scrolls and focuses
+  `#catalog-results-summary`.
+- A hash on a new pathname or a same-path hash change scrolls to the matching
+  element when it exists; otherwise the window stays at the top. Same-path hash
+  changes are not treated as query-only no-ops. Hash restore on Back/Forward
+  uses the saved offset, not the fragment.
+- Lazy routes wait until `main` is not `aria-busy` before restoring or
+  applying a hash target.
 
 ### Header navigation
 

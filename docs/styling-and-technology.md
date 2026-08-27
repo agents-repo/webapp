@@ -138,8 +138,13 @@ chunks below Vite's 500 kB warning threshold:
 chunks fetch and marks the app-shell `main` with `aria-busy` during loading.
 `RouteAnnouncer` defers navigation announcements until route content is ready. A
 persistent `main#main-content` in `src/App.tsx` wraps routed content so focus
-management and the skip link stay stable during lazy loads. `RouteDocumentTitle`
-updates the browser tab title on pathname change before lazy chunks resolve.
+management and the skip link stay stable during lazy loads. `RouteScrollManager`
+resets window scroll on pathname PUSH/REPLACE and restores it on Back/Forward
+(`history.scrollRestoration` is `manual`; positions live in memory and
+`sessionStorage`); same-path query updates are left to page logic (for example
+catalog pagination).
+`RouteDocumentTitle` updates the browser tab title on pathname change before lazy
+chunks resolve.
 `LazyRouteErrorBoundary` shows a recoverable fallback when a lazy chunk fails to
 load. The service worker caches same-origin
 script assets with `StaleWhileRevalidate`; additional hashed chunks are expected
