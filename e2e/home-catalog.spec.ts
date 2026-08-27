@@ -10,8 +10,15 @@ test.describe('Home catalog', () => {
     await waitForCatalogSettled(page)
 
     await expect(
-      page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
+      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
     ).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Install with the CLI' })).toBeVisible()
+    await expect(page.getByTestId('home-cli-init-terminal')).toContainText(
+      'npx agents-repo init --targets cursor github-copilot',
+    )
+    await expect(page.getByTestId('home-cli-install-terminal')).toContainText(
+      'npx agents-repo install agents-repo/some-package',
+    )
     await expect(page.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeVisible()
     const viewAllPackagesLinks = page.getByRole('link', { name: 'View all packages' })
     await expect(viewAllPackagesLinks).toHaveCount(2)

@@ -7,7 +7,8 @@ section: Catalog
 
 ## On the website
 
-1. Open [Home](/) and search (search navigates to [Packages](/packages)) or browse the most-downloaded slice.
+1. Open [Home](/) to read what Agents Repo is, copy CLI install commands, search
+   (search navigates to [Packages](/packages)), or browse the most-downloaded slice.
 2. Open [Packages](/packages) to search, sort by download window, and filter by category, tags, install
    targets, status, cost band, or Use in chat. Filters apply to the website
    catalog only; they are not CLI search flags.

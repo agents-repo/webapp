@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures/registry-mock'
 
-const homeHeading = 'Explore ready-to-use agents and flows'
+const homeHeading = 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 function primaryNav(page: Page) {
   return page.getByRole('navigation', { name: 'Primary' })

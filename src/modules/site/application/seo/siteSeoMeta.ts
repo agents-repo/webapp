@@ -43,7 +43,7 @@ export interface SiteSeoMeta {
 export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
   [siteRoutes.home]: {
     description:
-      'Browse agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex from the open registry.',
+      'Find curated agents and flows for Copilot, Cursor, Claude Code, and Codex. Install with the CLI or try instructions in chat.',
     canonicalPath: siteRoutes.home,
   },
   [siteRoutes.packages]: {

@@ -2,7 +2,7 @@ import { test, expect } from './fixtures/registry-mock'
 import { waitForCatalogSettled } from './fixtures/catalog-load'
 
 const routeHeadings = [
-  { path: '/', heading: 'Explore ready-to-use agents and flows' },
+  { path: '/', heading: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' },
   { path: '/packages', heading: 'All packages' },
   { path: '/about', heading: 'About' },
   { path: '/community', heading: 'Community' },
@@ -28,7 +28,7 @@ test.describe('Navigation', () => {
     await page.goto('/unknown-route')
 
     await expect(
-      page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
+      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
     ).toBeVisible()
   })
 
@@ -43,7 +43,7 @@ test.describe('Navigation', () => {
 
     await expect(page.getByRole('heading', { name: 'Package not found', level: 1 })).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: 'Explore ready-to-use agents and flows' }),
+      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
     ).toHaveCount(0)
   })
 

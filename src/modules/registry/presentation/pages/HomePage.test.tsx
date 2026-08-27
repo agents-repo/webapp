@@ -13,6 +13,11 @@ import {
 } from '../../../../test/fixtures/homePageTestFixtures'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
+import {
+  CLI_INIT_COMMAND,
+  CLI_INSTALL_COMMAND,
+  HOME_HERO_HEADING,
+} from '../components/homeLanding/homeLandingCopy'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -83,7 +88,7 @@ describe('HomePage catalog loading', () => {
     renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
     expect(await screen.findByRole('heading', { name: 'page-agent-01' })).toBeInTheDocument()
-    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(6)
+    expect(screen.getAllByRole('heading', { name: /page-agent-/ })).toHaveLength(6)
     expect(screen.queryByRole('navigation', { name: 'Package results pages' })).not.toBeInTheDocument()
   })
 
@@ -258,3 +263,45 @@ describe('HomePage package card owner', () => {
     expect(screen.queryByRole('button', { name: 'Use in chat for sample-agent' })).not.toBeInTheDocument()
   })
 })
+
+describe('HomePage landing sections', () => {
+  afterEach(() => {
+    cleanup()
+    vi.clearAllMocks()
+  })
+
+  it('renders the hero, explainer blocks, CLI quickstart, and contribute CTA', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
+
+    expect(await screen.findByRole('heading', { level: 1, name: HOME_HERO_HEADING })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Browse packages' })).toHaveAttribute('href', '/packages/')
+    expect(screen.getByRole('link', { name: 'Use the CLI' })).toHaveAttribute('href', '/#cli-quickstart')
+    expect(screen.getByRole('heading', { name: 'Works with your AI coding tools' })).toBeInTheDocument()
+    expect(screen.getByText('GitHub Copilot')).toBeInTheDocument()
+    expect(screen.getByText('OpenAI Codex')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'What you gain' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'How it works' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Install with the CLI' })).toBeInTheDocument()
+    expect(screen.getByTestId('home-cli-init-terminal')).toHaveTextContent(CLI_INIT_COMMAND)
+    expect(screen.getByTestId('home-cli-install-terminal')).toHaveTextContent(CLI_INSTALL_COMMAND)
+    expect(screen.getByRole('link', { name: 'Installing packages' })).toHaveAttribute(
+      'href',
+      '/docs/installing-packages/',
+    )
+    expect(screen.getByRole('heading', { name: 'Use in chat without installing' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Browse chat-ready packages' })).toHaveAttribute(
+      'href',
+      '/packages/?chatWeb=1',
+    )
+    expect(screen.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Help grow the catalog' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Submit a package' })).toHaveAttribute(
+      'href',
+      '/docs/submitting-a-package/',
+    )
+    expect(screen.getByRole('link', { name: 'Help Us' })).toHaveAttribute('href', '/help-us/')
+  })
+})
+

@@ -5,11 +5,13 @@ order: 30
 section: Catalog
 ---
 
-The catalog on [Home](/) shows a first slice of packages most downloaded in
-the last year, with **View all packages** links to the crawlable
-[Packages](/packages) index (one in the results heading row, and a larger
-button below the package cards or empty-catalog message). Catalog schema
-version is shown in
+[Home](/) is an end-user landing page: a value-focused hero with search,
+explainer blocks (supported tools, what you gain, how it works), a copyable CLI
+quickstart, a Use in chat callout, then a first slice of packages most
+downloaded in the last year, and a short contribute CTA. **View all packages**
+links go to the crawlable [Packages](/packages) index (one in the results
+heading row, and a larger button below the package cards or empty-catalog
+message). Catalog schema version is shown in
 **Website settings**, not on Home or Packages listings. Each card shows metadata, status, supported
 install targets, download counts, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). **View** and the package title open the in-app
 package page. **View on GitHub** is on that page. On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
