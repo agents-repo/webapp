@@ -43,5 +43,6 @@ predictable place for new code.
 
 ## Related Docs
 
+- [Architecture overview](../ARCHITECTURE.md)
 - [Styling and technology decisions](../styling-and-technology.md)
 - [Development workflow](../development.md)

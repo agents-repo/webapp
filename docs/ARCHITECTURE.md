@@ -9,25 +9,33 @@ UI behavior details live in [development.md](development.md#current-ui-state).
 | Module | Path | Responsibility |
 | --- | --- | --- |
 | `registry` | `src/modules/registry/` | Catalog fetch/cache, package pages, download stats |
-| `site` | `src/modules/site/` | App shell, routing, docs pages, settings, accessibility helpers |
+| `site` | `src/modules/site/` | Shell, docs, settings, and site route helpers |
+
+`src/App.tsx` composes React Router for both modules: site pages use lazy-loaded
+components from `site`; package list and detail routes mount registry page
+components. Package paths (`/packages/*`) are defined in `siteRoutes.ts` but
+wired in `App.tsx`, not in a registry routes module.
 
 ## Entry points
 
 | Area | Path |
 | --- | --- |
 | App bootstrap | `src/main.tsx`, `src/App.tsx` |
-| Site routes | `src/modules/site/presentation/routes/siteRoutes.tsx` |
-| Registry routes | `src/modules/registry/presentation/` (package list/detail) |
+| Site route constants | `src/modules/site/presentation/routes/siteRoutes.ts` |
+| Registry pages | `src/modules/registry/presentation/pages/` |
 | Global styles | `src/index.scss`, `src/App.scss`, `src/styles/bootstrap-theme.scss` |
-| SEO / Pages build | `scripts/build-pages.mjs`, `vite.config.ts` |
+| SEO / Pages build | `scripts/prepare-pages-dist.mjs`, `vite.config.ts` |
 
 ## Layering (per module)
 
+`registry` uses all four layers. `site` has `application/` and `presentation/`
+only (no `domain/` or `infrastructure/` folders).
+
 ```text
-presentation/  → React components, routes
-application/   → hooks, orchestration, selectors
-domain/        → types, pure rules
-infrastructure/→ fetch adapters, IndexedDB, external APIs
+presentation/  → React components, page modules
+application/   → hooks, orchestration, selectors, pure helpers
+domain/        → types, pure rules (registry only today)
+infrastructure/→ fetch adapters, IndexedDB, external APIs (registry only today)
 ```
 
 ## Decision records
