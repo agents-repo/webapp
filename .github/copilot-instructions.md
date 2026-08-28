@@ -117,7 +117,7 @@ incomplete.
 ## Pull Requests
 
 Use `.github/pull_request_template.md`. See
-[CONTRIBUTING.md — Required Workflow](.github/CONTRIBUTING.md#required-workflow).
+[CONTRIBUTING.md — Required Workflow](CONTRIBUTING.md#required-workflow).
 
 ## Required Workflow (Task Start)
 
