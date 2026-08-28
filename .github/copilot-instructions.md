@@ -116,146 +116,32 @@ incomplete.
 
 ## Pull Requests
 
-Use `.github/pull_request_template.md` for PR descriptions. Summaries should be
-concrete about:
-
-- what changed
-- why it changed
-- how it was validated
-- any follow-up work that remains
-
-`## Related Issues` MUST include a tracking reference: `Closes #<issue-number>`
-for standard tasks, or the security-advisory format defined in the **Workflow
-exceptions** section of `.github/CONTRIBUTING.md` when applicable.
-Every PR targeting `main` MUST include a tracking reference.
+Use `.github/pull_request_template.md`. See
+[CONTRIBUTING.md — Required Workflow](.github/CONTRIBUTING.md#required-workflow).
 
 ## Required Workflow (Task Start)
 
-Before implementation, agents MUST:
+Follow `.github/CONTRIBUTING.md` **Required Workflow** (issue form → branch →
+draft PR before implementation). Agents MUST NOT push to `main`, merge PRs into
+`main`, or mark pull requests ready for review.
 
-1. Open a tracking issue (matching issue form when available).
-2. Create a branch named `<prefix>/<issue-number>-<slug>`.
-3. Push the branch and open a draft pull request before implementation commits.
-   Pull requests MUST be created as drafts (`gh pr create --draft`). In
-   `## Related Issues`, include `Closes #<issue-number>` for standard tasks, or
-   follow the security-advisory format defined in the **Workflow exceptions**
-   section of `.github/CONTRIBUTING.md` when applicable. GitHub cannot open a
-   PR when head and base are identical; push a scaffolding commit on the task
-   branch first if needed (see `.github/CONTRIBUTING.md`).
+## Path-scoped Copilot instructions
 
-Agents MAY push additional commits to the task branch when requested.
-Agents MUST NOT push to `main`, merge PRs into `main`, or mark pull requests
-ready for review.
-After validation, the developer manually marks the pull request ready for
-review; agents MUST NOT perform that step.
-Agents MUST complete requested implementation work on the task branch, then
-hand off. Ready-for-review and merge are for a human maintainer.
-
-Task start in this organization authorizes workflow scaffolding (issue,
-branch, draft PR) even when generic tooling rules defer commits until
-requested. Repo-level agent instructions govern this workspace and supersede
-generic commit or pull request timing rules for workflow setup steps.
+GitHub Copilot loads norms from `.github/instructions/*.instructions.md` when
+`applyTo` matches edited paths. Do not duplicate those bodies here.
 
 ## Default Branch Integration (Agents)
 
-- AI agents and coding assistants MUST NOT merge pull requests into `main`
-  (including `gh pr merge`, squash/rebase merge, or local `git merge` followed
-  by push).
-- AI agents MUST NOT push commits directly to `main`.
-- Integration to `main` is a human-only, manual step performed by maintainers
-  after review. All contributors MUST deliver changes to `main` only through
-  merged pull requests.
-- Agents MUST complete requested implementation work on the task branch, then
-  hand off and state that merge is for a human maintainer.
+Agents MUST NOT merge or push to `main`. Integration is human-only after review.
 
-## Issue and PR Template Enforcement
+## GitHub Communication (gh CLI)
 
-When opening tracking issues, agents MUST use the matching category form in
-`.github/ISSUE_TEMPLATE/`:
-
-- bug or inconsistency: `.github/ISSUE_TEMPLATE/bug-inconsistency.yml`
-- spec change: `.github/ISSUE_TEMPLATE/spec-change.yml`
-- feature proposal: `.github/ISSUE_TEMPLATE/feature-proposal.yml`
-- task or chore: `.github/ISSUE_TEMPLATE/task-chore.yml`
-
-Documentation-only work uses the task/chore issue category and the `docs/`
-branch prefix.
-
-When opening a pull request, the agent MUST follow
-`.github/pull_request_template.md`.
-
-The agent MUST report template usage in its final PR handoff summary,
-including which issue form was used and confirmation that the PR body
-follows `.github/pull_request_template.md`.
-
-If the available tool path cannot programmatically apply a template, the
-agent MUST explicitly state that limitation and MUST include all required
-sections from the intended template in the issue or PR body.
-
-Branch names MUST follow `<prefix>/<issue-number>-<slug>`, where `<slug>` is
-short lowercase kebab-case.
-
-Use the prefix that matches the work category:
-
-- bug or inconsistency: `fix/`
-- spec change: `spec/`
-- feature proposal: `feat/`
-- task or chore: `chore/`
-- documentation-only work: `docs/`
-
-See `.github/CONTRIBUTING.md` **Branch Naming** and the organization
-[branch prefix reference](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#branch-prefix-reference).
-Branch prefix categorizes work; conventional **commit** (or squash-merge)
-prefix determines automated release bumps.
-
-## Commit Message Convention
-
-See `.github/CONTRIBUTING.md` for conventional commit prefixes and
-semantic-release mapping. Agents MUST follow that convention when creating
-commits.
-
-## GitHub Communication Method (gh CLI Preferred)
-
-For GitHub communication in this repository, agents and contributors SHOULD use
-`gh` CLI as the preferred interface for issue and pull request operations.
-
-Preferred command patterns:
-
-- view issue context: `gh issue view <number> --repo agents-repo/webapp`
-- update issue title/body:
-  `gh issue edit <number> --repo agents-repo/webapp --title "..." --body-file <file>`
-- create issue:
-  `gh issue create --repo agents-repo/webapp --title "..." --body-file <file>`
-- create draft PR (MUST use `--draft`):
-  `gh pr create --repo agents-repo/webapp --draft --title "..." --body-file <file>`
-- inspect PR status:
-  `gh pr view <number> --repo agents-repo/webapp --json state,url,title`
-
-For long issue or PR bodies, agents MUST prefer `--body-file` over inline
-quoted text to avoid shell escaping and truncation issues.
-
-If `gh` is unavailable in a task environment, agents MAY use the available
-tooling path, but MUST explicitly note that limitation in the handoff summary.
+Prefer `gh` for issues and draft PRs. See `.github/CONTRIBUTING.md`.
 
 ## Cursor Cloud environment
 
-This repository commits `.cursor/environment.json`. Cloud Agent builds run
-`.cursor/install.sh` (nvm Node `24.18.0` from `.nvmrc`, npm `12.0.1` from
-`packageManager`, then `HUSKY=0 npm ci`). `npm run env:check` requires the
-exact Node patch.
+See [agents-repo/.github docs/cursor-cloud.md](https://github.com/agents-repo/.github/blob/main/docs/cursor-cloud.md).
+Vite dev server: `webapp-dev` terminal (`http://localhost:5173`). Run
+`npx playwright install chromium` when E2E is needed.
 
-`/exec-daemon/node` (Node 22) may precede nvm on `PATH`. Before running
-repo scripts, prepend the pinned Node bin:
-
-```bash
-export NVM_DIR="$HOME/.nvm"
-. "$NVM_DIR/nvm.sh"
-nvm use
-export PATH="$(dirname "$(nvm which 24.18.0)"):$PATH"
-```
-
-Do not start long-running servers from `install`. The Vite dev server is
-configured as the `webapp-dev` terminal (`http://localhost:5173`). The
-catalog is fetched from `registry.agents-repo.org`; Playwright browsers are
-not installed during Cloud bootstrap (run `npx playwright install chromium`
-when a task needs E2E).
+After editing `.github/copilot-instructions.md`, run `npm run sync:ide-instructions`.
