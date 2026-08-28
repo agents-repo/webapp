@@ -19,6 +19,7 @@ Mandatory for all changes:
 - `README.md`
 - `docs/development.md`
 - `docs/testing.md`
+- `docs/ARCHITECTURE.md`
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
@@ -82,8 +83,10 @@ Before handing off work, run the relevant subset of:
 5. `npm run build:pages`
 6. `npm run test:crawl-files` (after `build:pages`; see `docs/seo.md`)
 
-For UI or accessibility changes, also run `npm run test:a11y`. See
-`docs/testing.md` and `docs/accessibility.md`.
+For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci`
+after `build:pages`. For routing, modals, or registry integration, also run
+`npm run test:e2e` locally (requires `npx playwright install chromium` once per
+machine). See `docs/testing.md`, `docs/accessibility.md`, and `docs/e2e-testing.md`.
 
 If a command cannot be run, explicitly say why in the handoff.
 

@@ -31,6 +31,10 @@ npm install
 npx playwright install chromium
 ```
 
+**Cursor Cloud:** Playwright browsers are not installed during workspace
+bootstrap. When a task needs E2E, run `npx playwright install chromium` in the
+webapp clone before `npm run test:e2e`.
+
 Without the browser install step, `npm run test:e2e` fails with an executable
 not found error.
 
