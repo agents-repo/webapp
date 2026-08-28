@@ -201,6 +201,15 @@ on CLI releases.
 
 ## Current UI State
 
+Feature-area index (details in bullets below):
+
+- [Home and catalog landing](#current-ui-state) — popular packages, search to `/packages`
+- [Packages index and namespace listings](#current-ui-state) — filters, pagination, sort
+- [Package detail](#current-ui-state) — latest-only detail page, GitHub link
+- [Header and navigation](#current-ui-state) — color mode, install app, settings
+- [Docs and site pages](#current-ui-state) — in-app documentation routes
+- [PWA and offline](#current-ui-state) — service worker, install prompts
+
 - The landing page shows a first slice of packages most downloaded in the last
   year (with catalog loading and source chrome) and **View all packages**
   links to `/packages`: one in the results heading row and a larger CTA below

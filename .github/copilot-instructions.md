@@ -19,6 +19,7 @@ Mandatory for all changes:
 - `README.md`
 - `docs/development.md`
 - `docs/testing.md`
+- `docs/ARCHITECTURE.md`
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 

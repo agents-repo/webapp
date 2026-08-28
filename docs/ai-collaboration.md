@@ -34,12 +34,20 @@ Mandatory for all changes:
 - `.github/pull_request_template.md`
 - `README.md`
 - `docs/development.md`
+- `docs/testing.md`
+- `docs/ARCHITECTURE.md`
 
 Mandatory before structural, architectural, styling, or technology stack
 changes:
 
 - `docs/styling-and-technology.md`
 - `docs/architecture/ddd-decision.md`
+- `docs/architecture/accessibility-decision.md`
+
+Mandatory for UI or accessibility changes:
+
+- `docs/accessibility.md`
+- `docs/e2e-testing.md` (when changing routing, modals, or registry integration)
 
 If a change alters setup, validation, contributor workflow, architecture,
 project structure, styling model, or technology/tooling choices, agents MUST

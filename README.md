@@ -283,6 +283,7 @@ repository, update the corresponding page(s) in
 ## Project Docs
 
 - Development workflow: [docs/development.md](docs/development.md)
+- Architecture map: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Testing guide: [docs/testing.md](docs/testing.md)
 - Deployment and Pages: [docs/deployment.md](docs/deployment.md)
 - Presentation slides: [docs/slides/README.md](docs/slides/README.md)

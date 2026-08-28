@@ -9,7 +9,8 @@ Accepted — issue #54
 The Agents Repo webapp is a React single-page application using React-Bootstrap.
 Issue #54 requires WCAG 2.2 Level AA conformance, reusable accessibility
 patterns, contributor documentation, a public accessibility statement, and
-automated regression checks in pull request CI.
+automated vitest-axe smoke tests in PR baseline CI (Lighthouse/pa11y remain
+local-only via `npm run a11y:ci`).
 
 ## Decision
 

@@ -62,6 +62,8 @@ List affected paths or areas:
 - [ ] `npm run typecheck`
 - [ ] `npm run build:pages`
 - [ ] `npm run test:crawl-files`
+- [ ] UI or a11y changes: `npm run test:a11y` and `npm run a11y:ci` (after `build:pages`)
+- [ ] Routing, modals, or registry integration: `npm run test:e2e`
 - [ ] Docs were updated where behavior or workflow changed.
 - [ ] Pre-ready self-review completed per [Pre-ready agent handoff][org-pre-ready]
   (draft PR updated with validation evidence).
