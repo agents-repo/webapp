@@ -1,3 +1,4 @@
+import '../modules/site/application/docs/docsPageMeta.browser.ts'
 import '@testing-library/jest-dom/vitest'
 import * as matchers from 'vitest-axe/matchers'
 import { afterEach, beforeAll, expect } from 'vitest'

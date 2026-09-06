@@ -1,3 +1,4 @@
+import './register-docs-page-meta.node.ts';
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {

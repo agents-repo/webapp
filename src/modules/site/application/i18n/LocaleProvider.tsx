@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import i18n from './i18n.ts'
 import { detectBrowserLocale, readNavigatorLanguages } from './detectBrowserLocale.ts'
@@ -38,16 +38,16 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
     document.documentElement.lang = getLocaleDefinition(locale).htmlLang
   }, [locale])
 
-  const setLocale = (nextLocale: AppLocale) => {
+  const setLocale = useCallback((nextLocale: AppLocale) => {
     persistLocale(nextLocale)
-  }
+  }, [])
 
   const contextValue = useMemo(
     () => ({
       locale,
       setLocale,
     }),
-    [locale],
+    [locale, setLocale],
   )
 
   return <LocaleContext.Provider value={contextValue}>{children}</LocaleContext.Provider>

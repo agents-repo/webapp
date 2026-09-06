@@ -5,7 +5,7 @@ import {
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
 import { parseLocaleFromPathname } from '../i18n/localePath.ts'
-import { getDocBySlug } from '../docs/docsManifest.ts'
+import { getDocPageMeta } from '../docs/docsPageMeta.ts'
 import {
   isUnlistedDocDetailPath,
   parseDocSlugFromPathname,
@@ -81,7 +81,7 @@ export function getSitePageMeta(
 
   const docSlug = parseDocSlugFromPathname(normalizedPath)
   if (docSlug) {
-    const doc = getDocBySlug(docSlug, locale)
+    const doc = getDocPageMeta(docSlug, locale)
     if (doc) {
       return {
         title: doc.title,

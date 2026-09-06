@@ -1,7 +1,7 @@
-import enSeo from '../../../../locales/en/seo.json'
-import esSeo from '../../../../locales/es/seo.json'
-import ptBrSeo from '../../../../locales/pt-BR/seo.json'
-import ptPtSeo from '../../../../locales/pt-PT/seo.json'
+import enSeo from '../../../../locales/en/seo.json' with { type: 'json' }
+import esSeo from '../../../../locales/es/seo.json' with { type: 'json' }
+import ptBrSeo from '../../../../locales/pt-BR/seo.json' with { type: 'json' }
+import ptPtSeo from '../../../../locales/pt-PT/seo.json' with { type: 'json' }
 import { siteRoutes, type SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
 import type { AppLocale } from '../i18n/supportedLocales.ts'
 import { defaultAppLocale } from '../i18n/supportedLocales.ts'

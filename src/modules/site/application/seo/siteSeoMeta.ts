@@ -8,7 +8,7 @@ import {
 import {
   getDocDetailPath,
 } from '../docs/docsCatalog.ts'
-import { getDocBySlug } from '../docs/docsManifest.ts'
+import { getDocPageMeta } from '../docs/docsPageMeta.ts'
 import { isUnlistedDocDetailPath, parseDocSlugFromPathname } from '../docs/docsNestedSiteRoutes.ts'
 import {
   getRepositoryDetailPath,
@@ -132,7 +132,7 @@ export function getSiteSeoMeta(
 
   const docSlug = parseDocSlugFromPathname(normalizedPath)
   if (docSlug) {
-    const doc = getDocBySlug(docSlug, locale)
+    const doc = getDocPageMeta(docSlug, locale)
     if (doc) {
       return {
         description: doc.description,
