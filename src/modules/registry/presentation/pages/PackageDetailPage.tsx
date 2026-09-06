@@ -156,7 +156,7 @@ function PackageDetailMetadataCard(options: {
   const license = metadata?.license
 
   return (
-    <Card className="h-100 border-secondary-subtle">
+    <Card className="flex-fill w-100 border-secondary-subtle">
       <Card.Body>
         <h2 className="h4">Metadata</h2>
         <dl className="row mb-0 small">
@@ -187,7 +187,7 @@ function PackageDetailVersionsCard(options: {
   const { detail, isDetailLoading } = options
 
   return (
-    <Card className="h-100 border-secondary-subtle">
+    <Card className="flex-fill w-100 border-secondary-subtle">
       <Card.Body>
         <h2 className="h4">Versions</h2>
         {detail?.versions.entries.length ? (
@@ -288,16 +288,16 @@ function PackageDetailLoaded(options: {
           />
 
           <Row className="g-3">
-            <Col md={6}>
+            <Col md={6} className="d-flex">
               <PackageDetailMetadataCard catalogPackage={catalogPackage} detail={detail} />
             </Col>
-            <Col md={6}>
-              <Row className="g-3">
-                <Col xs={12} md={6}>
+            <Col md={6} className="d-flex">
+              <Row className="g-3 flex-fill w-100">
+                <Col xs={12} md={6} className="d-flex">
                   <PackageDetailVersionsCard detail={detail} isDetailLoading={isDetailLoading} />
                 </Col>
-                <Col xs={12} md={6}>
-                  <Card className="h-100 border-secondary-subtle">
+                <Col xs={12} md={6} className="d-flex">
+                  <Card className="flex-fill w-100 border-secondary-subtle">
                     <Card.Body>
                       <PackageDownloadStatsSummary
                         stats={getPackageDownloadStats(
