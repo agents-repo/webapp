@@ -17,6 +17,8 @@ Typical project fields:
 | `packages` | Map of package id → semver range |
 | Registry URL / ref | Where to fetch the catalog (org default uses registry-proxy + `v2.x`) |
 
+The `v2.x` ref tracks published catalog tags (daily batch for package changes), not every `main` commit. See [How the registry works](/docs/how-the-registry-works).
+
 Use `agents-repo init` and `add-target` to manage targets. Inspect with `agents-repo targets`.
 
 ## agents-lock.json

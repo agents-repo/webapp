@@ -149,7 +149,11 @@ npm run package:validate-artifacts -- --package <namespace>/<package-id> --versi
 
 ## 7. Ready for review and merge
 
-Mark the pull request **ready for review** only after local validation and CI pass. Maintainers squash-merge with **`feat(package): …`** for new packages or versions, or **`fix(package): …`** for corrections so registry release tags publish.
+Mark the pull request **ready for review** only after local validation and CI pass. Maintainers squash-merge with **`feat(package): …`** for new packages or versions, or **`fix(package): …`** for corrections. Titles classify package intent for history and CI; they do not publish a catalog registry tag immediately.
+
+### After merge
+
+Package merges land on `main` immediately. Catalog registry tags for `v2.x` consumers publish on the **daily catalog release train** (~00:05 UTC) when `packages/` has unreleased changes. New packages appear on [agents-repo.org](https://agents-repo.org) after the next catalog tag unless you preview your fork via **Website settings** — see [Using the catalog](/docs/using-the-catalog).
 
 ## Keep your fork updated
 
