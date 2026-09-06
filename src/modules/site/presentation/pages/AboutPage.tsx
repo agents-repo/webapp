@@ -1,14 +1,11 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import CreatorProfileCard from '../people/CreatorProfileCard'
 import { siteRoutes } from '../routes/siteRoutes'
 
-const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
-const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
 const WEBAPP_REPO_URL = 'https://github.com/agents-repo/webapp'
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 
@@ -54,36 +51,17 @@ function AboutPage() {
             </Col>
           </Row>
 
-          <Card>
-            <Card.Body>
-              <h2 className="h4">{t('about.creatorHeading')}</h2>
-              <p className="text-body-secondary">
-                {t('about.creatorBodyPrefix')}{' '}
-                <NavLink to={localizedSitePath(siteRoutes.community)}>{t('about.collaboratorsLink')}</NavLink>
-                {t('about.creatorBodySuffix')}
-              </p>
-              <div className="d-flex flex-wrap gap-3">
-                <a
-                  href={CREATOR_GITHUB_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={t('about.creatorGithubAriaLabel')}
-                >
-                  <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
-                  {t('about.github')}
-                </a>
-                <a
-                  href={CREATOR_LINKEDIN_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={t('about.creatorLinkedinAriaLabel')}
-                >
-                  <FontAwesomeIcon icon={faLinkedin} className="me-2" aria-hidden="true" />
-                  {t('about.linkedin')}
-                </a>
-              </div>
-            </Card.Body>
-          </Card>
+          <CreatorProfileCard
+            heading={t('about.creatorHeading')}
+            bodyPrefix={t('about.creatorBodyPrefix')}
+            collaboratorsLink={t('about.collaboratorsLink')}
+            bodySuffix={t('about.creatorBodySuffix')}
+            communityPath={localizedSitePath(siteRoutes.community)}
+            githubAriaLabel={t('about.creatorGithubAriaLabel')}
+            linkedinAriaLabel={t('about.creatorLinkedinAriaLabel')}
+            githubLabel={t('about.github')}
+            linkedinLabel={t('about.linkedin')}
+          />
 
           <Card>
             <Card.Body>

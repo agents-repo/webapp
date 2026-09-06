@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -7,14 +5,13 @@ import { externalLinkAccessibleName } from '../../application/accessibility/exte
 import { socialLinks } from '../../application/community/socialLinks'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import SocialExternalLink from '../layout/SocialExternalLink'
+import CreatorProfileCard from '../people/CreatorProfileCard'
 import { siteRoutes } from '../routes/siteRoutes'
 
 const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
 const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 const REGISTRY_DISCUSSIONS_URL = 'https://github.com/agents-repo/registry/discussions'
 const REGISTRY_ISSUES_URL = 'https://github.com/agents-repo/registry/issues'
-const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
-const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
 
 function ContactPage() {
   const { t } = useTranslation('pages')
@@ -116,36 +113,17 @@ function ContactPage() {
             </Card.Body>
           </Card>
 
-          <Card>
-            <Card.Body>
-              <h2 className="h4">{t('contact.creatorHeading')}</h2>
-              <p className="text-body-secondary">
-                {t('contact.creatorBodyPrefix')}{' '}
-                <NavLink to={localizedSitePath(siteRoutes.community)}>{t('contact.collaboratorsLink')}</NavLink>
-                {t('contact.creatorBodySuffix')}
-              </p>
-              <div className="d-flex flex-wrap gap-3">
-                <a
-                  href={CREATOR_GITHUB_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={t('contact.creatorGithubAriaLabel')}
-                >
-                  <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
-                  {t('contact.github')}
-                </a>
-                <a
-                  href={CREATOR_LINKEDIN_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={t('contact.creatorLinkedinAriaLabel')}
-                >
-                  <FontAwesomeIcon icon={faLinkedin} className="me-2" aria-hidden="true" />
-                  {t('contact.linkedin')}
-                </a>
-              </div>
-            </Card.Body>
-          </Card>
+          <CreatorProfileCard
+            heading={t('contact.creatorHeading')}
+            bodyPrefix={t('contact.creatorBodyPrefix')}
+            collaboratorsLink={t('contact.collaboratorsLink')}
+            bodySuffix={t('contact.creatorBodySuffix')}
+            communityPath={localizedSitePath(siteRoutes.community)}
+            githubAriaLabel={t('contact.creatorGithubAriaLabel')}
+            linkedinAriaLabel={t('contact.creatorLinkedinAriaLabel')}
+            githubLabel={t('contact.github')}
+            linkedinLabel={t('contact.linkedin')}
+          />
 
           <Card>
             <Card.Body>

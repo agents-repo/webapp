@@ -2,7 +2,7 @@ import type { AppLocale } from './supportedLocales.ts'
 import { defaultAppLocale } from './supportedLocales.ts'
 
 function normalizeLanguageTag(tag: string): string {
-  return tag.trim().toLowerCase().replace(/_/g, '-')
+  return tag.trim().toLowerCase().replaceAll('_', '-')
 }
 
 export function detectBrowserLocale(languages: readonly string[]): AppLocale {
