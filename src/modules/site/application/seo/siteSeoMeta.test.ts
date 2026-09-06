@@ -61,4 +61,10 @@ describe('siteSeoMeta', () => {
   it('falls back to docs SEO meta for unlisted doc slugs', () => {
     expect(getSiteSeoMeta('/docs/not-listed')).toEqual(getSiteSeoMeta(siteRoutes.docs))
   })
+
+  it('returns localized descriptions for locale-prefixed routes', () => {
+    expect(getSiteSeoMeta('/es/about').description).toContain('Agents Repo')
+    expect(getSiteSeoMeta('/es/about').description).not.toBe(getSiteSeoMeta(siteRoutes.about).description)
+    expect(getSiteSeoMeta('/es/about').canonicalPath).toBe(siteRoutes.about)
+  })
 })

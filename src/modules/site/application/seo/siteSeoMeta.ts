@@ -1,4 +1,4 @@
-import { stripLocalePrefix } from '../i18n/localePath.ts'
+import { parseLocaleFromPathname } from '../i18n/localePath.ts'
 import {
   findSiteRoutePath,
   normalizeSitePathname,
@@ -7,8 +7,8 @@ import {
 } from '../../presentation/routes/siteRoutes.ts'
 import {
   getDocDetailPath,
-  getDocCatalogEntry,
 } from '../docs/docsCatalog.ts'
+import { getDocBySlug } from '../docs/docsManifest.ts'
 import { isUnlistedDocDetailPath, parseDocSlugFromPathname } from '../docs/docsNestedSiteRoutes.ts'
 import {
   getRepositoryDetailPath,
@@ -25,13 +25,14 @@ import {
 } from '../../../registry/application/packageSiteRoutes.ts'
 import {
   getPackageSiteSeoDescription,
-  getPackagesIndexSeoDescription,
 } from '../../../registry/application/packageSiteSeo.ts'
 import {
   getRuntimePackageCatalog,
   isRuntimePackageCatalogResolved,
 } from '../../../registry/application/runtimePackageCatalog.ts'
 import type { RegistryCatalog } from '../../../registry/domain/package.ts'
+import type { AppLocale } from '../i18n/supportedLocales.ts'
+import { getLocalizedSiteRouteMeta } from './siteRouteMetaLocales.ts'
 
 export type { SiteRoutePath } from '../../presentation/routes/siteRoutes.ts'
 export { getSiteRoutePaths, isKnownSiteRoute } from '../../presentation/routes/siteRoutes.ts'
@@ -43,54 +44,54 @@ export interface SiteSeoMeta {
 
 export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
   [siteRoutes.home]: {
-    description:
-      'Find curated agents and flows for Copilot, Cursor, Claude Code, and Codex. Install with the CLI or try instructions in chat.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.home).description ?? '',
     canonicalPath: siteRoutes.home,
   },
   [siteRoutes.packages]: {
-    description: getPackagesIndexSeoDescription(),
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.packages).description ?? '',
     canonicalPath: siteRoutes.packages,
   },
   [siteRoutes.about]: {
-    description:
-      'Learn about Agents Repo: browse curated agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.about).description ?? '',
     canonicalPath: siteRoutes.about,
   },
   [siteRoutes.community]: {
-    description:
-      'Meet Agents Repo maintainers and contributors, and see who maintains the platform repositories.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.community).description ?? '',
     canonicalPath: siteRoutes.community,
   },
   [siteRoutes.contact]: {
-    description:
-      'Contact Agents Repo through GitHub Discussions and Issues for tracked work, or join X and Reddit for community discussion and ideas.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.contact).description ?? '',
     canonicalPath: siteRoutes.contact,
   },
   [siteRoutes.helpUs]: {
-    description:
-      'Help improve the open agents registry. Contribute packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.helpUs).description ?? '',
     canonicalPath: siteRoutes.helpUs,
   },
   [siteRoutes.docs]: {
-    description:
-      'Docs for browsing the catalog, installing packages with the CLI, contributing to the registry, and downloading markdown for AI agents.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.docs).description ?? '',
     canonicalPath: siteRoutes.docs,
   },
   [siteRoutes.repositories]: {
-    description:
-      'Repositories in the agents-repo organization: registry, webapp, CLI, registry-proxy, and shared governance.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.repositories).description ?? '',
     canonicalPath: siteRoutes.repositories,
   },
   [siteRoutes.accessibility]: {
-    description:
-      'Accessibility statement and conformance report for Agents Repo, targeting WCAG 2.2 Level AA.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.accessibility).description ?? '',
     canonicalPath: siteRoutes.accessibility,
   },
   [siteRoutes.privacy]: {
-    description:
-      'Privacy policy for Agents Repo: data collection, cookies, analytics consent, and your rights in the EU, US, and Brazil.',
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.privacy).description ?? '',
     canonicalPath: siteRoutes.privacy,
   },
+}
+
+function getLocalizedRouteSeoMeta(locale: AppLocale, route: SiteRoutePath): SiteSeoMeta {
+  const localizedMeta = getLocalizedSiteRouteMeta(locale, route)
+
+  return {
+    description: localizedMeta.description ?? siteSeoMeta[route].description,
+    canonicalPath: route,
+  }
 }
 
 function getPackageCanonicalPath(route: PackageSiteRoute): string {
@@ -110,11 +111,12 @@ export function getSiteSeoMeta(
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
   catalogResolved = isRuntimePackageCatalogResolved(),
 ): SiteSeoMeta {
-  const normalizedPath = normalizeSitePathname(stripLocalePrefix(pathname))
+  const { locale, pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
+  const normalizedPath = normalizeSitePathname(pathnameWithoutLocale)
   const matchedRoute = findSiteRoutePath(normalizedPath)
 
   if (matchedRoute) {
-    return siteSeoMeta[matchedRoute]
+    return getLocalizedRouteSeoMeta(locale, matchedRoute)
   }
 
   const repositorySlug = parseRepositorySlugFromPathname(normalizedPath)
@@ -130,7 +132,7 @@ export function getSiteSeoMeta(
 
   const docSlug = parseDocSlugFromPathname(normalizedPath)
   if (docSlug) {
-    const doc = getDocCatalogEntry(docSlug)
+    const doc = getDocBySlug(docSlug, locale)
     if (doc) {
       return {
         description: doc.description,
@@ -148,16 +150,16 @@ export function getSiteSeoMeta(
   }
 
   if (isUnlistedPackageSitePath(normalizedPath, catalog, catalogResolved)) {
-    return siteSeoMeta[siteRoutes.packages]
+    return getLocalizedRouteSeoMeta(locale, siteRoutes.packages)
   }
 
   if (isUnlistedDocDetailPath(normalizedPath)) {
-    return siteSeoMeta[siteRoutes.docs]
+    return getLocalizedRouteSeoMeta(locale, siteRoutes.docs)
   }
 
   if (isUnlistedRepositoryDetailPath(normalizedPath)) {
-    return siteSeoMeta[siteRoutes.repositories]
+    return getLocalizedRouteSeoMeta(locale, siteRoutes.repositories)
   }
 
-  return siteSeoMeta[siteRoutes.home]
+  return getLocalizedRouteSeoMeta(locale, siteRoutes.home)
 }

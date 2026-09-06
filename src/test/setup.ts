@@ -11,6 +11,12 @@ import { resetRegistryMemoryCachesForTests } from './testUtils'
 expect.extend(matchers)
 
 beforeAll(async () => {
+  try {
+    localStorage.setItem('locale', 'en')
+  } catch {
+    // Ignore storage failures; locale pinning is best-effort.
+  }
+
   i18n.addResourceBundle('en', 'shell', enShell, true, true)
   i18n.addResourceBundle('en', 'catalog', enCatalog, true, true)
   i18n.addResourceBundle('en', 'pages', enPages, true, true)
