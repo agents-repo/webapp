@@ -19,7 +19,7 @@ import {
   createLazySitePages,
   type LazySitePages,
 } from './modules/site/presentation/routes/lazySitePages'
-import { publicSitePath, siteRoutes } from './modules/site/presentation/routes/siteRoutes'
+import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from './modules/site/application/websiteSettings/registryCatalogStatusNote'
 import './App.scss'
 
@@ -35,7 +35,7 @@ interface AppRoutesProps {
 
 function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
   const location = useLocation()
-  const { pathnameWithoutLocale } = useMemo(
+  const { locale, pathnameWithoutLocale } = useMemo(
     () => parseLocaleFromPathname(location.pathname),
     [location.pathname],
   )
@@ -70,12 +70,12 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
       <Route path={siteRoutes.docs} element={<DocIndexPage />} />
       <Route path={`${siteRoutes.docs}/:slug`} element={<DocArticlePage />} />
-      <Route path={`${siteRoutes.docs}/*`} element={<Navigate to={publicSitePath(siteRoutes.docs)} replace />} />
+      <Route path={`${siteRoutes.docs}/*`} element={<Navigate to={localizedSitePath(siteRoutes.docs, locale)} replace />} />
       <Route path={siteRoutes.repositories} element={<RepositoriesIndexPage />} />
       <Route path={`${siteRoutes.repositories}/:slug`} element={<RepositoryDetailPage />} />
       <Route
         path={`${siteRoutes.repositories}/*`}
-        element={<Navigate to={publicSitePath(siteRoutes.repositories)} replace />}
+        element={<Navigate to={localizedSitePath(siteRoutes.repositories, locale)} replace />}
       />
       <Route
         path={siteRoutes.packages}
@@ -94,7 +94,7 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
       <Route path="/privacidade" element={<Navigate to={privacyPtBrPath} replace />} />
       <Route path="/privacidade/" element={<Navigate to={privacyPtBrPath} replace />} />
-      <Route path="*" element={<Navigate to={publicSitePath(siteRoutes.home)} replace />} />
+      <Route path="*" element={<Navigate to={localizedSitePath(siteRoutes.home, locale)} replace />} />
     </Routes>
   )
 }

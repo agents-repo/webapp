@@ -21,12 +21,6 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   )
 
   useEffect(() => {
-    persistLocale(locale)
-    void i18n.changeLanguage(locale)
-    document.documentElement.lang = getLocaleDefinition(locale).htmlLang
-  }, [locale])
-
-  useEffect(() => {
     const storedLocale = getStoredLocale()
     const isHomePath = pathnameWithoutLocale === '/'
 
@@ -34,8 +28,13 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
       const detectedLocale = detectBrowserLocale(readNavigatorLanguages())
       if (detectedLocale !== 'en') {
         void navigate(getLocaleHomePath(detectedLocale), { replace: true })
+        return
       }
     }
+
+    persistLocale(locale)
+    void i18n.changeLanguage(locale)
+    document.documentElement.lang = getLocaleDefinition(locale).htmlLang
   }, [locale, navigate, pathnameWithoutLocale])
 
   const setLocale = (nextLocale: AppLocale) => {
