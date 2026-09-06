@@ -1,6 +1,8 @@
 import { Card, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { publicSitePath } from '../../routes/siteRoutes.ts'
+import { useTranslation } from 'react-i18next'
+import { useLocalizedSitePath } from '../../../application/i18n/useLocalizedSitePath.ts'
+import { useLocale } from '../../../application/i18n/useLocale.ts'
 import {
   getDocDetailPath,
   listDocManifestEntries,
@@ -9,29 +11,30 @@ import {
 import DocLayout from './DocLayout.tsx'
 
 function DocIndexPage() {
-  const sectionGroups = listDocSectionGroups()
-  const totalPages = listDocManifestEntries().length
+  const { t } = useTranslation('docs')
+  const { locale } = useLocale()
+  const localizedSitePath = useLocalizedSitePath()
+  const sectionGroups = listDocSectionGroups(locale)
+  const totalPages = listDocManifestEntries(locale).length
 
   return (
     <DocLayout>
-      <h1 className="h2 mb-3">Docs</h1>
+      <h1 className="h2 mb-3">{t('index.title')}</h1>
       <p className="text-body-secondary lead">
-        Learn how to browse the catalog, install packages with the CLI, contribute to the registry, and
-        fetch stable markdown for AI agents. {totalPages} topics are available; pick a page from the
-        sidebar, Browse docs, or the list below.
+        {t('index.lead', { count: totalPages })}
       </p>
       <Stack gap={4} className="mt-4">
         {sectionGroups.map((group) => (
           <section key={group.section} aria-labelledby={`docs-section-${group.section}`}>
             <h2 id={`docs-section-${group.section}`} className="h4 mb-3">
-              {group.section}
+              {t(`sections.${group.section}`, { defaultValue: group.section })}
             </h2>
             <Stack gap={3}>
               {group.entries.map((entry) => (
                 <Card key={entry.slug}>
                   <Card.Body>
                     <h3 className="h5 mb-2">
-                      <Link to={publicSitePath(getDocDetailPath(entry.slug))}>{entry.title}</Link>
+                      <Link to={localizedSitePath(getDocDetailPath(entry.slug))}>{entry.title}</Link>
                     </h3>
                     <p className="text-body-secondary mb-0">{entry.description}</p>
                   </Card.Body>

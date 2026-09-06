@@ -1,9 +1,10 @@
-import { lazy, Suspense, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useMemo, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AnalyticsRouteTracker from './modules/site/application/analytics/AnalyticsRouteTracker'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
 import RouteScrollManager from './modules/site/application/accessibility/RouteScrollManager'
 import RouteDocumentTitle from './modules/site/application/accessibility/RouteDocumentTitle'
+import { parseLocaleFromPathname, localizedSitePath } from './modules/site/application/i18n/localePath'
 import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
 import RegistryCatalogProvider from './modules/registry/presentation/catalog/RegistryCatalogProvider'
@@ -33,6 +34,15 @@ interface AppRoutesProps {
 }
 
 function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
+  const location = useLocation()
+  const { pathnameWithoutLocale } = useMemo(
+    () => parseLocaleFromPathname(location.pathname),
+    [location.pathname],
+  )
+  const routesLocation = useMemo(
+    () => ({ ...location, pathname: pathnameWithoutLocale }),
+    [location, pathnameWithoutLocale],
+  )
   const {
     AboutPage,
     CommunityPage,
@@ -42,13 +52,14 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
     DocArticlePage,
     DocIndexPage,
     PrivacyPage,
-    PrivacidadePage,
     RepositoriesIndexPage,
     RepositoryDetailPage,
   } = lazyPages
 
+  const privacyPtBrPath = localizedSitePath(siteRoutes.privacy, 'pt-BR')
+
   return (
-    <Routes>
+    <Routes location={routesLocation}>
       <Route
         path={siteRoutes.home}
         element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
@@ -81,7 +92,8 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={`${siteRoutes.packages}/*`} element={<PackageSiteNotFound />} />
       <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
       <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
-      <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
+      <Route path="/privacidade" element={<Navigate to={privacyPtBrPath} replace />} />
+      <Route path="/privacidade/" element={<Navigate to={privacyPtBrPath} replace />} />
       <Route path="*" element={<Navigate to={publicSitePath(siteRoutes.home)} replace />} />
     </Routes>
   )
@@ -138,7 +150,9 @@ function App() {
             }}
           />
 
-          <AppMainContent setHeaderSearchSlot={setHeaderSearchSlot} />
+          <Suspense fallback={<RouteLoadingFallback />}>
+            <AppMainContent setHeaderSearchSlot={setHeaderSearchSlot} />
+          </Suspense>
 
           <Footer />
         </div>

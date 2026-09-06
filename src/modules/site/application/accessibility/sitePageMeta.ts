@@ -4,6 +4,7 @@ import {
   siteRoutes,
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
+import { stripLocalePrefix } from '../i18n/localePath.ts'
 import { getDocCatalogEntry } from '../docs/docsCatalog.ts'
 import {
   isUnlistedDocDetailPath,
@@ -71,10 +72,6 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
     title: 'Privacy',
     routeLabel: 'Privacy policy',
   },
-  [siteRoutes.privacyPtBr]: {
-    title: 'Privacidade',
-    routeLabel: 'Política de privacidade',
-  },
 }
 
 const packageNotFoundMeta: SitePageMeta = {
@@ -87,7 +84,7 @@ export function getSitePageMeta(
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
   catalogResolved = isRuntimePackageCatalogResolved(),
 ): SitePageMeta {
-  const normalizedPath = normalizeSitePathname(pathname)
+  const normalizedPath = normalizeSitePathname(stripLocalePrefix(pathname))
   const matchedRoute = findSiteRoutePath(normalizedPath)
 
   if (matchedRoute) {

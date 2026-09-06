@@ -3,8 +3,11 @@ import { privacyPolicyLastUpdated } from './privacyPolicyContent.en.ts'
 
 export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
   pageTitle: 'Política de privacidade',
-  languageLinkLabel: 'English version',
-  languageLinkPath: '/privacy',
+  languageLinks: [
+    { label: 'English', locale: 'en' },
+    { label: 'Español', locale: 'es' },
+    { label: 'Português (Portugal)', locale: 'pt-PT' },
+  ],
   lastUpdatedLabel: 'Última atualização',
   lastUpdated: privacyPolicyLastUpdated,
   contactLinkLabel: 'Contato',
@@ -70,6 +73,13 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
           purpose: 'Armazena sua preferência de tema claro, escuro ou automático.',
           storage: 'localStorage',
           duration: 'Até você limpar os dados do site.',
+          consentRequired: 'Não (preferência).',
+        },
+        {
+          name: 'locale',
+          purpose: 'Armazena o idioma do site selecionado.',
+          storage: 'localStorage',
+          duration: 'Até você limpar os dados do site ou trocar de idioma.',
           consentRequired: 'Não (preferência).',
         },
         {

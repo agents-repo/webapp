@@ -1,3 +1,4 @@
+import { stripLocalePrefix } from '../i18n/localePath.ts'
 import {
   findSiteRoutePath,
   normalizeSitePathname,
@@ -90,11 +91,6 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
       'Privacy policy for Agents Repo: data collection, cookies, analytics consent, and your rights in the EU, US, and Brazil.',
     canonicalPath: siteRoutes.privacy,
   },
-  [siteRoutes.privacyPtBr]: {
-    description:
-      'Política de privacidade do Agents Repo: coleta de dados, cookies, consentimento de analytics e seus direitos.',
-    canonicalPath: siteRoutes.privacyPtBr,
-  },
 }
 
 function getPackageCanonicalPath(route: PackageSiteRoute): string {
@@ -114,7 +110,7 @@ export function getSiteSeoMeta(
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
   catalogResolved = isRuntimePackageCatalogResolved(),
 ): SiteSeoMeta {
-  const normalizedPath = normalizeSitePathname(pathname)
+  const normalizedPath = normalizeSitePathname(stripLocalePrefix(pathname))
   const matchedRoute = findSiteRoutePath(normalizedPath)
 
   if (matchedRoute) {

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Col, Container, Row, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { copyTextToClipboard } from '../../../../site/application/clipboard/copyTextToClipboard'
 import { getDocDetailPath } from '../../../../site/application/docs/docsCatalog'
-import { publicSitePath } from '../../../../site/presentation/routes/siteRoutes'
+import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
 import CliTerminalCommandRow from '../CliTerminalCommandRow'
 import {
   CLI_INIT_COMMAND,
@@ -11,11 +12,11 @@ import {
   CLI_QUICKSTART_ID,
 } from './homeLandingCopy'
 
-const COPY_FEEDBACK_MESSAGE = 'Copied to clipboard.'
 const COPY_FEEDBACK_DURATION_MS = 3000
-const COPY_FAILURE_MESSAGE = 'Could not copy to clipboard. Copy the command manually.'
 
 function HomeCliQuickstartSection() {
+  const { t } = useTranslation('catalog')
+  const localizedSitePath = useLocalizedSitePath()
   const [initCopyFeedback, setInitCopyFeedback] = useState('')
   const [installCopyFeedback, setInstallCopyFeedback] = useState('')
   const [liveMessage, setLiveMessage] = useState('')
@@ -41,7 +42,7 @@ function HomeCliQuickstartSection() {
       setFeedback: (message: string) => void,
       timeoutRef: { current: ReturnType<typeof setTimeout> | null },
     ) => {
-      setFeedback(COPY_FEEDBACK_MESSAGE)
+      setFeedback(t('homeLanding.cliQuickstart.copySuccess'))
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
@@ -50,7 +51,7 @@ function HomeCliQuickstartSection() {
         timeoutRef.current = null
       }, COPY_FEEDBACK_DURATION_MS)
     },
-    [],
+    [t],
   )
 
   const copyCommand = useCallback(
@@ -60,13 +61,13 @@ function HomeCliQuickstartSection() {
     ) => {
       const result = await copyTextToClipboard(text)
       if (result === 'success') {
-        setLiveMessage(COPY_FEEDBACK_MESSAGE)
+        setLiveMessage(t('homeLanding.cliQuickstart.copySuccess'))
         onSuccess()
         return
       }
-      setLiveMessage(COPY_FAILURE_MESSAGE)
+      setLiveMessage(t('homeLanding.cliQuickstart.copyFailure'))
     },
-    [],
+    [t],
   )
 
   const handleCopyInit = () => {
@@ -86,17 +87,14 @@ function HomeCliQuickstartSection() {
       <Container>
         <Row className="justify-content-center">
           <Col lg={8}>
-            <h2 className="h3 text-center mb-3">Install with the CLI</h2>
-            <p className="text-body-secondary text-center mb-4">
-              Initialize your project, then install a package. For real projects, pin the CLI as a
-              devDependency so teammates and CI use the same version.
-            </p>
+            <h2 className="h3 text-center mb-3">{t('homeLanding.cliQuickstart.heading')}</h2>
+            <p className="text-body-secondary text-center mb-4">{t('homeLanding.cliQuickstart.lead')}</p>
             <Stack gap={3}>
               <div>
-                <div className="h6 small fw-semibold mb-2">Initialize install targets</div>
+                <div className="h6 small fw-semibold mb-2">{t('homeLanding.cliQuickstart.initLabel')}</div>
                 <CliTerminalCommandRow
                   commandText={CLI_INIT_COMMAND}
-                  copyLabel="Copy init command"
+                  copyLabel={t('homeLanding.cliQuickstart.copyInitLabel')}
                   onCopy={handleCopyInit}
                   labelId="home-cli-init-label"
                   dataTestId="home-cli-init-terminal"
@@ -104,10 +102,10 @@ function HomeCliQuickstartSection() {
                 />
               </div>
               <div>
-                <div className="h6 small fw-semibold mb-2">Install a package</div>
+                <div className="h6 small fw-semibold mb-2">{t('homeLanding.cliQuickstart.installLabel')}</div>
                 <CliTerminalCommandRow
                   commandText={CLI_INSTALL_COMMAND}
-                  copyLabel="Copy install command"
+                  copyLabel={t('homeLanding.cliQuickstart.copyInstallLabel')}
                   onCopy={handleCopyInstall}
                   labelId="home-cli-install-label"
                   dataTestId="home-cli-install-terminal"
@@ -116,11 +114,13 @@ function HomeCliQuickstartSection() {
               </div>
             </Stack>
             <p className="text-center small mt-4 mb-0">
-              <Link to={publicSitePath(getDocDetailPath('installing-packages'))}>
-                Installing packages
+              <Link to={localizedSitePath(getDocDetailPath('installing-packages'))}>
+                {t('homeLanding.cliQuickstart.installingPackagesLink')}
               </Link>
               {' · '}
-              <Link to={publicSitePath(getDocDetailPath('cli-commands'))}>CLI command reference</Link>
+              <Link to={localizedSitePath(getDocDetailPath('cli-commands'))}>
+                {t('homeLanding.cliQuickstart.cliCommandsLink')}
+              </Link>
             </p>
             <div className="visually-hidden" aria-live="polite" aria-atomic="true">
               {liveMessage}

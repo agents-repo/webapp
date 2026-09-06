@@ -1,0 +1,103 @@
+{
+  "search": {
+    "ariaLabel": "Search packages",
+    "label": "Search registry packages",
+    "button": "Search",
+    "placeholder": "Search by package, owner (@slug), description, or tag"
+  },
+  "filters": {
+    "title": "Filters",
+    "titleWithCount": "Filters, {{count}} selected",
+    "show": "Show filters",
+    "hide": "Hide filters",
+    "sortByDownloads": "Sort packages by download window",
+    "emptyMatch": "No packages match your current search or filters."
+  },
+  "packagesIndex": {
+    "title": "All packages",
+    "lead": "A crawlable index of every published package in the registry. Search by name, owner, description, tag, or category, and narrow results with filters.",
+    "searchResults": "Search results for \"{{query}}\"",
+    "publishedPackages": "Published packages",
+    "searchAriaLabel": "Search all packages"
+  },
+  "home": {
+    "popularHeading": "Most downloaded in the last year",
+    "viewAllPackages": "View all packages",
+    "emptyCatalog": "No packages are available in the catalog yet.",
+    "heroBadge": "Curated package registry",
+    "heroHeading": "Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex",
+    "heroLead": "Agents Repo is an open, curated registry. Find maintained packages, install them with the CLI, or try instructions in a browser chat—without rewriting prompts for every tool.",
+    "browsePackages": "Browse packages",
+    "useCli": "Use the CLI",
+    "brandLogoAlt": "Agents Repo brand symbol"
+  },
+  "homeLanding": {
+    "supportedTools": {
+      "heading": "Works with your AI coding tools"
+    },
+    "value": {
+      "heading": "What you gain",
+      "discoverTitle": "Discover curated packages",
+      "discoverBody": "Search agents and flows by name, owner, tags, and tool. Status badges show what is maintained.",
+      "installTitle": "Install into your editor",
+      "installBody": "The CLI places packages into GitHub Copilot, Cursor, Claude Code, or OpenAI Codex layouts.",
+      "chatTitle": "Try in chat first",
+      "chatBody": "Copy instruction URLs and prompts into ChatGPT, Grok, Gemini, or Microsoft Copilot when a package is chat-ready."
+    },
+    "howItWorks": {
+      "heading": "How it works",
+      "step1Title": "Browse or search the catalog",
+      "step1Body": "Find an agent or flow on Home or Packages, then open the package page for details.",
+      "step2Title": "Install or copy chat instructions",
+      "step2Body": "Run two CLI commands in your project, or copy chat-ready instructions into a browser chat.",
+      "step3Title": "Use it in your coding tool",
+      "step3Body": "The agent or flow is ready in GitHub Copilot, Cursor, Claude Code, or OpenAI Codex."
+    },
+    "cliQuickstart": {
+      "heading": "Install with the CLI",
+      "lead": "Initialize your project, then install a package. For real projects, pin the CLI as a devDependency so teammates and CI use the same version.",
+      "initLabel": "Initialize install targets",
+      "installLabel": "Install a package",
+      "copyInitLabel": "Copy init command",
+      "copyInstallLabel": "Copy install command",
+      "copySuccess": "Copied to clipboard.",
+      "copyFailure": "Could not copy to clipboard. Copy the command manually.",
+      "installingPackagesLink": "Installing packages",
+      "cliCommandsLink": "CLI command reference"
+    },
+    "useInChat": {
+      "heading": "Use in chat without installing",
+      "body": "Some packages are chat-ready. Copy an instruction URL or markdown and a starter prompt into ChatGPT, Grok, Gemini, or Microsoft Copilot in the browser—no project install required.",
+      "browseButton": "Browse chat-ready packages"
+    },
+    "contribute": {
+      "heading": "Help grow the catalog",
+      "body": "The project needs agents and flows packages most. Submit a maintained package, or see other ways to help.",
+      "submitPackage": "Submit a package",
+      "helpUs": "Help Us"
+    }
+  },
+  "packageDetail": {
+    "byOwner": "by",
+    "viewOnGitHub": "View on GitHub",
+    "viewOnGitHubAriaLabel": "View {{name}} on GitHub",
+    "metadataHeading": "Metadata",
+    "license": "License",
+    "homepage": "Homepage",
+    "homepageAriaLabel": "Package homepage",
+    "maintainers": "Maintainers",
+    "installTargets": "Install targets",
+    "versionsHeading": "Versions",
+    "latestSuffix": "(latest)",
+    "artifactsCount": "{{count}} artifact(s)",
+    "loadingVersions": "Loading version list…",
+    "noVersions": "No version list available.",
+    "agentsHeading": "Agents",
+    "flowsHeading": "Flows",
+    "readmeHeading": "README",
+    "loadingReadme": "Loading README…",
+    "noReadme": "This package snapshot does not include a README.",
+    "loadingPackage": "Loading package",
+    "detailLoadError": "Unable to load package detail."
+  }
+}

@@ -169,13 +169,14 @@ table.
 The analytics consent banner (`CookieConsentBanner.tsx`) must:
 
 - Use `role="region"` with `aria-labelledby` pointing at the banner heading
-- Link to both `/privacy` and `/privacidade` before Accept/Reject controls
+- Link to the locale-aware privacy policy (`/privacy/`, or `/pt-br/privacy/`,
+  etc.) before Accept/Reject controls
 - Present Accept and Reject with equal visual prominence (same button variant
   and sizing)
 - Stay visible until the user makes an explicit choice (no dismiss-without-choice)
 - Re-open from footer **Cookie preferences** via `openCookiePreferences()`
 
-Privacy policy pages (`PrivacyPage`, `PrivacidadePage`) follow the same page
+Privacy policy pages (`PrivacyPage`) follow the same page
 requirements as other public routes: one `h1`, semantic `main`, document title,
 and accessible tables for the cookie/storage section.
 

@@ -3,11 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useCallback, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { Form, InputGroup, ListGroup } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { searchDocPages } from '../../../application/docs/docsSearch.ts'
 import type { DocSearchResult } from '../../../application/docs/docsSearch.ts'
-import { publicSitePath } from '../../routes/siteRoutes.ts'
+import { useLocalizedSitePath } from '../../../application/i18n/useLocalizedSitePath.ts'
+import { useLocale } from '../../../application/i18n/useLocale.ts'
 
 function DocSearch() {
+  const { t } = useTranslation('docs')
+  const { locale } = useLocale()
+  const localizedSitePath = useLocalizedSitePath()
   const navigate = useNavigate()
   const listboxId = useId()
   const inputId = useId()
@@ -19,7 +24,7 @@ function DocSearch() {
   const [listFocused, setListFocused] = useState(false)
 
   const trimmedQuery = query.trim()
-  const results = useMemo(() => searchDocPages(query), [query])
+  const results = useMemo(() => searchDocPages(query, { locale }), [locale, query])
   const showResults = trimmedQuery.length > 0
 
   if (activeIndexQuery !== query) {
@@ -33,20 +38,20 @@ function DocSearch() {
     }
 
     if (results.length === 0) {
-      return `No docs match your search for "${trimmedQuery}".`
+      return t('search.noResultsFor', { query: trimmedQuery })
     }
 
-    return `${results.length} doc result${results.length === 1 ? '' : 's'} for "${trimmedQuery}".`
-  }, [results.length, showResults, trimmedQuery])
+    return t('search.resultsStatus', { count: results.length, query: trimmedQuery })
+  }, [results.length, showResults, t, trimmedQuery])
 
   const navigateToResult = useCallback(
     (result: DocSearchResult) => {
-      void navigate(publicSitePath(result.href))
+      void navigate(localizedSitePath(result.href))
       setQuery('')
       setActiveIndex(-1)
       setListFocused(false)
     },
-    [navigate],
+    [localizedSitePath, navigate],
   )
 
   const handleQueryChange = (nextQuery: string) => {
@@ -130,7 +135,7 @@ function DocSearch() {
     <div className="docs-search mb-3">
       <Form
         role="search"
-        aria-label="Search docs"
+        aria-label={t('search.ariaLabel')}
         onSubmit={(event) => {
           event.preventDefault()
           const target = activeIndex >= 0 ? results[activeIndex] : results[0]
@@ -140,7 +145,7 @@ function DocSearch() {
         }}
       >
         <Form.Label htmlFor={inputId} className="visually-hidden">
-          Search docs
+          {t('search.label')}
         </Form.Label>
         <InputGroup size="sm" className="docs-search-control">
           <InputGroup.Text className="docs-search-control__addon">
@@ -154,7 +159,7 @@ function DocSearch() {
             value={query}
             onChange={(event) => handleQueryChange(event.target.value)}
             onKeyDown={handleInputKeyDown}
-            placeholder="Search docs"
+            placeholder={t('search.placeholder')}
             autoComplete="off"
             aria-controls={showResults ? listboxId : undefined}
             aria-expanded={showResults}
@@ -165,7 +170,7 @@ function DocSearch() {
           />
         </InputGroup>
         <button type="submit" className="visually-hidden">
-          Search docs
+          {t('search.button')}
         </button>
       </Form>
 
@@ -177,12 +182,12 @@ function DocSearch() {
         <ListGroup
           id={listboxId}
           role="listbox"
-          aria-label="Doc search results"
+          aria-label={t('search.resultsListLabel')}
           className="docs-search-results mt-2"
         >
           {results.length === 0 ? (
             <ListGroup.Item className="docs-search-empty text-body-secondary small" role="presentation">
-              No docs match your search.
+              {t('search.noResults')}
             </ListGroup.Item>
           ) : (
             results.map((result, index) => (
@@ -193,7 +198,7 @@ function DocSearch() {
                 aria-selected={index === activeIndex}
                 action
                 as={Link}
-                to={publicSitePath(result.href)}
+                to={localizedSitePath(result.href)}
                 className={`docs-search-result${index === activeIndex ? ' docs-search-result-active' : ''}`}
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => {

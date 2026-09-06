@@ -12,7 +12,6 @@ const routeHeadings = [
   { path: '/repositories/registry', heading: 'Registry' },
   { path: '/accessibility', heading: 'Accessibility statement' },
   { path: '/privacy', heading: 'Privacy policy' },
-  { path: '/privacidade', heading: 'Política de privacidade' },
 ] as const
 
 test.describe('Navigation', () => {
@@ -23,6 +22,19 @@ test.describe('Navigation', () => {
       await expect(page.getByRole('heading', { name: heading, level: 1 })).toBeVisible()
     })
   }
+
+  test('renders /es/about with Spanish locale prefix', async ({ page }) => {
+    await page.goto('/es/about/')
+
+    await expect(page.getByRole('heading', { name: 'Acerca de', level: 1 })).toBeVisible()
+  })
+
+  test('redirects legacy /privacidade to localized pt-BR privacy', async ({ page }) => {
+    await page.goto('/privacidade')
+
+    await expect(page).toHaveURL(/\/pt-br\/privacy\/?$/)
+    await expect(page.getByRole('heading', { name: 'Política de privacidade', level: 1 })).toBeVisible()
+  })
 
   test('redirects unknown paths to home', async ({ page }) => {
     await page.goto('/unknown-route')

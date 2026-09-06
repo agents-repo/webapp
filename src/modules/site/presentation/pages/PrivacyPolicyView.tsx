@@ -1,21 +1,36 @@
 import { Card, Container, Stack, Table } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import type { AppLocale } from '../../application/i18n/supportedLocales.ts'
+import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import type { PrivacyPolicyContent } from '../../application/privacy/privacyPolicyContent.types.ts'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
+import { localizedSitePath } from '../../application/i18n/localePath.ts'
+import { siteRoutes } from '../routes/siteRoutes.ts'
 
 interface PrivacyPolicyViewProps {
   readonly content: PrivacyPolicyContent
 }
 
 function PrivacyPolicyView({ content }: PrivacyPolicyViewProps) {
+  const localizedSitePathForLocale = useLocalizedSitePath()
+
   return (
     <div className="py-5">
       <Container>
-        <p className="mb-3">
-          <NavLink to={publicSitePath(content.languageLinkPath)} className="footer-link">
-            {content.languageLinkLabel}
-          </NavLink>
-        </p>
+        {content.languageLinks.length > 0 ? (
+          <p className="mb-3">
+            {content.languageLinks.map((link, index) => (
+              <span key={link.locale}>
+                {index > 0 ? ' · ' : null}
+                <NavLink
+                  to={localizedSitePath(siteRoutes.privacy, link.locale as AppLocale)}
+                  className="footer-link"
+                >
+                  {link.label}
+                </NavLink>
+              </span>
+            ))}
+          </p>
+        ) : null}
 
         <h1 className="h2 mb-2">{content.pageTitle}</h1>
         <p className="text-body-secondary mb-4">
@@ -65,7 +80,7 @@ function PrivacyPolicyView({ content }: PrivacyPolicyViewProps) {
                 ) : null}
                 {section.id === 'contact' ? (
                   <p className="mb-0 mt-3">
-                    <NavLink to={publicSitePath(siteRoutes.contact)} className="footer-link">
+                    <NavLink to={localizedSitePathForLocale(siteRoutes.contact)} className="footer-link">
                       {content.contactLinkLabel}
                     </NavLink>
                   </p>

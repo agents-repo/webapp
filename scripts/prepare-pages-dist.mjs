@@ -8,7 +8,7 @@ import {
 import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts';
 import { setRuntimePackageCatalog } from '../src/modules/registry/application/runtimePackageCatalog.ts';
 import {
-  getBuildSiteRoutePaths,
+  getBuildSitemapPaths,
   readGeneratedPackageSiteCatalog,
   resolveBuildSiteOrigin,
   rewriteSitemapLocsToPublicPaths,
@@ -37,7 +37,7 @@ if (generatedCatalog && isRegistryCatalog(generatedCatalog)) {
 }
 
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
-const buildRoutePaths = getBuildSiteRoutePaths();
+const buildRoutePaths = getBuildSitemapPaths();
 
 function assertKnownSiteRoute(routePath) {
   if (!buildRoutePaths.includes(routePath)) {
@@ -46,14 +46,17 @@ function assertKnownSiteRoute(routePath) {
 }
 
 function writeRouteDistHtml(routePath, html) {
-  assertKnownSiteRoute(routePath);
+  assertKnownSiteRoute(routePath)
 
-  if (routePath === '/') {
-    writeFileSync('dist/index.html', html);
-    return;
+  const pathWithoutTrailingSlash =
+    routePath.endsWith('/') && routePath.length > 1 ? routePath.slice(0, -1) : routePath
+
+  if (pathWithoutTrailingSlash === '/') {
+    writeFileSync('dist/index.html', html)
+    return
   }
 
-  const segments = routePath.slice(1).split('/');
+  const segments = pathWithoutTrailingSlash.slice(1).split('/')
   for (const segment of segments) {
     if (!/^[a-z0-9-]+$/.test(segment)) {
       throw new Error(`Unsafe route segment for dist output: ${segment}`);

@@ -1,0 +1,36 @@
+{
+  "index": {
+    "title": "Docs",
+    "lead": "Aprenda a explorar o catálogo, instalar pacotes com a CLI, contribuir para o registry e obter markdown estável para agentes de IA. Há {{count}} tópicos disponíveis; escolha uma página na barra lateral, Browse docs ou na lista abaixo."
+  },
+  "search": {
+    "ariaLabel": "Pesquisar docs",
+    "label": "Pesquisar docs",
+    "placeholder": "Pesquisar docs",
+    "button": "Pesquisar docs",
+    "noResults": "Nenhum doc corresponde à sua pesquisa.",
+    "noResultsFor": "Nenhum doc corresponde à sua pesquisa por \"{{query}}\".",
+    "resultsStatus_one": "{{count}} resultado de doc para \"{{query}}\".",
+    "resultsStatus_other": "{{count}} resultados de docs para \"{{query}}\".",
+    "resultsListLabel": "Resultados da pesquisa de docs"
+  },
+  "nav": {
+    "ariaLabel": "Docs",
+    "overview": "Visão geral dos docs",
+    "browseDocs": "Explorar docs",
+    "offcanvasTitle": "Docs",
+    "topicsAriaLabel": "Tópicos dos docs"
+  },
+  "article": {
+    "downloadMarkdown": "Descarregar Markdown",
+    "fallbackBanner": "Este artigo é mostrado em inglês enquanto uma tradução é preparada."
+  },
+  "sections": {
+    "Start": "Início",
+    "Catalog": "Catálogo",
+    "Registry": "Registry",
+    "CLI": "CLI",
+    "Contribute": "Contribuir",
+    "Agents": "Para agentes de IA"
+  }
+}

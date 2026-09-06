@@ -1,0 +1,103 @@
+{
+  "search": {
+    "ariaLabel": "Buscar pacotes",
+    "label": "Buscar pacotes do registry",
+    "button": "Buscar",
+    "placeholder": "Buscar por pacote, proprietário (@slug), descrição ou tag"
+  },
+  "filters": {
+    "title": "Filtros",
+    "titleWithCount": "Filtros, {{count}} selecionados",
+    "show": "Mostrar filtros",
+    "hide": "Ocultar filtros",
+    "sortByDownloads": "Ordenar pacotes por janela de downloads",
+    "emptyMatch": "Nenhum pacote corresponde à sua busca ou filtros atuais."
+  },
+  "packagesIndex": {
+    "title": "Todos os pacotes",
+    "lead": "Um índice rastreável de cada pacote publicado no registry. Busque por nome, proprietário, descrição, tag ou categoria, e refine os resultados com filtros.",
+    "searchResults": "Resultados da busca por \"{{query}}\"",
+    "publishedPackages": "Pacotes publicados",
+    "searchAriaLabel": "Buscar todos os pacotes"
+  },
+  "home": {
+    "popularHeading": "Mais baixados no último ano",
+    "viewAllPackages": "Ver todos os pacotes",
+    "emptyCatalog": "Nenhum pacote está disponível no catálogo ainda.",
+    "heroBadge": "Registry de pacotes curados",
+    "heroHeading": "Agentes e flows prontos para Copilot, Cursor, Claude Code e Codex",
+    "heroLead": "O Agents Repo é um registry aberto e curado. Encontre pacotes mantidos, instale com a CLI ou experimente instruções em um chat no navegador — sem reescrever prompts para cada ferramenta.",
+    "browsePackages": "Explorar pacotes",
+    "useCli": "Usar a CLI",
+    "brandLogoAlt": "Símbolo da marca Agents Repo"
+  },
+  "homeLanding": {
+    "supportedTools": {
+      "heading": "Funciona com suas ferramentas de codificação com IA"
+    },
+    "value": {
+      "heading": "O que você ganha",
+      "discoverTitle": "Descubra pacotes curados",
+      "discoverBody": "Busque agentes e flows por nome, proprietário, tags e ferramenta. Badges de status mostram o que é mantido.",
+      "installTitle": "Instale no seu editor",
+      "installBody": "A CLI coloca pacotes nos layouts do GitHub Copilot, Cursor, Claude Code ou OpenAI Codex.",
+      "chatTitle": "Experimente no chat primeiro",
+      "chatBody": "Copie URLs de instruções e prompts para ChatGPT, Grok, Gemini ou Microsoft Copilot quando um pacote estiver pronto para chat."
+    },
+    "howItWorks": {
+      "heading": "Como funciona",
+      "step1Title": "Explore ou busque no catálogo",
+      "step1Body": "Encontre um agente ou flow na Home ou em Pacotes e abra a página do pacote para ver detalhes.",
+      "step2Title": "Instale ou copie instruções de chat",
+      "step2Body": "Execute dois comandos CLI no seu projeto ou copie instruções prontas para chat em um chat do navegador.",
+      "step3Title": "Use na sua ferramenta de codificação",
+      "step3Body": "O agente ou flow fica pronto no GitHub Copilot, Cursor, Claude Code ou OpenAI Codex."
+    },
+    "cliQuickstart": {
+      "heading": "Instalar com a CLI",
+      "lead": "Inicialize seu projeto e depois instale um pacote. Em projetos reais, fixe a CLI como devDependency para que a equipe e o CI usem a mesma versão.",
+      "initLabel": "Inicializar destinos de instalação",
+      "installLabel": "Instalar um pacote",
+      "copyInitLabel": "Copiar comando init",
+      "copyInstallLabel": "Copiar comando install",
+      "copySuccess": "Copiado para a área de transferência.",
+      "copyFailure": "Não foi possível copiar para a área de transferência. Copie o comando manualmente.",
+      "installingPackagesLink": "Instalar pacotes",
+      "cliCommandsLink": "Referência de comandos CLI"
+    },
+    "useInChat": {
+      "heading": "Usar no chat sem instalar",
+      "body": "Alguns pacotes estão prontos para chat. Copie uma URL de instruções ou markdown e um prompt inicial para ChatGPT, Grok, Gemini ou Microsoft Copilot no navegador — sem instalar no projeto.",
+      "browseButton": "Explorar pacotes prontos para chat"
+    },
+    "contribute": {
+      "heading": "Ajude o catálogo a crescer",
+      "body": "O projeto precisa principalmente de pacotes de agentes e flows. Envie um pacote mantido ou veja outras formas de ajudar.",
+      "submitPackage": "Enviar um pacote",
+      "helpUs": "Ajude-nos"
+    }
+  },
+  "packageDetail": {
+    "byOwner": "por",
+    "viewOnGitHub": "Ver no GitHub",
+    "viewOnGitHubAriaLabel": "Ver {{name}} no GitHub",
+    "metadataHeading": "Metadados",
+    "license": "Licença",
+    "homepage": "Página inicial",
+    "homepageAriaLabel": "Página inicial do pacote",
+    "maintainers": "Mantenedores",
+    "installTargets": "Destinos de instalação",
+    "versionsHeading": "Versões",
+    "latestSuffix": "(mais recente)",
+    "artifactsCount": "{{count}} artefato(s)",
+    "loadingVersions": "Carregando lista de versões…",
+    "noVersions": "Nenhuma lista de versões disponível.",
+    "agentsHeading": "Agents",
+    "flowsHeading": "Flows",
+    "readmeHeading": "README",
+    "loadingReadme": "Carregando README…",
+    "noReadme": "Este snapshot do pacote não inclui README.",
+    "loadingPackage": "Carregando pacote",
+    "detailLoadError": "Não foi possível carregar os detalhes do pacote."
+  }
+}

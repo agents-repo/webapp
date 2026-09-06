@@ -3,7 +3,7 @@ import { test, expect } from './fixtures/registry-mock'
 const analyticsConsentStorageKey = 'analytics-consent'
 
 test.describe('Cookie consent', () => {
-  test('shows banner and both privacy links before a decision', async ({ page }) => {
+  test('shows banner and locale privacy link before a decision', async ({ page }) => {
     await page.addInitScript((key) => {
       localStorage.removeItem(key)
     }, analyticsConsentStorageKey)
@@ -12,11 +12,7 @@ test.describe('Cookie consent', () => {
 
     const banner = page.getByRole('region', { name: 'Cookie preferences' })
     await expect(banner).toBeVisible()
-    await expect(banner.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', '/privacy/')
-    await expect(banner.getByRole('link', { name: 'Política de privacidade' })).toHaveAttribute(
-      'href',
-      '/privacidade/',
-    )
+    await expect(banner.getByRole('link', { name: 'privacy policy' })).toHaveAttribute('href', '/privacy/')
   })
 
   test('persists reject decision and hides banner', async ({ page }) => {

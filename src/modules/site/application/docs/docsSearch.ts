@@ -1,3 +1,5 @@
+import type { AppLocale } from '../i18n/supportedLocales.ts'
+import { defaultAppLocale } from '../i18n/supportedLocales.ts'
 import { getDocDetailPath, listDocManifestEntries } from './docsManifest.ts'
 import type { DocManifestEntry } from './docsManifest.types.ts'
 
@@ -10,6 +12,7 @@ export interface DocSearchResult {
 
 export interface DocSearchOptions {
   readonly maxResults?: number
+  readonly locale?: AppLocale
 }
 
 const DEFAULT_MAX_RESULTS = 10
@@ -205,8 +208,8 @@ const rankOrder: Record<NonNullable<ReturnType<typeof matchRank>>, number> = {
   body: 2,
 }
 
-function buildDocSearchIndex(): readonly DocSearchIndexEntry[] {
-  return listDocManifestEntries().map((entry) => {
+function buildDocSearchIndex(locale: AppLocale): readonly DocSearchIndexEntry[] {
+  return listDocManifestEntries(locale).map((entry) => {
     const bodyPlain = stripDocMarkdownForSearch(entry.bodyMarkdown)
 
     return {
@@ -219,10 +222,14 @@ function buildDocSearchIndex(): readonly DocSearchIndexEntry[] {
   })
 }
 
-let docSearchIndex: readonly DocSearchIndexEntry[] | null = null
+const docSearchIndexByLocale = new Map<AppLocale, readonly DocSearchIndexEntry[]>()
 
-function getDocSearchIndex(): readonly DocSearchIndexEntry[] {
-  docSearchIndex ??= buildDocSearchIndex()
+function getDocSearchIndex(locale: AppLocale = defaultAppLocale): readonly DocSearchIndexEntry[] {
+  let docSearchIndex = docSearchIndexByLocale.get(locale)
+  if (!docSearchIndex) {
+    docSearchIndex = buildDocSearchIndex(locale)
+    docSearchIndexByLocale.set(locale, docSearchIndex)
+  }
 
   return docSearchIndex
 }
@@ -230,6 +237,7 @@ function getDocSearchIndex(): readonly DocSearchIndexEntry[] {
 export function searchDocPages(query: string, options?: DocSearchOptions): DocSearchResult[] {
   const normalizedQuery = query.trim().toLowerCase()
   const maxResults = options?.maxResults ?? DEFAULT_MAX_RESULTS
+  const locale = options?.locale ?? defaultAppLocale
 
   if (!normalizedQuery) {
     return []
@@ -238,7 +246,7 @@ export function searchDocPages(query: string, options?: DocSearchOptions): DocSe
   const matches: Array<{ indexEntry: DocSearchIndexEntry; rank: NonNullable<ReturnType<typeof matchRank>> }> =
     []
 
-  for (const indexEntry of getDocSearchIndex()) {
+  for (const indexEntry of getDocSearchIndex(locale)) {
     const rank = matchRank(indexEntry, normalizedQuery)
     if (rank) {
       matches.push({ indexEntry, rank })

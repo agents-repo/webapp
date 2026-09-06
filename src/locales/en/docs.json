@@ -1,0 +1,36 @@
+{
+  "index": {
+    "title": "Docs",
+    "lead": "Learn how to browse the catalog, install packages with the CLI, contribute to the registry, and fetch stable markdown for AI agents. {{count}} topics are available; pick a page from the sidebar, Browse docs, or the list below."
+  },
+  "search": {
+    "ariaLabel": "Search docs",
+    "label": "Search docs",
+    "placeholder": "Search docs",
+    "button": "Search docs",
+    "noResults": "No docs match your search.",
+    "noResultsFor": "No docs match your search for \"{{query}}\".",
+    "resultsStatus_one": "{{count}} doc result for \"{{query}}\".",
+    "resultsStatus_other": "{{count}} doc results for \"{{query}}\".",
+    "resultsListLabel": "Doc search results"
+  },
+  "nav": {
+    "ariaLabel": "Docs",
+    "overview": "Docs overview",
+    "browseDocs": "Browse docs",
+    "offcanvasTitle": "Docs",
+    "topicsAriaLabel": "Docs topics"
+  },
+  "article": {
+    "downloadMarkdown": "Download Markdown",
+    "fallbackBanner": "This article is shown in English while a translation is prepared."
+  },
+  "sections": {
+    "Start": "Start",
+    "Catalog": "Catalog",
+    "Registry": "Registry",
+    "CLI": "CLI",
+    "Contribute": "Contribute",
+    "Agents": "For AI agents"
+  }
+}

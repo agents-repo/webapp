@@ -33,7 +33,6 @@ describe('siteSeoMeta', () => {
         siteRoutes.repositories,
         siteRoutes.accessibility,
         siteRoutes.privacy,
-        siteRoutes.privacyPtBr,
         '/repositories/registry',
         '/docs/getting-started',
       ]),

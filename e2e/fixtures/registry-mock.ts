@@ -129,6 +129,9 @@ export const test = base.extend<{ catalog: E2eRegistryCatalog }>({
     await use(searchableCatalog)
   },
   page: async ({ page, catalog }, use) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('locale', 'en')
+    })
     await mockRegistryIndex(page, catalog)
     await mockRegistryStats(page)
     await use(page)

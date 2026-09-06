@@ -4,8 +4,11 @@ export const privacyPolicyLastUpdated = '2026-08-21'
 
 export const privacyPolicyContentEn: PrivacyPolicyContent = {
   pageTitle: 'Privacy policy',
-  languageLinkLabel: 'Versão em português (Brasil)',
-  languageLinkPath: '/privacidade',
+  languageLinks: [
+    { label: 'Español', locale: 'es' },
+    { label: 'Português (Brasil)', locale: 'pt-BR' },
+    { label: 'Português (Portugal)', locale: 'pt-PT' },
+  ],
   lastUpdatedLabel: 'Last updated',
   lastUpdated: privacyPolicyLastUpdated,
   contactLinkLabel: 'Contact',
@@ -71,6 +74,13 @@ export const privacyPolicyContentEn: PrivacyPolicyContent = {
           purpose: 'Stores your light, dark, or auto theme preference.',
           storage: 'localStorage',
           duration: 'Until you clear site data.',
+          consentRequired: 'No (preference).',
+        },
+        {
+          name: 'locale',
+          purpose: 'Stores your selected site language.',
+          storage: 'localStorage',
+          duration: 'Until you clear site data or switch language.',
           consentRequired: 'No (preference).',
         },
         {

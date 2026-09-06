@@ -9,6 +9,7 @@ import {
   isKnownPackageSiteRoute,
   PACKAGES_BASE_PATH,
 } from '../../../registry/application/packageSiteRoutes.ts'
+import { stripLocalePrefix } from '../../application/i18n/localePath.ts'
 import {
   getRuntimePackageCatalog,
   isRuntimePackageCatalogResolved,
@@ -26,7 +27,6 @@ export const siteRoutes = {
   repositories: REPOSITORIES_BASE_PATH,
   accessibility: '/accessibility',
   privacy: '/privacy',
-  privacyPtBr: '/privacidade',
 } as const
 
 export type SiteRoutePath = (typeof siteRoutes)[keyof typeof siteRoutes]
@@ -70,12 +70,17 @@ export function findSiteRoutePath(normalizedPath: string): SiteRoutePath | undef
   return routePaths.find((routePath) => routePath === normalizedPath)
 }
 
+export function getSiteRoutePaths(): string[] {
+  const staticPaths = Object.values(siteRoutes) as SiteRoutePath[]
+  return [...staticPaths, ...getDocRoutePaths(), ...getRepositoryDetailRoutePaths()]
+}
+
 export function isKnownSiteRoute(
   pathname: string,
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
   catalogResolved = isRuntimePackageCatalogResolved(),
 ): boolean {
-  const normalizedPath = normalizeSitePathname(pathname)
+  const normalizedPath = normalizeSitePathname(stripLocalePrefix(pathname))
   if (findSiteRoutePath(normalizedPath) !== undefined) {
     return true
   }
@@ -89,9 +94,4 @@ export function isKnownSiteRoute(
   }
 
   return isKnownPackageSiteRoute(normalizedPath, catalog, catalogResolved)
-}
-
-export function getSiteRoutePaths(): string[] {
-  const staticPaths = Object.values(siteRoutes) as SiteRoutePath[]
-  return [...staticPaths, ...getDocRoutePaths(), ...getRepositoryDetailRoutePaths()]
 }

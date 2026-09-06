@@ -1,5 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { loadEnv } from 'vite'
+import { localizedSitePath } from '../src/modules/site/application/i18n/localePath.ts'
+import { appLocales } from '../src/modules/site/application/i18n/supportedLocales.ts'
 import {
   getSiteRoutePaths as getStaticAndManifestSiteRoutePaths,
   publicSitePath,
@@ -40,6 +42,22 @@ export function readGeneratedPackageSiteRoutes(): string[] {
 
 export function getBuildSiteRoutePaths(): string[] {
   return [...getStaticAndManifestSiteRoutePaths(), ...readGeneratedPackageSiteRoutes()]
+}
+
+export function expandRoutesWithLocalePrefixes(routes: readonly string[]): string[] {
+  const expanded = new Set<string>()
+
+  for (const route of routes) {
+    for (const locale of appLocales) {
+      expanded.add(localizedSitePath(route, locale))
+    }
+  }
+
+  return [...expanded]
+}
+
+export function getBuildSitemapPaths(): string[] {
+  return expandRoutesWithLocalePrefixes(getBuildSiteRoutePaths())
 }
 
 export function readGeneratedPackageSiteCatalog(): unknown {

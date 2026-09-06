@@ -1,9 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLink } from '@fortawesome/free-solid-svg-icons'
+import { faExternalLink, faLanguage } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Card, Col, Container, Row, Stack } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 import { NavLink, useParams } from 'react-router-dom'
+import { buildGoogleTranslateUrl, shouldShowGoogleTranslate } from '../../../site/application/i18n/googleTranslate.ts'
+import { useLocale } from '../../../site/application/i18n/useLocale.ts'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
@@ -43,6 +46,7 @@ function PackageDetailHeader(options: {
   readonly registryBaseUrl: string
   readonly githubRepositoryUrl: string
 }): ReactNode {
+  const { t } = useTranslation('catalog')
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
   const packageSlug = toPackageSlug(catalogPackage.namespace, catalogPackage.package)
   const downloadTargets = getPackageDownloadTargets(catalogPackage, registryBaseUrl)
@@ -61,7 +65,7 @@ function PackageDetailHeader(options: {
         <PackageStatusBadge status={catalogPackage.status} />
       </Stack>
       <p className="text-body-secondary mb-2">
-        by{' '}
+        {t('packageDetail.byOwner')}{' '}
         <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>{catalogPackage.owner}</NavLink>
       </p>
       <p className="mb-3">{catalogPackage.description}</p>
@@ -100,10 +104,10 @@ function PackageDetailHeader(options: {
             target="_blank"
             rel="noreferrer noopener"
             className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center package-card-action"
-            aria-label={externalLinkAccessibleName(`View ${catalogPackage.name} on GitHub`)}
+            aria-label={externalLinkAccessibleName(t('packageDetail.viewOnGitHubAriaLabel', { name: catalogPackage.name }))}
           >
             <FontAwesomeIcon icon={faGithub} aria-hidden="true" />
-            <span className="package-card-action-label">View on GitHub</span>
+            <span className="package-card-action-label">{t('packageDetail.viewOnGitHub')}</span>
           </a>
         ) : null}
       </div>
@@ -124,12 +128,14 @@ function MetadataRow(options: {
 }
 
 function PackageHomepageLink({ homepage }: { readonly homepage: string }): ReactNode {
+  const { t } = useTranslation('catalog')
+
   return (
     <a
       href={homepage}
       target="_blank"
       rel="noreferrer noopener"
-      aria-label={externalLinkAccessibleName('Package homepage')}
+      aria-label={externalLinkAccessibleName(t('packageDetail.homepageAriaLabel'))}
     >
       {homepage}
       <FontAwesomeIcon icon={faExternalLink} className="ms-1" aria-hidden="true" />
@@ -149,6 +155,7 @@ function PackageDetailMetadataCard(options: {
   readonly catalogPackage: RegistryPackage
   readonly detail: PackageDetailDocument | null
 }): ReactNode {
+  const { t } = useTranslation('catalog')
   const metadata = options.detail?.metadata
   const homepage = getSafeHomepage(metadata?.homepage)
   const maintainers = metadata?.maintainers ?? []
@@ -158,19 +165,19 @@ function PackageDetailMetadataCard(options: {
   return (
     <Card className="flex-fill w-100 border-secondary-subtle">
       <Card.Body>
-        <h2 className="h4">Metadata</h2>
+        <h2 className="h4">{t('packageDetail.metadataHeading')}</h2>
         <dl className="row mb-0 small">
-          {license ? <MetadataRow term="License">{license}</MetadataRow> : null}
+          {license ? <MetadataRow term={t('packageDetail.license')}>{license}</MetadataRow> : null}
           {homepage ? (
-            <MetadataRow term="Homepage">
+            <MetadataRow term={t('packageDetail.homepage')}>
               <PackageHomepageLink homepage={homepage} />
             </MetadataRow>
           ) : null}
           {maintainers.length > 0 ? (
-            <MetadataRow term="Maintainers">{maintainers.join(', ')}</MetadataRow>
+            <MetadataRow term={t('packageDetail.maintainers')}>{maintainers.join(', ')}</MetadataRow>
           ) : null}
           {installTargets.length > 0 ? (
-            <MetadataRow term="Install targets">
+            <MetadataRow term={t('packageDetail.installTargets')}>
               {installTargets.map((target) => `${target.id} (${target.status})`).join(', ')}
             </MetadataRow>
           ) : null}
@@ -184,25 +191,29 @@ function PackageDetailVersionsCard(options: {
   readonly detail: PackageDetailDocument | null
   readonly isDetailLoading: boolean
 }): ReactNode {
+  const { t } = useTranslation('catalog')
   const { detail, isDetailLoading } = options
 
   return (
     <Card className="flex-fill w-100 border-secondary-subtle">
       <Card.Body>
-        <h2 className="h4">Versions</h2>
+        <h2 className="h4">{t('packageDetail.versionsHeading')}</h2>
         {detail?.versions.entries.length ? (
           <ul className="mb-0">
             {detail.versions.entries.map((entry) => (
               <li key={entry.version}>
                 <strong>{entry.version}</strong>
-                {entry.version === detail.versions.latest ? ' (latest)' : ''}
-                <span className="text-body-secondary"> · {entry.artifacts.length} artifact(s)</span>
+                {entry.version === detail.versions.latest ? ` ${t('packageDetail.latestSuffix')}` : ''}
+                <span className="text-body-secondary">
+                  {' '}
+                  · {t('packageDetail.artifactsCount', { count: entry.artifacts.length })}
+                </span>
               </li>
             ))}
           </ul>
         ) : (
           <p className="mb-0 text-body-secondary">
-            {isDetailLoading ? 'Loading version list…' : 'No version list available.'}
+            {isDetailLoading ? t('packageDetail.loadingVersions') : t('packageDetail.noVersions')}
           </p>
         )}
       </Card.Body>
@@ -216,6 +227,9 @@ function PackageDetailLoaded(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
+  const { locale } = useLocale()
+  const { t: tShell } = useTranslation('shell')
+  const { t } = useTranslation('catalog')
   const { downloadStatsById } = useRegistryCatalog()
   const detailRequestKey = `${catalogPackage.namespace}/${catalogPackage.package}/${catalogPackage.latest}::${registryBaseUrl}`
   const [detail, setDetail] = useState<PackageDetailDocument | null>(null)
@@ -251,7 +265,7 @@ function PackageDetailLoaded(options: {
           return
         }
 
-        setDetailError(error instanceof Error ? error.message : 'Unable to load package detail.')
+        setDetailError(error instanceof Error ? error.message : t('packageDetail.detailLoadError'))
         setSettledRequestKey(detailRequestKey)
       })
 
@@ -267,7 +281,7 @@ function PackageDetailLoaded(options: {
         <nav aria-label="Breadcrumb" className="mb-3 package-detail-breadcrumb">
           <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item">
-              <NavLink to={publicSitePath(getPackagesIndexPath())}>Packages</NavLink>
+              <NavLink to={publicSitePath(getPackagesIndexPath())}>{t('packagesIndex.title')}</NavLink>
             </li>
             <li className="breadcrumb-item">
               <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>
@@ -281,6 +295,20 @@ function PackageDetailLoaded(options: {
         </nav>
 
         <Stack gap={4}>
+          {shouldShowGoogleTranslate(locale) ? (
+            <div>
+              <a
+                href={buildGoogleTranslateUrl(globalThis.location.href, locale)}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+              >
+                <FontAwesomeIcon icon={faLanguage} aria-hidden="true" />
+                {tShell('footer.translateWithGoogle')}
+              </a>
+            </div>
+          ) : null}
+
           <PackageDetailHeader
             catalogPackage={catalogPackage}
             registryBaseUrl={registryBaseUrl}
@@ -319,7 +347,7 @@ function PackageDetailLoaded(options: {
 
           <Card className="border-secondary-subtle">
             <Card.Body>
-              <h2 className="h4">Agents</h2>
+              <h2 className="h4">{t('packageDetail.agentsHeading')}</h2>
               <PackageInstructionAccordion
                 kind="agent"
                 entries={detail?.agents ?? []}
@@ -330,7 +358,7 @@ function PackageDetailLoaded(options: {
 
           <Card className="border-secondary-subtle">
             <Card.Body>
-              <h2 className="h4">Flows</h2>
+              <h2 className="h4">{t('packageDetail.flowsHeading')}</h2>
               <PackageInstructionAccordion
                 kind="flow"
                 entries={detail?.flows ?? []}
@@ -341,12 +369,12 @@ function PackageDetailLoaded(options: {
 
           <Card className="border-secondary-subtle">
             <Card.Body>
-              <h2 className="h4">README</h2>
+              <h2 className="h4">{t('packageDetail.readmeHeading')}</h2>
               {detail?.readmeMarkdown ? (
                 <PackageMarkdown markdown={detail.readmeMarkdown} />
               ) : (
                 <p className="mb-0 text-body-secondary">
-                  {isDetailLoading ? 'Loading README…' : 'This package snapshot does not include a README.'}
+                  {isDetailLoading ? t('packageDetail.loadingReadme') : t('packageDetail.noReadme')}
                 </p>
               )}
             </Card.Body>
@@ -358,6 +386,7 @@ function PackageDetailLoaded(options: {
 }
 
 function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
+  const { t } = useTranslation('catalog')
   const { namespace, packageId } = useParams()
   const { catalog, isLoading, hasCompletedForcedReload, registryBaseUrl, githubRepositoryUrl } =
     useRegistryCatalog()
@@ -398,7 +427,7 @@ function PackageDetailPage({ setHeaderSearchSlot }: PackageDetailPageProps) {
     return (
       <div className="py-5">
         <Container>
-          <section className="py-5 d-flex justify-content-center" aria-busy="true" aria-label="Loading package">
+          <section className="py-5 d-flex justify-content-center" aria-busy="true" aria-label={t('packageDetail.loadingPackage')}>
             <FontAwesomeIcon
               icon={faDuotoneSpinner}
               spinPulse

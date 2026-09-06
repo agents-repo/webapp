@@ -1,0 +1,103 @@
+{
+  "search": {
+    "ariaLabel": "Buscar paquetes",
+    "label": "Buscar paquetes del registry",
+    "button": "Buscar",
+    "placeholder": "Buscar por paquete, propietario (@slug), descripción o etiqueta"
+  },
+  "filters": {
+    "title": "Filtros",
+    "titleWithCount": "Filtros, {{count}} seleccionados",
+    "show": "Mostrar filtros",
+    "hide": "Ocultar filtros",
+    "sortByDownloads": "Ordenar paquetes por ventana de descargas",
+    "emptyMatch": "Ningún paquete coincide con tu búsqueda o filtros actuales."
+  },
+  "packagesIndex": {
+    "title": "Todos los paquetes",
+    "lead": "Un índice rastreable de cada paquete publicado en el registry. Busca por nombre, propietario, descripción, etiqueta o categoría, y reduce los resultados con filtros.",
+    "searchResults": "Resultados de búsqueda para \"{{query}}\"",
+    "publishedPackages": "Paquetes publicados",
+    "searchAriaLabel": "Buscar todos los paquetes"
+  },
+  "home": {
+    "popularHeading": "Más descargados en el último año",
+    "viewAllPackages": "Ver todos los paquetes",
+    "emptyCatalog": "Aún no hay paquetes disponibles en el catálogo.",
+    "heroBadge": "Registry de paquetes curados",
+    "heroHeading": "Agentes y flows listos para Copilot, Cursor, Claude Code y Codex",
+    "heroLead": "Agents Repo es un registry abierto y curado. Encuentra paquetes mantenidos, instálalos con la CLI o prueba instrucciones en un chat del navegador, sin reescribir prompts para cada herramienta.",
+    "browsePackages": "Explorar paquetes",
+    "useCli": "Usar la CLI",
+    "brandLogoAlt": "Símbolo de marca de Agents Repo"
+  },
+  "homeLanding": {
+    "supportedTools": {
+      "heading": "Funciona con tus herramientas de codificación con IA"
+    },
+    "value": {
+      "heading": "Lo que obtienes",
+      "discoverTitle": "Descubre paquetes curados",
+      "discoverBody": "Busca agentes y flows por nombre, propietario, etiquetas y herramienta. Las insignias de estado muestran qué se mantiene.",
+      "installTitle": "Instala en tu editor",
+      "installBody": "La CLI coloca paquetes en los layouts de GitHub Copilot, Cursor, Claude Code u OpenAI Codex.",
+      "chatTitle": "Prueba en chat primero",
+      "chatBody": "Copia URLs de instrucciones y prompts en ChatGPT, Grok, Gemini o Microsoft Copilot cuando un paquete esté listo para chat."
+    },
+    "howItWorks": {
+      "heading": "Cómo funciona",
+      "step1Title": "Explora o busca en el catálogo",
+      "step1Body": "Encuentra un agente o flow en Inicio o Paquetes, luego abre la página del paquete para ver detalles.",
+      "step2Title": "Instala o copia instrucciones de chat",
+      "step2Body": "Ejecuta dos comandos CLI en tu proyecto, o copia instrucciones listas para chat en un chat del navegador.",
+      "step3Title": "Úsalo en tu herramienta de codificación",
+      "step3Body": "El agente o flow está listo en GitHub Copilot, Cursor, Claude Code u OpenAI Codex."
+    },
+    "cliQuickstart": {
+      "heading": "Instalar con la CLI",
+      "lead": "Inicializa tu proyecto y luego instala un paquete. En proyectos reales, fija la CLI como devDependency para que el equipo y CI usen la misma versión.",
+      "initLabel": "Inicializar destinos de instalación",
+      "installLabel": "Instalar un paquete",
+      "copyInitLabel": "Copiar comando init",
+      "copyInstallLabel": "Copiar comando install",
+      "copySuccess": "Copiado al portapapeles.",
+      "copyFailure": "No se pudo copiar al portapapeles. Copia el comando manualmente.",
+      "installingPackagesLink": "Instalar paquetes",
+      "cliCommandsLink": "Referencia de comandos CLI"
+    },
+    "useInChat": {
+      "heading": "Usar en chat sin instalar",
+      "body": "Algunos paquetes están listos para chat. Copia una URL de instrucciones o markdown y un prompt inicial en ChatGPT, Grok, Gemini o Microsoft Copilot en el navegador, sin instalar en el proyecto.",
+      "browseButton": "Explorar paquetes listos para chat"
+    },
+    "contribute": {
+      "heading": "Ayuda a hacer crecer el catálogo",
+      "body": "El proyecto necesita sobre todo paquetes de agentes y flows. Envía un paquete mantenido u otras formas de ayudar.",
+      "submitPackage": "Enviar un paquete",
+      "helpUs": "Ayúdanos"
+    }
+  },
+  "packageDetail": {
+    "byOwner": "por",
+    "viewOnGitHub": "Ver en GitHub",
+    "viewOnGitHubAriaLabel": "Ver {{name}} en GitHub",
+    "metadataHeading": "Metadatos",
+    "license": "Licencia",
+    "homepage": "Página web",
+    "homepageAriaLabel": "Página web del paquete",
+    "maintainers": "Mantenedores",
+    "installTargets": "Destinos de instalación",
+    "versionsHeading": "Versiones",
+    "latestSuffix": "(última)",
+    "artifactsCount": "{{count}} artefacto(s)",
+    "loadingVersions": "Cargando lista de versiones…",
+    "noVersions": "No hay lista de versiones disponible.",
+    "agentsHeading": "Agents",
+    "flowsHeading": "Flows",
+    "readmeHeading": "README",
+    "loadingReadme": "Cargando README…",
+    "noReadme": "Esta instantánea del paquete no incluye README.",
+    "loadingPackage": "Cargando paquete",
+    "detailLoadError": "No se pudo cargar el detalle del paquete."
+  }
+}
