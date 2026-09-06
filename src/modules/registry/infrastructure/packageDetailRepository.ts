@@ -1,5 +1,5 @@
 import type { PackageDetailDocument } from '../domain/packageDetail'
-import { settleWithCallerSignal } from './callerAbort'
+import { abortError, settleWithCallerSignal } from './callerAbort'
 import {
   buildPackageDetailCacheKey,
   clearRegistryPackageDetailCache as clearPackageDetailStorage,
@@ -12,8 +12,15 @@ import { buildRegistryPackageDetailUrl } from './registrySourceUrl'
 const inflightByCacheKey = new Map<string, Promise<PackageDetailDocument>>()
 let loadGeneration = 0
 
+const swallowOrphanedInflightRejection = (pending: Promise<PackageDetailDocument>): void => {
+  void pending.catch(() => undefined)
+}
+
 export const invalidatePackageDetailLoads = (): void => {
   loadGeneration += 1
+  for (const pending of inflightByCacheKey.values()) {
+    swallowOrphanedInflightRejection(pending)
+  }
   inflightByCacheKey.clear()
 }
 
@@ -69,6 +76,10 @@ export const loadPackageDetail = async (options: {
 
   let pending = inflightByCacheKey.get(cacheKey)
   if (!pending) {
+    if (options.signal?.aborted) {
+      throw abortError()
+    }
+
     const generation = loadGeneration
     pending = loadPackageDetailFromNetwork(detailUrl)
       .then(async (detail) => {
@@ -80,7 +91,12 @@ export const loadPackageDetail = async (options: {
       .finally(() => {
         inflightByCacheKey.delete(cacheKey)
       })
+    swallowOrphanedInflightRejection(pending)
     inflightByCacheKey.set(cacheKey, pending)
+  }
+
+  if (options.signal?.aborted) {
+    throw abortError()
   }
 
   return settleWithCallerSignal(pending, options.signal)

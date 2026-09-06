@@ -93,4 +93,39 @@ describe('packageDetailRepository', () => {
     await expect(loadPackageDetail(options)).resolves.toEqual(samplePackageDetail)
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
+
+  it('does not leave orphaned network rejections when the caller aborts before settling', async () => {
+    let finishFetch: ((value: { ok: boolean; status: number; statusText: string }) => void) | undefined
+    const fetchMock = vi.fn().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finishFetch = resolve
+        }),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    const abortController = new AbortController()
+    const options = {
+      registryBaseUrl: 'https://example.test/registry',
+      namespace: 'agents-repo',
+      packageId: 'sample-agent',
+      latest: '1.0.0',
+      signal: abortController.signal,
+    }
+
+    const pending = loadPackageDetail(options)
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+
+    abortController.abort()
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+
+    finishFetch?.({
+      ok: false,
+      status: 503,
+      statusText: 'Service Unavailable',
+    })
+    await Promise.resolve()
+  })
 })
