@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { getDocBySlug, getDocDetailPath } from '../../../application/docs/docsManifest.ts'
 import { useLocalizedSitePath } from '../../../application/i18n/useLocalizedSitePath.ts'
 import { useLocale } from '../../../application/i18n/useLocale.ts'
-import { siteRoutes } from '../../routes/siteRoutes.ts'
+import { siteRoutes, normalizeSitePathname } from '../../routes/siteRoutes.ts'
 import DocLayout from './DocLayout.tsx'
 import DocMarkdown from './DocMarkdown.tsx'
 
@@ -19,7 +19,7 @@ function DocArticlePage() {
     return <Navigate to={localizedSitePath(siteRoutes.docs)} replace />
   }
 
-  const markdownDownloadHref = `${getDocDetailPath(entry.slug)}.md`
+  const markdownDownloadHref = `${normalizeSitePathname(localizedSitePath(getDocDetailPath(entry.slug)))}.md`
 
   return (
     <DocLayout activeSlug={entry.slug}>
