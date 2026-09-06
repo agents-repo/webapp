@@ -34,7 +34,10 @@ describe('DocArticlePage accessibility', () => {
     )
 
     expect(await screen.findByRole('heading', { name: 'Primeros pasos', level: 1 })).toBeInTheDocument()
-    const footer = screen.getByRole('contentinfo')
-    expect(within(footer).getByRole('link')).toHaveAttribute('href', '/es/docs/getting-started.md')
+    const article = screen.getByRole('article')
+    expect(within(article).getByRole('link', { name: 'Download Markdown' })).toHaveAttribute(
+      'href',
+      '/es/docs/getting-started.md',
+    )
   })
 })
