@@ -1,7 +1,7 @@
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName.ts'
 import { listRepositoryManifestEntries } from '../../application/repositories/repositoryManifest.ts'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../routes/siteRoutes'
@@ -13,6 +13,7 @@ const ECOSYSTEM_DOC_URL = 'https://github.com/agents-repo/.github/blob/main/docs
 function RepositoriesIndexPage() {
   const { t } = useTranslation('pages')
   const localizedSitePath = useLocalizedSitePath()
+  const externalLinkName = useExternalLinkAccessibleName()
   const entries = listRepositoryManifestEntries()
 
   return (
@@ -50,7 +51,7 @@ function RepositoriesIndexPage() {
                   href={ECOSYSTEM_DOC_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkAccessibleName('Ecosystem overview on GitHub')}
+                  aria-label={externalLinkName('Ecosystem overview on GitHub')}
                 >
                   {t('repositories.ecosystemLink')}
                 </a>.
@@ -78,7 +79,7 @@ function RepositoriesIndexPage() {
                   href={ORG_CONTRIBUTING_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkAccessibleName('Organization contributing guide')}
+                  aria-label={externalLinkName('Organization contributing guide')}
                 >
                   {t('repositories.contributingGuide')}
                 </a>

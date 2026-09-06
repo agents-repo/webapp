@@ -16,7 +16,7 @@ import {
 import { Col, Container, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import { useCookieConsent } from '../../application/analytics/cookieConsentContext'
 import { socialLinks } from '../../application/community/socialLinks'
 import { localeDefinitions } from '../../application/i18n/supportedLocales.ts'
@@ -31,6 +31,7 @@ function Footer() {
   const switchLocale = useSwitchLocale()
   const currentPath = `${location.pathname}${location.search}${location.hash}`
   const { openCookiePreferences } = useCookieConsent()
+  const externalLinkName = useExternalLinkAccessibleName()
 
   return (
     <footer className="border-top border-secondary-subtle py-4 py-lg-5 site-footer bg-body-tertiary">
@@ -111,7 +112,7 @@ function Footer() {
                   href="https://github.com/agents-repo/webapp/blob/main/LICENSE"
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkAccessibleName(t('footer.mitLicense'))}
+                  aria-label={externalLinkName(t('footer.mitLicense'))}
                 >
                   MIT
                 </a>.

@@ -51,7 +51,8 @@ Every routed page should:
    {name}` (WCAG 2.5.3). Card-wide hover does not reveal the windows. On the
    package page, the **Downloads** section lists each window label and count on
    the same line.
-7. Use `externalLinkAccessibleName()` for links that open in a new tab
+7. Use `useExternalLinkAccessibleName()` (or `externalLinkAccessibleName()` with a localized
+   new-tab cue) for links that open in a new tab
 
 ### Route scroll
 
@@ -223,7 +224,8 @@ or `CHROME_PATH` before running the command.
 When changing UI:
 
 - [ ] Keyboard navigation still works (skip link, header, main, footer)
-- [ ] New external links use `externalLinkAccessibleName()`
+- [ ] New external links use `useExternalLinkAccessibleName()` or
+  `externalLinkAccessibleName()` with a localized new-tab cue
 - [ ] New icon-only controls have accessible names
 - [ ] Package card footer action `aria-label`s contain the visible label as a
   contiguous prefix when the name also includes the package

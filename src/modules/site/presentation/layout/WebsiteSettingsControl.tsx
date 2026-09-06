@@ -3,7 +3,7 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Badge, Button, Form, Modal, Stack } from 'react-bootstrap'
 import { isSafeExternalHttpUrl } from '../../application/urlSafety'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import type { RegistryCatalogStatusNote } from '../../application/websiteSettings/registryCatalogStatusNote'
 import {
   clearRegistryCatalogCache,
@@ -49,7 +49,7 @@ const formatRefResolutionLabel = (resolution: RegistryRefResolution | null | und
   return `${resolution.alias} → ${resolution.resolvedRef}`
 }
 
-const renderSourceLink = (url: string): ReactNode => {
+const renderSourceLink = (url: string, externalLinkName: (label: string) => string): ReactNode => {
   if (isSafeExternalHttpUrl(url)) {
     return (
       <a
@@ -57,7 +57,7 @@ const renderSourceLink = (url: string): ReactNode => {
         target="_blank"
         rel="noreferrer noopener"
         className="text-reset text-break"
-        aria-label={externalLinkAccessibleName(url)}
+        aria-label={externalLinkName(url)}
       >
         {url}
       </a>
@@ -67,7 +67,10 @@ const renderSourceLink = (url: string): ReactNode => {
   return <span className="text-break">{url}</span>
 }
 
-const renderCatalogStatusNote = (note: RegistryCatalogStatusNote): ReactNode => (
+const renderCatalogStatusNote = (
+  note: RegistryCatalogStatusNote,
+  externalLinkName: (label: string) => string,
+): ReactNode => (
   <p className="small text-body-secondary opacity-75 mb-0">
     {note.summaryText}
     {isSafeExternalHttpUrl(note.sourceUrl) ? (
@@ -76,7 +79,7 @@ const renderCatalogStatusNote = (note: RegistryCatalogStatusNote): ReactNode => 
         target="_blank"
         rel="noreferrer noopener"
         className="text-reset text-break"
-        aria-label={externalLinkAccessibleName(note.sourceUrl)}
+        aria-label={externalLinkName(note.sourceUrl)}
       >
         {note.sourceUrl}
       </a>
@@ -120,6 +123,7 @@ function RefResolutionBadge({ label }: { readonly label: string | null }) {
 }
 
 function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteSettingsControlProps) {
+  const externalLinkName = useExternalLinkAccessibleName()
   const configuredSource = getConfiguredRegistrySourceConfig()
   const [resolvedSource, setResolvedSource] = useState<RegistrySourceConfig | null>(null)
   const [isRefreshingSource, setIsRefreshingSource] = useState(false)
@@ -380,13 +384,13 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
 
                 <div className="small text-body-secondary mb-3 d-flex align-items-center gap-2 flex-wrap">
                   <span>Current source:</span>
-                  {renderSourceLink(activeSource.baseUrl)}
+                  {renderSourceLink(activeSource.baseUrl, externalLinkName)}
                   <SourceModeBadge mode={activeSource.sourceMode} />
                   {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
                   <RefResolutionBadge label={currentBaseUrlRefResolution} />
                 </div>
 
-                {registryCatalogStatusNote ? renderCatalogStatusNote(registryCatalogStatusNote) : null}
+                {registryCatalogStatusNote ? renderCatalogStatusNote(registryCatalogStatusNote, externalLinkName) : null}
 
                 <section className="mt-4">
                   <h3 className="h6 mb-2">Registry data cache</h3>
@@ -445,7 +449,7 @@ function WebsiteSettingsControl({ onSaved, registryCatalogStatusNote }: WebsiteS
 
                 <div className="small text-body-secondary mt-3 d-flex align-items-center gap-2 flex-wrap">
                   <span>Current GitHub repository:</span>
-                  {renderSourceLink(activeSource.githubRepositoryUrl)}
+                  {renderSourceLink(activeSource.githubRepositoryUrl, externalLinkName)}
                   <SourceModeBadge mode={activeSource.githubRepositorySourceMode} />
                   {isRefreshingSource ? <span className="opacity-75">Resolving refs…</span> : null}
                   <RefResolutionBadge label={currentGithubRepositoryRefResolution} />

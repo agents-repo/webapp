@@ -13,6 +13,9 @@
     "helpUs": "Ajude-nos",
     "current": "(atual)"
   },
+  "accessibility": {
+    "opensInNewTab": "(abre num novo separador)"
+  },
   "footer": {
     "product": "Produto",
     "connect": "Ligação",

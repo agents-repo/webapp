@@ -13,7 +13,7 @@ import {
   Tabs,
 } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
-import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
 import { copyTextToClipboard } from '../../../site/application/clipboard/copyTextToClipboard'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
@@ -177,6 +177,7 @@ function UseInChatLoadedForm({
   readonly safeQuickstart: string | null
 }) {
   const { t } = useTranslation('catalog')
+  const externalLinkName = useExternalLinkAccessibleName()
   const { selectedInstruction, copyUrls, starterPrompt, instructionGroups } = selectedState
 
   return (
@@ -275,7 +276,7 @@ function UseInChatLoadedForm({
                       target="_blank"
                       rel="noreferrer noopener"
                       className="btn btn-outline-primary"
-                      aria-label={externalLinkAccessibleName(
+                      aria-label={externalLinkName(
                         t('packageCard.useInChatForm.openInPlatform', { platform: platformLabel }),
                       )}
                     >
@@ -291,7 +292,7 @@ function UseInChatLoadedForm({
         {safeQuickstart ? (
           <p className="small mb-0">
             <a href={safeQuickstart} target="_blank" rel="noreferrer noopener">
-              {externalLinkAccessibleName(t('packageCard.useInChatForm.packageQuickstart'))}
+              {externalLinkName(t('packageCard.useInChatForm.packageQuickstart'))}
             </a>
           </p>
         ) : null}

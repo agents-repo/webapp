@@ -9,7 +9,7 @@ import { buildGoogleTranslateUrl, shouldShowGoogleTranslate } from '../../../sit
 import { useLocale } from '../../../site/application/i18n/useLocale.ts'
 import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
-import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
 import {
   findRegistryPackage,
   getNamespacePackagesPath,
@@ -47,6 +47,7 @@ function PackageDetailHeader(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { t } = useTranslation('catalog')
+  const externalLinkName = useExternalLinkAccessibleName()
   const localizedSitePath = useLocalizedSitePath()
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
   const packageSlug = toPackageSlug(catalogPackage.namespace, catalogPackage.package)
@@ -105,7 +106,7 @@ function PackageDetailHeader(options: {
             target="_blank"
             rel="noreferrer noopener"
             className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center package-card-action"
-            aria-label={externalLinkAccessibleName(t('packageDetail.viewOnGitHubAriaLabel', { name: catalogPackage.name }))}
+            aria-label={externalLinkName(t('packageDetail.viewOnGitHubAriaLabel', { name: catalogPackage.name }))}
           >
             <FontAwesomeIcon icon={faGithub} aria-hidden="true" />
             <span className="package-card-action-label">{t('packageDetail.viewOnGitHub')}</span>
@@ -130,13 +131,14 @@ function MetadataRow(options: {
 
 function PackageHomepageLink({ homepage }: { readonly homepage: string }): ReactNode {
   const { t } = useTranslation('catalog')
+  const externalLinkName = useExternalLinkAccessibleName()
 
   return (
     <a
       href={homepage}
       target="_blank"
       rel="noreferrer noopener"
-      aria-label={externalLinkAccessibleName(t('packageDetail.homepageAriaLabel'))}
+      aria-label={externalLinkName(t('packageDetail.homepageAriaLabel'))}
     >
       {homepage}
       <FontAwesomeIcon icon={faExternalLink} className="ms-1" aria-hidden="true" />

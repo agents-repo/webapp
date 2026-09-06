@@ -13,6 +13,9 @@
     "helpUs": "Ayúdanos",
     "current": "(actual)"
   },
+  "accessibility": {
+    "opensInNewTab": "(se abre en una pestaña nueva)"
+  },
   "footer": {
     "product": "Producto",
     "connect": "Conectar",

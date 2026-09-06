@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { externalLinkAccessibleName, externalLinkOpensInNewTabLabelEn } from '../../application/accessibility/externalLink'
 import { socialLinks } from '../../application/community/socialLinks'
 import Footer from './Footer'
 
@@ -17,7 +17,7 @@ describe('Footer accessibility', () => {
 
     for (const entry of socialLinks) {
       expect(
-        getByRole('link', { name: externalLinkAccessibleName(entry.accessibleLabel) }),
+        getByRole('link', { name: externalLinkAccessibleName(entry.accessibleLabel, externalLinkOpensInNewTabLabelEn) }),
       ).toBeInTheDocument()
     }
 

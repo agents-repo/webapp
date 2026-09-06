@@ -2,7 +2,7 @@ import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getDocDetailPath } from '../../application/docs/docsManifest.ts'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../routes/siteRoutes'
 
@@ -18,6 +18,7 @@ const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 function HelpUsPage() {
   const { t } = useTranslation('pages')
   const localizedSitePath = useLocalizedSitePath()
+  const externalLinkName = useExternalLinkAccessibleName()
 
   return (
     <div className="py-5">
@@ -54,7 +55,7 @@ function HelpUsPage() {
                   href={REGISTRY_REPO_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                  aria-label={externalLinkName('agents-repo/registry repository')}
                 >
                   agents-repo/registry
                 </a>
@@ -75,7 +76,7 @@ function HelpUsPage() {
                     href={REGISTRY_REPO_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                    aria-label={externalLinkName('agents-repo/registry repository')}
                   >
                     agents-repo/registry
                   </a>
@@ -85,7 +86,7 @@ function HelpUsPage() {
                     href={REGISTRY_CONTRIBUTING_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Registry contributing guide')}
+                    aria-label={externalLinkName('Registry contributing guide')}
                   >
                     {t('helpUs.contributingGuide')}
                   </a>
@@ -95,7 +96,7 @@ function HelpUsPage() {
                     href={REGISTRY_ISSUES_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Registry issues')}
+                    aria-label={externalLinkName('Registry issues')}
                   >
                     {t('contact.issues')}
                   </a>
@@ -120,7 +121,7 @@ function HelpUsPage() {
                     href={WEBAPP_REPO_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('agents-repo/webapp repository')}
+                    aria-label={externalLinkName('agents-repo/webapp repository')}
                   >
                     agents-repo/webapp
                   </a>
@@ -130,7 +131,7 @@ function HelpUsPage() {
                     href={WEBAPP_CONTRIBUTING_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Webapp contributing guide')}
+                    aria-label={externalLinkName('Webapp contributing guide')}
                   >
                     {t('helpUs.contributingGuide')}
                   </a>
@@ -140,7 +141,7 @@ function HelpUsPage() {
                     href={WEBAPP_ISSUES_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Webapp issues')}
+                    aria-label={externalLinkName('Webapp issues')}
                   >
                     {t('contact.issues')}
                   </a>
