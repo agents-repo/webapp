@@ -59,6 +59,8 @@ curl -fsSL 'https://registry.agents-repo.org/packages/<namespace>/<package-id>/d
 
 `detail.json` is generated for the latest snapshot and may include `readmeMarkdown`. CLI install does not fetch it; it uses `versions/manifest.json` and target ZIPs. Normative package rules remain in [registry specs](https://github.com/agents-repo/registry/tree/main/specs).
 
+`?ref=v2.x` resolves to the latest registry Git tag. After package merges, index and detail at that ref may not update until the next daily catalog release (~00:05 UTC). For bleeding-edge reads, use an explicit tag or `main` on a fork via registry-proxy.
+
 ## HTML routes
 
 Human-readable pages live under `/docs` and `/docs/<slug>` with the same content as the `.md` files.
