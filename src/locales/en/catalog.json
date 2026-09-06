@@ -77,6 +77,89 @@
       "helpUs": "Help Us"
     }
   },
+  "packageCard": {
+    "byOwner": "by",
+    "view": "View",
+    "viewAriaLabel": "View {{name}}",
+    "cli": "CLI",
+    "cliAriaLabel": "CLI install for {{name}}",
+    "useInChat": "Use in chat",
+    "useInChatAriaLabel": "Use in chat for {{name}}",
+    "useInChatModalTitle": "Use {{name}} in chat",
+    "useInChatLoading": "Loading chat instructions",
+    "download": "Download",
+    "downloadAriaLabel": "Download {{name}}",
+    "downloadItemAriaLabel": "Download {{name}} for {{target}} (opens in a new tab)",
+    "experimental": "experimental",
+    "viewGitHubProfile": "View GitHub profile",
+    "viewGitHubProfileAriaLabel": "View GitHub profile for {{owner}} (opens in a new tab)",
+    "viewPackagesInNamespace": "View packages in this namespace",
+    "filterByOwner": "Filter packages by this owner",
+    "cliIntro": "Select one or more AI tools, then run the init command in your project root. After that, install the package with the command below.",
+    "cliChooseTool": "Choose AI tool",
+    "cliInitHeading": "Initialize project",
+    "cliInstallHeading": "Install package",
+    "cliCopyInitLabel": "Copy init command for {{name}}",
+    "cliCopyInstallLabel": "Copy install command for {{name}}",
+    "copySuccess": "Copied to clipboard.",
+    "copyFailure": "Could not copy to clipboard. Copy the command manually.",
+    "copyTextFailure": "Could not copy to clipboard. Copy the text manually.",
+    "useInChatForm": {
+      "instructionLabel": "Instruction",
+      "latestUrlLabel": "Latest instruction URL",
+      "copyLatestUrlAriaLabel": "Copy latest instruction URL for {{id}}",
+      "pinnedUrlLabel": "Pinned instruction URL (v{{version}})",
+      "copyPinnedUrlAriaLabel": "Copy pinned instruction URL for {{id}}",
+      "markdownLabel": "Instruction markdown",
+      "copyingMarkdown": "Copying markdown…",
+      "copyMarkdownButton": "Copy instruction markdown",
+      "flowIncludesAgentsNote": "Includes this flow and its related agent files.",
+      "starterPromptLabel": "Starter prompt",
+      "copyStarterPromptAriaLabel": "Copy starter prompt for {{id}}",
+      "urlFallbackHeading": "If the chat cannot load the URL",
+      "urlFallbackBody": "Web chats may fail to fetch instruction URLs from the starter prompt. If the chat cannot load a URL, copy the instruction markdown from this dialog and paste it into the chat.",
+      "howToHeading": "How to use in a web chat",
+      "openInPlatform": "Open in {{platform}}",
+      "openInPlatformAriaLabel": "Open in {{platform}} (opens in a new tab)",
+      "packageQuickstart": "Package quickstart",
+      "loadError": "Unable to load chat instructions.",
+      "markdownLoadError": "Unable to load instruction markdown.",
+      "platforms": {
+        "chatgpt": {
+          "label": "ChatGPT",
+          "steps": [
+            "Sign in to ChatGPT in the browser if needed.",
+            "Use Open in ChatGPT to start a chat with the starter prompt (latest instruction URLs). ChatGPT may send the prompt automatically. ChatGPT may not fetch those URLs.",
+            "Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into ChatGPT."
+          ]
+        },
+        "grok": {
+          "label": "Grok",
+          "steps": [
+            "Sign in to Grok in the browser if needed.",
+            "Use Open in Grok to start a chat with the starter prompt (latest instruction URLs). Grok may send the prompt automatically. Grok may not fetch those URLs.",
+            "Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into Grok."
+          ]
+        },
+        "gemini": {
+          "label": "Gemini",
+          "steps": [
+            "Open Gemini in the browser.",
+            "Copy the instruction URL, markdown, or starter prompt from this dialog.",
+            "Paste it into Gemini and ask it to follow those instructions."
+          ]
+        },
+        "copilot-web": {
+          "label": "Microsoft Copilot (web)",
+          "steps": [
+            "Open Microsoft Copilot in the browser (not GitHub Copilot in an IDE).",
+            "Copy the instruction URL, markdown, or starter prompt from this dialog.",
+            "Paste it into Copilot and ask it to follow those instructions."
+          ]
+        }
+      }
+    }
+  },
   "packageDetail": {
     "byOwner": "by",
     "viewOnGitHub": "View on GitHub",

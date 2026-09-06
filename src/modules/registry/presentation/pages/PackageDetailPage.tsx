@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next'
 import { NavLink, useParams } from 'react-router-dom'
 import { buildGoogleTranslateUrl, shouldShowGoogleTranslate } from '../../../site/application/i18n/googleTranslate.ts'
 import { useLocale } from '../../../site/application/i18n/useLocale.ts'
+import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
-import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import {
   findRegistryPackage,
@@ -47,6 +47,7 @@ function PackageDetailHeader(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { t } = useTranslation('catalog')
+  const localizedSitePath = useLocalizedSitePath()
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
   const packageSlug = toPackageSlug(catalogPackage.namespace, catalogPackage.package)
   const downloadTargets = getPackageDownloadTargets(catalogPackage, registryBaseUrl)
@@ -66,13 +67,13 @@ function PackageDetailHeader(options: {
       </Stack>
       <p className="text-body-secondary mb-2">
         {t('packageDetail.byOwner')}{' '}
-        <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>{catalogPackage.owner}</NavLink>
+        <NavLink to={localizedSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>{catalogPackage.owner}</NavLink>
       </p>
       <p className="mb-3">{catalogPackage.description}</p>
       <PackageMetaBadges
         pkg={catalogPackage}
         className="flex-wrap mb-3"
-        getFacetHref={(facet, value) => publicSitePath(getPackageCatalogFacetQueryPath(facet, value))}
+        getFacetHref={(facet, value) => localizedSitePath(getPackageCatalogFacetQueryPath(facet, value))}
       />
       <div className="d-flex gap-2 flex-wrap">
         {cliPackageRef ? (
@@ -228,6 +229,7 @@ function PackageDetailLoaded(options: {
 }): ReactNode {
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
   const { locale } = useLocale()
+  const localizedSitePath = useLocalizedSitePath()
   const { t: tShell } = useTranslation('shell')
   const { t } = useTranslation('catalog')
   const { downloadStatsById } = useRegistryCatalog()
@@ -273,7 +275,7 @@ function PackageDetailLoaded(options: {
       isActive = false
       abortController.abort()
     }
-  }, [catalogPackage, detailRequestKey, registryBaseUrl])
+  }, [catalogPackage, detailRequestKey, registryBaseUrl, t])
 
   return (
     <div className="py-4 py-lg-5">
@@ -281,10 +283,10 @@ function PackageDetailLoaded(options: {
         <nav aria-label="Breadcrumb" className="mb-3 package-detail-breadcrumb">
           <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item">
-              <NavLink to={publicSitePath(getPackagesIndexPath())}>{t('packagesIndex.title')}</NavLink>
+              <NavLink to={localizedSitePath(getPackagesIndexPath())}>{t('packagesIndex.title')}</NavLink>
             </li>
             <li className="breadcrumb-item">
-              <NavLink to={publicSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>
+              <NavLink to={localizedSitePath(getNamespacePackagesPath(catalogPackage.namespace))}>
                 {catalogPackage.namespace}
               </NavLink>
             </li>

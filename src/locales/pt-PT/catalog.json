@@ -77,6 +77,89 @@
       "helpUs": "Ajude-nos"
     }
   },
+  "packageCard": {
+    "byOwner": "por",
+    "view": "Ver",
+    "viewAriaLabel": "Ver {{name}}",
+    "cli": "CLI",
+    "cliAriaLabel": "Instalação via CLI para {{name}}",
+    "useInChat": "Usar no chat",
+    "useInChatAriaLabel": "Usar no chat para {{name}}",
+    "useInChatModalTitle": "Usar {{name}} no chat",
+    "useInChatLoading": "A carregar instruções de chat",
+    "download": "Descarregar",
+    "downloadAriaLabel": "Descarregar {{name}}",
+    "downloadItemAriaLabel": "Descarregar {{name}} para {{target}} (abre num novo separador)",
+    "experimental": "experimental",
+    "viewGitHubProfile": "Ver perfil no GitHub",
+    "viewGitHubProfileAriaLabel": "Ver perfil no GitHub de {{owner}} (abre num novo separador)",
+    "viewPackagesInNamespace": "Ver pacotes neste namespace",
+    "filterByOwner": "Filtrar pacotes por este proprietário",
+    "cliIntro": "Selecione uma ou mais ferramentas de IA e execute o comando init na raiz do projeto. Depois, instale o pacote com o comando abaixo.",
+    "cliChooseTool": "Escolha a ferramenta de IA",
+    "cliInitHeading": "Inicializar projeto",
+    "cliInstallHeading": "Instalar pacote",
+    "cliCopyInitLabel": "Copiar comando init para {{name}}",
+    "cliCopyInstallLabel": "Copiar comando de instalação para {{name}}",
+    "copySuccess": "Copiado para a área de transferência.",
+    "copyFailure": "Não foi possível copiar para a área de transferência. Copie o comando manualmente.",
+    "copyTextFailure": "Não foi possível copiar para a área de transferência. Copie o texto manualmente.",
+    "useInChatForm": {
+      "instructionLabel": "Instrução",
+      "latestUrlLabel": "URL da instrução mais recente",
+      "copyLatestUrlAriaLabel": "Copiar URL da instrução mais recente para {{id}}",
+      "pinnedUrlLabel": "URL da instrução fixada (v{{version}})",
+      "copyPinnedUrlAriaLabel": "Copiar URL da instrução fixada para {{id}}",
+      "markdownLabel": "Markdown da instrução",
+      "copyingMarkdown": "A copiar markdown…",
+      "copyMarkdownButton": "Copiar markdown da instrução",
+      "flowIncludesAgentsNote": "Inclui este flow e os seus ficheiros de agente relacionados.",
+      "starterPromptLabel": "Prompt inicial",
+      "copyStarterPromptAriaLabel": "Copiar prompt inicial para {{id}}",
+      "urlFallbackHeading": "Se o chat não conseguir carregar o URL",
+      "urlFallbackBody": "Os chats web podem falhar ao obter URLs de instrução do prompt inicial. Se o chat não conseguir carregar um URL, copie o markdown da instrução deste diálogo e cole no chat.",
+      "howToHeading": "Como usar num chat web",
+      "openInPlatform": "Abrir no {{platform}}",
+      "openInPlatformAriaLabel": "Abrir no {{platform}} (abre num novo separador)",
+      "packageQuickstart": "Início rápido do pacote",
+      "loadError": "Não foi possível carregar as instruções de chat.",
+      "markdownLoadError": "Não foi possível carregar o markdown da instrução.",
+      "platforms": {
+        "chatgpt": {
+          "label": "ChatGPT",
+          "steps": [
+            "Inicie sessão no ChatGPT no navegador, se necessário.",
+            "Use Abrir no ChatGPT para iniciar um chat com o prompt inicial (URLs de instrução mais recentes). O ChatGPT pode enviar o prompt automaticamente. O ChatGPT pode não obter esses URLs.",
+            "Ou copie o URL da instrução, o markdown ou o prompt inicial deste diálogo e cole no ChatGPT."
+          ]
+        },
+        "grok": {
+          "label": "Grok",
+          "steps": [
+            "Inicie sessão no Grok no navegador, se necessário.",
+            "Use Abrir no Grok para iniciar um chat com o prompt inicial (URLs de instrução mais recentes). O Grok pode enviar o prompt automaticamente. O Grok pode não obter esses URLs.",
+            "Ou copie o URL da instrução, o markdown ou o prompt inicial deste diálogo e cole no Grok."
+          ]
+        },
+        "gemini": {
+          "label": "Gemini",
+          "steps": [
+            "Abra o Gemini no navegador.",
+            "Copie o URL da instrução, o markdown ou o prompt inicial deste diálogo.",
+            "Cole no Gemini e peça para seguir essas instruções."
+          ]
+        },
+        "copilot-web": {
+          "label": "Microsoft Copilot (web)",
+          "steps": [
+            "Abra o Microsoft Copilot no navegador (não o GitHub Copilot num IDE).",
+            "Copie o URL da instrução, o markdown ou o prompt inicial deste diálogo.",
+            "Cole no Copilot e peça para seguir essas instruções."
+          ]
+        }
+      }
+    }
+  },
   "packageDetail": {
     "byOwner": "por",
     "viewOnGitHub": "Ver no GitHub",
