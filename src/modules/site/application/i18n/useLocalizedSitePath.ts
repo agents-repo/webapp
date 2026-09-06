@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { localizedSitePath } from './localePath.ts'
+import { localizedSitePath, swapLocaleInPathname } from './localePath.ts'
 import { useLocale } from './useLocale.ts'
 import type { AppLocale } from './supportedLocales.ts'
 
@@ -27,13 +27,13 @@ export function useSwitchLocale() {
   const { locale, setLocale } = useLocale()
 
   return useCallback(
-    (targetLocale: AppLocale, pathname: string) => {
+    (targetLocale: AppLocale, currentPath: string) => {
       if (targetLocale === locale) {
         return
       }
 
       setLocale(targetLocale)
-      void navigate(localizedSitePath(pathname, targetLocale), { replace: false })
+      void navigate(swapLocaleInPathname(currentPath, targetLocale), { replace: false })
     },
     [locale, navigate, setLocale],
   )

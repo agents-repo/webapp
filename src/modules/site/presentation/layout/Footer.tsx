@@ -19,7 +19,6 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
 import { useCookieConsent } from '../../application/analytics/cookieConsentContext'
 import { socialLinks } from '../../application/community/socialLinks'
-import { parseLocaleFromPathname } from '../../application/i18n/localePath.ts'
 import { localeDefinitions } from '../../application/i18n/supportedLocales.ts'
 import { useLocalizedSitePath, useSwitchLocale } from '../../application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../routes/siteRoutes'
@@ -30,7 +29,7 @@ function Footer() {
   const location = useLocation()
   const localizedSitePath = useLocalizedSitePath()
   const switchLocale = useSwitchLocale()
-  const { pathnameWithoutLocale } = parseLocaleFromPathname(location.pathname)
+  const currentPath = `${location.pathname}${location.search}${location.hash}`
   const { openCookiePreferences } = useCookieConsent()
 
   return (
@@ -130,7 +129,7 @@ function Footer() {
                     type="button"
                     className="btn btn-link footer-link text-start p-0 border-0"
                     onClick={() => {
-                      switchLocale(definition.id, pathnameWithoutLocale)
+                      switchLocale(definition.id, currentPath)
                     }}
                   >
                     {definition.displayName}

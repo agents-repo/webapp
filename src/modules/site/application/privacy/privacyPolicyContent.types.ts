@@ -1,3 +1,5 @@
+import type { AppLocale } from '../i18n/supportedLocales.ts'
+
 export interface PrivacyPolicyCookieRow {
   readonly name: string
   readonly purpose: string
@@ -24,7 +26,7 @@ export interface PrivacyPolicyTableHeaders {
 
 export interface PrivacyPolicyLanguageLink {
   readonly label: string
-  readonly locale: string
+  readonly locale: AppLocale
 }
 
 export interface PrivacyPolicyContent {

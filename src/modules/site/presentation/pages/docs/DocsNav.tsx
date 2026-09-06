@@ -1,5 +1,5 @@
 import { Nav } from 'react-bootstrap'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   getDocDetailPath,
@@ -7,7 +7,7 @@ import {
 } from '../../../application/docs/docsManifest.ts'
 import { useLocalizedSitePath } from '../../../application/i18n/useLocalizedSitePath.ts'
 import { useLocale } from '../../../application/i18n/useLocale.ts'
-import { normalizeSitePathname, siteRoutes } from '../../routes/siteRoutes.ts'
+import { siteRoutes } from '../../routes/siteRoutes.ts'
 
 interface DocsNavProps {
   readonly activeSlug?: string
@@ -17,7 +17,6 @@ function DocsNav({ activeSlug }: DocsNavProps) {
   const { t } = useTranslation('docs')
   const { locale } = useLocale()
   const localizedSitePath = useLocalizedSitePath()
-  const location = useLocation()
   const sectionGroups = listDocSectionGroups(locale)
 
   return (
@@ -28,7 +27,6 @@ function DocsNav({ activeSlug }: DocsNavProps) {
           to={localizedSitePath(siteRoutes.docs)}
           end
           className="docs-sidebar-link"
-          aria-current={normalizeSitePathname(location.pathname) === siteRoutes.docs ? 'page' : undefined}
         >
           {t('nav.overview')}
         </Nav.Link>

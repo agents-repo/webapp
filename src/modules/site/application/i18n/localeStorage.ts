@@ -27,8 +27,12 @@ export function getStoredLocale(): AppLocale | null {
     return null
   }
 
-  const storedLocale = storage.getItem(localeStorageKey)
-  return isAppLocale(storedLocale) ? storedLocale : null
+  try {
+    const storedLocale = storage.getItem(localeStorageKey)
+    return isAppLocale(storedLocale) ? storedLocale : null
+  } catch {
+    return null
+  }
 }
 
 export function persistLocale(locale: AppLocale): void {
@@ -37,7 +41,11 @@ export function persistLocale(locale: AppLocale): void {
     return
   }
 
-  storage.setItem(localeStorageKey, locale)
+  try {
+    storage.setItem(localeStorageKey, locale)
+  } catch {
+    // Ignore storage failures; persistence is best-effort.
+  }
 }
 
 export function getInitialLocale(): AppLocale {

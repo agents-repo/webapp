@@ -11,7 +11,8 @@ function LocaleDropdown() {
   const { t } = useTranslation('shell')
   const location = useLocation()
   const switchLocale = useSwitchLocale()
-  const { locale, pathnameWithoutLocale } = parseLocaleFromPathname(location.pathname)
+  const { locale } = parseLocaleFromPathname(location.pathname)
+  const currentPath = `${location.pathname}${location.search}${location.hash}`
   const activeDefinition = localeDefinitions.find((definition) => definition.id === locale) ?? localeDefinitions[0]
 
   return (
@@ -35,7 +36,7 @@ function LocaleDropdown() {
             className="d-flex align-items-center gap-2"
             active={definition.id === locale}
             onClick={() => {
-              switchLocale(definition.id, pathnameWithoutLocale)
+              switchLocale(definition.id, currentPath)
             }}
           >
             <span className="flex-grow-1">{definition.displayName}</span>

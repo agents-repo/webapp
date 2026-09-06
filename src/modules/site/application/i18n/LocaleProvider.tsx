@@ -28,14 +28,15 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
       const detectedLocale = detectBrowserLocale(readNavigatorLanguages())
       if (detectedLocale !== 'en') {
         void navigate(getLocaleHomePath(detectedLocale), { replace: true })
-        return
       }
     }
+  }, [locale, navigate, pathnameWithoutLocale])
 
+  useEffect(() => {
     persistLocale(locale)
     void i18n.changeLanguage(locale)
     document.documentElement.lang = getLocaleDefinition(locale).htmlLang
-  }, [locale, navigate, pathnameWithoutLocale])
+  }, [locale])
 
   const setLocale = (nextLocale: AppLocale) => {
     persistLocale(nextLocale)
