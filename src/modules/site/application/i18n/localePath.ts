@@ -1,6 +1,7 @@
 import { normalizeSitePathname, publicSitePath } from '../../presentation/routes/siteRoutes.ts'
 import type { AppLocale } from './supportedLocales.ts'
 import {
+  appLocales,
   defaultAppLocale,
   getLocaleDefinition,
   getLocaleUrlSlug,
@@ -84,8 +85,7 @@ export function getLocaleHreflangAlternates(
 ): readonly { readonly hreflang: string; readonly href: string }[] {
   const { pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
 
-  return ['en', 'es', 'pt-BR', 'pt-PT'].map((localeId) => {
-    const locale = localeId as AppLocale
+  return appLocales.map((locale) => {
     const definition = getLocaleDefinition(locale)
     const href = `${origin}${localizedSitePath(pathnameWithoutLocale, locale)}`
 
