@@ -14,7 +14,9 @@ const distRoot = join(process.cwd(), 'dist')
 const siteOrigin = resolveBuildSiteOrigin(mode)
 
 function docMarkdownPublicPath(slug, locale) {
-  return `${normalizeSitePathname(localizedSitePath(`/docs/${slug}`, locale))}.md`
+  const detailPath = `/docs/${slug}`
+  const normalizedPath = normalizeSitePathname(localizedSitePath(detailPath, locale))
+  return `${normalizedPath}.md`
 }
 
 function distPathForDocMarkdown(slug, locale) {
