@@ -1,28 +1,63 @@
 import { copyFileSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { localizedSitePath } from '../src/modules/site/application/i18n/localePath.ts'
+import { defaultAppLocale, localeFromUrlSlug } from '../src/modules/site/application/i18n/supportedLocales.ts'
+import { normalizeSitePathname } from '../src/modules/site/application/routes/sitePath.ts'
 import { resolveBuildSiteOrigin } from './seo-build-config.ts'
 
 const modeArgIndex = process.argv.indexOf('--mode')
 const mode = modeArgIndex >= 0 ? process.argv[modeArgIndex + 1] : (process.env.MODE ?? 'production')
 
 const docSourceDir = join(process.cwd(), 'src/content/docs')
-const distDocsDir = join(process.cwd(), 'dist/docs')
 const distRoot = join(process.cwd(), 'dist')
 
 const siteOrigin = resolveBuildSiteOrigin(mode)
 
-mkdirSync(distDocsDir, { recursive: true })
+function docMarkdownPublicPath(slug, locale) {
+  return `${normalizeSitePathname(localizedSitePath(`/docs/${slug}`, locale))}.md`
+}
 
-const markdownFiles = readdirSync(docSourceDir).filter((name) => name.endsWith('.md'))
+function distPathForDocMarkdown(slug, locale) {
+  const publicPath = docMarkdownPublicPath(slug, locale)
+  return join(distRoot, ...publicPath.slice(1).split('/'))
+}
+
+function copyDocMarkdown(sourcePath, slug, locale, llmsLines) {
+  const destinationPath = distPathForDocMarkdown(slug, locale)
+  mkdirSync(dirname(destinationPath), { recursive: true })
+  copyFileSync(sourcePath, destinationPath)
+  llmsLines.push(`${siteOrigin}${docMarkdownPublicPath(slug, locale)}`)
+}
+
 const llmsLines = ['# Agents Repo docs', '', 'Stable markdown URLs for agents and tooling:', '']
+let copiedCount = 0
 
-for (const fileName of markdownFiles) {
-  const slug = fileName.replace(/\.md$/, '')
-  copyFileSync(join(docSourceDir, fileName), join(distDocsDir, fileName))
-  llmsLines.push(`${siteOrigin}/docs/${slug}.md`)
+for (const entry of readdirSync(docSourceDir, { withFileTypes: true })) {
+  if (entry.isFile() && entry.name.endsWith('.md')) {
+    const slug = entry.name.replace(/\.md$/, '')
+    copyDocMarkdown(join(docSourceDir, entry.name), slug, defaultAppLocale, llmsLines)
+    copiedCount += 1
+    continue
+  }
+
+  if (!entry.isDirectory()) {
+    continue
+  }
+
+  const locale = localeFromUrlSlug(entry.name)
+  if (!locale) {
+    continue
+  }
+
+  const localeDir = join(docSourceDir, entry.name)
+  for (const fileName of readdirSync(localeDir).filter((name) => name.endsWith('.md'))) {
+    const slug = fileName.replace(/\.md$/, '')
+    copyDocMarkdown(join(localeDir, fileName), slug, locale, llmsLines)
+    copiedCount += 1
+  }
 }
 
 llmsLines.push('')
 writeFileSync(join(distRoot, 'llms.txt'), `${llmsLines.join('\n')}\n`, 'utf8')
 
-console.log(`Copied ${markdownFiles.length} doc markdown files to dist/docs/`)
+console.log(`Copied ${copiedCount} doc markdown files into dist/`)

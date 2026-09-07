@@ -46,7 +46,8 @@ separate `noindex` fallback head for unknown paths.
 200 URL). Canonical, `og:url`, JSON-LD `url`, sitemap `<loc>`, and in-app
 `Link`/`NavLink`/`Navigate` hrefs MUST use that trailing-slash form via
 `publicSitePath()` in `siteRoutes.ts`. Home stays `/`. File URLs stay unslashed
-(`/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/docs/<slug>.md`). Route ids
+(`/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/docs/<slug>.md`, and locale-prefixed
+`/es/docs/<slug>.md`, `/pt-br/docs/<slug>.md`, `/pt-pt/docs/<slug>.md`). Route ids
 (`siteRoutes`, `canonicalPath`, `getBuildSiteRoutePaths()`) stay unslashed so
 `prepare-pages-dist.mjs` can write folder HTML. `prepare-pages-dist.mjs` also
 rewrites sitemap `<loc>` values after `vite build` in case `vite-plugin-sitemap`
@@ -63,7 +64,8 @@ The plugin also injects `<link rel="sitemap" href="/sitemap.xml">` into
 the `404.html` fallback).
 
 **Browser access:** The PWA service worker excludes `/sitemap.xml`,
-`/robots.txt`, `/llms.txt`, and `/docs/*.md` from HTML `NetworkFirst` caching
+`/robots.txt`, `/llms.txt`, and doc markdown (`/docs/*.md` plus locale-prefixed
+`/es/docs/*.md`, `/pt-br/docs/*.md`, `/pt-pt/docs/*.md`) from HTML `NetworkFirst` caching
 (`isHtmlNavigationRequest` in `scripts/pwa-workbox.ts`, wired in
 `vite.config.ts`) so browser navigation serves the static crawl files instead of
 the SPA shell. `navigateFallback` is disabled so those files are not replaced by
