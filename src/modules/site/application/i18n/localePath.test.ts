@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  getLocaleHreflangAlternates,
   getLocaleHomePath,
   localizedSitePath,
   parseLocaleFromPathname,
@@ -40,6 +41,12 @@ describe('localizedSitePath', () => {
     expect(localizedSitePath('/about', 'es')).toBe('/es/about/')
     expect(localizedSitePath('/', 'pt-BR')).toBe('/pt-br/')
   })
+
+  it('keeps doc markdown crawl files unslashed', () => {
+    expect(localizedSitePath('/docs/getting-started.md', 'en')).toBe('/docs/getting-started.md')
+    expect(localizedSitePath('/docs/getting-started.md', 'es')).toBe('/es/docs/getting-started.md')
+    expect(localizedSitePath('/docs/getting-started.md', 'pt-PT')).toBe('/pt-pt/docs/getting-started.md')
+  })
 })
 
 describe('stripLocalePrefix', () => {
@@ -58,5 +65,18 @@ describe('getLocaleHomePath', () => {
   it('returns localized home paths', () => {
     expect(getLocaleHomePath('en')).toBe('/')
     expect(getLocaleHomePath('es')).toBe('/es/')
+  })
+})
+
+describe('getLocaleHreflangAlternates', () => {
+  it('emits locale-prefixed markdown URLs without trailing slashes', () => {
+    const alternates = getLocaleHreflangAlternates('/docs/getting-started.md', 'https://agents-repo.org')
+
+    expect(alternates).toEqual([
+      { hreflang: 'en', href: 'https://agents-repo.org/docs/getting-started.md' },
+      { hreflang: 'es', href: 'https://agents-repo.org/es/docs/getting-started.md' },
+      { hreflang: 'pt-BR', href: 'https://agents-repo.org/pt-br/docs/getting-started.md' },
+      { hreflang: 'pt-PT', href: 'https://agents-repo.org/pt-pt/docs/getting-started.md' },
+    ])
   })
 })
