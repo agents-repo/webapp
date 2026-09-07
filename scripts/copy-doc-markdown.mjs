@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename -- dist output paths derived from locale doc slugs and content/docs directories */
 import { copyFileSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { localizedSitePath } from '../src/modules/site/application/i18n/localePath.ts'
