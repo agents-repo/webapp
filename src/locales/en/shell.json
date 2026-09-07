@@ -53,5 +53,15 @@
   "common": {
     "loading": "Loading…",
     "notFound": "Page not found"
+  },
+  "social": {
+    "x": {
+      "shortDescription": "Announcements and informal conversation",
+      "accessibleLabel": "Agents Repo on X"
+    },
+    "reddit": {
+      "shortDescription": "Community discussion and ideas",
+      "accessibleLabel": "Agents Repo on Reddit"
+    }
   }
 }

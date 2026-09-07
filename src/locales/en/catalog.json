@@ -20,6 +20,13 @@
     "publishedPackages": "Published packages",
     "searchAriaLabel": "Search all packages"
   },
+  "namespacePackages": {
+    "title": "{{namespace}} packages",
+    "lead": "Published packages in the {{namespace}} namespace. Search and filters are limited to this namespace.",
+    "searchResults": "Search results for \"{{query}}\"",
+    "publishedPackages": "{{namespace}} packages",
+    "searchAriaLabel": "Search packages in {{namespace}}"
+  },
   "home": {
     "popularHeading": "Most downloaded in the last year",
     "viewAllPackages": "View all packages",

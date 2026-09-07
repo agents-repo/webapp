@@ -20,6 +20,13 @@
     "publishedPackages": "Pacotes publicados",
     "searchAriaLabel": "Pesquisar todos os pacotes"
   },
+  "namespacePackages": {
+    "title": "Pacotes de {{namespace}}",
+    "lead": "Pacotes publicados no namespace {{namespace}}. A pesquisa e os filtros ficam limitados a este namespace.",
+    "searchResults": "Resultados da pesquisa por \"{{query}}\"",
+    "publishedPackages": "Pacotes de {{namespace}}",
+    "searchAriaLabel": "Pesquisar pacotes em {{namespace}}"
+  },
   "home": {
     "popularHeading": "Mais descarregados no último ano",
     "viewAllPackages": "Ver todos os pacotes",

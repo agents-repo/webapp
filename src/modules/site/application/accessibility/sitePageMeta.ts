@@ -92,7 +92,7 @@ export function getSitePageMeta(
 
   const packageRoute = parsePackageSitePath(normalizedPath)
   if (packageRoute) {
-    const title = getPackageSitePageTitle(packageRoute, catalog)
+    const title = getPackageSitePageTitle(packageRoute, catalog, locale)
     return { title, routeLabel: title }
   }
 

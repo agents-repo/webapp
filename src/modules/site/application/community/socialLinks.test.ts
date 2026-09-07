@@ -17,8 +17,6 @@ describe('socialLinks', () => {
     for (const link of socialLinks) {
       expect(link.href).toMatch(/^https:\/\//)
       expect(link.label.length).toBeGreaterThan(0)
-      expect(link.shortDescription.length).toBeGreaterThan(0)
-      expect(link.accessibleLabel.length).toBeGreaterThan(0)
     }
   })
 

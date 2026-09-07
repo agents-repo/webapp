@@ -58,6 +58,10 @@
     "registryIssuesSuffix": "— envios de pacotes, problemas do catálogo e trabalho rastreado",
     "discussions": "Discussions",
     "issues": "Issues",
+    "webappDiscussionsAriaLabel": "Discussões do webapp",
+    "webappIssuesAriaLabel": "Issues do webapp",
+    "registryDiscussionsAriaLabel": "Discussões do registry",
+    "registryIssuesAriaLabel": "Issues do registry",
     "communityHeading": "Comunidade",
     "communityBody": "Participe dos canais públicos da comunidade para conversa informal e ideias. Use GitHub Discussions e Issues acima para bugs, trabalho rastreado e envios de pacotes. Não use canais sociais para solicitações de segurança ou privacidade.",
     "creatorHeading": "Criador",
@@ -137,17 +141,137 @@
     "architectureBodyFrom": "pelo pipeline da webapp.",
     "architectureLinkPrefix": "Diagramas e fluxos passo a passo:",
     "ecosystemLink": "Visão geral do ecossistema no GitHub",
+    "ecosystemLinkAriaLabel": "Visão geral do ecossistema no GitHub",
     "organizationHeading": "Repositórios da organização",
     "contributeHeading": "Contribuir",
     "contributePrefix": "Comece com o",
-    "contributeMiddle": "da organização, veja como ajudar em",
+    "contributeMiddle": " da organização, veja como ajudar em",
     "contributeAfterHelpUs": ", ou explore ideias de pacotes em",
     "contributeAfterHome": ". Leia a",
     "contributeSuffix": "do site para documentação de catálogo, CLI e contribuição.",
     "contributingGuide": "guia de contribuição",
+    "contributingGuideAriaLabel": "Guia de contribuição da organização",
+    "viewRepositoryPage": "Ver a página do repositório {{name}}",
     "helpUsLink": "Ajude-nos",
     "homeLink": "Início",
-    "docsLink": "Documentação"
+    "docsLink": "Documentação",
+    "detail": {
+      "backLink": "← Todos os repositórios",
+      "relationshipHeading": "Relacionamento",
+      "quickLinksHeading": "Links rápidos",
+      "stackHeading": "Stack e tags",
+      "stackLabel": "Stack:",
+      "audienceHeading": "Público-alvo",
+      "quickstartHeading": "Início rápido",
+      "docsHeading": "Documentação",
+      "docsFallbackPrefix": "Consulte a documentação do site em",
+      "docsFallbackDocsLink": "Documentação",
+      "docsFallbackMiddle": ", incluindo",
+      "docsFallbackInstallingPackages": "Instalação de pacotes",
+      "docsFallbackAnd": "e",
+      "docsFallbackCliCommands": "Referência de comandos CLI",
+      "docsFallbackSuffix": ". A documentação do repositório permanece no GitHub.",
+      "canonicalHeading": "URL canônica do site",
+      "canonicalBodyPrefix": "Use",
+      "canonicalBodyAsGithubRepo": "como repositório do GitHub",
+      "canonicalBodyWebsite": "Website",
+      "canonicalBodyFieldSuffix": "do campo.",
+      "canonicalBodyMiddle": "Slugs em",
+      "canonicalBodySuffix": "são estáveis e não devem ser renomeados após a publicação.",
+      "onGitHub": "{{name}} no GitHub",
+      "contributingGuide": "Guia de contribuição",
+      "issues": "Issues",
+      "discussions": "Discussões",
+      "security": "Segurança"
+    },
+    "roles": {
+      "data": "dados",
+      "ui": "interface",
+      "tooling": "ferramentas",
+      "infrastructure": "infraestrutura",
+      "governance": "governança"
+    },
+    "entries": {
+      "registry": {
+        "description": "Especificações de código aberto e catálogo de pacotes para agents e flows multiagente em destinos de instalação compatíveis.",
+        "relationship": "O registry é a fonte da verdade para metadados de pacotes, especificações e ZIPs versionados. Webapp e CLI buscam dados do catálogo pelo registry-proxy por padrão.",
+        "audience": "Autores de pacotes, mantenedores de especificações e colaboradores que adicionam agents ou flows.",
+        "tags": {
+          "catalog": "catálogo",
+          "specs": "especificações",
+          "packages": "pacotes",
+          "validation": "validação"
+        },
+        "docLinks": {
+          "how-the-registry-works": "Como o registro funciona",
+          "submitting-a-package": "Enviar um pacote"
+        }
+      },
+      "registry-proxy": {
+        "description": "Cloudflare Worker que armazena em cache e faz proxy de acesso somente leitura aos arquivos do registro no GitHub, com autenticação opcional por token.",
+        "relationship": "Fica entre consumidores (webapp, CLI) e o repositório do registry no GitHub, reduzindo limites de taxa e melhorando a confiabilidade das buscas.",
+        "audience": "Operadores e colaboradores que alteram comportamento do proxy, cache ou implantação.",
+        "tags": {
+          "cloudflare": "cloudflare",
+          "worker": "worker",
+          "cache": "cache",
+          "github-raw": "github-raw"
+        },
+        "docLinks": {}
+      },
+      "webapp": {
+        "description": "Site público para explorar, buscar e baixar agents e flows do registro (agents-repo.org).",
+        "relationship": "Apresenta o catálogo do registro a usuários finais e hospeda páginas da organização como Sobre, Ajude-nos e documentação de repositórios.",
+        "audience": "Colaboradores de frontend, revisores de UX e mantenedores de conteúdo do site.",
+        "tags": {
+          "react": "react",
+          "vite": "vite",
+          "pwa": "pwa",
+          "catalog-ui": "interface de catálogo"
+        },
+        "docLinks": {
+          "contributing-to-webapp": "Contribuindo para a webapp",
+          "using-the-catalog": "Usando o catálogo"
+        }
+      },
+      "cli": {
+        "description": "CLI oficial para instalar e gerenciar pacotes agents-repo para GitHub Copilot, Cursor, Claude Code e OpenAI Codex.",
+        "relationship": "Instala pacotes do registro em destinos de instalação do projeto, usando registry-proxy para buscar o catálogo por padrão.",
+        "audience": "Desenvolvedores que instalam pacotes localmente e colaboradores que estendem comandos da CLI.",
+        "tags": {
+          "npx": "npx",
+          "install-targets": "destinos de instalação",
+          "lockfile": "lockfile"
+        },
+        "docLinks": {
+          "installing-packages": "Instalação de pacotes",
+          "cli-commands": "Referência de comandos CLI",
+          "cli-doctor": "diagnósticos doctor"
+        }
+      },
+      "github": {
+        "description": "Arquivos de saúde comunitária, políticas compartilhadas e padrões de fluxo de contribuição em toda a organização agents-repo.",
+        "relationship": "Define o Required Workflow compartilhado, relatórios de segurança e padrões herdados por repositórios filhos, salvo substituição.",
+        "audience": "Mantenedores que atualizam políticas da organização e documentação entre repositórios.",
+        "tags": {
+          "contributing": "contribuição",
+          "security": "segurança",
+          "org-policies": "políticas da organização"
+        },
+        "docLinks": {}
+      },
+      "github-pages": {
+        "description": "Destino de implantação automatizada do site público (agents-repo.github.io), compilado a partir do repositório webapp.",
+        "relationship": "Recebe builds de produção do CI da webapp; o domínio personalizado agents-repo.org aponta para este site do Pages.",
+        "audience": "Mantenedores que verificam implantações e disponibilidade do site.",
+        "tags": {
+          "github-pages": "github-pages",
+          "deploy": "implantação",
+          "cdn": "cdn"
+        },
+        "docLinks": {}
+      }
+    }
   },
   "accessibility": {
     "title": "Declaração de acessibilidade",

@@ -5,6 +5,11 @@ import { externalLinkAccessibleName, externalLinkOpensInNewTabLabelEn } from '..
 import { socialLinks } from '../../application/community/socialLinks'
 import Footer from './Footer'
 
+const socialAccessibleLabelsEn: Record<string, string> = {
+  x: 'Agents Repo on X',
+  reddit: 'Agents Repo on Reddit',
+}
+
 const axeOptions = {
   rules: {
     'color-contrast': { enabled: false },
@@ -17,7 +22,12 @@ describe('Footer accessibility', () => {
 
     for (const entry of socialLinks) {
       expect(
-        getByRole('link', { name: externalLinkAccessibleName(entry.accessibleLabel, externalLinkOpensInNewTabLabelEn) }),
+        getByRole('link', {
+          name: externalLinkAccessibleName(
+            socialAccessibleLabelsEn[entry.id],
+            externalLinkOpensInNewTabLabelEn,
+          ),
+        }),
       ).toBeInTheDocument()
     }
 

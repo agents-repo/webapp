@@ -58,6 +58,10 @@
     "registryIssuesSuffix": "— package submissions, catalog problems, and tracked work",
     "discussions": "Discussions",
     "issues": "Issues",
+    "webappDiscussionsAriaLabel": "Webapp discussions",
+    "webappIssuesAriaLabel": "Webapp issues",
+    "registryDiscussionsAriaLabel": "Registry discussions",
+    "registryIssuesAriaLabel": "Registry issues",
     "communityHeading": "Community",
     "communityBody": "Join public community channels for informal discussion and ideas. Use GitHub Discussions and Issues above for bugs, tracked work, and package submissions. Do not use social channels for security or privacy requests.",
     "creatorHeading": "Creator",
@@ -137,6 +141,7 @@
     "architectureBodyFrom": "from the webapp pipeline.",
     "architectureLinkPrefix": "Step-by-step diagrams and flows:",
     "ecosystemLink": "Ecosystem overview on GitHub",
+    "ecosystemLinkAriaLabel": "Ecosystem overview on GitHub",
     "organizationHeading": "Organization repositories",
     "contributeHeading": "Contribute",
     "contributePrefix": "Start with the organization",
@@ -145,9 +150,128 @@
     "contributeAfterHome": ". Read the site",
     "contributeSuffix": "for catalog, CLI, and contribution docs.",
     "contributingGuide": "contributing guide",
+    "contributingGuideAriaLabel": "Organization contributing guide",
+    "viewRepositoryPage": "View {{name}} repository page",
     "helpUsLink": "Help Us",
     "homeLink": "Home",
-    "docsLink": "Docs"
+    "docsLink": "Docs",
+    "detail": {
+      "backLink": "← All repositories",
+      "relationshipHeading": "Relationship",
+      "quickLinksHeading": "Quick links",
+      "stackHeading": "Stack and tags",
+      "stackLabel": "Stack:",
+      "audienceHeading": "Audience",
+      "quickstartHeading": "Quickstart",
+      "docsHeading": "Docs",
+      "docsFallbackPrefix": "Browse site docs on",
+      "docsFallbackDocsLink": "Docs",
+      "docsFallbackMiddle": ", including",
+      "docsFallbackInstallingPackages": "Installing packages",
+      "docsFallbackAnd": "and",
+      "docsFallbackCliCommands": "CLI command reference",
+      "docsFallbackSuffix": ". Repository docs remain on GitHub.",
+      "canonicalHeading": "Canonical site URL",
+      "canonicalBodyPrefix": "Use",
+      "canonicalBodyAsGithubRepo": "as the GitHub repository",
+      "canonicalBodyWebsite": "Website",
+      "canonicalBodyFieldSuffix": "field.",
+      "canonicalBodyMiddle": "Slugs under",
+      "canonicalBodySuffix": "are stable and must not be renamed after publish.",
+      "onGitHub": "{{name}} on GitHub",
+      "contributingGuide": "Contributing guide",
+      "issues": "Issues",
+      "discussions": "Discussions",
+      "security": "Security"
+    },
+    "roles": {
+      "data": "data",
+      "ui": "ui",
+      "tooling": "tooling",
+      "infrastructure": "infrastructure",
+      "governance": "governance"
+    },
+    "entries": {
+      "registry": {
+        "description": "Open-source specifications and package catalog for agents and multi-agent flows across supported install targets.",
+        "relationship": "Registry is the source of truth for package metadata, specs, and versioned ZIPs. Webapp and CLI fetch catalog data through registry-proxy by default.",
+        "audience": "Package authors, spec maintainers, and contributors adding agents or flows.",
+        "tags": {
+          "catalog": "catalog",
+          "specs": "specs",
+          "packages": "packages",
+          "validation": "validation"
+        },
+        "docLinks": {
+          "how-the-registry-works": "How the registry works",
+          "submitting-a-package": "Submit a package"
+        }
+      },
+      "registry-proxy": {
+        "description": "Cloudflare Worker that caches and proxies read-only access to registry files on GitHub with optional token auth.",
+        "relationship": "Sits between consumers (webapp, CLI) and the registry GitHub repository, reducing rate limits and improving fetch reliability.",
+        "audience": "Operators and contributors changing proxy behavior, caching, or deployment.",
+        "tags": {
+          "cloudflare": "cloudflare",
+          "worker": "worker",
+          "cache": "cache",
+          "github-raw": "github-raw"
+        },
+        "docLinks": {}
+      },
+      "webapp": {
+        "description": "Public site for browsing, searching, and downloading agents and flows from the registry (agents-repo.org).",
+        "relationship": "Presents the registry catalog to end users and hosts organization pages such as About, Help Us, and repository documentation.",
+        "audience": "Frontend contributors, UX reviewers, and maintainers of site content.",
+        "tags": {
+          "react": "react",
+          "vite": "vite",
+          "pwa": "pwa",
+          "catalog-ui": "catalog-ui"
+        },
+        "docLinks": {
+          "contributing-to-webapp": "Contributing to webapp",
+          "using-the-catalog": "Using the catalog"
+        }
+      },
+      "cli": {
+        "description": "Official CLI to install and manage agents-repo packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex.",
+        "relationship": "Installs packages from the registry into project install targets, using registry-proxy for catalog fetches by default.",
+        "audience": "Developers installing packages locally and contributors extending CLI commands.",
+        "tags": {
+          "npx": "npx",
+          "install-targets": "install-targets",
+          "lockfile": "lockfile"
+        },
+        "docLinks": {
+          "installing-packages": "Installing packages",
+          "cli-commands": "CLI command reference",
+          "cli-doctor": "doctor diagnostics"
+        }
+      },
+      "github": {
+        "description": "Organization-wide community health files, shared policies, and contributor workflow defaults for agents-repo.",
+        "relationship": "Defines shared Required Workflow, security reporting, and defaults inherited by child repositories unless overridden.",
+        "audience": "Maintainers updating organization policies and cross-repo documentation.",
+        "tags": {
+          "contributing": "contributing",
+          "security": "security",
+          "org-policies": "org-policies"
+        },
+        "docLinks": {}
+      },
+      "github-pages": {
+        "description": "Automated deploy target for the public site (agents-repo.github.io), built from the webapp repository.",
+        "relationship": "Receives production builds from webapp CI; custom domain agents-repo.org points at this Pages site.",
+        "audience": "Maintainers verifying deployments and site availability.",
+        "tags": {
+          "github-pages": "github-pages",
+          "deploy": "deploy",
+          "cdn": "cdn"
+        },
+        "docLinks": {}
+      }
+    }
   },
   "accessibility": {
     "title": "Accessibility statement",

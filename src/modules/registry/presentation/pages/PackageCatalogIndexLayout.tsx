@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Badge, Button, Col, Container, Form, Offcanvas, Row, Stack } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import GoogleTranslateLink from '../../../site/presentation/components/GoogleTranslateLink.tsx'
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
 import {
   DOWNLOAD_STATS_PERIODS,
@@ -145,6 +146,7 @@ export function PackageCatalogIndexLayout({
               <Stack gap={3} className="align-items-center">
                 <h1 className="display-6 fw-semibold mb-0">{title}</h1>
                 <p className="lead fs-6 text-body-secondary mb-0">{lead}</p>
+                <GoogleTranslateLink />
                 <div className={`w-100 hero-search${page.stickySearch ? ' d-lg-none' : ''}`}>
                   {page.searchControl}
                 </div>

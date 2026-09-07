@@ -51,7 +51,7 @@ function RepositoriesIndexPage() {
                   href={ECOSYSTEM_DOC_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkName('Ecosystem overview on GitHub')}
+                  aria-label={externalLinkName(t('repositories.ecosystemLinkAriaLabel'))}
                 >
                   {t('repositories.ecosystemLink')}
                 </a>.
@@ -79,7 +79,7 @@ function RepositoriesIndexPage() {
                   href={ORG_CONTRIBUTING_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkName('Organization contributing guide')}
+                  aria-label={externalLinkName(t('repositories.contributingGuideAriaLabel'))}
                 >
                   {t('repositories.contributingGuide')}
                 </a>

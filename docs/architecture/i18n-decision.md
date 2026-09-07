@@ -25,8 +25,9 @@ such as `/privacidade`.
    `/privacidade` 301-style client redirect to `/pt-br/privacy/`.
 6. **Build expansion** — `getBuildSitemapPaths()` duplicates static/manifest
    routes per locale for sitemap and GitHub Pages HTML shells.
-7. **Package detail fallback** — Non-English locales may show a Google Translate
-   link for README content not yet translated in-repo.
+7. **Package catalog fallback** — Non-English locales may show a Google Translate
+   link on catalog index, namespace list, and package detail pages for content not
+   yet translated in-repo.
 
 ## Consequences
 
