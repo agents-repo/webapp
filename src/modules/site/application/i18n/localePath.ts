@@ -1,4 +1,4 @@
-import { normalizeSitePathname, publicSitePath } from '../../presentation/routes/siteRoutes.ts'
+import { normalizeSitePathname, publicSitePath } from '../routes/sitePath.ts'
 import type { AppLocale } from './supportedLocales.ts'
 import {
   appLocales,

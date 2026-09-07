@@ -1,7 +1,7 @@
 {
   "index": {
     "title": "Docs",
-    "lead": "Aprenda a explorar o catálogo, instalar pacotes com a CLI, contribuir para o registry e obter markdown estável para agentes de IA. Há {{count}} tópicos disponíveis; escolha uma página na barra lateral, Browse docs ou na lista abaixo."
+    "lead": "Aprenda a explorar o catálogo, instalar pacotes com a CLI, contribuir para o registry e obter markdown estável para agentes de IA. Há {{count}} tópicos disponíveis; escolha uma página na barra lateral, Explorar docs ou na lista abaixo."
   },
   "search": {
     "ariaLabel": "Buscar docs",
