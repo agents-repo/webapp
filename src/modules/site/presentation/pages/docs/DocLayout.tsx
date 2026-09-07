@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Button, Col, Container, Offcanvas, Row } from 'react-bootstrap'
 import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import DocSearch from './DocSearch.tsx'
 import DocsNav from './DocsNav.tsx'
 
@@ -13,6 +14,7 @@ interface DocLayoutProps {
 }
 
 function DocLayout({ children, activeSlug }: DocLayoutProps) {
+  const { t } = useTranslation('docs')
   const location = useLocation()
   const [docsNavOpen, setDocsNavOpen] = useState(false)
   const [docsNavPath, setDocsNavPath] = useState(location.pathname)
@@ -27,7 +29,7 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
       <Container>
         <Row className="g-4">
           <Col lg={3} xl={3} className="d-none d-lg-block">
-            <nav className="docs-sidebar" aria-label="Docs">
+            <nav className="docs-sidebar" aria-label={t('nav.ariaLabel')}>
               <DocSearch key={`sidebar-${location.pathname}`} />
               <DocsNav activeSlug={activeSlug} />
             </nav>
@@ -46,7 +48,7 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
                 aria-controls={DOCS_NAV_OFFCANVAS_ID}
                 onClick={() => setDocsNavOpen(true)}
               >
-                Browse docs
+                {t('nav.browseDocs')}
               </Button>
             </div>
             <article className="docs-article">{children}</article>
@@ -62,10 +64,10 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
         aria-labelledby={DOCS_NAV_OFFCANVAS_TITLE_ID}
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title id={DOCS_NAV_OFFCANVAS_TITLE_ID}>Docs</Offcanvas.Title>
+          <Offcanvas.Title id={DOCS_NAV_OFFCANVAS_TITLE_ID}>{t('nav.offcanvasTitle')}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <nav aria-label="Docs topics">
+          <nav aria-label={t('nav.topicsAriaLabel')}>
             <DocsNav activeSlug={activeSlug} />
           </nav>
         </Offcanvas.Body>

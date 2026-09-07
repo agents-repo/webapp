@@ -9,6 +9,7 @@ import {
   injectSpaFallbackHeadIntoHtml,
   renderRouteHeadHtml,
 } from './buildRouteHead'
+import { getSiteSeoMeta } from './siteSeoMeta'
 
 describe('getRouteHeadData', () => {
   it('uses absolute canonical and OG image URLs', () => {
@@ -66,6 +67,15 @@ describe('getRouteHeadData', () => {
       'https://www.reddit.com/r/agentsrepo/',
       'https://github.com/agents-repo',
     ])
+  })
+
+  it('uses localized titles and descriptions for locale-prefixed routes', () => {
+    const head = getRouteHeadData('/es/about', 'https://agents-repo.org')
+
+    expect(head.documentTitle).toBe('Acerca de — Agents Repo')
+    expect(head.description).toBe(getSiteSeoMeta('/es/about').description)
+    expect(head.canonicalUrl).toBe('https://agents-repo.org/es/about/')
+    expect(head.ogLocale).toBe('es_ES')
   })
 })
 

@@ -121,8 +121,9 @@ chunks below Vite's 500 kB warning threshold:
 
 - **Route-level lazy loading** — the home route (`/`) stays in the initial
   bundle because it is the primary entry path. Secondary routes (`/about`,
-  `/contact`, `/help-us`, `/accessibility`, `/privacy`, `/privacidade`) load
-  on demand via `React.lazy` and `Suspense` in `src/App.tsx`.
+  `/contact`, `/help-us`, `/accessibility`, `/privacy`) load
+  on demand via `React.lazy` and `Suspense` in `src/App.tsx`. An outer `Suspense`
+  boundary wraps `AppMainContent` for i18next resource loading.
 - **Vendor chunk groups** — `vite.config.ts` uses Rolldown
   `build.rolldownOptions.output.codeSplitting` to split React and UI library
   dependencies into separate hashed chunks (`vendor-react`, `vendor-ui`).

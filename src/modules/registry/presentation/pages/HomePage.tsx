@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
+import { useTranslation } from 'react-i18next'
+import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { getPackagesIndexPath } from '../../application/packageSiteRoutes'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { CatalogResultsPanel } from '../components/PackageCatalogResults'
@@ -18,13 +19,15 @@ interface HomePageProps {
 }
 
 function HomePage({ setHeaderSearchSlot }: HomePageProps) {
+  const { t } = useTranslation('catalog')
+  const localizedSitePath = useLocalizedSitePath()
   const { catalog } = useRegistryCatalog()
   const page = useHomeHeroSearch({
     catalog,
     searchInputId: 'registry-package-search',
     setHeaderSearchSlot,
   })
-  const packagesIndexPath = publicSitePath(getPackagesIndexPath())
+  const packagesIndexPath = localizedSitePath(getPackagesIndexPath())
 
   return (
     <>
@@ -36,7 +39,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       <HomeUseInChatSection />
 
       <CatalogResultsPanel
-        resultsHeading="Most downloaded in the last year"
+        resultsHeading={t('home.popularHeading')}
         catalogResultsSummary={page.catalogResultsSummary}
         catalogAlertState={page.catalogAlertState}
         catalogSourceUrl={page.catalogSourceUrl}
@@ -49,17 +52,17 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
         onFilterByOwner={page.filterByOwner}
         resultsActions={
           <Link to={packagesIndexPath} className="btn btn-outline-primary btn-sm">
-            View all packages
+            {t('home.viewAllPackages')}
           </Link>
         }
         resultsFooter={
           <div className="d-flex justify-content-center mt-4">
             <Link to={packagesIndexPath} className="btn btn-outline-primary">
-              View all packages
+              {t('home.viewAllPackages')}
             </Link>
           </div>
         }
-        emptyMatchMessage="No packages are available in the catalog yet."
+        emptyMatchMessage={t('home.emptyCatalog')}
       />
 
       <HomeContributeSection />

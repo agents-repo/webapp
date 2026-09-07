@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquare, faSquareCheck, faTerminal } from '@fortawesome/free-solid-svg-icons'
 import { Button, Overlay, Popover, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 import type { InstallTargetId } from '../../domain/package'
 import { getInstallTargetLabel } from '../../application/installTargets'
 import {
@@ -9,12 +10,10 @@ import {
   buildCliInitCommand,
   buildCliInstallCommand,
   getCliInitPlaceholderCommand,
-  getCliInstallPopoverIntro,
 } from '../../application/cliInstallCopy'
 import { copyTextToClipboard } from '../../../site/application/clipboard/copyTextToClipboard'
 import CliTerminalCommandRow from './CliTerminalCommandRow'
 
-const COPY_FEEDBACK_MESSAGE = 'Copied to clipboard.'
 const COPY_FEEDBACK_DURATION_MS = 3000
 
 export interface PackageCliInstallActionProps {
@@ -28,6 +27,7 @@ function PackageCliInstallActionInner({
   packageId,
   controlId,
 }: PackageCliInstallActionProps) {
+  const { t } = useTranslation('catalog')
   const toggleRef = useRef<HTMLButtonElement>(null)
   const popoverInteractionRef = useRef(0)
   const initFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -75,7 +75,7 @@ function PackageCliInstallActionInner({
       setFeedback: (message: string) => void,
       timeoutRef: { current: ReturnType<typeof setTimeout> | null },
     ) => {
-      setFeedback(COPY_FEEDBACK_MESSAGE)
+      setFeedback(t('packageCard.copySuccess'))
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
@@ -84,7 +84,7 @@ function PackageCliInstallActionInner({
         timeoutRef.current = null
       }, COPY_FEEDBACK_DURATION_MS)
     },
-    [],
+    [t],
   )
 
   const closePopover = useCallback(() => {
@@ -118,13 +118,13 @@ function PackageCliInstallActionInner({
         return
       }
       if (result === 'success') {
-        setLiveMessage(COPY_FEEDBACK_MESSAGE)
+        setLiveMessage(t('packageCard.copySuccess'))
         onSuccess()
         return
       }
-      setLiveMessage('Could not copy to clipboard. Copy the command manually.')
+      setLiveMessage(t('packageCard.copyFailure'))
     },
-    [],
+    [t],
   )
 
   const handleCopyInit = () => {
@@ -155,13 +155,13 @@ function PackageCliInstallActionInner({
         type="button"
         variant="outline-primary"
         className="d-inline-flex align-items-center justify-content-center package-card-action"
-        aria-label={`CLI install for ${packageName}`}
+        aria-label={t('packageCard.cliAriaLabel', { name: packageName })}
         aria-expanded={showPopover}
         aria-controls={popoverId}
         onClick={handleTogglePopover}
       >
         <FontAwesomeIcon icon={faTerminal} aria-hidden="true" />
-        <span className="package-card-action-label">CLI</span>
+        <span className="package-card-action-label">{t('packageCard.cli')}</span>
       </Button>
 
       <Overlay
@@ -186,10 +186,10 @@ function PackageCliInstallActionInner({
       >
         <Popover id={popoverId} className="package-cli-install-popover">
           <Popover.Body className="d-flex flex-column gap-3">
-            <p className="small text-body-secondary mb-0">{getCliInstallPopoverIntro()}</p>
+            <p className="small text-body-secondary mb-0">{t('packageCard.cliIntro')}</p>
 
             <fieldset className="package-cli-target-fieldset border-0 p-0 m-0">
-              <legend className="form-label small fw-semibold mb-2">Choose AI tool</legend>
+              <legend className="form-label small fw-semibold mb-2">{t('packageCard.cliChooseTool')}</legend>
               <ToggleButtonGroup
                 type="checkbox"
                 name={targetGroupName}
@@ -224,10 +224,10 @@ function PackageCliInstallActionInner({
             </fieldset>
 
             <div>
-              <div className="h6 small fw-semibold mb-2">Initialize project</div>
+              <div className="h6 small fw-semibold mb-2">{t('packageCard.cliInitHeading')}</div>
               <CliTerminalCommandRow
                 commandText={initCommandText}
-                copyLabel={`Copy init command for ${packageName}`}
+                copyLabel={t('packageCard.cliCopyInitLabel', { name: packageName })}
                 onCopy={handleCopyInit}
                 copyDisabled={!hasSelectedTargets}
                 isPlaceholder={!hasSelectedTargets}
@@ -238,10 +238,10 @@ function PackageCliInstallActionInner({
             </div>
 
             <div>
-              <div className="h6 small fw-semibold mb-2">Install package</div>
+              <div className="h6 small fw-semibold mb-2">{t('packageCard.cliInstallHeading')}</div>
               <CliTerminalCommandRow
                 commandText={buildCliInstallCommand(packageId)}
-                copyLabel={`Copy install command for ${packageName}`}
+                copyLabel={t('packageCard.cliCopyInstallLabel', { name: packageName })}
                 onCopy={handleCopyInstall}
                 labelId={installLabelId}
                 dataTestId={`cli-install-terminal-${controlId}`}

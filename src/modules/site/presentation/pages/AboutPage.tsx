@@ -1,137 +1,84 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
-import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
+import { Col, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
+import { useTranslation } from 'react-i18next'
+import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import ExternalLinkListItem from '../layout/ExternalLinkListItem'
+import SitePageLayout from '../layout/SitePageLayout'
+import SiteTextCard from '../layout/SiteTextCard'
+import LocalizedCreatorProfileCard from '../people/LocalizedCreatorProfileCard'
+import { siteRoutes } from '../routes/siteRoutes'
 
-const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
-const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
 const WEBAPP_REPO_URL = 'https://github.com/agents-repo/webapp'
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 
 function AboutPage() {
+  const { t } = useTranslation('pages')
+  const localizedSitePath = useLocalizedSitePath()
+  const whatYouCanDoItems = t('about.whatYouCanDoItems', { returnObjects: true }) as string[]
+
   return (
-    <div className="py-5">
-      <Container>
-        <h1 className="h2 mb-4">About</h1>
+    <SitePageLayout title={t('about.title')}>
+      <SiteTextCard heading={t('about.missionHeading')} body={t('about.missionBody')} />
 
-        <Stack gap={4}>
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Mission</h2>
-              <p className="text-body-secondary mb-0">
-                Agents Repo is the web interface for browsing, searching, and downloading curated agents
-                and flows from the registry. It helps teams discover maintained packages for GitHub
-                Copilot, Cursor, Claude Code, and OpenAI Codex, understand package status, and install
-                packages for their preferred install targets.
-              </p>
-            </Card.Body>
-          </Card>
-
-          <Row className="g-4">
-            <Col lg={6}>
-              <Card className="h-100">
-                <Card.Body>
-                  <h2 className="h4">What you can do</h2>
-                  <ul className="text-body-secondary mb-0">
-                    <li>Browse and search the catalog of agents and flows</li>
-                    <li>Filter packages and review status badges</li>
-                    <li>Download packages for supported install targets</li>
-                    <li>Copy CLI install commands from package cards (<code>npx agents-repo install …</code>)</li>
-                    <li>Configure the registry source from Website settings in the header</li>
-                    <li>Install the site as an app from the header or the browser install UI, or follow in-header instructions when the browser cannot install it natively</li>
-                    <li>Open package sources on GitHub for deeper inspection</li>
-                  </ul>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col lg={6}>
-              <Card className="h-100">
-                <Card.Body>
-                  <h2 className="h4">How it works</h2>
-                  <p className="text-body-secondary mb-0">
-                    The app loads a registry index from a configurable source URL, applies an app-owned
-                    freshness and caching policy, and serves cached catalog data when remote refresh is
-                    unavailable. A PWA service worker fetches HTML from the network first (with a 1-day
-                    offline fallback) and caches same-origin static assets so the site remains usable
-                    offline after the first visit.
-                  </p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Creator</h2>
-              <p className="text-body-secondary">
-                Agents Repo is created and maintained by Maicon, a senior full stack developer based in
-                Portugal, with support from <NavLink to={publicSitePath(siteRoutes.community)}>collaborators</NavLink>.
-              </p>
-              <div className="d-flex flex-wrap gap-3">
-                <a
-                  href={CREATOR_GITHUB_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label="Maicon on GitHub (opens in a new tab)"
-                >
-                  <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
-                  GitHub
-                </a>
-                <a
-                  href={CREATOR_LINKEDIN_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label="Maicon on LinkedIn (opens in a new tab)"
-                >
-                  <FontAwesomeIcon icon={faLinkedin} className="me-2" aria-hidden="true" />
-                  LinkedIn
-                </a>
-              </div>
-            </Card.Body>
-          </Card>
-
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Get involved</h2>
-              <p className="text-body-secondary">
-                Questions, feedback, and contributions are welcome. Reach out on{' '}
-                <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink>, see how to contribute on{' '}
-                <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink>, or browse all organization repositories
-                on <NavLink to={publicSitePath(siteRoutes.repositories)}>Repositories</NavLink>. Source code and registry
-                content also live on GitHub:
-              </p>
-              <ul className="mb-0">
-                <li>
-                  <a
-                    href={WEBAPP_REPO_URL}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('agents-repo/webapp repository')}
-                  >
-                    agents-repo/webapp
-                  </a>{' '}
-                  — this web application
-                </li>
-                <li>
-                  <a
-                    href={REGISTRY_REPO_URL}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
-                  >
-                    agents-repo/registry
-                  </a>{' '}
-                  — agents, flows, and registry index
-                </li>
+      <Row className="g-4">
+        <Col lg={6}>
+          <SiteTextCard
+            className="h-100"
+            heading={t('about.whatYouCanDoHeading')}
+            body={
+              <ul className="text-body-secondary mb-0">
+                {whatYouCanDoItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
-            </Card.Body>
-          </Card>
-        </Stack>
-      </Container>
-    </div>
+            }
+          />
+        </Col>
+
+        <Col lg={6}>
+          <SiteTextCard
+            className="h-100"
+            heading={t('about.howItWorksHeading')}
+            body={t('about.howItWorksBody')}
+          />
+        </Col>
+      </Row>
+
+      <LocalizedCreatorProfileCard pageKey="about" />
+
+      <SiteTextCard
+        heading={t('about.getInvolvedHeading')}
+        body={
+          <>
+            <p className="text-body-secondary">
+              {t('about.getInvolvedIntro')}{' '}
+              <NavLink to={localizedSitePath(siteRoutes.contact)}>{t('about.contactLink')}</NavLink>,{' '}
+              {t('about.getInvolvedMiddle')}{' '}
+              <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('about.helpUsLink')}</NavLink>
+              {t('about.getInvolvedAfterHelpUs')}{' '}
+              <NavLink to={localizedSitePath(siteRoutes.repositories)}>{t('about.repositoriesLink')}</NavLink>
+              {t('about.getInvolvedSuffix')}
+            </p>
+            <ul className="mb-0">
+              <ExternalLinkListItem
+                href={WEBAPP_REPO_URL}
+                accessibleLabel="agents-repo/webapp repository"
+                suffix={t('about.webappRepoDescription')}
+              >
+                agents-repo/webapp
+              </ExternalLinkListItem>
+              <ExternalLinkListItem
+                href={REGISTRY_REPO_URL}
+                accessibleLabel="agents-repo/registry repository"
+                suffix={t('about.registryRepoDescription')}
+              >
+                agents-repo/registry
+              </ExternalLinkListItem>
+            </ul>
+          </>
+        }
+      />
+    </SitePageLayout>
   )
 }
 

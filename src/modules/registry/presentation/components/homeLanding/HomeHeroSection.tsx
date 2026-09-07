@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react'
 import { Badge, Col, Container, Row, Stack } from 'react-bootstrap'
 import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import brandLogo from '../../../../../assets/logo/agents-repo-logo.svg'
 import { applyHashTargetScroll } from '../../../../site/application/accessibility/routeScroll'
-import { publicSitePath, siteRoutes } from '../../../../site/presentation/routes/siteRoutes'
+import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
+import { siteRoutes } from '../../../../site/presentation/routes/siteRoutes'
 import { getPackagesIndexPath } from '../../../application/packageSiteRoutes'
-import { CLI_QUICKSTART_ID, HOME_HERO_HEADING } from './homeLandingCopy'
+import { CLI_QUICKSTART_ID } from './homeLandingCopy'
 
 export interface HomeHeroSectionProps {
   readonly searchControl: ReactNode
@@ -13,10 +15,12 @@ export interface HomeHeroSectionProps {
 }
 
 function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) {
+  const { t } = useTranslation('catalog')
+  const localizedSitePath = useLocalizedSitePath()
   const location = useLocation()
-  const packagesIndexPath = publicSitePath(getPackagesIndexPath())
+  const packagesIndexPath = localizedSitePath(getPackagesIndexPath())
   const cliQuickstartHash = `#${CLI_QUICKSTART_ID}`
-  const cliQuickstartHref = `${publicSitePath(siteRoutes.home)}${cliQuickstartHash}`
+  const cliQuickstartHref = `${localizedSitePath(siteRoutes.home)}${cliQuickstartHash}`
 
   return (
     <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
@@ -24,19 +28,15 @@ function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) 
         <Row className="justify-content-center">
           <Col xl={8} className="text-center">
             <Stack gap={3} className="align-items-center">
-              <img src={brandLogo} width="72" height="72" alt="Agents Repo brand symbol" />
+              <img src={brandLogo} width="72" height="72" alt={t('home.brandLogoAlt')} />
               <Badge bg="primary" pill>
-                Curated package registry
+                {t('home.heroBadge')}
               </Badge>
-              <h1 className="display-5 fw-semibold mb-0">{HOME_HERO_HEADING}</h1>
-              <p className="lead fs-6 text-body-secondary mb-0">
-                Agents Repo is an open, curated registry. Find maintained packages, install them with
-                the CLI, or try instructions in a browser chat—without rewriting prompts for every
-                tool.
-              </p>
+              <h1 className="display-5 fw-semibold mb-0">{t('home.heroHeading')}</h1>
+              <p className="lead fs-6 text-body-secondary mb-0">{t('home.heroLead')}</p>
               <div className="d-flex flex-wrap gap-2 justify-content-center">
                 <Link to={packagesIndexPath} className="btn btn-primary">
-                  Browse packages
+                  {t('home.browsePackages')}
                 </Link>
                 <Link
                   to={cliQuickstartHref}
@@ -47,7 +47,7 @@ function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) 
                     }
                   }}
                 >
-                  Use the CLI
+                  {t('home.useCli')}
                 </Link>
               </div>
               <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>

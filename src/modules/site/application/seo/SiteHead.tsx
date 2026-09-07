@@ -46,6 +46,9 @@ function SiteHead() {
       <meta property="og:type" content={head.ogType} />
       <meta property="og:site_name" content={head.ogSiteName} />
       <meta property="og:locale" content={head.ogLocale} />
+      {head.hreflangAlternates.map((alternate) => (
+        <link key={alternate.hreflang} rel="alternate" hrefLang={alternate.hreflang} href={alternate.href} />
+      ))}
       <meta name="twitter:card" content={head.twitterCard} />
       <meta name="twitter:site" content={head.twitterSite} />
       <meta name="twitter:title" content={head.twitterTitle} />

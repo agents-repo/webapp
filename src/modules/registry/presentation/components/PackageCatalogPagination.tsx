@@ -5,7 +5,7 @@ import {
   applyPackageCatalogPageToSearchParams,
   getPackageCatalogPaginationItems,
 } from '../../application/packageCatalogPagination'
-import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
+import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 
 export function PackageCatalogPagination(options: {
   readonly currentPage: number
@@ -14,6 +14,7 @@ export function PackageCatalogPagination(options: {
   readonly searchParams: URLSearchParams
   readonly onNavigate: () => void
 }): ReactNode {
+  const localizedSitePath = useLocalizedSitePath()
   const { currentPage, pageCount, pathname, searchParams, onNavigate } = options
   if (pageCount <= 1) {
     return null
@@ -21,7 +22,7 @@ export function PackageCatalogPagination(options: {
 
   const pageHref = (page: number): string => {
     const query = applyPackageCatalogPageToSearchParams(searchParams, page).toString()
-    return publicSitePath(query.length > 0 ? `${pathname}?${query}` : pathname)
+    return localizedSitePath(query.length > 0 ? `${pathname}?${query}` : pathname)
   }
 
   const handleNavigate = (event: MouseEvent<HTMLElement>) => {

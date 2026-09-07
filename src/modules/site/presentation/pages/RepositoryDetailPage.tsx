@@ -1,11 +1,12 @@
 import { Badge, Card, Container, Stack } from 'react-bootstrap'
 import { Navigate, NavLink, useParams } from 'react-router-dom'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName.ts'
 import { getRepositoryBySlug } from '../../application/repositories/repositoryManifest.ts'
 import type { RepositoryManifestEntry } from '../../application/repositories/repositoryManifest.types.ts'
 import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
 
 function RepositoryLinkList({ entry }: { readonly entry: RepositoryManifestEntry }) {
+  const externalLinkName = useExternalLinkAccessibleName()
   const links: { href: string; label: string }[] = [
     { href: entry.repository, label: `${entry.name} on GitHub` },
     { href: entry.contributing, label: 'Contributing guide' },
@@ -28,7 +29,7 @@ function RepositoryLinkList({ entry }: { readonly entry: RepositoryManifestEntry
             href={link.href}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label={externalLinkAccessibleName(link.label)}
+            aria-label={externalLinkName(link.label)}
           >
             {link.label}
           </a>

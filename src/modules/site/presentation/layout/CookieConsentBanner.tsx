@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
 import { pushAnalyticsPageView } from '../../application/analytics/analyticsPageView.ts'
 import {
@@ -14,10 +15,13 @@ import {
   pushConsentUpdateEvent,
 } from '../../application/analytics/googleConsentMode.ts'
 import { loadGoogleTagManager } from '../../application/analytics/googleTagManager.ts'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes.ts'
+import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import { siteRoutes } from '../routes/siteRoutes.ts'
 import { useCookieConsent } from '../../application/analytics/cookieConsentContext.ts'
 
 function CookieConsentBanner() {
+  const { t } = useTranslation('shell')
+  const localizedSitePath = useLocalizedSitePath()
   const headingId = useId()
   const location = useLocation()
   const { isPreferencesOpen, closeCookiePreferences } = useCookieConsent()
@@ -98,26 +102,21 @@ function CookieConsentBanner() {
     >
       <div className="cookie-consent-banner__inner container py-3">
         <h2 id={headingId} className="h6 mb-2">
-          Cookie preferences
+          {t('cookieBanner.title')}
         </h2>
         <p className="small text-body-secondary mb-3 mb-md-2">
-          We use optional analytics cookies to understand how the site is used. You can accept or
-          reject analytics. See our{' '}
-          <NavLink to={publicSitePath(siteRoutes.privacy)} className="footer-link">
-            Privacy policy
-          </NavLink>{' '}
-          or{' '}
-          <NavLink to={publicSitePath(siteRoutes.privacyPtBr)} className="footer-link">
-            Política de privacidade
-          </NavLink>{' '}
-          for details, including your rights in Europe, the United States, and Brazil.
+          {t('cookieBanner.descriptionBefore')}
+          <NavLink to={localizedSitePath(siteRoutes.privacy)} className="footer-link">
+            {t('cookieBanner.privacyLink')}
+          </NavLink>
+          {t('cookieBanner.descriptionAfter')}
         </p>
         <div className="d-flex flex-wrap gap-2">
           <Button variant="outline-primary" size="sm" onClick={handleAccept}>
-            Accept analytics
+            {t('cookieBanner.accept')}
           </Button>
           <Button variant="outline-primary" size="sm" onClick={handleReject}>
-            Reject analytics
+            {t('cookieBanner.reject')}
           </Button>
         </div>
       </div>

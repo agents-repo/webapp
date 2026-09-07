@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Alert, Card, Col, Container, Row } from 'react-bootstrap'
-import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
 import { toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getCatalogAlertState } from '../pages/homePageCatalogState'
 import { faDuotoneSpinner } from '../pages/catalogLoadingSpinnerIcon'
@@ -15,6 +15,7 @@ export function CatalogAlert(options: {
   readonly catalogErrorMessage: string | null
 }): ReactNode {
   const { alertState, catalogSourceUrl, canShowCatalogSourceLink, catalogErrorMessage } = options
+  const externalLinkName = useExternalLinkAccessibleName()
 
   return (
     <Alert variant={alertState.variant} className="mb-3">
@@ -26,7 +27,7 @@ export function CatalogAlert(options: {
             href={catalogSourceUrl}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label={externalLinkAccessibleName('Check configured index URL')}
+            aria-label={externalLinkName('Check configured index URL')}
           >
             Check configured index URL
           </a>.

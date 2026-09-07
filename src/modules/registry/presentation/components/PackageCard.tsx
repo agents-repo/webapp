@@ -2,10 +2,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faEye, faFilter } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Dropdown, Stack } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getNamespacePackagesPath, getPackageDetailPath } from '../../application/packageSiteRoutes'
-import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
+import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { getPackageDownloadStats } from '../../application/packageDownloadStats'
 import { getPackageDownloadTargets } from '../pages/homePageCatalogState'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
@@ -31,11 +32,13 @@ export function PackageCard({
   onToggleFacet,
   isFacetSelected,
 }: PackageCardProps) {
+  const { t } = useTranslation('catalog')
+  const localizedSitePath = useLocalizedSitePath()
   const { downloadStatsById } = useRegistryCatalog()
   const packageSlug = toPackageSlug(pkg.namespace, pkg.package)
   const downloadTargets = getPackageDownloadTargets(pkg, registryBaseUrl)
-  const detailPath = getPackageDetailPath(pkg.namespace, pkg.package)
-  const namespacePath = getNamespacePackagesPath(pkg.namespace)
+  const detailPath = localizedSitePath(getPackageDetailPath(pkg.namespace, pkg.package))
+  const namespacePath = localizedSitePath(getNamespacePackagesPath(pkg.namespace))
   const cliPackageRef = formatRegistryPackageRef(pkg.namespace, pkg.package)
   const showCli = cliPackageRef !== null
   const showUseInChat = pkg.chatWeb === true
@@ -47,12 +50,12 @@ export function PackageCard({
           <Stack direction="horizontal" className="justify-content-between align-items-start">
             <div className="me-2">
               <Card.Title as="h3" className="h6 fw-semibold mb-0 lh-sm">
-                <Link to={publicSitePath(detailPath)} className="package-card-title-link stretched-link-none">
+                <Link to={detailPath} className="package-card-title-link stretched-link-none">
                   {pkg.name}
                 </Link>
               </Card.Title>
               <Card.Subtitle as="div" className="small text-body-secondary mb-0 mt-1">
-                by{' '}
+                {t('packageCard.byOwner')}{' '}
                 <Dropdown as="div" align="end" className="d-inline-block">
                   <Dropdown.Toggle
                     as="button"
@@ -68,18 +71,18 @@ export function PackageCard({
                       href={`https://github.com/${pkg.owner}`}
                       target="_blank"
                       rel="noreferrer noopener"
-                      aria-label={`View GitHub profile for ${pkg.owner} (opens in a new tab)`}
+                      aria-label={t('packageCard.viewGitHubProfileAriaLabel', { owner: pkg.owner })}
                     >
                       <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
-                      View GitHub profile
+                      {t('packageCard.viewGitHubProfile')}
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to={publicSitePath(namespacePath)}>
+                    <Dropdown.Item as={Link} to={namespacePath}>
                       <FontAwesomeIcon icon={faFilter} className="me-2" aria-hidden="true" />
-                      View packages in this namespace
+                      {t('packageCard.viewPackagesInNamespace')}
                     </Dropdown.Item>
                     <Dropdown.Item onClick={() => onFilterByOwner(pkg.owner)}>
                       <FontAwesomeIcon icon={faFilter} className="me-2" aria-hidden="true" />
-                      Filter packages by this owner
+                      {t('packageCard.filterByOwner')}
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
@@ -129,12 +132,12 @@ export function PackageCard({
             downloadTargets={downloadTargets}
           />
           <Link
-            to={publicSitePath(detailPath)}
+            to={detailPath}
             className="btn btn-outline-primary d-inline-flex align-items-center justify-content-center package-card-action"
-            aria-label={`View ${pkg.name}`}
+            aria-label={t('packageCard.viewAriaLabel', { name: pkg.name })}
           >
             <FontAwesomeIcon icon={faEye} aria-hidden="true" />
-            <span className="package-card-action-label">View</span>
+            <span className="package-card-action-label">{t('packageCard.view')}</span>
           </Link>
         </Card.Footer>
       </Card>

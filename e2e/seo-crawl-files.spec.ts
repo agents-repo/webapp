@@ -11,7 +11,7 @@ const nonHomeRoutes = [
   '/repositories/registry',
   '/accessibility',
   '/privacy',
-  '/privacidade',
+  '/es/about',
 ] as const
 
 const homeHeading = 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'

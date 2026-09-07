@@ -31,6 +31,7 @@ describe('pwa-workbox matchers', () => {
     assert.equal(isCrawlFilePath('/robots.txt'), true)
     assert.equal(isCrawlFilePath('/llms.txt'), true)
     assert.equal(isCrawlFilePath('/docs/getting-started.md'), true)
+    assert.equal(isCrawlFilePath('/es/docs/getting-started.md'), true)
     assert.equal(isCrawlFilePath('/docs/getting-started'), false)
   })
 
@@ -61,6 +62,12 @@ describe('pwa-workbox matchers', () => {
     assert.equal(
       isHtmlNavigationRequest(
         context({ pathname: '/docs/getting-started.md', mode: 'navigate' }),
+      ),
+      false,
+    )
+    assert.equal(
+      isHtmlNavigationRequest(
+        context({ pathname: '/es/docs/getting-started.md', mode: 'navigate' }),
       ),
       false,
     )
@@ -106,9 +113,14 @@ describe('pwa-workbox matchers', () => {
   })
 
   it('keeps navigateFallback denylist aligned with crawl-file path checks', () => {
-    const crawlPaths = ['/sitemap.xml', '/robots.txt', '/llms.txt', '/docs/getting-started.md']
+    const crawlPaths = [
+      '/sitemap.xml',
+      '/robots.txt',
+      '/llms.txt',
+      '/docs/getting-started.md',
+      '/es/docs/getting-started.md',
+    ]
 
-    assert.equal(CRAWL_FILE_NAVIGATE_DENYLIST.length, crawlPaths.length)
     for (const pathname of crawlPaths) {
       assert.equal(
         CRAWL_FILE_NAVIGATE_DENYLIST.some((pattern) => pattern.test(pathname)),

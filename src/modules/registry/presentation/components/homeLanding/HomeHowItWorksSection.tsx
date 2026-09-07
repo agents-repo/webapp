@@ -1,25 +1,27 @@
 import { Col, Container, Row } from 'react-bootstrap'
-
-const steps = [
-  {
-    title: 'Browse or search the catalog',
-    body: 'Find an agent or flow on Home or Packages, then open the package page for details.',
-  },
-  {
-    title: 'Install or copy chat instructions',
-    body: 'Run two CLI commands in your project, or copy chat-ready instructions into a browser chat.',
-  },
-  {
-    title: 'Use it in your coding tool',
-    body: 'The agent or flow is ready in GitHub Copilot, Cursor, Claude Code, or OpenAI Codex.',
-  },
-] as const
+import { useTranslation } from 'react-i18next'
 
 function HomeHowItWorksSection() {
+  const { t } = useTranslation('catalog')
+  const steps = [
+    {
+      title: t('homeLanding.howItWorks.step1Title'),
+      body: t('homeLanding.howItWorks.step1Body'),
+    },
+    {
+      title: t('homeLanding.howItWorks.step2Title'),
+      body: t('homeLanding.howItWorks.step2Body'),
+    },
+    {
+      title: t('homeLanding.howItWorks.step3Title'),
+      body: t('homeLanding.howItWorks.step3Body'),
+    },
+  ] as const
+
   return (
     <section className="py-4 py-lg-5 bg-body-tertiary">
       <Container>
-        <h2 className="h3 text-center mb-4">How it works</h2>
+        <h2 className="h3 text-center mb-4">{t('homeLanding.howItWorks.heading')}</h2>
         <Row as="ol" className="g-4 list-unstyled mb-0">
           {steps.map((step, index) => (
             <Col key={step.title} as="li" md={4}>

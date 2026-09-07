@@ -1,0 +1,57 @@
+{
+  "brand": {
+    "name": "Agents Repo",
+    "logoAlt": "Agents Repo logo"
+  },
+  "nav": {
+    "primary": "Primary",
+    "packages": "Packages",
+    "docs": "Docs",
+    "about": "About",
+    "community": "Community",
+    "contact": "Contact",
+    "helpUs": "Help Us",
+    "current": "(current)"
+  },
+  "accessibility": {
+    "opensInNewTab": "(opens in a new tab)"
+  },
+  "footer": {
+    "product": "Product",
+    "connect": "Connect",
+    "legal": "Legal",
+    "language": "Language",
+    "home": "Home",
+    "repositories": "Repositories",
+    "accessibility": "Accessibility",
+    "privacy": "Privacy policy",
+    "cookiePreferences": "Cookie preferences",
+    "licensedUnder": "Licensed under",
+    "mitLicense": "MIT license",
+    "madeWith": "Made with",
+    "byCollaborators": "Maicon + collaborators",
+    "translateWithGoogle": "Translate page with Google"
+  },
+  "cookieBanner": {
+    "title": "Cookie preferences",
+    "descriptionBefore": "We use optional analytics cookies to understand how the site is used. You can accept or reject analytics. See our ",
+    "privacyLink": "privacy policy",
+    "descriptionAfter": " for details, including your rights in Europe, the United States, and Brazil.",
+    "accept": "Accept analytics",
+    "reject": "Reject analytics"
+  },
+  "locale": {
+    "label": "Language",
+    "current": "Language: {{language}}"
+  },
+  "theme": {
+    "label": "Color mode: {{mode}}",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
+  "common": {
+    "loading": "Loading…",
+    "notFound": "Page not found"
+  }
+}

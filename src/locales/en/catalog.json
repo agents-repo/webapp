@@ -1,0 +1,186 @@
+{
+  "search": {
+    "ariaLabel": "Search packages",
+    "label": "Search registry packages",
+    "button": "Search",
+    "placeholder": "Search by package, owner (@slug), description, or tag"
+  },
+  "filters": {
+    "title": "Filters",
+    "titleWithCount": "Filters, {{count}} selected",
+    "show": "Show filters",
+    "hide": "Hide filters",
+    "sortByDownloads": "Sort packages by download window",
+    "emptyMatch": "No packages match your current search or filters."
+  },
+  "packagesIndex": {
+    "title": "All packages",
+    "lead": "A crawlable index of every published package in the registry. Search by name, owner, description, tag, or category, and narrow results with filters.",
+    "searchResults": "Search results for \"{{query}}\"",
+    "publishedPackages": "Published packages",
+    "searchAriaLabel": "Search all packages"
+  },
+  "home": {
+    "popularHeading": "Most downloaded in the last year",
+    "viewAllPackages": "View all packages",
+    "emptyCatalog": "No packages are available in the catalog yet.",
+    "heroBadge": "Curated package registry",
+    "heroHeading": "Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex",
+    "heroLead": "Agents Repo is an open, curated registry. Find maintained packages, install them with the CLI, or try instructions in a browser chat—without rewriting prompts for every tool.",
+    "browsePackages": "Browse packages",
+    "useCli": "Use the CLI",
+    "brandLogoAlt": "Agents Repo brand symbol"
+  },
+  "homeLanding": {
+    "supportedTools": {
+      "heading": "Works with your AI coding tools"
+    },
+    "value": {
+      "heading": "What you gain",
+      "discoverTitle": "Discover curated packages",
+      "discoverBody": "Search agents and flows by name, owner, tags, and tool. Status badges show what is maintained.",
+      "installTitle": "Install into your editor",
+      "installBody": "The CLI places packages into GitHub Copilot, Cursor, Claude Code, or OpenAI Codex layouts.",
+      "chatTitle": "Try in chat first",
+      "chatBody": "Copy instruction URLs and prompts into ChatGPT, Grok, Gemini, or Microsoft Copilot when a package is chat-ready."
+    },
+    "howItWorks": {
+      "heading": "How it works",
+      "step1Title": "Browse or search the catalog",
+      "step1Body": "Find an agent or flow on Home or Packages, then open the package page for details.",
+      "step2Title": "Install or copy chat instructions",
+      "step2Body": "Run two CLI commands in your project, or copy chat-ready instructions into a browser chat.",
+      "step3Title": "Use it in your coding tool",
+      "step3Body": "The agent or flow is ready in GitHub Copilot, Cursor, Claude Code, or OpenAI Codex."
+    },
+    "cliQuickstart": {
+      "heading": "Install with the CLI",
+      "lead": "Initialize your project, then install a package. For real projects, pin the CLI as a devDependency so teammates and CI use the same version.",
+      "initLabel": "Initialize install targets",
+      "installLabel": "Install a package",
+      "copyInitLabel": "Copy init command",
+      "copyInstallLabel": "Copy install command",
+      "copySuccess": "Copied to clipboard.",
+      "copyFailure": "Could not copy to clipboard. Copy the command manually.",
+      "installingPackagesLink": "Installing packages",
+      "cliCommandsLink": "CLI command reference"
+    },
+    "useInChat": {
+      "heading": "Use in chat without installing",
+      "body": "Some packages are chat-ready. Copy an instruction URL or markdown and a starter prompt into ChatGPT, Grok, Gemini, or Microsoft Copilot in the browser—no project install required.",
+      "browseButton": "Browse chat-ready packages"
+    },
+    "contribute": {
+      "heading": "Help grow the catalog",
+      "body": "The project needs agents and flows packages most. Submit a maintained package, or see other ways to help.",
+      "submitPackage": "Submit a package",
+      "helpUs": "Help Us"
+    }
+  },
+  "packageCard": {
+    "byOwner": "by",
+    "view": "View",
+    "viewAriaLabel": "View {{name}}",
+    "cli": "CLI",
+    "cliAriaLabel": "CLI install for {{name}}",
+    "useInChat": "Use in chat",
+    "useInChatAriaLabel": "Use in chat for {{name}}",
+    "useInChatModalTitle": "Use {{name}} in chat",
+    "useInChatLoading": "Loading chat instructions",
+    "download": "Download",
+    "downloadAriaLabel": "Download {{name}}",
+    "downloadItemAriaLabel": "Download {{name}} for {{target}} (opens in a new tab)",
+    "experimental": "experimental",
+    "viewGitHubProfile": "View GitHub profile",
+    "viewGitHubProfileAriaLabel": "View GitHub profile for {{owner}} (opens in a new tab)",
+    "viewPackagesInNamespace": "View packages in this namespace",
+    "filterByOwner": "Filter packages by this owner",
+    "cliIntro": "Select one or more AI tools, then run the init command in your project root. After that, install the package with the command below.",
+    "cliChooseTool": "Choose AI tool",
+    "cliInitHeading": "Initialize project",
+    "cliInstallHeading": "Install package",
+    "cliCopyInitLabel": "Copy init command for {{name}}",
+    "cliCopyInstallLabel": "Copy install command for {{name}}",
+    "copySuccess": "Copied to clipboard.",
+    "copyFailure": "Could not copy to clipboard. Copy the command manually.",
+    "copyTextFailure": "Could not copy to clipboard. Copy the text manually.",
+    "useInChatForm": {
+      "instructionLabel": "Instruction",
+      "latestUrlLabel": "Latest instruction URL",
+      "copyLatestUrlAriaLabel": "Copy latest instruction URL for {{id}}",
+      "pinnedUrlLabel": "Pinned instruction URL (v{{version}})",
+      "copyPinnedUrlAriaLabel": "Copy pinned instruction URL for {{id}}",
+      "markdownLabel": "Instruction markdown",
+      "copyingMarkdown": "Copying markdown…",
+      "copyMarkdownButton": "Copy instruction markdown",
+      "flowIncludesAgentsNote": "Includes this flow and its related agent files.",
+      "starterPromptLabel": "Starter prompt",
+      "copyStarterPromptAriaLabel": "Copy starter prompt for {{id}}",
+      "urlFallbackHeading": "If the chat cannot load the URL",
+      "urlFallbackBody": "Web chats may fail to fetch instruction URLs from the starter prompt. If the chat cannot load a URL, copy the instruction markdown from this dialog and paste it into the chat.",
+      "howToHeading": "How to use in a web chat",
+      "openInPlatform": "Open in {{platform}}",
+      "openInPlatformAriaLabel": "Open in {{platform}} (opens in a new tab)",
+      "packageQuickstart": "Package quickstart",
+      "loadError": "Unable to load chat instructions.",
+      "markdownLoadError": "Unable to load instruction markdown.",
+      "platforms": {
+        "chatgpt": {
+          "label": "ChatGPT",
+          "steps": [
+            "Sign in to ChatGPT in the browser if needed.",
+            "Use Open in ChatGPT to start a chat with the starter prompt (latest instruction URLs). ChatGPT may send the prompt automatically. ChatGPT may not fetch those URLs.",
+            "Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into ChatGPT."
+          ]
+        },
+        "grok": {
+          "label": "Grok",
+          "steps": [
+            "Sign in to Grok in the browser if needed.",
+            "Use Open in Grok to start a chat with the starter prompt (latest instruction URLs). Grok may send the prompt automatically. Grok may not fetch those URLs.",
+            "Or copy the instruction URL, markdown, or starter prompt from this dialog and paste it into Grok."
+          ]
+        },
+        "gemini": {
+          "label": "Gemini",
+          "steps": [
+            "Open Gemini in the browser.",
+            "Copy the instruction URL, markdown, or starter prompt from this dialog.",
+            "Paste it into Gemini and ask it to follow those instructions."
+          ]
+        },
+        "copilot-web": {
+          "label": "Microsoft Copilot (web)",
+          "steps": [
+            "Open Microsoft Copilot in the browser (not GitHub Copilot in an IDE).",
+            "Copy the instruction URL, markdown, or starter prompt from this dialog.",
+            "Paste it into Copilot and ask it to follow those instructions."
+          ]
+        }
+      }
+    }
+  },
+  "packageDetail": {
+    "byOwner": "by",
+    "viewOnGitHub": "View on GitHub",
+    "viewOnGitHubAriaLabel": "View {{name}} on GitHub",
+    "metadataHeading": "Metadata",
+    "license": "License",
+    "homepage": "Homepage",
+    "homepageAriaLabel": "Package homepage",
+    "maintainers": "Maintainers",
+    "installTargets": "Install targets",
+    "versionsHeading": "Versions",
+    "latestSuffix": "(latest)",
+    "artifactsCount": "{{count}} artifact(s)",
+    "loadingVersions": "Loading version list…",
+    "noVersions": "No version list available.",
+    "agentsHeading": "Agents",
+    "flowsHeading": "Flows",
+    "readmeHeading": "README",
+    "loadingReadme": "Loading README…",
+    "noReadme": "This package snapshot does not include a README.",
+    "loadingPackage": "Loading package",
+    "detailLoadError": "Unable to load package detail."
+  }
+}

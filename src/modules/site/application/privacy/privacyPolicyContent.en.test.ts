@@ -28,6 +28,7 @@ describe('privacyPolicyContent.en', () => {
     const expectedNames = [
       'analytics-consent',
       'theme',
+      'locale',
       'catalog.filters.sidebarCollapsed',
       'agents-repo-webapp-registry',
       'html-pages-cache and app-static-runtime-cache',

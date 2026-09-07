@@ -1,7 +1,7 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { faReddit, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import type { SocialLink, SocialLinkId } from '../../application/community/socialLinks'
 
 const socialLinkIcons: Record<SocialLinkId, IconDefinition> = {
@@ -15,13 +15,15 @@ interface SocialExternalLinkProps {
 }
 
 function SocialExternalLink({ entry, className }: SocialExternalLinkProps) {
+  const externalLinkName = useExternalLinkAccessibleName()
+
   return (
     <a
       href={entry.href}
       className={className}
       target="_blank"
       rel="noreferrer noopener"
-      aria-label={externalLinkAccessibleName(entry.accessibleLabel)}
+      aria-label={externalLinkName(entry.accessibleLabel)}
     >
       <FontAwesomeIcon icon={socialLinkIcons[entry.id]} className="me-2" aria-hidden="true" />
       {entry.label}

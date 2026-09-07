@@ -5,6 +5,7 @@ export interface DocManifestEntry {
   readonly order: number
   readonly section: string
   readonly bodyMarkdown: string
+  readonly usesEnglishFallback?: boolean
 }
 
 export interface DocSectionGroup {

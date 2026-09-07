@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, it } from 'node:test'
 import {
+  expandRoutesWithLocalePrefixes,
+  getBuildSitemapPaths,
   resolveBuildSiteOrigin,
   resolveViteSiteUrl,
   rewriteSitemapLocsToPublicPaths,
@@ -43,11 +45,6 @@ describe('seo-build-config', () => {
     assert.equal(resolveBuildSiteOrigin('production'), 'https://example.test')
   })
 
-  it('falls back to the default origin when no env value is set', () => {
-    assert.equal(resolveBuildSiteOrigin('no-env-file-mode'), productionOrigin)
-    assert.equal(resolveViteSiteUrl('no-env-file-mode'), undefined)
-  })
-
   it('rewrites sitemap locs onto trailing-slash directory URLs', () => {
     const xml = [
       `<url><loc>${productionOrigin}/</loc></url>`,
@@ -62,5 +59,21 @@ describe('seo-build-config', () => {
     assert.equal(rewritten.includes(`<loc>${productionOrigin}/about/</loc>`), true)
     assert.equal(rewritten.includes(`<loc>${productionOrigin}/about</loc>`), false)
     assert.equal(rewritten.includes(`<loc>${productionOrigin}/docs/foo.md</loc>`), true)
+  })
+
+  it('falls back to the default origin when no env value is set', () => {
+    assert.equal(resolveBuildSiteOrigin('no-env-file-mode'), productionOrigin)
+    assert.equal(resolveViteSiteUrl('no-env-file-mode'), undefined)
+  })
+
+  it('expands build routes with locale prefixes', () => {
+    const expanded = expandRoutesWithLocalePrefixes(['/', '/about'])
+
+    assert.equal(expanded.includes('/'), true)
+    assert.equal(expanded.includes('/about/'), true)
+    assert.equal(expanded.includes('/es/'), true)
+    assert.equal(expanded.includes('/es/about/'), true)
+    assert.equal(expanded.includes('/pt-br/about/'), true)
+    assert.equal(getBuildSitemapPaths().length >= expanded.length, true)
   })
 })

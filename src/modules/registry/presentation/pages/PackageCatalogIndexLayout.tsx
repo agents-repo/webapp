@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Badge, Button, Col, Container, Form, Offcanvas, Row, Stack } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
 import {
   DOWNLOAD_STATS_PERIODS,
@@ -37,8 +38,11 @@ function FilterToggleButtons(options: {
   readonly onToggleSidebar: () => void
   readonly onOpenOffcanvas: () => void
 }): ReactNode {
+  const { t } = useTranslation('catalog')
   const filtersLabel =
-    options.selectedFacetCount > 0 ? `Filters, ${options.selectedFacetCount} selected` : 'Filters'
+    options.selectedFacetCount > 0
+      ? t('filters.titleWithCount', { count: options.selectedFacetCount })
+      : t('filters.title')
 
   return (
     <>
@@ -50,7 +54,7 @@ function FilterToggleButtons(options: {
         aria-expanded={options.sidebarVisible}
         onClick={options.onToggleSidebar}
       >
-        {options.sidebarVisible ? 'Hide filters' : 'Show filters'}
+        {options.sidebarVisible ? t('filters.hide') : t('filters.show')}
       </Button>
       <Button
         type="button"
@@ -61,7 +65,7 @@ function FilterToggleButtons(options: {
         aria-label={filtersLabel}
         aria-expanded={options.filtersOffcanvasOpen}
       >
-        Filters
+        {t('filters.title')}
         {options.selectedFacetCount > 0 ? (
           <Badge bg="primary" pill className="ms-2">
             {options.selectedFacetCount}
@@ -77,6 +81,7 @@ function PackageCatalogListingColumn(options: {
   readonly sidebarVisible: boolean
   readonly hasCatalog: boolean
 }): ReactNode {
+  const { t } = useTranslation('catalog')
   const { page, sidebarVisible, hasCatalog } = options
   return (
     <Col lg={sidebarVisible ? 9 : 12}>
@@ -105,10 +110,7 @@ function PackageCatalogListingColumn(options: {
         />
       ) : null}
       {page.filteredPackages.length === 0 ? (
-        <EmptyCatalogState
-          hasCatalog={hasCatalog}
-          emptyMatchMessage="No packages match your current search or filters."
-        />
+        <EmptyCatalogState hasCatalog={hasCatalog} emptyMatchMessage={t('filters.emptyMatch')} />
       ) : null}
     </Col>
   )
@@ -124,6 +126,7 @@ export function PackageCatalogIndexLayout({
   packages,
   catalog,
 }: PackageCatalogIndexLayoutProps) {
+  const { t } = useTranslation('catalog')
   const page = usePackageCatalogIndexPage({
     catalog,
     packages,
@@ -169,7 +172,7 @@ export function PackageCatalogIndexLayout({
             <Col lg={4} className="text-lg-end">
               <Stack direction="horizontal" gap={2} className="justify-content-lg-end flex-wrap">
                 <Form.Group controlId="package-catalog-download-period" className="mb-0">
-                  <Form.Label className="visually-hidden">Sort packages by download window</Form.Label>
+                  <Form.Label className="visually-hidden">{t('filters.sortByDownloads')}</Form.Label>
                   <Form.Select
                     size="sm"
                     value={page.downloadPeriod}
@@ -208,7 +211,7 @@ export function PackageCatalogIndexLayout({
             <Row className="g-4">
               {sidebarVisible ? (
                 <Col lg={3} className="d-none d-lg-block">
-                  <h3 className="h5">Filters</h3>
+                  <h3 className="h5">{t('filters.title')}</h3>
                   <PackageCatalogFilterBody
                     idPrefix="sidebar"
                     facets={page.facets}
@@ -235,7 +238,7 @@ export function PackageCatalogIndexLayout({
         aria-labelledby="package-catalog-filters-offcanvas-title"
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title id="package-catalog-filters-offcanvas-title">Filters</Offcanvas.Title>
+          <Offcanvas.Title id="package-catalog-filters-offcanvas-title">{t('filters.title')}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <PackageCatalogFilterBody

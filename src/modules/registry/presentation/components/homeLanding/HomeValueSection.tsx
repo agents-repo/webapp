@@ -1,30 +1,32 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComments, faMagnifyingGlass, faTerminal } from '@fortawesome/free-solid-svg-icons'
 import { Card, Col, Container, Row } from 'react-bootstrap'
-
-const valueCards = [
-  {
-    icon: faMagnifyingGlass,
-    title: 'Discover curated packages',
-    body: 'Search agents and flows by name, owner, tags, and tool. Status badges show what is maintained.',
-  },
-  {
-    icon: faTerminal,
-    title: 'Install into your editor',
-    body: 'The CLI places packages into GitHub Copilot, Cursor, Claude Code, or OpenAI Codex layouts.',
-  },
-  {
-    icon: faComments,
-    title: 'Try in chat first',
-    body: 'Copy instruction URLs and prompts into ChatGPT, Grok, Gemini, or Microsoft Copilot when a package is chat-ready.',
-  },
-] as const
+import { useTranslation } from 'react-i18next'
 
 function HomeValueSection() {
+  const { t } = useTranslation('catalog')
+  const valueCards = [
+    {
+      icon: faMagnifyingGlass,
+      title: t('homeLanding.value.discoverTitle'),
+      body: t('homeLanding.value.discoverBody'),
+    },
+    {
+      icon: faTerminal,
+      title: t('homeLanding.value.installTitle'),
+      body: t('homeLanding.value.installBody'),
+    },
+    {
+      icon: faComments,
+      title: t('homeLanding.value.chatTitle'),
+      body: t('homeLanding.value.chatBody'),
+    },
+  ] as const
+
   return (
     <section className="py-4 py-lg-5">
       <Container>
-        <h2 className="h3 text-center mb-4">What you gain</h2>
+        <h2 className="h3 text-center mb-4">{t('homeLanding.value.heading')}</h2>
         <Row className="g-4">
           {valueCards.map((card) => (
             <Col key={card.title} md={4}>

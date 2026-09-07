@@ -21,6 +21,42 @@ describe('docsManifest', () => {
     expect(entry?.bodyMarkdown).toMatch(/Agents Repo/)
   })
 
+  it('resolves localized getting-started for es', () => {
+    const entry = getDocBySlug('getting-started', 'es')
+    expect(entry?.title).toBe('Primeros pasos')
+    expect(entry?.usesEnglishFallback).toBe(false)
+  })
+
+  it('resolves localized cli-doctor for es', () => {
+    const entry = getDocBySlug('cli-doctor', 'es')
+    expect(entry?.title).toBe('Diagnósticos doctor')
+    expect(entry?.usesEnglishFallback).toBe(false)
+  })
+
+  it('resolves all Spanish doc slugs without English fallback', () => {
+    for (const slug of getDocSlugs()) {
+      const entry = getDocBySlug(slug, 'es')
+      expect(entry).toBeDefined()
+      expect(entry?.usesEnglishFallback).toBe(false)
+    }
+  })
+
+  it('resolves all pt-BR doc slugs without English fallback', () => {
+    for (const slug of getDocSlugs()) {
+      const entry = getDocBySlug(slug, 'pt-BR')
+      expect(entry).toBeDefined()
+      expect(entry?.usesEnglishFallback).toBe(false)
+    }
+  })
+
+  it('resolves all pt-PT doc slugs without English fallback', () => {
+    for (const slug of getDocSlugs()) {
+      const entry = getDocBySlug(slug, 'pt-PT')
+      expect(entry).toBeDefined()
+      expect(entry?.usesEnglishFallback).toBe(false)
+    }
+  })
+
   it('orders entries by frontmatter order field', () => {
     const orders = listDocManifestEntries().map((entry) => entry.order)
     const sorted = [...orders].sort((left, right) => left - right)

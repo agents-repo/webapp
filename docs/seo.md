@@ -33,7 +33,8 @@ the latest stable registry tag (same resolution as runtime catalog loading).
 Production uses the proxy (`ref` query); `--mode e2e` uses Playwright fixtures.
 A failed fetch or schema mismatch **fails the production Pages build**. It writes
 gitignored `scripts/.generated/package-site-routes.json` and
-`package-site-catalog.json` used by `getBuildSiteRoutePaths()` in
+`package-site-catalog.json` used by `getBuildSiteRoutePaths()` and
+`getBuildSitemapPaths()` in
 `vite.config.ts` and `scripts/prepare-pages-dist.mjs`. `prepare-pages-dist.mjs`
 injects route-specific head tags into `dist/**/index.html`, including package
 JSON-LD `codeRepository` from `VITE_REGISTRY_GITHUB_REPOSITORY_URL` for the
@@ -45,7 +46,8 @@ separate `noindex` fallback head for unknown paths.
 200 URL). Canonical, `og:url`, JSON-LD `url`, sitemap `<loc>`, and in-app
 `Link`/`NavLink`/`Navigate` hrefs MUST use that trailing-slash form via
 `publicSitePath()` in `siteRoutes.ts`. Home stays `/`. File URLs stay unslashed
-(`/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/docs/<slug>.md`). Route ids
+(`/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/docs/<slug>.md`, and locale-prefixed
+`/es/docs/<slug>.md`, `/pt-br/docs/<slug>.md`, `/pt-pt/docs/<slug>.md`). Route ids
 (`siteRoutes`, `canonicalPath`, `getBuildSiteRoutePaths()`) stay unslashed so
 `prepare-pages-dist.mjs` can write folder HTML. `prepare-pages-dist.mjs` also
 rewrites sitemap `<loc>` values after `vite build` in case `vite-plugin-sitemap`
@@ -53,9 +55,7 @@ strips trailing slashes.
 
 **Crawl files:** `vite-plugin-sitemap` in `vite.config.ts` generates
 `dist/sitemap.xml` and `dist/robots.txt` at the end of `vite build`. Routes come
-from `getBuildSiteRoutePaths()` via `dynamicRoutes` mapped with `publicSitePath()`
-(static/docs/repository routes plus package index, namespace, and detail paths
-from the fetched catalog);
+from `getBuildSitemapPaths()` (locale-expanded static/docs/repository/package paths);
 `hostname` uses `VITE_SITE_URL`
 through `scripts/seo-build-config.ts` (shared with `prepare-pages-dist.mjs`) so
 `.env` values match the client bundle.
@@ -64,7 +64,8 @@ The plugin also injects `<link rel="sitemap" href="/sitemap.xml">` into
 the `404.html` fallback).
 
 **Browser access:** The PWA service worker excludes `/sitemap.xml`,
-`/robots.txt`, `/llms.txt`, and `/docs/*.md` from HTML `NetworkFirst` caching
+`/robots.txt`, `/llms.txt`, and doc markdown (`/docs/*.md` plus locale-prefixed
+`/es/docs/*.md`, `/pt-br/docs/*.md`, `/pt-pt/docs/*.md`) from HTML `NetworkFirst` caching
 (`isHtmlNavigationRequest` in `scripts/pwa-workbox.ts`, wired in
 `vite.config.ts`) so browser navigation serves the static crawl files instead of
 the SPA shell. `navigateFallback` is disabled so those files are not replaced by

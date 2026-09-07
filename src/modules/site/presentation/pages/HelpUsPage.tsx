@@ -1,8 +1,10 @@
 import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { getDocDetailPath } from '../../application/docs/docsManifest.ts'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
+import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import { siteRoutes } from '../routes/siteRoutes'
 
 const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 const REGISTRY_CONTRIBUTING_URL =
@@ -14,40 +16,59 @@ const WEBAPP_CONTRIBUTING_URL =
 const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 
 function HelpUsPage() {
+  const { t } = useTranslation('pages')
+  const localizedSitePath = useLocalizedSitePath()
+  const externalLinkName = useExternalLinkAccessibleName()
+
   return (
     <div className="py-5">
       <Container>
-        <h1 className="h2 mb-4">Help Us</h1>
+        <h1 className="h2 mb-4">{t('helpUs.title')}</h1>
 
         <Stack gap={4}>
           <Card>
             <Card.Body>
-              <h2 className="h4">Help us grow</h2>
+              <h2 className="h4">{t('helpUs.growHeading')}</h2>
               <p className="text-body-secondary mb-0">
-                The project needs <strong>agents and flows packages</strong> most. Browse the catalog on{' '}
-                <NavLink to={publicSitePath(siteRoutes.home)}>Home</NavLink>, then follow the{' '}
-                <NavLink to={publicSitePath(getDocDetailPath('submitting-a-package'))}>package submission guide</NavLink>.
-                Step-by-step docs live in <NavLink to={publicSitePath(siteRoutes.docs)}>Docs</NavLink>. Questions and
-                feedback are welcome on <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink>.
+                {t('helpUs.growBodyPrefix')}{' '}
+                <strong>{t('helpUs.growBodyPackages')}</strong> {t('helpUs.growBodyMiddle')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.home)}>{t('helpUs.homeLink')}</NavLink>
+                {t('helpUs.growBodyAfterHome')}{' '}
+                <NavLink to={localizedSitePath(getDocDetailPath('submitting-a-package'))}>
+                  {t('helpUs.submissionGuideLink')}
+                </NavLink>
+                {t('helpUs.growBodyAfterGuide')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.docs)}>{t('helpUs.docsLink')}</NavLink>
+                {t('helpUs.growBodyAfterDocs')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.contact)}>{t('helpUs.contactLink')}</NavLink>
+                {t('helpUs.growBodySuffix')}
               </p>
             </Card.Body>
           </Card>
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Create agents and flows</h2>
+              <h2 className="h4">{t('helpUs.createPackagesHeading')}</h2>
               <p className="text-body-secondary">
-                Fork <a
+                {t('helpUs.createPackagesBodyPrefix')}{' '}
+                <a
                   href={REGISTRY_REPO_URL}
                   target="_blank"
                   rel="noreferrer noopener"
-                  aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                  aria-label={externalLinkName('agents-repo/registry repository')}
                 >
                   agents-repo/registry
-                </a>, add maintained packages under <code>packages/</code>, and open a pull request from your
-                fork to upstream. Start with{' '}
-                <NavLink to={publicSitePath(getDocDetailPath('submitting-a-package'))}>Submit a package</NavLink> and{' '}
-                <NavLink to={publicSitePath(getDocDetailPath('contributing-packages'))}>Contributing packages</NavLink>.
+                </a>
+                {t('helpUs.createPackagesBodyMiddle')} <code>packages/</code>
+                {t('helpUs.createPackagesBodyAfterPackages')}{' '}
+                <NavLink to={localizedSitePath(getDocDetailPath('submitting-a-package'))}>
+                  {t('helpUs.submitPackageLink')}
+                </NavLink>{' '}
+                {t('helpUs.createPackagesBodyAnd')}{' '}
+                <NavLink to={localizedSitePath(getDocDetailPath('contributing-packages'))}>
+                  {t('helpUs.contributingPackagesLink')}
+                </NavLink>
+                {t('helpUs.createPackagesBodySuffix')}
               </p>
               <ul className="mb-0">
                 <li>
@@ -55,7 +76,7 @@ function HelpUsPage() {
                     href={REGISTRY_REPO_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('agents-repo/registry repository')}
+                    aria-label={externalLinkName('agents-repo/registry repository')}
                   >
                     agents-repo/registry
                   </a>
@@ -65,9 +86,9 @@ function HelpUsPage() {
                     href={REGISTRY_CONTRIBUTING_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Registry contributing guide')}
+                    aria-label={externalLinkName('Registry contributing guide')}
                   >
-                    Contributing guide
+                    {t('helpUs.contributingGuide')}
                   </a>
                 </li>
                 <li>
@@ -75,9 +96,9 @@ function HelpUsPage() {
                     href={REGISTRY_ISSUES_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Registry issues')}
+                    aria-label={externalLinkName('Registry issues')}
                   >
-                    Issues
+                    {t('contact.issues')}
                   </a>
                 </li>
               </ul>
@@ -86,11 +107,13 @@ function HelpUsPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Improve the webapp</h2>
+              <h2 className="h4">{t('helpUs.improveWebappHeading')}</h2>
               <p className="text-body-secondary">
-                UI, UX, registry integration, and site docs are welcome. See{' '}
-                <NavLink to={publicSitePath(getDocDetailPath('contributing-to-webapp'))}>Contributing to webapp</NavLink>{' '}
-                for workflow and validation commands.
+                {t('helpUs.improveWebappBodyPrefix')}{' '}
+                <NavLink to={localizedSitePath(getDocDetailPath('contributing-to-webapp'))}>
+                  {t('helpUs.contributingWebappLink')}
+                </NavLink>{' '}
+                {t('helpUs.improveWebappBodySuffix')}
               </p>
               <ul className="mb-0">
                 <li>
@@ -98,7 +121,7 @@ function HelpUsPage() {
                     href={WEBAPP_REPO_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('agents-repo/webapp repository')}
+                    aria-label={externalLinkName('agents-repo/webapp repository')}
                   >
                     agents-repo/webapp
                   </a>
@@ -108,9 +131,9 @@ function HelpUsPage() {
                     href={WEBAPP_CONTRIBUTING_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Webapp contributing guide')}
+                    aria-label={externalLinkName('Webapp contributing guide')}
                   >
-                    Contributing guide
+                    {t('helpUs.contributingGuide')}
                   </a>
                 </li>
                 <li>
@@ -118,9 +141,9 @@ function HelpUsPage() {
                     href={WEBAPP_ISSUES_URL}
                     target="_blank"
                     rel="noreferrer noopener"
-                    aria-label={externalLinkAccessibleName('Webapp issues')}
+                    aria-label={externalLinkName('Webapp issues')}
                   >
-                    Issues
+                    {t('contact.issues')}
                   </a>
                 </li>
               </ul>
@@ -129,24 +152,26 @@ function HelpUsPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Support the project</h2>
+              <h2 className="h4">{t('helpUs.supportHeading')}</h2>
               <p className="text-body-secondary mb-0">
-                <span className="text-body-secondary">Coming soon:</span> financial support through GitHub
-                Sponsors, Patreon, and similar platforms. Package contributions remain the most direct way
-                to help today.
+                <span className="text-body-secondary">{t('helpUs.supportComingSoon')}</span>{' '}
+                {t('helpUs.supportBody')}
               </p>
             </Card.Body>
           </Card>
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Related</h2>
+              <h2 className="h4">{t('helpUs.relatedHeading')}</h2>
               <p className="text-body-secondary mb-0">
-                <NavLink to={publicSitePath(siteRoutes.community)}>Community</NavLink>,{' '}
-                <NavLink to={publicSitePath(siteRoutes.docs)}>Docs</NavLink>, organization repositories on{' '}
-                <NavLink to={publicSitePath(siteRoutes.repositories)}>Repositories</NavLink>, questions on{' '}
-                <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink>, and context on{' '}
-                <NavLink to={publicSitePath(siteRoutes.about)}>About</NavLink>.
+                <NavLink to={localizedSitePath(siteRoutes.community)}>{t('helpUs.communityLink')}</NavLink>,{' '}
+                <NavLink to={localizedSitePath(siteRoutes.docs)}>{t('helpUs.docsLink')}</NavLink>,{' '}
+                {t('helpUs.relatedRepositoriesOn')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.repositories)}>{t('helpUs.repositoriesLink')}</NavLink>,{' '}
+                {t('helpUs.relatedQuestionsOn')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.contact)}>{t('helpUs.contactLink')}</NavLink>,{' '}
+                {t('helpUs.relatedContextOn')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.about)}>{t('helpUs.aboutLink')}</NavLink>.
               </p>
             </Card.Body>
           </Card>

@@ -9,11 +9,15 @@ import {
   isKnownPackageSiteRoute,
   PACKAGES_BASE_PATH,
 } from '../../../registry/application/packageSiteRoutes.ts'
+import { stripLocalePrefix } from '../../application/i18n/localePath.ts'
+import { normalizeSitePathname } from '../../application/routes/sitePath.ts'
 import {
   getRuntimePackageCatalog,
   isRuntimePackageCatalogResolved,
 } from '../../../registry/application/runtimePackageCatalog.ts'
 import type { RegistryCatalog } from '../../../registry/domain/package.ts'
+
+export { normalizeSitePathname, publicSitePath } from '../../application/routes/sitePath.ts'
 
 export const siteRoutes = {
   home: '/',
@@ -26,48 +30,18 @@ export const siteRoutes = {
   repositories: REPOSITORIES_BASE_PATH,
   accessibility: '/accessibility',
   privacy: '/privacy',
-  privacyPtBr: '/privacidade',
 } as const
 
 export type SiteRoutePath = (typeof siteRoutes)[keyof typeof siteRoutes]
 
-export function normalizeSitePathname(pathname: string): string {
-  return pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname
-}
-
-const fileUrlSegmentPattern = /\.[a-z0-9]+$/i
-
-function splitPathAndSuffix(pathname: string): { readonly pathOnly: string; readonly suffix: string } {
-  const queryIndex = pathname.indexOf('?')
-  const hashIndex = pathname.indexOf('#')
-  const splitCandidates = [queryIndex, hashIndex].filter((index) => index >= 0)
-  if (splitCandidates.length === 0) {
-    return { pathOnly: pathname, suffix: '' }
-  }
-
-  const splitAt = Math.min(...splitCandidates)
-  return { pathOnly: pathname.slice(0, splitAt), suffix: pathname.slice(splitAt) }
-}
-
-export function publicSitePath(pathname: string): string {
-  const { pathOnly, suffix } = splitPathAndSuffix(pathname)
-  const normalized = normalizeSitePathname(pathOnly.length > 0 ? pathOnly : '/')
-
-  if (normalized === '/') {
-    return `/${suffix}`
-  }
-
-  const lastSegment = normalized.slice(normalized.lastIndexOf('/') + 1)
-  if (fileUrlSegmentPattern.test(lastSegment)) {
-    return `${normalized}${suffix}`
-  }
-
-  return `${normalized}/${suffix}`
-}
-
 export function findSiteRoutePath(normalizedPath: string): SiteRoutePath | undefined {
   const routePaths = Object.values(siteRoutes) as SiteRoutePath[]
   return routePaths.find((routePath) => routePath === normalizedPath)
+}
+
+export function getSiteRoutePaths(): string[] {
+  const staticPaths = Object.values(siteRoutes) as SiteRoutePath[]
+  return [...staticPaths, ...getDocRoutePaths(), ...getRepositoryDetailRoutePaths()]
 }
 
 export function isKnownSiteRoute(
@@ -75,7 +49,7 @@ export function isKnownSiteRoute(
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
   catalogResolved = isRuntimePackageCatalogResolved(),
 ): boolean {
-  const normalizedPath = normalizeSitePathname(pathname)
+  const normalizedPath = normalizeSitePathname(stripLocalePrefix(pathname))
   if (findSiteRoutePath(normalizedPath) !== undefined) {
     return true
   }
@@ -89,9 +63,4 @@ export function isKnownSiteRoute(
   }
 
   return isKnownPackageSiteRoute(normalizedPath, catalog, catalogResolved)
-}
-
-export function getSiteRoutePaths(): string[] {
-  const staticPaths = Object.values(siteRoutes) as SiteRoutePath[]
-  return [...staticPaths, ...getDocRoutePaths(), ...getRepositoryDetailRoutePaths()]
 }

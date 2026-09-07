@@ -40,4 +40,10 @@ describe('getSitePageMeta', () => {
     expect(getSitePageMeta('/repositories/not-listed')).toEqual(getSitePageMeta(siteRoutes.repositories))
     expect(getSitePageMeta('/repositories/foo/bar')).toEqual(getSitePageMeta(siteRoutes.repositories))
   })
+
+  it('returns localized meta for locale-prefixed routes', () => {
+    expect(getSitePageMeta('/es/about').title).toBe('Acerca de')
+    expect(getSitePageMeta('/es/about').routeLabel).toBe('Acerca de')
+    expect(getSitePageMeta('/pt-br/help-us').title).toBe('Ajude-nos')
+  })
 })
