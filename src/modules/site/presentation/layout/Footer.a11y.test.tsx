@@ -1,14 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
+import enShell from '../../../../locales/en/shell.json' with { type: 'json' }
 import { renderWithProviders } from '../../../../test/renderWithProviders'
-import { externalLinkAccessibleName, externalLinkOpensInNewTabLabelEn } from '../../application/accessibility/externalLink'
-import { socialLinks, type SocialLinkId } from '../../application/community/socialLinks'
+import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { socialLinks } from '../../application/community/socialLinks'
 import Footer from './Footer'
-
-const socialAccessibleLabelsEn: Record<SocialLinkId, string> = {
-  x: 'Agents Repo on X',
-  reddit: 'Agents Repo on Reddit',
-}
 
 const axeOptions = {
   rules: {
@@ -24,8 +20,8 @@ describe('Footer accessibility', () => {
       expect(
         getByRole('link', {
           name: externalLinkAccessibleName(
-            socialAccessibleLabelsEn[entry.id],
-            externalLinkOpensInNewTabLabelEn,
+            enShell.social[entry.id].accessibleLabel,
+            enShell.accessibility.opensInNewTab,
           ),
         }),
       ).toBeInTheDocument()

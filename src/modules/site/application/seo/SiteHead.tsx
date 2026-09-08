@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async'
-import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import { isPackageSitePathCatalogMember } from '../../../registry/application/packageSiteRoutes.ts'
 import { isCatalogLoadAttemptResolved } from '../../../registry/application/runtimePackageCatalog.ts'
@@ -9,7 +8,6 @@ import { getRouteHeadData } from './buildRouteHead.ts'
 
 function SiteHead() {
   const { pathname } = useLocation()
-  useTranslation('pages')
   const catalogContext = useOptionalRegistryCatalog()
   const catalog = catalogContext?.catalog ?? null
   const catalogResolved = catalogContext
