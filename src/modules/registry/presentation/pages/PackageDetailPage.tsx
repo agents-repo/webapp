@@ -296,9 +296,7 @@ function PackageDetailLoaded(options: {
         </nav>
 
         <Stack gap={4}>
-          <div className="align-self-start">
-            <GoogleTranslateLink />
-          </div>
+          <GoogleTranslateLink className="align-self-start" />
 
           <PackageDetailHeader
             catalogPackage={catalogPackage}

@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import {
-  getRepositoryDocLinkKey,
-} from '../../application/repositories/repositoryPageLocales.ts'
+import { getRepositoryDocLinkKey } from '../../application/repositories/repositoryDocLinkKey.ts'
 import type { RepositoryManifestEntry } from '../../application/repositories/repositoryManifest.types.ts'
 
 export interface LocalizedRepositoryEntry {

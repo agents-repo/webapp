@@ -26,6 +26,7 @@
     "vitest.a11y.config.ts",
     "scripts/seo-build-config.ts",
     "scripts/register-docs-page-meta.node.ts",
+    "scripts/register-repository-page-locales.node.ts",
     "scripts/pwa-workbox.ts",
     "scripts/package-site-routes-path.ts",
     "src/modules/registry/application/packageSiteRoutes.ts",
