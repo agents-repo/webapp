@@ -1,6 +1,7 @@
 import { faLanguage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useTranslation } from 'react-i18next'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import { buildGoogleTranslateUrl, shouldShowGoogleTranslate } from '../../application/i18n/googleTranslate.ts'
 import { useLocale } from '../../application/i18n/useLocale.ts'
 
@@ -10,6 +11,7 @@ interface GoogleTranslateLinkProps {
 
 function GoogleTranslateLink({ className }: GoogleTranslateLinkProps) {
   const { t } = useTranslation('shell')
+  const externalLinkName = useExternalLinkAccessibleName()
   const { locale } = useLocale()
 
   if (!shouldShowGoogleTranslate(locale)) {
@@ -26,6 +28,7 @@ function GoogleTranslateLink({ className }: GoogleTranslateLinkProps) {
       target="_blank"
       rel="noreferrer noopener"
       className={buttonClassName}
+      aria-label={externalLinkName(t('footer.translateWithGoogle'))}
     >
       <FontAwesomeIcon icon={faLanguage} aria-hidden="true" />
       {t('footer.translateWithGoogle')}
