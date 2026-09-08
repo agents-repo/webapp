@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { externalLinkAccessibleName, externalLinkOpensInNewTabLabelEn } from '../../application/accessibility/externalLink'
-import { socialLinks } from '../../application/community/socialLinks'
+import { socialLinks, type SocialLinkId } from '../../application/community/socialLinks'
 import Footer from './Footer'
 
-const socialAccessibleLabelsEn: Record<string, string> = {
+const socialAccessibleLabelsEn: Record<SocialLinkId, string> = {
   x: 'Agents Repo on X',
   reddit: 'Agents Repo on Reddit',
 }

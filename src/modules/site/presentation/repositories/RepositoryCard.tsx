@@ -43,9 +43,9 @@ function RepositoryCard({ entry }: RepositoryCardProps) {
         </div>
         <Card.Text className="text-body-secondary flex-grow-1">{localized.description}</Card.Text>
         <div className="d-flex flex-wrap gap-1 mb-3">
-          {localized.tags.map((tag) => (
+          {entry.tags.map((tag, index) => (
             <Badge key={tag} bg="light" text="dark" className="fw-normal">
-              {tag}
+              {localized.tags[index]}
             </Badge>
           ))}
         </div>

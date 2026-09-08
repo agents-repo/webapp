@@ -91,9 +91,9 @@ function RepositoryDetailContent({ entry }: { readonly entry: RepositoryManifest
                 <strong>{t('repositories.detail.stackLabel')}</strong> {entry.stack.join(', ')}
               </p>
               <div className="d-flex flex-wrap gap-1">
-                {localized.tags.map((tag) => (
+                {entry.tags.map((tag, index) => (
                   <Badge key={tag} bg="light" text="dark" className="fw-normal">
-                    {tag}
+                    {localized.tags[index]}
                   </Badge>
                 ))}
               </div>
