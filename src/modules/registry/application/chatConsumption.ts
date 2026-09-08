@@ -14,11 +14,17 @@ export interface ChatInstructionEntry {
   readonly agentInstructions?: readonly string[]
 }
 
+export interface ChatDefaultInstructionRef {
+  readonly kind: ChatInstructionKind
+  readonly id: string
+}
+
 export interface ChatInstructionsManifest {
   readonly schemaVersion: string
   readonly package: string
   readonly version: string
   readonly instructions: readonly ChatInstructionEntry[]
+  readonly defaultInstruction?: ChatDefaultInstructionRef
 }
 
 export interface ChatInstructionCopyUrls {
@@ -93,6 +99,17 @@ const parseAgentInstructions = (value: unknown): readonly string[] | null | unde
   return paths
 }
 
+const parseDefaultInstruction = (value: unknown): ChatDefaultInstructionRef | undefined => {
+  if (!isRecord(value) || !isChatInstructionKind(value.kind) || !isNonEmptyString(value.id)) {
+    return undefined
+  }
+
+  return {
+    kind: value.kind,
+    id: value.id.trim(),
+  }
+}
+
 const parseInstructionEntry = (value: unknown): ChatInstructionEntry | null => {
   if (!isRecord(value) || !isChatInstructionKind(value.kind) || !isNonEmptyString(value.id) || !isPkgPath(value.path)) {
     return null
@@ -135,11 +152,14 @@ export const parseChatInstructionsManifest = (value: unknown): ChatInstructionsM
     instructions.push(parsed)
   }
 
+  const defaultInstruction = parseDefaultInstruction(value.defaultInstruction)
+
   return {
     schemaVersion: value.schemaVersion.trim(),
     package: value.package.trim(),
     version: value.version.trim(),
     instructions,
+    ...(defaultInstruction ? { defaultInstruction } : {}),
   }
 }
 
@@ -170,6 +190,18 @@ export const findChatInstruction = (
   key: string,
 ): ChatInstructionEntry | null => {
   return instructions.find((entry) => instructionOptionKey(entry) === key) ?? null
+}
+
+export const resolveInitialChatInstructionKey = (manifest: ChatInstructionsManifest): string => {
+  const fallbackKey = instructionOptionKey(manifest.instructions[0])
+  const defaultInstruction = manifest.defaultInstruction
+
+  if (!defaultInstruction) {
+    return fallbackKey
+  }
+
+  const defaultKey = `${defaultInstruction.kind}:${defaultInstruction.id}`
+  return findChatInstruction(manifest.instructions, defaultKey) ? defaultKey : fallbackKey
 }
 
 export const buildChatInstructionCopyUrls = (

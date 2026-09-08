@@ -6,9 +6,10 @@ import {
 } from './chatInstructionsRepository'
 
 const validManifest = {
-  schemaVersion: '1.0.0',
+  schemaVersion: '1.1.0',
   package: 'agents-repo/hello-agent',
   version: '1.0.1',
+  defaultInstruction: { kind: 'agent', id: 'hello-agent' },
   instructions: [
     {
       kind: 'agent',
@@ -36,9 +37,10 @@ describe('chatInstructionsRepository', () => {
     await expect(
       fetchChatInstructionsManifest('https://example.test/pkg/ns/id/1.0.1/instructions.json'),
     ).resolves.toEqual({
-      schemaVersion: '1.0.0',
+      schemaVersion: '1.1.0',
       package: 'agents-repo/hello-agent',
       version: '1.0.1',
+      defaultInstruction: { kind: 'agent', id: 'hello-agent' },
       instructions: validManifest.instructions,
     })
     expect(fetchMock).toHaveBeenCalledWith(
