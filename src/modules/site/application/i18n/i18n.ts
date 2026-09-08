@@ -1,10 +1,10 @@
 import i18n from 'i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
 import { initReactI18next } from 'react-i18next'
-import enCatalog from '../../../../locales/en/catalog.json'
-import enDocs from '../../../../locales/en/docs.json'
-import enPages from '../../../../locales/en/pages.json'
-import enShell from '../../../../locales/en/shell.json'
+import enCatalog from '../../../../locales/en/catalog.json' with { type: 'json' }
+import enDocs from '../../../../locales/en/docs.json' with { type: 'json' }
+import enPages from '../../../../locales/en/pages.json' with { type: 'json' }
+import enShell from '../../../../locales/en/shell.json' with { type: 'json' }
 import { appLocales, defaultAppLocale } from './supportedLocales.ts'
 
 void i18n

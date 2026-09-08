@@ -18,15 +18,17 @@ export function useLocalizedRepositoryEntry(
   const entryKey = `repositories.entries.${entry.slug}`
 
   return {
-    description: t(`${entryKey}.description`),
-    relationship: t(`${entryKey}.relationship`),
-    audience: t(`${entryKey}.audience`),
-    roleLabel: t(`repositories.roles.${entry.role}`),
-    tags: entry.tags.map((tag) => t(`${entryKey}.tags.${tag}`)),
+    description: t(`${entryKey}.description`, { defaultValue: entry.description }),
+    relationship: t(`${entryKey}.relationship`, { defaultValue: entry.relationship }),
+    audience: t(`${entryKey}.audience`, { defaultValue: entry.audience }),
+    roleLabel: t(`repositories.roles.${entry.role}`, { defaultValue: entry.role }),
+    tags: entry.tags.map((tag) => t(`${entryKey}.tags.${tag}`, { defaultValue: tag })),
     docLinks:
       entry.docLinks?.map((link) => ({
         path: link.path,
-        label: t(`${entryKey}.docLinks.${getRepositoryDocLinkKey(link.path)}`),
+        label: t(`${entryKey}.docLinks.${getRepositoryDocLinkKey(link.path)}`, {
+          defaultValue: link.label,
+        }),
       })) ?? [],
   }
 }

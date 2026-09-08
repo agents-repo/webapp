@@ -3,10 +3,10 @@ import '@testing-library/jest-dom/vitest'
 import * as matchers from 'vitest-axe/matchers'
 import { afterEach, beforeAll, expect } from 'vitest'
 import i18n from '../modules/site/application/i18n/i18n.ts'
-import enCatalog from '../locales/en/catalog.json'
-import enDocs from '../locales/en/docs.json'
-import enPages from '../locales/en/pages.json'
-import enShell from '../locales/en/shell.json'
+import enCatalog from '../locales/en/catalog.json' with { type: 'json' }
+import enDocs from '../locales/en/docs.json' with { type: 'json' }
+import enPages from '../locales/en/pages.json' with { type: 'json' }
+import enShell from '../locales/en/shell.json' with { type: 'json' }
 import { resetRegistryMemoryCachesForTests } from './testUtils'
 
 expect.extend(matchers)
