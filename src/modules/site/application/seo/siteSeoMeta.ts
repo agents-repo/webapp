@@ -16,6 +16,7 @@ import {
   parseRepositorySlugFromPathname,
 } from '../nestedSiteRoutes.ts'
 import { getRepositoryBySlug } from '../repositories/repositoryManifest.ts'
+import { getLocalizedRepositoryDescription } from '../repositories/repositoryPageLocales.ts'
 import {
   getNamespacePackagesPath,
   getPackageDetailPath,
@@ -106,6 +107,23 @@ function getPackageCanonicalPath(route: PackageSiteRoute): string {
   return getPackageDetailPath(route.namespace, route.packageId)
 }
 
+function getRepositorySeoMeta(
+  repositorySlug: string,
+  locale: AppLocale,
+): SiteSeoMeta | undefined {
+  const entry = getRepositoryBySlug(repositorySlug)
+  if (!entry) {
+    return undefined
+  }
+
+  const localizedDescription = getLocalizedRepositoryDescription(repositorySlug, locale)
+
+  return {
+    description: localizedDescription ?? entry.description,
+    canonicalPath: getRepositoryDetailPath(repositorySlug),
+  }
+}
+
 export function getSiteSeoMeta(
   pathname: string,
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
@@ -121,12 +139,9 @@ export function getSiteSeoMeta(
 
   const repositorySlug = parseRepositorySlugFromPathname(normalizedPath)
   if (repositorySlug) {
-    const entry = getRepositoryBySlug(repositorySlug)
-    if (entry) {
-      return {
-        description: entry.description,
-        canonicalPath: getRepositoryDetailPath(repositorySlug),
-      }
+    const repositorySeoMeta = getRepositorySeoMeta(repositorySlug, locale)
+    if (repositorySeoMeta) {
+      return repositorySeoMeta
     }
   }
 
@@ -144,7 +159,7 @@ export function getSiteSeoMeta(
   const packageRoute = parsePackageSitePath(normalizedPath)
   if (packageRoute) {
     return {
-      description: getPackageSiteSeoDescription(packageRoute, catalog),
+      description: getPackageSiteSeoDescription(packageRoute, catalog, locale),
       canonicalPath: getPackageCanonicalPath(packageRoute),
     }
   }

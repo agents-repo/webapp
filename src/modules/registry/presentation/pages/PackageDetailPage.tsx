@@ -1,12 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLink, faLanguage } from '@fortawesome/free-solid-svg-icons'
+import { faExternalLink } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useParams } from 'react-router-dom'
-import { buildGoogleTranslateUrl, shouldShowGoogleTranslate } from '../../../site/application/i18n/googleTranslate.ts'
-import { useLocale } from '../../../site/application/i18n/useLocale.ts'
+import GoogleTranslateLink from '../../../site/presentation/components/GoogleTranslateLink.tsx'
 import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
@@ -230,9 +229,7 @@ function PackageDetailLoaded(options: {
   readonly githubRepositoryUrl: string
 }): ReactNode {
   const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
-  const { locale } = useLocale()
   const localizedSitePath = useLocalizedSitePath()
-  const { t: tShell } = useTranslation('shell')
   const { t } = useTranslation('catalog')
   const { downloadStatsById } = useRegistryCatalog()
   const detailRequestKey = `${catalogPackage.namespace}/${catalogPackage.package}/${catalogPackage.latest}::${registryBaseUrl}`
@@ -299,19 +296,7 @@ function PackageDetailLoaded(options: {
         </nav>
 
         <Stack gap={4}>
-          {shouldShowGoogleTranslate(locale) ? (
-            <div>
-              <a
-                href={buildGoogleTranslateUrl(globalThis.location.href, locale)}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
-              >
-                <FontAwesomeIcon icon={faLanguage} aria-hidden="true" />
-                {tShell('footer.translateWithGoogle')}
-              </a>
-            </div>
-          ) : null}
+          <GoogleTranslateLink className="align-self-start" />
 
           <PackageDetailHeader
             catalogPackage={catalogPackage}

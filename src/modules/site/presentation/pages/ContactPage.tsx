@@ -17,19 +17,20 @@ const REGISTRY_ISSUES_URL = 'https://github.com/agents-repo/registry/issues'
 
 function ContactPage() {
   const { t } = useTranslation('pages')
+  const { t: tShell } = useTranslation('shell')
   const localizedSitePath = useLocalizedSitePath()
   const beforeYouWriteItems = t('contact.beforeYouWriteItems', { returnObjects: true }) as string[]
 
   const webappContactLinks = [
     {
       href: WEBAPP_DISCUSSIONS_URL,
-      accessibleLabel: 'Webapp discussions',
+      accessibleLabel: t('contact.webappDiscussionsAriaLabel'),
       label: t('contact.discussions'),
       suffix: t('contact.webappDiscussionsSuffix'),
     },
     {
       href: WEBAPP_ISSUES_URL,
-      accessibleLabel: 'Webapp issues',
+      accessibleLabel: t('contact.webappIssuesAriaLabel'),
       label: t('contact.issues'),
       suffix: t('contact.webappIssuesSuffix'),
     },
@@ -38,13 +39,13 @@ function ContactPage() {
   const registryContactLinks = [
     {
       href: REGISTRY_DISCUSSIONS_URL,
-      accessibleLabel: 'Registry discussions',
+      accessibleLabel: t('contact.registryDiscussionsAriaLabel'),
       label: t('contact.discussions'),
       suffix: t('contact.registryDiscussionsSuffix'),
     },
     {
       href: REGISTRY_ISSUES_URL,
-      accessibleLabel: 'Registry issues',
+      accessibleLabel: t('contact.registryIssuesAriaLabel'),
       label: t('contact.issues'),
       suffix: t('contact.registryIssuesSuffix'),
     },
@@ -80,7 +81,7 @@ function ContactPage() {
             <ul className="mb-0">
               {socialLinks.map((entry) => (
                 <li key={entry.id}>
-                  <SocialExternalLink entry={entry} /> — {entry.shortDescription}
+                  <SocialExternalLink entry={entry} /> — {tShell(`social.${entry.id}.shortDescription`)}
                 </li>
               ))}
             </ul>

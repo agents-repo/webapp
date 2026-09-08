@@ -10,6 +10,8 @@ import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixt
 import { filterableRegistryCatalog } from '../../../../test/fixtures/filterableRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
+import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
+import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { localizedSitePath } from '../../../site/application/i18n/localePath.ts'
 import { getPackageDetailPath } from '../../application/packageSiteRoutes'
 
@@ -29,6 +31,35 @@ describe('PackagesIndexPage', () => {
     cleanup()
     vi.clearAllMocks()
     clearTestStorage()
+  })
+
+  it('hides the Google Translate link on the English packages page', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />)
+    await screen.findByRole('heading', { name: 'sample-agent' })
+
+    expect(
+      screen.queryByRole('link', { name: /translate page with google/i }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the Google Translate link for non-English package catalog pages', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: [localizedSitePath('/packages', 'es')],
+    })
+    await screen.findByRole('heading', { name: 'sample-agent' })
+
+    expect(
+      await screen.findByRole('link', {
+        name: externalLinkAccessibleName(
+          esShell.footer.translateWithGoogle,
+          esShell.accessibility.opensInNewTab,
+        ),
+      }),
+    ).toHaveAttribute('target', '_blank')
   })
 
   it('uses a distinct heading from Home and links cards to package pages', async () => {

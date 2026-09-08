@@ -9,6 +9,16 @@
     "routeLabel": "Packages",
     "description": "Browse every published Agents Repo package. Search agents and flows for Copilot, Cursor, Claude Code, and Codex."
   },
+  "namespacePackages": {
+    "title": "{{namespace}} packages",
+    "routeLabel": "{{namespace}} packages",
+    "description": "Browse published Agents Repo packages in the {{namespace}} namespace for Copilot, Cursor, Claude Code, and Codex."
+  },
+  "packageDetailFallback": {
+    "title": "Package",
+    "routeLabel": "Package",
+    "description": "Latest published details for {{namespace}}/{{packageId}} on the Agents Repo registry."
+  },
   "about": {
     "title": "About",
     "routeLabel": "About",

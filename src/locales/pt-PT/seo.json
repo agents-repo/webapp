@@ -9,6 +9,16 @@
     "routeLabel": "Pacotes",
     "description": "Explore todos os pacotes publicados do Agents Repo. Pesquise agents e flows para Copilot, Cursor, Claude Code e Codex."
   },
+  "namespacePackages": {
+    "title": "Pacotes de {{namespace}}",
+    "routeLabel": "Pacotes de {{namespace}}",
+    "description": "Explore pacotes publicados do Agents Repo no namespace {{namespace}} para Copilot, Cursor, Claude Code e Codex."
+  },
+  "packageDetailFallback": {
+    "title": "Pacote",
+    "routeLabel": "Pacote",
+    "description": "Últimos detalhes publicados de {{namespace}}/{{packageId}} no registry do Agents Repo."
+  },
   "about": {
     "title": "Sobre",
     "routeLabel": "Sobre",
