@@ -10,6 +10,8 @@ import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixt
 import { filterableRegistryCatalog } from '../../../../test/fixtures/filterableRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
+import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
+import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { localizedSitePath } from '../../../site/application/i18n/localePath.ts'
 import { getPackageDetailPath } from '../../application/packageSiteRoutes'
 
@@ -51,8 +53,11 @@ describe('PackagesIndexPage', () => {
     await screen.findByRole('heading', { name: 'sample-agent' })
 
     expect(
-      screen.getByRole('link', {
-        name: 'Translate page with Google (opens in a new tab)',
+      await screen.findByRole('link', {
+        name: externalLinkAccessibleName(
+          esShell.footer.translateWithGoogle,
+          esShell.accessibility.opensInNewTab,
+        ),
       }),
     ).toHaveAttribute('target', '_blank')
   })
