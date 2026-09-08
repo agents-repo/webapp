@@ -27,6 +27,7 @@ import {
   findChatInstruction,
   groupChatInstructionsByKind,
   instructionOptionKey,
+  resolveInitialChatInstructionKey,
   type ChatInstructionCopyUrls,
   type ChatInstructionEntry,
   type ChatInstructionKind,
@@ -385,7 +386,7 @@ function PackageUseInChatAction({
   const applyManifest = useCallback((loaded: ChatInstructionsManifest, sourceUrl: string): void => {
     setManifest(loaded)
     setLoadedUrl(sourceUrl)
-    setSelectedKey(instructionOptionKey(loaded.instructions[0]))
+    setSelectedKey(resolveInitialChatInstructionKey(loaded))
     setErrorMessage(null)
     setErrorUrl(null)
   }, [])

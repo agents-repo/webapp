@@ -118,6 +118,43 @@ describe('PackageUseInChatAction', () => {
     expect(screen.queryByText('Includes this flow and its related agent files.')).not.toBeInTheDocument()
   })
 
+  it('pre-selects defaultInstruction when it is not the first sorted instruction', async () => {
+    const user = userEvent.setup()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse({
+          ...instructionsManifest,
+          schemaVersion: '1.1.0',
+          defaultInstruction: { kind: 'flow', id: 'sample-flow' },
+        }),
+      ),
+    )
+
+    renderWithProviders(<PackageUseInChatAction {...defaultProps} />)
+
+    await user.click(screen.getByRole('button', { name: 'Use in chat for sample-agent' }))
+    await screen.findByLabelText('Instruction')
+
+    expect(screen.getByRole('combobox', { name: 'Instruction' })).toHaveDisplayValue('sample-flow')
+    expect(screen.getByDisplayValue(/Follow this flow:/)).toHaveValue(flowStarterPrompt)
+    expect(
+      screen.getByDisplayValue(
+        'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/flows/sample-flow.agent.md?ref=v2.x',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByDisplayValue(
+        'https://registry-proxy.example.workers.dev/pkg/agents-repo/sample-agent/flows/sample-flow.agent.md?ref=v2.x&version=1.0.0',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: OPEN_IN_CHATGPT_NAME })).toHaveAttribute(
+      'href',
+      chatgptOpenUrl(flowStarterPrompt),
+    )
+    expect(screen.getByText('Includes this flow and its related agent files.')).toBeInTheDocument()
+  })
+
   it('shows a flow-aware starter prompt when a flow with agentInstructions is selected', async () => {
     const user = userEvent.setup()
     vi.stubGlobal(

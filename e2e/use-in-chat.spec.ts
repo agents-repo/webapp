@@ -79,4 +79,32 @@ test.describe('Use in chat', () => {
       ),
     ).toBeVisible()
   })
+
+  test('pre-selects defaultInstruction when it is not the first sorted instruction', async ({ page }) => {
+    await mockChatPackageArtifacts(page, {
+      instructionsUrl: SAMPLE_INSTRUCTIONS_URL,
+      manifest: {
+        ...sampleInstructionsManifest,
+        schemaVersion: '1.1.0',
+        defaultInstruction: { kind: 'flow', id: 'sample-flow' },
+      },
+      markdownUrl: SAMPLE_MARKDOWN_URL,
+      markdown: '# Sample agent',
+    })
+
+    await page.goto('/')
+    await waitForCatalogSettled(page)
+
+    const sampleCard = page.locator('#package-card-agents-repo--sample-agent')
+    await sampleCard.getByRole('button', { name: 'Use in chat for sample-agent' }).click()
+
+    await expect(page.getByRole('heading', { name: 'Use sample-agent in chat' })).toBeVisible()
+    await expect(page.getByRole('combobox', { name: 'Instruction' })).toHaveValue('flow:sample-flow')
+    await expect(page.getByRole('textbox', { name: 'Latest instruction URL' })).toHaveValue(
+      'https://e2e.local/registry/pkg/agents-repo/sample-agent/flows/sample-flow.agent.md',
+    )
+    await expect(page.getByRole('textbox', { name: 'Pinned instruction URL (v1.0.0)' })).toHaveValue(
+      'https://e2e.local/registry/pkg/agents-repo/sample-agent/flows/sample-flow.agent.md?version=1.0.0',
+    )
+  })
 })

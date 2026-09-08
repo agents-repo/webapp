@@ -13,6 +13,7 @@ import {
   instructionIdFromVersionedPkgPath,
   instructionOptionKey,
   parseChatInstructionsManifest,
+  resolveInitialChatInstructionKey,
   wrapChatInstructionMarkdownForPaste,
   type ChatInstructionEntry,
 } from './chatConsumption'
@@ -137,6 +138,72 @@ describe('parseChatInstructionsManifest', () => {
       }),
     ).toBeNull()
   })
+
+  it('parses optional defaultInstruction on instructions.manifest 1.1.0 payloads', () => {
+    expect(
+      parseChatInstructionsManifest({
+        schemaVersion: '1.1.0',
+        package: 'maiconfz/chorume',
+        version: '1.0.1',
+        defaultInstruction: { kind: 'agent', id: 'chorume-chat' },
+        instructions: [
+          {
+            kind: 'agent',
+            id: 'chorume-ai',
+            path: '/pkg/maiconfz/chorume/1.0.1/agents/chorume-ai.agent.md',
+          },
+          {
+            kind: 'agent',
+            id: 'chorume-chat',
+            path: '/pkg/maiconfz/chorume/1.0.1/agents/chorume-chat.agent.md',
+          },
+        ],
+      }),
+    ).toEqual({
+      schemaVersion: '1.1.0',
+      package: 'maiconfz/chorume',
+      version: '1.0.1',
+      defaultInstruction: { kind: 'agent', id: 'chorume-chat' },
+      instructions: [
+        {
+          kind: 'agent',
+          id: 'chorume-ai',
+          path: '/pkg/maiconfz/chorume/1.0.1/agents/chorume-ai.agent.md',
+        },
+        {
+          kind: 'agent',
+          id: 'chorume-chat',
+          path: '/pkg/maiconfz/chorume/1.0.1/agents/chorume-chat.agent.md',
+        },
+      ],
+    })
+  })
+
+  it('omits malformed defaultInstruction without failing manifest parse', () => {
+    expect(
+      parseChatInstructionsManifest({
+        ...validManifest,
+        defaultInstruction: { kind: 'skill', id: 'hello-agent' },
+      }),
+    ).toEqual({
+      schemaVersion: '1.0.0',
+      package: 'agents-repo/hello-agent',
+      version: '1.0.1',
+      instructions: validManifest.instructions,
+    })
+
+    expect(
+      parseChatInstructionsManifest({
+        ...validManifest,
+        defaultInstruction: { kind: 'agent' },
+      }),
+    ).toEqual({
+      schemaVersion: '1.0.0',
+      package: 'agents-repo/hello-agent',
+      version: '1.0.1',
+      instructions: validManifest.instructions,
+    })
+  })
 })
 
 describe('groupChatInstructionsByKind', () => {
@@ -170,6 +237,35 @@ describe('instruction lookup', () => {
     expect(instructionOptionKey(helloFlowEntry)).toBe('flow:hello-agents')
     expect(findChatInstruction([helloAgentEntry, helloFlowEntry], 'flow:hello-agents')).toEqual(helloFlowEntry)
     expect(findChatInstruction([helloAgentEntry], 'flow:hello-agents')).toBeNull()
+  })
+})
+
+describe('resolveInitialChatInstructionKey', () => {
+  const parsed = parseChatInstructionsManifest(validManifest)
+
+  it('selects defaultInstruction when it matches an entry', () => {
+    expect(parsed).not.toBeNull()
+    expect(
+      resolveInitialChatInstructionKey({
+        ...parsed!,
+        defaultInstruction: { kind: 'flow', id: 'hello-agents' },
+      }),
+    ).toBe('flow:hello-agents')
+  })
+
+  it('falls back to the first instruction when defaultInstruction is absent', () => {
+    expect(parsed).not.toBeNull()
+    expect(resolveInitialChatInstructionKey(parsed!)).toBe('agent:hello-again')
+  })
+
+  it('falls back to the first instruction when defaultInstruction does not match', () => {
+    expect(parsed).not.toBeNull()
+    expect(
+      resolveInitialChatInstructionKey({
+        ...parsed!,
+        defaultInstruction: { kind: 'agent', id: 'missing-agent' },
+      }),
+    ).toBe('agent:hello-again')
   })
 })
 

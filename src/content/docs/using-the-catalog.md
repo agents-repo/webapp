@@ -63,8 +63,9 @@ Package cards may offer:
   (`chatWeb`). This opens a dialog to copy instruction URLs (latest and
   pinned), instruction markdown with a short kind-aware preamble, and a
   starter prompt for ChatGPT, Grok, Gemini, or Microsoft Copilot in the
-  browser. The ChatGPT tab includes **Open in ChatGPT**, and the Grok tab
-  includes **Open in Grok**. Each opens a new tab with the starter prompt
+  browser. When a package declares a default chat instruction, the dialog
+  pre-selects it; otherwise it uses the first listed instruction. The ChatGPT
+  tab includes **Open in ChatGPT**, and the Grok tab includes **Open in Grok**. Each opens a new tab with the starter prompt
   (latest instruction URLs). You must be signed in; ChatGPT or Grok may send
   the prompt automatically. Web chats may fail to fetch those URLs; if they
   cannot load a URL, copy the instruction markdown and paste it into the
