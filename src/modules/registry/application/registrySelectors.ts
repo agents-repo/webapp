@@ -1,3 +1,4 @@
+import { getIntlLocale } from '../../site/application/i18n/getIntlLocale.ts'
 import type { RegistryCatalog, RegistryPackage } from '../domain/package'
 
 const createSearchIndex = (pkg: RegistryPackage): string => {
@@ -40,8 +41,8 @@ export const filterRegistryPackages = (
   })
 }
 
-export const formatCatalogUpdatedAt = (value: string): string => {
-  return new Intl.DateTimeFormat('en-US', {
+export const formatCatalogUpdatedAt = (value: string, locale?: string): string => {
+  return new Intl.DateTimeFormat(getIntlLocale(locale), {
     month: 'short',
     day: '2-digit',
     year: 'numeric',

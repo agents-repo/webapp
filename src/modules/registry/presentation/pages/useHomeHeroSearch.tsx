@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
-import { publicSitePath } from '../../../site/presentation/routes/siteRoutes'
+import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { CATALOG_SEARCH_DEBOUNCE_MS } from '../../application/catalogSearch'
 import { excludeYankedPackages } from '../../application/packageCatalogFilters'
 import { selectHomePopularPackages } from '../../application/packageDownloadStats'
@@ -14,10 +15,17 @@ import { getCatalogAlertState, getCatalogResultsSummary } from './homePageCatalo
 
 const STICKY_SEARCH_THRESHOLD = 180
 
-function packagesSearchPath(query: string): string {
-  const params = new URLSearchParams()
-  params.set('q', query)
-  return `${publicSitePath(getPackagesIndexPath())}?${params.toString()}`
+function usePackagesSearchPathBuilder() {
+  const localizedSitePath = useLocalizedSitePath()
+
+  return useCallback(
+    (query: string): string => {
+      const params = new URLSearchParams()
+      params.set('q', query)
+      return `${localizedSitePath(getPackagesIndexPath())}?${params.toString()}`
+    },
+    [localizedSitePath],
+  )
 }
 
 export function useHomeHeroSearch(options: {
@@ -27,6 +35,9 @@ export function useHomeHeroSearch(options: {
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
 }) {
   const { catalog, searchInputId, searchAriaLabel, setHeaderSearchSlot } = options
+  const { t } = useTranslation('catalog')
+  const resolvedSearchAriaLabel = searchAriaLabel ?? t('search.ariaLabel')
+  const packagesSearchPath = usePackagesSearchPathBuilder()
   const navigate = useNavigate()
   const {
     cacheState: catalogCacheState,
@@ -68,7 +79,7 @@ export function useHomeHeroSearch(options: {
 
       void navigate(packagesSearchPath(trimmed))
     },
-    [navigate],
+    [navigate, packagesSearchPath],
   )
 
   useEffect(() => {
@@ -93,10 +104,10 @@ export function useHomeHeroSearch(options: {
         onQueryChange={setQuery}
         onSubmit={navigateToPackagesSearch}
         inputId={searchInputId}
-        ariaLabel={searchAriaLabel}
+        ariaLabel={resolvedSearchAriaLabel}
       />
     ),
-    [navigateToPackagesSearch, query, searchAriaLabel, searchInputId],
+    [navigateToPackagesSearch, query, resolvedSearchAriaLabel, searchInputId],
   )
 
   useEffect(() => {
@@ -111,7 +122,7 @@ export function useHomeHeroSearch(options: {
     (owner: string) => {
       void navigate(packagesSearchPath(`@${owner}`))
     },
-    [navigate],
+    [navigate, packagesSearchPath],
   )
 
   return {

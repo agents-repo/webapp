@@ -1,8 +1,9 @@
 import { lazy, Suspense } from 'react'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { axe } from 'vitest-axe'
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import { renderWithProviders } from '../../../../test/renderWithProviders.tsx'
 import RouteDocumentTitle from '../../application/accessibility/RouteDocumentTitle'
 import LazyRouteErrorBoundary from '../layout/LazyRouteErrorBoundary'
 import RouteLoadingFallback from '../layout/RouteLoadingFallback'
@@ -41,11 +42,7 @@ describe('Route shell integration', () => {
   })
 
   it('renders lazy route content inside the app-shell main landmark', async () => {
-    render(
-      <MemoryRouter initialEntries={['/about']}>
-        <RouteShellHarness />
-      </MemoryRouter>,
-    )
+    renderWithProviders(<RouteShellHarness />, { initialEntries: ['/about'] })
 
     expect(await screen.findByRole('heading', { name: 'About' })).toBeInTheDocument()
     expect(document.getElementById('main-content')).toBeInTheDocument()
@@ -53,11 +50,7 @@ describe('Route shell integration', () => {
   })
 
   it('has no detectable accessibility violations with the app-shell main landmark', async () => {
-    const { container } = render(
-      <MemoryRouter initialEntries={['/about']}>
-        <RouteShellHarness />
-      </MemoryRouter>,
-    )
+    const { container } = renderWithProviders(<RouteShellHarness />, { initialEntries: ['/about'] })
 
     await screen.findByRole('heading', { name: 'About' })
 

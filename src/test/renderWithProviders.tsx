@@ -1,7 +1,10 @@
 import type { ReactElement, ReactNode } from 'react'
+import { Suspense } from 'react'
 import { render, type RenderOptions } from '@testing-library/react'
 import { HelmetProvider } from 'react-helmet-async'
 import { MemoryRouter } from 'react-router-dom'
+import '../modules/site/application/i18n/i18n.ts'
+import { LocaleProvider } from '../modules/site/application/i18n/LocaleProvider'
 import ThemeModeProvider from '../modules/site/application/theme/ThemeModeProvider'
 import CookieConsentProvider from '../modules/site/presentation/layout/CookieConsentProvider'
 
@@ -18,7 +21,11 @@ export function renderWithProviders(
       <ThemeModeProvider>
         <CookieConsentProvider>
           <HelmetProvider>
-            <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+            <MemoryRouter initialEntries={initialEntries}>
+              <LocaleProvider>
+                <Suspense fallback={null}>{children}</Suspense>
+              </LocaleProvider>
+            </MemoryRouter>
           </HelmetProvider>
         </CookieConsentProvider>
       </ThemeModeProvider>

@@ -10,6 +10,10 @@ import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixt
 import { filterableRegistryCatalog } from '../../../../test/fixtures/filterableRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
+import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
+import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
+import { localizedSitePath } from '../../../site/application/i18n/localePath.ts'
+import { getPackageDetailPath } from '../../application/packageSiteRoutes'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -29,6 +33,35 @@ describe('PackagesIndexPage', () => {
     clearTestStorage()
   })
 
+  it('hides the Google Translate link on the English packages page', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />)
+    await screen.findByRole('heading', { name: 'sample-agent' })
+
+    expect(
+      screen.queryByRole('link', { name: /translate page with google/i }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the Google Translate link for non-English package catalog pages', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: [localizedSitePath('/packages', 'es')],
+    })
+    await screen.findByRole('heading', { name: 'sample-agent' })
+
+    expect(
+      await screen.findByRole('link', {
+        name: externalLinkAccessibleName(
+          esShell.footer.translateWithGoogle,
+          esShell.accessibility.opensInNewTab,
+        ),
+      }),
+    ).toHaveAttribute('target', '_blank')
+  })
+
   it('uses a distinct heading from Home and links cards to package pages', async () => {
     useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
 
@@ -41,6 +74,22 @@ describe('PackagesIndexPage', () => {
       'href',
       '/packages/agents-repo/sample-agent/',
     )
+  })
+
+  it('links package cards to locale-prefixed pages and translates card actions', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: [localizedSitePath('/packages', 'es')],
+    })
+
+    expect(await screen.findByRole('heading', { name: 'sample-agent' })).toBeInTheDocument()
+    expect(await screen.findByRole('link', { name: 'Ver sample-agent' })).toHaveAttribute(
+      'href',
+      localizedSitePath(getPackageDetailPath('agents-repo', 'sample-agent'), 'es'),
+    )
+    expect(await screen.findByRole('button', { name: 'Instalación CLI para sample-agent' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Usar en chat para sample-agent' })).toBeInTheDocument()
   })
 
   it('uses unique filter control ids for the sidebar and offcanvas copies', async () => {

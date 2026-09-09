@@ -23,9 +23,11 @@ The suggested authoring path is the in-tree **`full-package-creation-flow`** (`a
 
 Human-facing requirements and review expectations: [registry CONTRIBUTING](https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md).
 
+Squash-merge titles (`feat(package):`, `fix(package):`) classify package intent; catalog registry tags batch daily on the release train, not on every merge. See [How the registry works](/docs/how-the-registry-works) for timing and consumer impact.
+
 ## Corrections
 
-Fixes to published packages use the same fork → upstream pull request model. The [package correction issue template](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-correction.yml) is optional but recommended. Squash-merge titles use `fix(package):`.
+Fixes to published packages use the same fork → upstream pull request model. The [package correction issue template](https://github.com/agents-repo/registry/blob/main/.github/ISSUE_TEMPLATE/package-correction.yml) is optional but recommended. Squash-merge titles use `fix(package):` for the same intent classification; catalog tags still publish on the daily train.
 
 ## Help
 

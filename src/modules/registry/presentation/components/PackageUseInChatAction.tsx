@@ -12,23 +12,25 @@ import {
   Tab,
   Tabs,
 } from 'react-bootstrap'
-import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
+import { useTranslation } from 'react-i18next'
+import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
 import { copyTextToClipboard } from '../../../site/application/clipboard/copyTextToClipboard'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
-  CHAT_PLATFORM_GUIDES,
-  CHAT_URL_FETCH_FALLBACK_WARNING,
   buildChatInstructionCopyUrls,
   buildChatInstructionLatestUrlFromPath,
   buildChatInstructionMarkdownForPaste,
   buildChatPlatformOpenUrl,
   buildChatRelatedAgentMarkdownSources,
   buildChatStarterPrompt,
+  CHAT_PLATFORM_GUIDES,
   findChatInstruction,
   groupChatInstructionsByKind,
   instructionOptionKey,
+  resolveInitialChatInstructionKey,
   type ChatInstructionCopyUrls,
   type ChatInstructionEntry,
+  type ChatInstructionKind,
   type ChatInstructionOptionGroup,
   type ChatInstructionsManifest,
 } from '../../application/chatConsumption'
@@ -38,9 +40,23 @@ import {
 } from '../../infrastructure/chatInstructionsRepository'
 import { buildRegistryPkgInstructionsUrl } from '../../infrastructure/registrySourceUrl'
 
-const COPY_FEEDBACK_MESSAGE = 'Copied to clipboard.'
 const COPY_FEEDBACK_DURATION_MS = 3000
-const COPY_FAILURE_MESSAGE = 'Could not copy to clipboard. Copy the text manually.'
+
+const instructionGroupLabelKey = (kind: ChatInstructionKind): string => {
+  return kind === 'agent' ? 'packageDetail.agentsHeading' : 'packageDetail.flowsHeading'
+}
+
+const readTranslatedPlatformSteps = (
+  t: (key: string, options?: { returnObjects?: boolean }) => string | readonly string[],
+  platformId: string,
+): readonly string[] => {
+  const steps = t(`packageCard.useInChatForm.platforms.${platformId}.steps`, { returnObjects: true })
+  if (!Array.isArray(steps)) {
+    return []
+  }
+
+  return steps.filter((step): step is string => typeof step === 'string')
+}
 
 export interface PackageUseInChatActionProps {
   readonly packageName: string
@@ -161,16 +177,18 @@ function UseInChatLoadedForm({
   readonly copyFeedback: Partial<Record<CopyField, string>>
   readonly safeQuickstart: string | null
 }) {
+  const { t } = useTranslation('catalog')
+  const externalLinkName = useExternalLinkAccessibleName()
   const { selectedInstruction, copyUrls, starterPrompt, instructionGroups } = selectedState
 
   return (
     <Form>
       <Stack gap={3}>
         <Form.Group controlId={pickerId}>
-          <Form.Label>Instruction</Form.Label>
+          <Form.Label>{t('packageCard.useInChatForm.instructionLabel')}</Form.Label>
           <Form.Select value={selectedKey} onChange={(event) => onSelectKey(event.target.value)}>
             {instructionGroups.map((group) => (
-              <optgroup key={group.kind} label={group.label}>
+              <optgroup key={group.kind} label={t(instructionGroupLabelKey(group.kind))}>
                 {group.instructions.map((entry) => (
                   <option key={instructionOptionKey(entry)} value={instructionOptionKey(entry)}>
                     {entry.id}
@@ -183,24 +201,24 @@ function UseInChatLoadedForm({
 
         <CopyableTextRow
           controlId={`${pickerId}-latest`}
-          label="Latest instruction URL"
+          label={t('packageCard.useInChatForm.latestUrlLabel')}
           value={copyUrls.latestUrl}
-          copyLabel={`Copy latest instruction URL for ${selectedInstruction.id}`}
+          copyLabel={t('packageCard.useInChatForm.copyLatestUrlAriaLabel', { id: selectedInstruction.id })}
           onCopy={() => onCopyValue('latest', copyUrls.latestUrl)}
           copyFeedback={copyFeedback.latest ?? ''}
         />
 
         <CopyableTextRow
           controlId={`${pickerId}-pinned`}
-          label={`Pinned instruction URL (v${latest})`}
+          label={t('packageCard.useInChatForm.pinnedUrlLabel', { version: latest })}
           value={copyUrls.pinnedUrl}
-          copyLabel={`Copy pinned instruction URL for ${selectedInstruction.id}`}
+          copyLabel={t('packageCard.useInChatForm.copyPinnedUrlAriaLabel', { id: selectedInstruction.id })}
           onCopy={() => onCopyValue('pinned', copyUrls.pinnedUrl)}
           copyFeedback={copyFeedback.pinned ?? ''}
         />
 
         <div>
-          <div className="form-label">Instruction markdown</div>
+          <div className="form-label">{t('packageCard.useInChatForm.markdownLabel')}</div>
           <Button
             type="button"
             variant="outline-secondary"
@@ -208,10 +226,12 @@ function UseInChatLoadedForm({
             aria-busy={isCopyingMarkdown}
             onClick={onCopyMarkdown}
           >
-            {isCopyingMarkdown ? 'Copying markdown…' : 'Copy instruction markdown'}
+            {isCopyingMarkdown
+              ? t('packageCard.useInChatForm.copyingMarkdown')
+              : t('packageCard.useInChatForm.copyMarkdownButton')}
           </Button>
           {selectedInstruction.kind === 'flow' && (selectedInstruction.agentInstructions?.length ?? 0) > 0 ? (
-            <div className="form-text">Includes this flow and its related agent files.</div>
+            <div className="form-text">{t('packageCard.useInChatForm.flowIncludesAgentsNote')}</div>
           ) : null}
           {copyFeedback.markdown ? (
             <output className="form-text d-block">{copyFeedback.markdown}</output>
@@ -220,9 +240,9 @@ function UseInChatLoadedForm({
 
         <CopyableTextRow
           controlId={`${pickerId}-prompt`}
-          label="Starter prompt"
+          label={t('packageCard.useInChatForm.starterPromptLabel')}
           value={starterPrompt}
-          copyLabel={`Copy starter prompt for ${selectedInstruction.id}`}
+          copyLabel={t('packageCard.useInChatForm.copyStarterPromptAriaLabel', { id: selectedInstruction.id })}
           onCopy={() => onCopyValue('prompt', starterPrompt)}
           copyFeedback={copyFeedback.prompt ?? ''}
           rows={selectedInstruction.kind === 'flow' ? 6 : 3}
@@ -230,22 +250,24 @@ function UseInChatLoadedForm({
 
         <Alert variant="warning" role="note" className="mb-0">
           <Alert.Heading as="h3" className="h6">
-            If the chat cannot load the URL
+            {t('packageCard.useInChatForm.urlFallbackHeading')}
           </Alert.Heading>
-          <p className="mb-0">{CHAT_URL_FETCH_FALLBACK_WARNING}</p>
+          <p className="mb-0">{t('packageCard.useInChatForm.urlFallbackBody')}</p>
         </Alert>
 
         <div>
-          <h3 className="h6">How to use in a web chat</h3>
+          <h3 className="h6">{t('packageCard.useInChatForm.howToHeading')}</h3>
           <Tabs defaultActiveKey="chatgpt" id={`${pickerId}-platforms`} className="mb-3">
             {CHAT_PLATFORM_GUIDES.map((guide) => {
+              const platformLabel = t(`packageCard.useInChatForm.platforms.${guide.id}.label`)
+              const platformSteps = readTranslatedPlatformSteps(t, guide.id)
               const openUrl = buildChatPlatformOpenUrl(guide.id, starterPrompt)
               const safeOpenUrl = openUrl && isSafeExternalHttpUrl(openUrl) ? openUrl : null
 
               return (
-                <Tab eventKey={guide.id} title={guide.label} key={guide.id}>
+                <Tab eventKey={guide.id} title={platformLabel} key={guide.id}>
                   <ol className={safeOpenUrl ? 'small mb-3 ps-3' : 'small mb-0 ps-3'}>
-                    {guide.steps.map((step) => (
+                    {platformSteps.map((step) => (
                       <li key={step}>{step}</li>
                     ))}
                   </ol>
@@ -255,9 +277,11 @@ function UseInChatLoadedForm({
                       target="_blank"
                       rel="noreferrer noopener"
                       className="btn btn-outline-primary"
-                      aria-label={externalLinkAccessibleName(`Open in ${guide.label}`)}
+                      aria-label={externalLinkName(
+                        t('packageCard.useInChatForm.openInPlatform', { platform: platformLabel }),
+                      )}
                     >
-                      Open in {guide.label}
+                      {t('packageCard.useInChatForm.openInPlatform', { platform: platformLabel })}
                     </a>
                   ) : null}
                 </Tab>
@@ -269,7 +293,7 @@ function UseInChatLoadedForm({
         {safeQuickstart ? (
           <p className="small mb-0">
             <a href={safeQuickstart} target="_blank" rel="noreferrer noopener">
-              {externalLinkAccessibleName('Package quickstart')}
+              {externalLinkName(t('packageCard.useInChatForm.packageQuickstart'))}
             </a>
           </p>
         ) : null}
@@ -287,6 +311,7 @@ function PackageUseInChatAction({
   controlId,
   quickstart,
 }: PackageUseInChatActionProps) {
+  const { t } = useTranslation('catalog')
   const reactId = useId()
   const modalInteractionRef = useRef(0)
   const copyFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -348,7 +373,7 @@ function PackageUseInChatAction({
   }, [])
 
   const showFieldCopyFeedback = useCallback((field: CopyField) => {
-    setCopyFeedback({ [field]: COPY_FEEDBACK_MESSAGE })
+    setCopyFeedback({ [field]: t('packageCard.copySuccess') })
     if (copyFeedbackTimeoutRef.current) {
       clearTimeout(copyFeedbackTimeoutRef.current)
     }
@@ -356,12 +381,12 @@ function PackageUseInChatAction({
       setCopyFeedback({})
       copyFeedbackTimeoutRef.current = null
     }, COPY_FEEDBACK_DURATION_MS)
-  }, [])
+  }, [t])
 
   const applyManifest = useCallback((loaded: ChatInstructionsManifest, sourceUrl: string): void => {
     setManifest(loaded)
     setLoadedUrl(sourceUrl)
-    setSelectedKey(instructionOptionKey(loaded.instructions[0]))
+    setSelectedKey(resolveInitialChatInstructionKey(loaded))
     setErrorMessage(null)
     setErrorUrl(null)
   }, [])
@@ -398,7 +423,7 @@ function PackageUseInChatAction({
         }
         setManifest(null)
         setLoadedUrl(null)
-        setErrorMessage(messageFromError(error, 'Unable to load chat instructions.'))
+        setErrorMessage(messageFromError(error, t('packageCard.useInChatForm.loadError')))
         setErrorUrl(instructionsUrl)
       }
     }
@@ -409,7 +434,7 @@ function PackageUseInChatAction({
       cancelled = true
       controller.abort()
     }
-  }, [applyManifest, instructionsUrl, showModal])
+  }, [applyManifest, instructionsUrl, showModal, t])
 
   const copyValue = useCallback(
     async (field: CopyField, text: string) => {
@@ -421,13 +446,13 @@ function PackageUseInChatAction({
       if (result === 'success') {
         setErrorMessage(null)
         setErrorUrl(null)
-        setLiveMessage(COPY_FEEDBACK_MESSAGE)
+        setLiveMessage(t('packageCard.copySuccess'))
         showFieldCopyFeedback(field)
         return
       }
-      setLiveMessage(COPY_FAILURE_MESSAGE)
+      setLiveMessage(t('packageCard.copyTextFailure'))
     },
-    [showFieldCopyFeedback],
+    [showFieldCopyFeedback, t],
   )
 
   const handleCopyMarkdown = async (): Promise<void> => {
@@ -446,7 +471,7 @@ function PackageUseInChatAction({
           : []
 
       if (relatedSources === null) {
-        throw new Error('Unable to load instruction markdown.')
+        throw new Error(t('packageCard.useInChatForm.markdownLoadError'))
       }
 
       const [markdown, ...relatedMarkdowns] = await Promise.all([
@@ -458,7 +483,7 @@ function PackageUseInChatAction({
       }
 
       if (relatedMarkdowns.length !== relatedSources.length) {
-        throw new Error('Unable to load instruction markdown.')
+        throw new Error(t('packageCard.useInChatForm.markdownLoadError'))
       }
 
       const relatedAgentMarkdowns = relatedSources.map((source, index) => ({
@@ -478,7 +503,7 @@ function PackageUseInChatAction({
       if (isAbortError(error) || interactionAtStart !== modalInteractionRef.current) {
         return
       }
-      const message = messageFromError(error, 'Unable to load instruction markdown.')
+      const message = messageFromError(error, t('packageCard.useInChatForm.markdownLoadError'))
       setLiveMessage(message)
       setErrorMessage(message)
       setErrorUrl(instructionsUrl)
@@ -496,14 +521,14 @@ function PackageUseInChatAction({
         type="button"
         variant="outline-primary"
         className="d-inline-flex align-items-center justify-content-center package-card-action"
-        aria-label={`Use in chat for ${packageName}`}
+        aria-label={t('packageCard.useInChatAriaLabel', { name: packageName })}
         aria-haspopup="dialog"
         aria-expanded={showModal}
         aria-controls={modalId}
         onClick={openModal}
       >
         <FontAwesomeIcon icon={faComments} aria-hidden="true" />
-        <span className="package-card-action-label">Use in chat</span>
+        <span className="package-card-action-label">{t('packageCard.useInChat')}</span>
       </Button>
 
       <Modal
@@ -515,14 +540,14 @@ function PackageUseInChatAction({
       >
         <Modal.Header closeButton>
           <Modal.Title as="h2" id={`${modalId}-title`} className="h5 mb-0">
-            Use {packageName} in chat
+            {t('packageCard.useInChatModalTitle', { name: packageName })}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body id={modalId} aria-busy={showInstructionsLoading}>
           {showInstructionsLoading ? (
             <output className="d-flex align-items-center gap-2">
               <Spinner animation="border" size="sm" aria-hidden="true" />
-              <span>Loading chat instructions</span>
+              <span>{t('packageCard.useInChatLoading')}</span>
             </output>
           ) : null}
 

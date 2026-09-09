@@ -1,0 +1,67 @@
+{
+  "brand": {
+    "name": "Agents Repo",
+    "logoAlt": "Logo de Agents Repo"
+  },
+  "nav": {
+    "primary": "Principal",
+    "packages": "Paquetes",
+    "docs": "Documentación",
+    "about": "Acerca de",
+    "community": "Comunidad",
+    "contact": "Contacto",
+    "helpUs": "Ayúdanos",
+    "current": "(actual)"
+  },
+  "accessibility": {
+    "opensInNewTab": "(se abre en una pestaña nueva)"
+  },
+  "footer": {
+    "product": "Producto",
+    "connect": "Conectar",
+    "legal": "Legal",
+    "language": "Idioma",
+    "home": "Inicio",
+    "repositories": "Repositorios",
+    "accessibility": "Accesibilidad",
+    "privacy": "Política de privacidad",
+    "cookiePreferences": "Preferencias de cookies",
+    "licensedUnder": "Licenciado bajo",
+    "mitLicense": "licencia MIT",
+    "madeWith": "Hecho con",
+    "byCollaborators": "Maicon y colaboradores",
+    "translateWithGoogle": "Traducir página con Google"
+  },
+  "cookieBanner": {
+    "title": "Preferencias de cookies",
+    "descriptionBefore": "Usamos cookies de analítica opcionales para entender cómo se utiliza el sitio. Puedes aceptar o rechazar la analítica. Consulta nuestra ",
+    "privacyLink": "política de privacidad",
+    "descriptionAfter": " para más detalles, incluidos tus derechos en Europa, Estados Unidos y Brasil.",
+    "accept": "Aceptar analítica",
+    "reject": "Rechazar analítica"
+  },
+  "locale": {
+    "label": "Idioma",
+    "current": "Idioma: {{language}}"
+  },
+  "theme": {
+    "label": "Modo de color: {{mode}}",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "auto": "Automático"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "notFound": "Página no encontrada"
+  },
+  "social": {
+    "x": {
+      "shortDescription": "Anuncios y conversación informal",
+      "accessibleLabel": "Agents Repo en X"
+    },
+    "reddit": {
+      "shortDescription": "Discusión comunitaria e ideas",
+      "accessibleLabel": "Agents Repo en Reddit"
+    }
+  }
+}

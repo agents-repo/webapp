@@ -1,189 +1,123 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons'
-import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
+import { Col, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink'
+import { useTranslation } from 'react-i18next'
 import { socialLinks } from '../../application/community/socialLinks'
+import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import SitePageLayout from '../layout/SitePageLayout'
+import SiteTextCard from '../layout/SiteTextCard'
 import SocialExternalLink from '../layout/SocialExternalLink'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
+import LocalizedCreatorProfileCard from '../people/LocalizedCreatorProfileCard'
+import { siteRoutes } from '../routes/siteRoutes'
+import RepositoryContactCard from './RepositoryContactCard'
 
 const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
 const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 const REGISTRY_DISCUSSIONS_URL = 'https://github.com/agents-repo/registry/discussions'
 const REGISTRY_ISSUES_URL = 'https://github.com/agents-repo/registry/issues'
-const CREATOR_GITHUB_URL = 'https://github.com/maiconfz'
-const CREATOR_LINKEDIN_URL = 'https://www.linkedin.com/in/maiconfz/'
 
 function ContactPage() {
+  const { t } = useTranslation('pages')
+  const { t: tShell } = useTranslation('shell')
+  const localizedSitePath = useLocalizedSitePath()
+  const beforeYouWriteItems = t('contact.beforeYouWriteItems', { returnObjects: true }) as string[]
+
+  const webappContactLinks = [
+    {
+      href: WEBAPP_DISCUSSIONS_URL,
+      accessibleLabel: t('contact.webappDiscussionsAriaLabel'),
+      label: t('contact.discussions'),
+      suffix: t('contact.webappDiscussionsSuffix'),
+    },
+    {
+      href: WEBAPP_ISSUES_URL,
+      accessibleLabel: t('contact.webappIssuesAriaLabel'),
+      label: t('contact.issues'),
+      suffix: t('contact.webappIssuesSuffix'),
+    },
+  ]
+
+  const registryContactLinks = [
+    {
+      href: REGISTRY_DISCUSSIONS_URL,
+      accessibleLabel: t('contact.registryDiscussionsAriaLabel'),
+      label: t('contact.discussions'),
+      suffix: t('contact.registryDiscussionsSuffix'),
+    },
+    {
+      href: REGISTRY_ISSUES_URL,
+      accessibleLabel: t('contact.registryIssuesAriaLabel'),
+      label: t('contact.issues'),
+      suffix: t('contact.registryIssuesSuffix'),
+    },
+  ]
+
   return (
-    <div className="py-5">
-      <Container>
-        <h1 className="h2 mb-4">Contact</h1>
+    <SitePageLayout title={t('contact.title')}>
+      <SiteTextCard heading={t('contact.reachOutHeading')} body={t('contact.reachOutBody')} />
 
-        <Stack gap={4}>
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Reach out</h2>
-              <p className="text-body-secondary mb-0">
-                Use this page to find the right channel for questions about packages, registry usage,
-                webapp behavior, and contribution workflows. GitHub Discussions and Issues remain the
-                tracked-work path for bugs, package submissions, and contribution work. X and Reddit are
-                for announcements, informal conversation, and community ideas. For registry source
-                configuration, check Website settings in the header before opening a thread.
-              </p>
-            </Card.Body>
-          </Card>
+      <Row className="g-4">
+        <Col lg={6}>
+          <RepositoryContactCard
+            heading={t('contact.webappHeading')}
+            body={t('contact.webappBody')}
+            links={webappContactLinks}
+          />
+        </Col>
 
-          <Row className="g-4">
-            <Col lg={6}>
-              <Card className="h-100">
-                <Card.Body>
-                  <h2 className="h4">Webapp</h2>
-                  <p className="text-body-secondary">
-                    For this site: usage questions, UI behavior, registry integration, and tracked
-                    feature or bug work.
-                  </p>
-                  <ul className="mb-0">
-                    <li>
-                      <a
-                        href={WEBAPP_DISCUSSIONS_URL}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={externalLinkAccessibleName('Webapp discussions')}
-                      >
-                        Discussions
-                      </a>{' '}
-                      — usage questions and open-ended help
-                    </li>
-                    <li>
-                      <a
-                        href={WEBAPP_ISSUES_URL}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={externalLinkAccessibleName('Webapp issues')}
-                      >
-                        Issues
-                      </a>{' '}
-                      — bugs, UI problems, and tracked work
-                    </li>
-                  </ul>
-                </Card.Body>
-              </Card>
-            </Col>
+        <Col lg={6}>
+          <RepositoryContactCard
+            heading={t('contact.registryHeading')}
+            body={t('contact.registryBody')}
+            links={registryContactLinks}
+          />
+        </Col>
+      </Row>
 
-            <Col lg={6}>
-              <Card className="h-100">
-                <Card.Body>
-                  <h2 className="h4">Registry</h2>
-                  <p className="text-body-secondary">
-                    For agents, flows, and catalog content: usage questions, package ideas, submissions,
-                    and index problems.
-                  </p>
-                  <ul className="mb-0">
-                    <li>
-                      <a
-                        href={REGISTRY_DISCUSSIONS_URL}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={externalLinkAccessibleName('Registry discussions')}
-                      >
-                        Discussions
-                      </a>{' '}
-                      — usage questions and package ideas
-                    </li>
-                    <li>
-                      <a
-                        href={REGISTRY_ISSUES_URL}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={externalLinkAccessibleName('Registry issues')}
-                      >
-                        Issues
-                      </a>{' '}
-                      — package submissions, catalog problems, and tracked work
-                    </li>
-                  </ul>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+      <SiteTextCard
+        heading={t('contact.communityHeading')}
+        body={
+          <>
+            <p className="text-body-secondary">{t('contact.communityBody')}</p>
+            <ul className="mb-0">
+              {socialLinks.map((entry) => (
+                <li key={entry.id}>
+                  <SocialExternalLink entry={entry} /> — {tShell(`social.${entry.id}.shortDescription`)}
+                </li>
+              ))}
+            </ul>
+          </>
+        }
+      />
 
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Community</h2>
-              <p className="text-body-secondary">
-                Join public community channels for informal discussion and ideas. Use GitHub Discussions
-                and Issues above for bugs, tracked work, and package submissions. Do not use social
-                channels for security or privacy requests.
-              </p>
-              <ul className="mb-0">
-                {socialLinks.map((entry) => (
-                  <li key={entry.id}>
-                    <SocialExternalLink entry={entry} /> — {entry.shortDescription}
-                  </li>
-                ))}
-              </ul>
-            </Card.Body>
-          </Card>
+      <LocalizedCreatorProfileCard pageKey="contact" />
 
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Creator</h2>
-              <p className="text-body-secondary">
-                Maicon is the creator and maintainer of Agents Repo, a senior full stack developer based
-                in Portugal, with support from <NavLink to={publicSitePath(siteRoutes.community)}>collaborators</NavLink>.
-              </p>
-              <div className="d-flex flex-wrap gap-3">
-                <a
-                  href={CREATOR_GITHUB_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label="Maicon on GitHub (opens in a new tab)"
-                >
-                  <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
-                  GitHub
-                </a>
-                <a
-                  href={CREATOR_LINKEDIN_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label="Maicon on LinkedIn (opens in a new tab)"
-                >
-                  <FontAwesomeIcon icon={faLinkedin} className="me-2" aria-hidden="true" />
-                  LinkedIn
-                </a>
-              </div>
-            </Card.Body>
-          </Card>
+      <SiteTextCard
+        heading={t('contact.beforeYouWriteHeading')}
+        body={
+          <>
+            <p className="text-body-secondary">{t('contact.beforeYouWriteIntro')}</p>
+            <ul className="text-body-secondary mb-0">
+              {beforeYouWriteItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </>
+        }
+      />
 
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Before you write</h2>
-              <p className="text-body-secondary">
-                Discussions work well with lighter context. For issues, include enough detail to reproduce
-                or route the request:
-              </p>
-              <ul className="text-body-secondary mb-0">
-                <li>Package id and install target, when relevant</li>
-                <li>Registry source settings from Website settings, if catalog-related</li>
-                <li>Steps to reproduce and expected vs actual behavior</li>
-                <li>Browser and environment, for webapp bugs</li>
-              </ul>
-            </Card.Body>
-          </Card>
-
-          <Card>
-            <Card.Body>
-              <h2 className="h4">Related</h2>
-              <p className="text-body-secondary mb-0">
-                See how to contribute on <NavLink to={publicSitePath(siteRoutes.helpUs)}>Help Us</NavLink> or read more
-                about the project on <NavLink to={publicSitePath(siteRoutes.about)}>About</NavLink>.
-              </p>
-            </Card.Body>
-          </Card>
-        </Stack>
-      </Container>
-    </div>
+      <SiteTextCard
+        heading={t('contact.relatedHeading')}
+        body={
+          <p className="text-body-secondary mb-0">
+            {t('contact.relatedPrefix')}{' '}
+            <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('contact.helpUsLink')}</NavLink>{' '}
+            {t('contact.relatedMiddle')}{' '}
+            <NavLink to={localizedSitePath(siteRoutes.about)}>{t('contact.aboutLink')}</NavLink>
+            {t('contact.relatedSuffix')}
+          </p>
+        }
+      />
+    </SitePageLayout>
   )
 }
 

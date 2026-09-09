@@ -1,20 +1,21 @@
 import type { PrivacyPolicyContent } from './privacyPolicyContent.types.ts'
 import { privacyPolicyLastUpdated } from './privacyPolicyContent.en.ts'
+import {
+  createPortuguesePrivacyPolicyCookieRows,
+  portuguesePrivacyPolicyCookieTableHeaders,
+} from './privacyPolicyContent.pt-shared.ts'
 
 export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
   pageTitle: 'Política de privacidade',
-  languageLinkLabel: 'English version',
-  languageLinkPath: '/privacy',
+  languageLinks: [
+    { label: 'English', locale: 'en' },
+    { label: 'Español', locale: 'es' },
+    { label: 'Português (Portugal)', locale: 'pt-PT' },
+  ],
   lastUpdatedLabel: 'Última atualização',
   lastUpdated: privacyPolicyLastUpdated,
   contactLinkLabel: 'Contato',
-  cookieTableHeaders: {
-    name: 'Nome',
-    purpose: 'Finalidade',
-    storage: 'Armazenamento',
-    duration: 'Duração',
-    consentRequired: 'Consentimento necessário',
-  },
+  cookieTableHeaders: portuguesePrivacyPolicyCookieTableHeaders,
   sections: [
     {
       id: 'introduction',
@@ -57,66 +58,55 @@ export const privacyPolicyContentPtBr: PrivacyPolicyContent = {
       paragraphs: [
         'Usamos armazenamento local do navegador para preferências e consentimento, IndexedDB para caches de JSON e markdown do registry, e Cache Storage para o service worker PWA. Tags de analytics são carregadas somente após você aceitar analytics no banner de cookies.',
       ],
-      cookieRows: [
+      cookieRows: createPortuguesePrivacyPolicyCookieRows([
         {
-          name: 'analytics-consent',
           purpose: 'Armazena sua decisão de consentimento de analytics (aceito ou rejeitado).',
-          storage: 'localStorage',
           duration: 'Até você limpar os dados do site ou alterar preferências.',
           consentRequired: 'Não (necessário para lembrar sua escolha).',
         },
         {
-          name: 'theme',
           purpose: 'Armazena sua preferência de tema claro, escuro ou automático.',
-          storage: 'localStorage',
           duration: 'Até você limpar os dados do site.',
           consentRequired: 'Não (preferência).',
         },
         {
-          name: 'catalog.filters.sidebarCollapsed',
+          purpose: 'Armazena o idioma do site selecionado.',
+          duration: 'Até você limpar os dados do site ou trocar de idioma.',
+          consentRequired: 'Não (preferência).',
+        },
+        {
           purpose: 'Armazena se a barra de filtros da listagem de pacotes está recolhida em telas grandes.',
-          storage: 'localStorage',
           duration: 'Até você limpar os dados do site.',
           consentRequired: 'Não (preferência).',
         },
         {
-          name: 'registry.source.baseUrlOverride',
           purpose: 'URL base opcional do registry configurada em Website settings.',
-          storage: 'localStorage',
           duration: 'Até você limpar os dados do site ou redefinir configurações.',
           consentRequired: 'Não (funcionalidade solicitada pelo usuário).',
         },
         {
-          name: 'registry.source.githubRepositoryUrlOverride',
           purpose: 'URL opcional do repositório GitHub do registry configurada em Website settings.',
-          storage: 'localStorage',
           duration: 'Até você limpar os dados do site ou redefinir configurações.',
           consentRequired: 'Não (funcionalidade solicitada pelo usuário).',
         },
         {
-          name: 'agents-repo-webapp-registry',
           purpose: 'Armazena no navegador JSON do catálogo, JSON de detalhe de pacote, listas de tags e JSON/markdown de instruções de chat. Downloads ZIP não são guardados aqui. Limpar cache em Website settings remove esses stores.',
-          storage: 'IndexedDB',
           duration: 'Até o TTL expirar, você usar Limpar cache ou limpar os dados do site. Catálogo e detalhe usam 24h; tags usam 1h; payloads de chat com versão fixa não usam o TTL curto.',
           consentRequired: 'Não (estritamente necessário para navegar no catálogo).',
         },
         {
-          name: 'html-pages-cache and app-static-runtime-cache',
           purpose:
             'Cache Storage do service worker para documentos HTML (network-first, 1 dia offline) e assets estáticos da mesma origem (até 7 dias). Downloads ZIP e JSON do registry não ficam aqui. Limpar cache em Website settings não remove esses stores; limpe os dados do site ou cancele o registro do service worker.',
-          storage: 'Cache Storage',
           duration:
             'HTML até 1 dia; assets estáticos até 7 dias ou até um novo service worker ativar.',
           consentRequired: 'Não (estritamente necessário para operar o site e o fallback offline).',
         },
         {
-          name: 'Google Tag Manager / Google Analytics',
           purpose: 'Analytics agregado de uso quando você aceita cookies de analytics.',
-          storage: 'Cookies e tecnologias semelhantes definidos pelo Google',
           duration: 'Conforme políticas do Google; veja a documentação de privacidade do Google.',
           consentRequired: 'Sim.',
         },
-      ],
+      ]),
     },
     {
       id: 'third-parties',

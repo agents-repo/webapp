@@ -2,7 +2,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Badge, Card } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
-import { externalLinkAccessibleName } from '../../application/accessibility/externalLink.ts'
+import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName.ts'
 import { getRepositoryDetailPath } from '../../application/nestedSiteRoutes.ts'
 import { publicSitePath } from '../routes/siteRoutes.ts'
 import {
@@ -18,6 +18,7 @@ interface PersonCardProps {
 }
 
 function PersonCard({ person }: PersonCardProps) {
+  const externalLinkName = useExternalLinkAccessibleName()
   const profileUrl = githubProfileUrl(person.githubLogin)
   const avatarUrl = githubAvatarUrl(person.githubLogin)
 
@@ -37,7 +38,7 @@ function PersonCard({ person }: PersonCardProps) {
             href={profileUrl}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label={externalLinkAccessibleName(`${person.displayName} on GitHub`)}
+            aria-label={externalLinkName(`${person.displayName} on GitHub`)}
           >
             <FontAwesomeIcon icon={faGithub} className="me-2" aria-hidden="true" />
             GitHub

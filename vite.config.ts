@@ -4,7 +4,7 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import { VitePWA } from 'vite-plugin-pwa'
 import Sitemap from 'vite-plugin-sitemap'
-import { getBuildSiteRoutePaths, publicSitePath, resolveBuildSiteOrigin } from './scripts/seo-build-config.ts'
+import { getBuildSitemapPaths, resolveBuildSiteOrigin } from './scripts/seo-build-config.ts'
 import {
   APP_STATIC_RUNTIME_CACHE_NAME,
   APP_STATIC_RUNTIME_MAX_AGE_SECONDS,
@@ -120,9 +120,7 @@ export default defineConfig(({ mode }) => {
       }),
       Sitemap({
         hostname: siteOrigin,
-        dynamicRoutes: getBuildSiteRoutePaths()
-          .filter((routePath: string) => routePath !== '/')
-          .map((routePath: string) => publicSitePath(routePath)),
+        dynamicRoutes: getBuildSitemapPaths().filter((routePath: string) => routePath !== '/'),
         priority: { '*': 0.8, '/': 1.0 },
         changefreq: 'monthly',
         generateRobotsTxt: true,

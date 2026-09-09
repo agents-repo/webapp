@@ -1,14 +1,14 @@
 import { formatDocumentTitle } from '../accessibility/documentTitleFormat.ts'
 import { getSitePageMeta } from '../accessibility/sitePageMeta.ts'
-import { publicSitePath, siteRoutes } from '../../presentation/routes/siteRoutes.ts'
+import { siteRoutes } from '../../presentation/routes/siteRoutes.ts'
+import { getLocaleHreflangAlternates, localizedSitePath, parseLocaleFromPathname } from '../i18n/localePath.ts'
+import { getLocaleDefinition } from '../i18n/supportedLocales.ts'
 import {
   getOgImageUrl,
   getSiteOrigin,
   ogImageAlt,
   ogImageHeight,
   ogImageWidth,
-  ogLocale,
-  ogSiteName,
   ogType,
   siteName,
   twitterCard,
@@ -54,6 +54,7 @@ export interface RouteHeadData {
   readonly ogType: string
   readonly ogSiteName: string
   readonly ogLocale: string
+  readonly hreflangAlternates: readonly { readonly hreflang: string; readonly href: string }[]
   readonly twitterCard: string
   readonly twitterSite: string
   readonly twitterTitle: string
@@ -68,10 +69,6 @@ function escapeHtml(value: string): string {
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
-}
-
-function buildCanonicalUrl(origin: string, canonicalPath: string): string {
-  return `${origin}${publicSitePath(canonicalPath)}`
 }
 
 function buildJsonLd(
@@ -159,9 +156,11 @@ export function getRouteHeadData(
     options.githubRepositoryUrl || getRuntimeGithubRepositoryUrl() || DEFAULT_REGISTRY_GITHUB_REPOSITORY_URL
   const pageMeta = getSitePageMeta(pathname, catalog)
   const seoMeta = getSiteSeoMeta(pathname, catalog)
+  const { locale, pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
   const documentTitle = formatDocumentTitle(pageMeta.title)
-  const canonicalUrl = buildCanonicalUrl(origin, seoMeta.canonicalPath)
+  const canonicalUrl = `${origin}${localizedSitePath(seoMeta.canonicalPath, locale)}`
   const ogImage = getOgImageUrl(origin)
+  const hreflangAlternates = getLocaleHreflangAlternates(pathnameWithoutLocale, origin)
 
   return {
     documentTitle,
@@ -175,8 +174,9 @@ export function getRouteHeadData(
     ogImageHeight,
     ogImageAlt,
     ogType,
-    ogSiteName,
-    ogLocale,
+    ogSiteName: siteName,
+    ogLocale: getLocaleDefinition(locale).ogLocale,
+    hreflangAlternates,
     twitterCard,
     twitterSite,
     twitterTitle: documentTitle,
@@ -211,6 +211,10 @@ export function renderRouteHeadHtml(data: RouteHeadData): string {
     `<meta property="og:type" content="${escapeHtml(data.ogType)}" />`,
     `<meta property="og:site_name" content="${escapeHtml(data.ogSiteName)}" />`,
     `<meta property="og:locale" content="${escapeHtml(data.ogLocale)}" />`,
+    ...data.hreflangAlternates.map(
+      (alternate) =>
+        `<link rel="alternate" hreflang="${escapeHtml(alternate.hreflang)}" href="${escapeHtml(alternate.href)}" />`,
+    ),
     `<meta name="twitter:card" content="${escapeHtml(data.twitterCard)}" />`,
     `<meta name="twitter:site" content="${escapeHtml(data.twitterSite)}" />`,
     `<meta name="twitter:title" content="${escapeHtml(data.twitterTitle)}" />`,

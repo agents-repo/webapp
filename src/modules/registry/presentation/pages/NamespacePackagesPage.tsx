@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { isPackagePathSegment, namespaceExistsInCatalog } from '../../application/packageSiteRoutes'
 import { shouldAwaitCatalogMembershipRecheck } from '../../application/runtimePackageCatalog'
@@ -12,6 +13,7 @@ interface NamespacePackagesPageProps {
 }
 
 function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPageProps) {
+  const { t } = useTranslation('catalog')
   const { namespace } = useParams()
   const { catalog, isLoading, hasCompletedForcedReload } = useRegistryCatalog()
   const namespaceValue = namespace ?? ''
@@ -43,12 +45,14 @@ function NamespacePackagesPage({ setHeaderSearchSlot }: NamespacePackagesPagePro
 
   const layoutProps = {
     setHeaderSearchSlot,
-    title: `${namespaceValue} packages`,
-    lead: `Published packages in the ${namespaceValue} namespace. Search and filters are limited to this namespace.`,
+    title: t('namespacePackages.title', { namespace: namespaceValue }),
+    lead: t('namespacePackages.lead', { namespace: namespaceValue }),
     resultsHeading: (trimmedQuery: string) =>
-      trimmedQuery ? `Search results for "${trimmedQuery}"` : `${namespaceValue} packages`,
+      trimmedQuery
+        ? t('namespacePackages.searchResults', { query: trimmedQuery })
+        : t('namespacePackages.publishedPackages', { namespace: namespaceValue }),
     searchInputId: `namespace-packages-search-${namespaceValue}`,
-    searchAriaLabel: `Search packages in ${namespaceValue}`,
+    searchAriaLabel: t('namespacePackages.searchAriaLabel', { namespace: namespaceValue }),
   }
 
   if (awaitingMembershipRecheck) {

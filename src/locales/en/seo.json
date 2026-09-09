@@ -1,0 +1,66 @@
+{
+  "home": {
+    "title": "Home",
+    "routeLabel": "Home",
+    "description": "Find curated agents and flows for Copilot, Cursor, Claude Code, and Codex. Install with the CLI or try instructions in chat."
+  },
+  "packages": {
+    "title": "Packages",
+    "routeLabel": "Packages",
+    "description": "Browse every published Agents Repo package. Search agents and flows for Copilot, Cursor, Claude Code, and Codex."
+  },
+  "namespacePackages": {
+    "title": "{{namespace}} packages",
+    "routeLabel": "{{namespace}} packages",
+    "description": "Browse published Agents Repo packages in the {{namespace}} namespace for Copilot, Cursor, Claude Code, and Codex."
+  },
+  "packageDetailFallback": {
+    "title": "Package",
+    "routeLabel": "Package",
+    "description": "Latest published details for {{namespace}}/{{packageId}} on the Agents Repo registry."
+  },
+  "about": {
+    "title": "About",
+    "routeLabel": "About",
+    "description": "Learn about Agents Repo: browse curated agents and flows for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex."
+  },
+  "community": {
+    "title": "Community",
+    "routeLabel": "Community",
+    "description": "Meet Agents Repo maintainers and contributors, and see who maintains the platform repositories."
+  },
+  "contact": {
+    "title": "Contact",
+    "routeLabel": "Contact",
+    "description": "Contact Agents Repo through GitHub Discussions and Issues for tracked work, or join X and Reddit for community discussion and ideas."
+  },
+  "helpUs": {
+    "title": "Help Us",
+    "routeLabel": "Help Us",
+    "description": "Help improve the open agents registry. Contribute packages for GitHub Copilot, Cursor, Claude Code, and OpenAI Codex."
+  },
+  "docs": {
+    "title": "Docs",
+    "routeLabel": "Docs",
+    "description": "Docs for browsing the catalog, installing packages with the CLI, contributing to the registry, and downloading markdown for AI agents."
+  },
+  "repositories": {
+    "title": "Repositories",
+    "routeLabel": "Repositories",
+    "description": "Repositories in the agents-repo organization: registry, webapp, CLI, registry-proxy, and shared governance."
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "routeLabel": "Accessibility statement",
+    "description": "Accessibility statement and conformance report for Agents Repo, targeting WCAG 2.2 Level AA."
+  },
+  "privacy": {
+    "title": "Privacy",
+    "routeLabel": "Privacy policy",
+    "description": "Privacy policy for Agents Repo: data collection, cookies, analytics consent, and your rights in the EU, US, and Brazil."
+  },
+  "packageNotFound": {
+    "title": "Package not found",
+    "routeLabel": "Package not found"
+  }
+}

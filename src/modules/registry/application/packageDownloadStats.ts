@@ -1,3 +1,4 @@
+import { getIntlLocale } from '../../site/application/i18n/getIntlLocale.ts'
 import { excludeYankedPackages } from './packageCatalogFilters'
 import { PACKAGE_CATALOG_PAGE_PARAM } from './packageCatalogPagination'
 import type { RegistryPackage } from '../domain/package'
@@ -23,10 +24,21 @@ export {
   EMPTY_PACKAGE_DOWNLOAD_STATS_BY_ID,
 } from '../domain/downloadStats'
 
-const downloadCountFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 })
+const downloadCountFormatters = new Map<string, Intl.NumberFormat>()
 
-export function formatPackageDownloadCount(value: number): string {
-  return downloadCountFormatter.format(value)
+function getDownloadCountFormatter(locale?: string): Intl.NumberFormat {
+  const resolvedLocale = getIntlLocale(locale)
+  let formatter = downloadCountFormatters.get(resolvedLocale)
+  if (!formatter) {
+    formatter = new Intl.NumberFormat(resolvedLocale, { maximumFractionDigits: 0 })
+    downloadCountFormatters.set(resolvedLocale, formatter)
+  }
+
+  return formatter
+}
+
+export function formatPackageDownloadCount(value: number, locale?: string): string {
+  return getDownloadCountFormatter(locale).format(value)
 }
 
 export function getPackageDownloadStats(

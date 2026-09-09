@@ -169,6 +169,11 @@ Functions using `Intl` or `Date` may be timezone-sensitive. Pin time with
 `vi.setSystemTime()` in tests, or assert structural patterns instead of
 hard-coded locale strings.
 
+Playwright E2E pins English via `locale: 'en-US'` in `playwright.config.ts` and
+sets `localStorage.locale` to `en` in `e2e/fixtures/registry-mock.ts` so
+first-visit home browser detection does not redirect away from unprefixed routes.
+Vitest preloads English bundles in `src/test/setup.ts`.
+
 ### Accessibility tests
 
 - File suffix: `.a11y.test.tsx`

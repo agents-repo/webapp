@@ -16,8 +16,10 @@ import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/pagina
 import {
   CLI_INIT_COMMAND,
   CLI_INSTALL_COMMAND,
-  HOME_HERO_HEADING,
 } from '../components/homeLanding/homeLandingCopy'
+
+const HOME_HERO_HEADING =
+  'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),

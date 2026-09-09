@@ -1,9 +1,10 @@
-import { lazy, Suspense, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useMemo, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AnalyticsRouteTracker from './modules/site/application/analytics/AnalyticsRouteTracker'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
 import RouteScrollManager from './modules/site/application/accessibility/RouteScrollManager'
 import RouteDocumentTitle from './modules/site/application/accessibility/RouteDocumentTitle'
+import { parseLocaleFromPathname, localizedSitePath } from './modules/site/application/i18n/localePath'
 import SiteHead from './modules/site/application/seo/SiteHead'
 import SkipLink from './modules/site/application/accessibility/SkipLink'
 import RegistryCatalogProvider from './modules/registry/presentation/catalog/RegistryCatalogProvider'
@@ -18,7 +19,7 @@ import {
   createLazySitePages,
   type LazySitePages,
 } from './modules/site/presentation/routes/lazySitePages'
-import { publicSitePath, siteRoutes } from './modules/site/presentation/routes/siteRoutes'
+import { siteRoutes } from './modules/site/presentation/routes/siteRoutes'
 import type { RegistryCatalogStatusNote } from './modules/site/application/websiteSettings/registryCatalogStatusNote'
 import './App.scss'
 
@@ -33,6 +34,15 @@ interface AppRoutesProps {
 }
 
 function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
+  const location = useLocation()
+  const { locale, pathnameWithoutLocale } = useMemo(
+    () => parseLocaleFromPathname(location.pathname),
+    [location.pathname],
+  )
+  const routesLocation = useMemo(
+    () => ({ ...location, pathname: pathnameWithoutLocale }),
+    [location, pathnameWithoutLocale],
+  )
   const {
     AboutPage,
     CommunityPage,
@@ -42,13 +52,14 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
     DocArticlePage,
     DocIndexPage,
     PrivacyPage,
-    PrivacidadePage,
     RepositoriesIndexPage,
     RepositoryDetailPage,
   } = lazyPages
 
+  const privacyPtBrPath = localizedSitePath(siteRoutes.privacy, 'pt-BR')
+
   return (
-    <Routes>
+    <Routes location={routesLocation}>
       <Route
         path={siteRoutes.home}
         element={<HomePage setHeaderSearchSlot={setHeaderSearchSlot} />}
@@ -59,12 +70,12 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
       <Route path={siteRoutes.docs} element={<DocIndexPage />} />
       <Route path={`${siteRoutes.docs}/:slug`} element={<DocArticlePage />} />
-      <Route path={`${siteRoutes.docs}/*`} element={<Navigate to={publicSitePath(siteRoutes.docs)} replace />} />
+      <Route path={`${siteRoutes.docs}/*`} element={<Navigate to={localizedSitePath(siteRoutes.docs, locale)} replace />} />
       <Route path={siteRoutes.repositories} element={<RepositoriesIndexPage />} />
       <Route path={`${siteRoutes.repositories}/:slug`} element={<RepositoryDetailPage />} />
       <Route
         path={`${siteRoutes.repositories}/*`}
-        element={<Navigate to={publicSitePath(siteRoutes.repositories)} replace />}
+        element={<Navigate to={localizedSitePath(siteRoutes.repositories, locale)} replace />}
       />
       <Route
         path={siteRoutes.packages}
@@ -81,8 +92,9 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={`${siteRoutes.packages}/*`} element={<PackageSiteNotFound />} />
       <Route path={siteRoutes.accessibility} element={<AccessibilityPage />} />
       <Route path={siteRoutes.privacy} element={<PrivacyPage />} />
-      <Route path={siteRoutes.privacyPtBr} element={<PrivacidadePage />} />
-      <Route path="*" element={<Navigate to={publicSitePath(siteRoutes.home)} replace />} />
+      <Route path="/privacidade" element={<Navigate to={privacyPtBrPath} replace />} />
+      <Route path="/privacidade/" element={<Navigate to={privacyPtBrPath} replace />} />
+      <Route path="*" element={<Navigate to={localizedSitePath(siteRoutes.home, locale)} replace />} />
     </Routes>
   )
 }
@@ -138,7 +150,9 @@ function App() {
             }}
           />
 
-          <AppMainContent setHeaderSearchSlot={setHeaderSearchSlot} />
+          <Suspense fallback={<RouteLoadingFallback />}>
+            <AppMainContent setHeaderSearchSlot={setHeaderSearchSlot} />
+          </Suspense>
 
           <Footer />
         </div>

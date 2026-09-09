@@ -9,25 +9,27 @@ be reviewed by qualified counsel before launch or material changes.
 
 | Route | Language | Source module |
 | --- | --- | --- |
-| `/privacy` | English | `privacyPolicyContent.en.ts` |
-| `/privacidade` | Portuguese (Brazil) | `privacyPolicyContent.pt-BR.ts` |
+| `/privacy/` and locale variants | Per locale | `privacyPolicyContent.<locale>.ts` |
+| (`/es/`, `/pt-br/`, `/pt-pt/`) | | |
 
 Presentation:
 
-- `PrivacyPage.tsx` — English page with cross-link to `/privacidade`
-- `PrivacidadePage.tsx` — Portuguese page with `lang="pt-BR"` wrapper and
-  cross-link to `/privacy`
-- `PrivacyPolicyView.tsx` — shared card/table layout
+- `PrivacyPage.tsx` — locale-aware page (`en`, `es`, `pt-BR`, `pt-PT`)
+- `PrivacyPolicyView.tsx` — shared card/table layout with `languageLinks`
 
 Shared types live in `privacyPolicyContent.types.ts` (`PrivacyPolicyContent`,
 `PrivacyPolicySection`, and related interfaces). Locale modules export:
 
 - `privacyPolicyContentEn` — English (`privacyPolicyContent.en.ts`)
-- `privacyPolicyContentPtBr` — Portuguese (`privacyPolicyContent.pt-BR.ts`)
-- `privacyPolicyLastUpdated` — defined in the English module; imported by pt-BR
+- `privacyPolicyContentEs` — Spanish (`privacyPolicyContent.es.ts`)
+- `privacyPolicyContentPtBr` — Portuguese Brazil (`privacyPolicyContent.pt-BR.ts`)
+- `privacyPolicyContentPtPt` — Portuguese Portugal (`privacyPolicyContent.pt-PT.ts`)
+- `privacyPolicyLastUpdated` — defined in the English module; imported by other locales
+
+Legacy `/privacidade` redirects to `/pt-br/privacy/`.
 
 Each locale object includes `sections`, `cookieTableHeaders`, and page chrome
-fields (`pageTitle`, `languageLinkLabel`, and so on). Section `id` values are
+fields (`pageTitle`, `languageLinks`, and so on). Section `id` values are
 shared across locales for structural parity.
 
 ## Jurisdiction mapping
@@ -41,10 +43,10 @@ Europe/UK (GDPR + ePrivacy), the United States (notice + opt-out), and Brazil
 | Prior consent for analytics | GTM blocked until Accept; Consent Mode default-deny |
 | Equal Accept / Reject | Same banner row, equal button prominence |
 | Withdraw consent | Footer **Cookie preferences** re-opens the banner |
-| Transparency | `/privacy` and `/privacidade` before choice |
+| Transparency | Locale-aware privacy link in cookie banner before choice |
 | No advertising | Only `analytics_storage` granted; all `ad_*` stay denied |
 | US opt-out | Reject and Cookie preferences → Reject |
-| LGPD Portuguese notice | Dedicated `/privacidade` page |
+| LGPD Portuguese notice | `/pt-br/privacy/` (legacy `/privacidade` redirects here) |
 
 ## Analytics modules
 
@@ -62,7 +64,7 @@ Code lives in `src/modules/site/application/analytics/`:
 UI:
 
 - `CookieConsentProvider.tsx` — consent state and `openCookiePreferences()`
-- `CookieConsentBanner.tsx` — banner with both policy links and Accept/Reject
+- `CookieConsentBanner.tsx` — banner with localized privacy link and Accept/Reject
 
 ## Production-only gate
 
@@ -95,12 +97,12 @@ GTM is injected at runtime after consent — it is **not** in static HTML.
 
 When updating policy copy:
 
-1. Edit **both** `privacyPolicyContent.en.ts` and `privacyPolicyContent.pt-BR.ts`.
-2. Keep section `id` values and legal coverage aligned — do not shorten PT sections.
-3. Update `privacyPolicyLastUpdated` in `privacyPolicyContent.en.ts` only (pt-BR
-   imports it).
-4. Run locale content tests and page/a11y tests for both routes.
-5. Coordinate legal review for EN and LGPD-fluent PT review for `/privacidade`.
+1. Edit `privacyPolicyContent.en.ts`, `privacyPolicyContent.es.ts`,
+   `privacyPolicyContent.pt-BR.ts`, and `privacyPolicyContent.pt-PT.ts`.
+2. Keep section `id` values and legal coverage aligned — do not shorten non-EN sections.
+3. Update `privacyPolicyLastUpdated` in `privacyPolicyContent.en.ts` only (other locales import it).
+4. Run locale content tests and `PrivacyPage` / a11y tests.
+5. Coordinate legal review for EN, ES, and LGPD-fluent PT.
 
 Cookie table headers are localized via `cookieTableHeaders` on each content
 object.

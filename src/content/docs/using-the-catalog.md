@@ -16,6 +16,10 @@ message). Catalog schema version is shown in
 install targets, download counts, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). **View** and the package title open the in-app
 package page. **View on GitHub** is on that page. On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
 
+## Catalog freshness
+
+The production default (`v2.x`) reflects the latest **published catalog tag**, not every merge to registry `main`. After package changes merge, the public catalog may update on the next daily catalog release (~00:05 UTC). **Clear cache and reload catalog** in Website settings picks up a newly published tag when one exists; it does not bypass the release train. To preview unreleased catalog content, set a fork or explicit ref in Website settings — see below.
+
 ## Search and filters
 
 [Home](/) search (hero and sticky header) navigates to [Packages](/packages)
@@ -59,8 +63,9 @@ Package cards may offer:
   (`chatWeb`). This opens a dialog to copy instruction URLs (latest and
   pinned), instruction markdown with a short kind-aware preamble, and a
   starter prompt for ChatGPT, Grok, Gemini, or Microsoft Copilot in the
-  browser. The ChatGPT tab includes **Open in ChatGPT**, and the Grok tab
-  includes **Open in Grok**. Each opens a new tab with the starter prompt
+  browser. When a package declares a default chat instruction, the dialog
+  pre-selects it; otherwise it uses the first listed instruction. The ChatGPT
+  tab includes **Open in ChatGPT**, and the Grok tab includes **Open in Grok**. Each opens a new tab with the starter prompt
   (latest instruction URLs). You must be signed in; ChatGPT or Grok may send
   the prompt automatically. Web chats may fail to fetch those URLs; if they
   cannot load a URL, copy the instruction markdown and paste it into the
@@ -83,7 +88,7 @@ For reproducible projects, prefer pinning the CLI in `devDependencies` and using
 
 ## Website settings
 
-Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). The modal also shows catalog source status, including the loaded catalog schema version. This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog. It does not delete ZIP downloads or change analytics, theme, or catalog filter sidebar preferences.
+Use **Website settings** in the header to point the browser at a different registry base URL or ref (for example a fork or tag). The modal also shows catalog source status, including the loaded catalog schema version. This affects catalog loading in your session only; it does not change CLI config in your repositories. **Clear cache and reload catalog** drops locally cached registry JSON and markdown in this browser (IndexedDB) and reloads the catalog from the resolved ref (including a newly published `v2.x` tag when available). It does not bypass the daily catalog release train, delete ZIP downloads, or change analytics, theme, or catalog filter sidebar preferences.
 
 ## Install the site (PWA)
 

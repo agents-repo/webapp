@@ -4,7 +4,8 @@ import {
   siteRoutes,
   type SiteRoutePath,
 } from '../../presentation/routes/siteRoutes.ts'
-import { getDocCatalogEntry } from '../docs/docsCatalog.ts'
+import { parseLocaleFromPathname } from '../i18n/localePath.ts'
+import { getDocPageMeta } from '../docs/docsPageMeta.ts'
 import {
   isUnlistedDocDetailPath,
   parseDocSlugFromPathname,
@@ -24,62 +25,34 @@ import {
   isRuntimePackageCatalogResolved,
 } from '../../../registry/application/runtimePackageCatalog.ts'
 import type { RegistryCatalog } from '../../../registry/domain/package.ts'
+import {
+  getLocalizedSiteRouteMeta,
+  getLocalizedSiteRouteMetaByKey,
+} from '../seo/siteRouteMetaLocales.ts'
 
 export interface SitePageMeta {
   readonly title: string
   readonly routeLabel: string
 }
 
-export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
-  [siteRoutes.home]: {
-    title: 'Home',
-    routeLabel: 'Home',
-  },
-  [siteRoutes.packages]: {
-    title: 'Packages',
-    routeLabel: 'Packages',
-  },
-  [siteRoutes.about]: {
-    title: 'About',
-    routeLabel: 'About',
-  },
-  [siteRoutes.community]: {
-    title: 'Community',
-    routeLabel: 'Community',
-  },
-  [siteRoutes.contact]: {
-    title: 'Contact',
-    routeLabel: 'Contact',
-  },
-  [siteRoutes.helpUs]: {
-    title: 'Help Us',
-    routeLabel: 'Help Us',
-  },
-  [siteRoutes.docs]: {
-    title: 'Docs',
-    routeLabel: 'Docs',
-  },
-  [siteRoutes.repositories]: {
-    title: 'Repositories',
-    routeLabel: 'Repositories',
-  },
-  [siteRoutes.accessibility]: {
-    title: 'Accessibility',
-    routeLabel: 'Accessibility statement',
-  },
-  [siteRoutes.privacy]: {
-    title: 'Privacy',
-    routeLabel: 'Privacy policy',
-  },
-  [siteRoutes.privacyPtBr]: {
-    title: 'Privacidade',
-    routeLabel: 'Política de privacidade',
-  },
+function toSitePageMeta(meta: { readonly title: string; readonly routeLabel: string }): SitePageMeta {
+  return {
+    title: meta.title,
+    routeLabel: meta.routeLabel,
+  }
 }
 
-const packageNotFoundMeta: SitePageMeta = {
-  title: 'Package not found',
-  routeLabel: 'Package not found',
+export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
+  [siteRoutes.home]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.home)),
+  [siteRoutes.packages]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.packages)),
+  [siteRoutes.about]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.about)),
+  [siteRoutes.community]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.community)),
+  [siteRoutes.contact]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.contact)),
+  [siteRoutes.helpUs]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.helpUs)),
+  [siteRoutes.docs]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.docs)),
+  [siteRoutes.repositories]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.repositories)),
+  [siteRoutes.accessibility]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.accessibility)),
+  [siteRoutes.privacy]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.privacy)),
 }
 
 export function getSitePageMeta(
@@ -87,11 +60,12 @@ export function getSitePageMeta(
   catalog: RegistryCatalog | null = getRuntimePackageCatalog(),
   catalogResolved = isRuntimePackageCatalogResolved(),
 ): SitePageMeta {
-  const normalizedPath = normalizeSitePathname(pathname)
+  const { locale, pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
+  const normalizedPath = normalizeSitePathname(pathnameWithoutLocale)
   const matchedRoute = findSiteRoutePath(normalizedPath)
 
   if (matchedRoute) {
-    return sitePageMeta[matchedRoute]
+    return toSitePageMeta(getLocalizedSiteRouteMeta(locale, matchedRoute))
   }
 
   const repositorySlug = parseRepositorySlugFromPathname(normalizedPath)
@@ -107,7 +81,7 @@ export function getSitePageMeta(
 
   const docSlug = parseDocSlugFromPathname(normalizedPath)
   if (docSlug) {
-    const doc = getDocCatalogEntry(docSlug)
+    const doc = getDocPageMeta(docSlug, locale)
     if (doc) {
       return {
         title: doc.title,
@@ -118,21 +92,21 @@ export function getSitePageMeta(
 
   const packageRoute = parsePackageSitePath(normalizedPath)
   if (packageRoute) {
-    const title = getPackageSitePageTitle(packageRoute, catalog)
+    const title = getPackageSitePageTitle(packageRoute, catalog, locale)
     return { title, routeLabel: title }
   }
 
   if (isUnlistedPackageSitePath(normalizedPath, catalog, catalogResolved)) {
-    return packageNotFoundMeta
+    return toSitePageMeta(getLocalizedSiteRouteMetaByKey(locale, 'packageNotFound'))
   }
 
   if (isUnlistedDocDetailPath(normalizedPath)) {
-    return sitePageMeta[siteRoutes.docs]
+    return toSitePageMeta(getLocalizedSiteRouteMeta(locale, siteRoutes.docs))
   }
 
   if (isUnlistedRepositoryDetailPath(normalizedPath)) {
-    return sitePageMeta[siteRoutes.repositories]
+    return toSitePageMeta(getLocalizedSiteRouteMeta(locale, siteRoutes.repositories))
   }
 
-  return sitePageMeta[siteRoutes.home]
+  return toSitePageMeta(getLocalizedSiteRouteMeta(locale, siteRoutes.home))
 }

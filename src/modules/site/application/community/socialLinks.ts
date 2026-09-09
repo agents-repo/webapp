@@ -5,15 +5,11 @@ export const socialLinks = [
     id: 'x',
     label: 'X',
     href: 'https://x.com/AgentsRepo',
-    shortDescription: 'Announcements and informal conversation',
-    accessibleLabel: 'Agents Repo on X',
   },
   {
     id: 'reddit',
     label: 'Reddit',
     href: 'https://www.reddit.com/r/agentsrepo/',
-    shortDescription: 'Community discussion and ideas',
-    accessibleLabel: 'Agents Repo on Reddit',
   },
 ] as const
 

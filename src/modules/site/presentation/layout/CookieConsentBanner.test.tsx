@@ -59,13 +59,9 @@ describe('CookieConsentBanner', () => {
     renderWithProviders(<CookieConsentBanner />)
 
     expect(screen.getByRole('region', { name: 'Cookie preferences' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'privacy policy' })).toHaveAttribute(
       'href',
       publicSitePath(siteRoutes.privacy),
-    )
-    expect(screen.getByRole('link', { name: 'Política de privacidade' })).toHaveAttribute(
-      'href',
-      publicSitePath(siteRoutes.privacyPtBr),
     )
   })
 

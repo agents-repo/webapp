@@ -67,8 +67,10 @@ npm run a11y:ci
 See [docs/accessibility.md](docs/accessibility.md) for patterns and the public
 statement at `/accessibility`.
 
-Public privacy notices: `/privacy` (English) and `/privacidade` (Portuguese).
+Public privacy notices: `/privacy/` (English default) and localized paths such as
+`/pt-br/privacy/`. Legacy `/privacidade` redirects to pt-BR.
 See [docs/privacy.md](docs/privacy.md) for consent, GTM, and contributor guidance.
+See [docs/i18n.md](docs/i18n.md) for locale routing.
 
 See [docs/seo.md](docs/seo.md) for search and social-preview metadata patterns.
 
@@ -294,7 +296,7 @@ repository, update the corresponding page(s) in
 - Privacy and analytics guide: [docs/privacy.md](docs/privacy.md)
 - SEO guide: [docs/seo.md](docs/seo.md)
 - Public accessibility statement: `/accessibility` route in the deployed app
-- Public privacy policies: `/privacy` (EN) and `/privacidade` (pt-BR)
+- Public privacy policies: locale-prefixed `/privacy/` routes (see [docs/i18n.md](docs/i18n.md))
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - GitHub Copilot project instructions:
   [.github/copilot-instructions.md](.github/copilot-instructions.md)

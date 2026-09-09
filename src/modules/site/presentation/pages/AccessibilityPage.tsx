@@ -1,5 +1,6 @@
 import { Card, Container, Stack, Table } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   accessibilityConformanceSummary,
   accessibilityKnownLimitations,
@@ -7,31 +8,35 @@ import {
   accessibilityStatementReportDate,
   wcagCriterionSummaries,
 } from '../../application/accessibility/accessibilityStatementContent'
-import { publicSitePath, siteRoutes } from '../routes/siteRoutes'
+import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import { siteRoutes } from '../routes/siteRoutes'
 
 function AccessibilityPage() {
+  const { t } = useTranslation('pages')
+  const localizedSitePath = useLocalizedSitePath()
+
   return (
     <div className="py-5">
       <Container>
-        <h1 className="h2 mb-4">Accessibility statement</h1>
+        <h1 className="h2 mb-4">{t('accessibility.title')}</h1>
 
         <Stack gap={4}>
           <Card>
             <Card.Body>
-              <h2 className="h4">Summary</h2>
+              <h2 className="h4">{t('accessibility.summaryHeading')}</h2>
               <dl className="mb-0">
-                <dt>Product</dt>
+                <dt>{t('accessibility.productLabel')}</dt>
                 <dd>{accessibilityConformanceSummary.productName}</dd>
-                <dt>Report version</dt>
+                <dt>{t('accessibility.reportVersionLabel')}</dt>
                 <dd>{accessibilityConformanceSummary.reportVersion}</dd>
-                <dt>Report date</dt>
+                <dt>{t('accessibility.reportDateLabel')}</dt>
                 <dd>{accessibilityStatementReportDate}</dd>
-                <dt>Standard</dt>
+                <dt>{t('accessibility.standardLabel')}</dt>
                 <dd>
                   {accessibilityConformanceSummary.wcagVersion}{' '}
                   {accessibilityConformanceSummary.conformanceTarget}
                 </dd>
-                <dt>Conformance status</dt>
+                <dt>{t('accessibility.conformanceStatusLabel')}</dt>
                 <dd>{accessibilityConformanceSummary.conformanceStatus}</dd>
               </dl>
               <p className="text-body-secondary mb-0 mt-3">
@@ -42,18 +47,14 @@ function AccessibilityPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Scope</h2>
-              <p className="text-body-secondary mb-0">
-                This Accessibility Conformance Report (ACR) applies to the Agents Repo web application
-                user interface served from this site. It does not cover third-party websites such as
-                GitHub, LinkedIn, X, Reddit, or remote registry hosts linked from the application.
-              </p>
+              <h2 className="h4">{t('accessibility.scopeHeading')}</h2>
+              <p className="text-body-secondary mb-0">{t('accessibility.scopeBody')}</p>
             </Card.Body>
           </Card>
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Measures to support accessibility</h2>
+              <h2 className="h4">{t('accessibility.measuresHeading')}</h2>
               <ul className="text-body-secondary mb-0">
                 {accessibilityMeasures.map((measure) => (
                   <li key={measure}>{measure}</li>
@@ -64,13 +65,13 @@ function AccessibilityPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">WCAG 2.2 conformance summary</h2>
+              <h2 className="h4">{t('accessibility.wcagHeading')}</h2>
               <Table responsive bordered size="sm" className="mb-0">
                 <thead>
                   <tr>
-                    <th scope="col">Principle</th>
-                    <th scope="col">Support level</th>
-                    <th scope="col">Notes</th>
+                    <th scope="col">{t('accessibility.principleColumn')}</th>
+                    <th scope="col">{t('accessibility.supportLevelColumn')}</th>
+                    <th scope="col">{t('accessibility.notesColumn')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -88,7 +89,7 @@ function AccessibilityPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Known limitations</h2>
+              <h2 className="h4">{t('accessibility.limitationsHeading')}</h2>
               <ul className="text-body-secondary mb-0">
                 {accessibilityKnownLimitations.map((limitation) => (
                   <li key={limitation}>{limitation}</li>
@@ -99,22 +100,18 @@ function AccessibilityPage() {
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Assessment approach</h2>
-              <p className="text-body-secondary mb-0">
-                This report is based on a self-assessment using manual keyboard testing, automated
-                eslint-jsx-a11y linting, vitest-axe component smoke tests, and local
-                Lighthouse/pa11y scans via `npm run a11y:ci`.
-              </p>
+              <h2 className="h4">{t('accessibility.assessmentHeading')}</h2>
+              <p className="text-body-secondary mb-0">{t('accessibility.assessmentBody')}</p>
             </Card.Body>
           </Card>
 
           <Card>
             <Card.Body>
-              <h2 className="h4">Feedback and contact</h2>
+              <h2 className="h4">{t('accessibility.feedbackHeading')}</h2>
               <p className="text-body-secondary mb-0">
-                If you encounter accessibility barriers on this site, please reach out through the{' '}
-                <NavLink to={publicSitePath(siteRoutes.contact)}>Contact</NavLink> page. Include the page URL, your
-                browser and assistive technology, and a description of the issue.
+                {t('accessibility.feedbackPrefix')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.contact)}>{t('accessibility.contactLink')}</NavLink>{' '}
+                {t('accessibility.feedbackSuffix')}
               </p>
             </Card.Body>
           </Card>
