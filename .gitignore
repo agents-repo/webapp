@@ -30,5 +30,6 @@ blob-report/
 *.sw?
 
 .cache/actionlint/
+.vitest/
 scripts/.generated/
 docs/slides/build/
