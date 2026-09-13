@@ -25,7 +25,7 @@ function renderFallbackLink(origin: string, path: string, label: string): string
 }
 
 function renderHomeFallback(origin: string, description: string): string {
-  const heading = formatDocumentTitle(siteName)
+  const heading = siteName
   const links = [
     renderFallbackLink(origin, siteRoutes.packages, 'Browse packages'),
     renderFallbackLink(origin, '/llms.txt', 'llms.txt (docs index for agents)'),

@@ -19,6 +19,8 @@ describe('renderRouteBodyFallbackHtml', () => {
     expect(html).toContain('https://agents-repo.org/packages/')
     expect(html).toContain('https://agents-repo.org/llms.txt')
     expect(html).toContain('https://agents-repo.org/docs/for-ai-agents.md')
+    expect(html).toContain('<h1>Agents Repo</h1>')
+    expect(html).not.toContain('Agents Repo — Agents Repo')
   })
 
   it('renders localized homepage fallback with catalog links', () => {

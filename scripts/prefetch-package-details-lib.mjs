@@ -31,17 +31,29 @@ async function mapWithConcurrency(items, concurrency, mapper) {
   return results
 }
 
+function isValidPackageDetailEntry(entry) {
+  return (
+    entry &&
+    typeof entry === 'object' &&
+    typeof entry.name === 'string' &&
+    typeof entry.description === 'string'
+  )
+}
+
 function isMinimalPackageDetail(value) {
   return (
     value &&
     typeof value === 'object' &&
     typeof value.package === 'string' &&
+    typeof value.version === 'string' &&
     value.metadata &&
     typeof value.metadata === 'object' &&
     typeof value.metadata.name === 'string' &&
     typeof value.metadata.description === 'string' &&
     Array.isArray(value.agents) &&
-    Array.isArray(value.flows)
+    value.agents.every(isValidPackageDetailEntry) &&
+    Array.isArray(value.flows) &&
+    value.flows.every(isValidPackageDetailEntry)
   )
 }
 
