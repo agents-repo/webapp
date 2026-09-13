@@ -6,7 +6,11 @@ import {
   getSiteRoutePaths as getStaticAndManifestSiteRoutePaths,
   publicSitePath,
 } from '../src/modules/site/presentation/routes/siteRoutes.ts'
-import { GENERATED_PACKAGE_SITE_CATALOG_PATH, GENERATED_PACKAGE_SITE_ROUTES_PATH } from './package-site-routes-path.ts'
+import {
+  GENERATED_PACKAGE_SITE_CATALOG_PATH,
+  GENERATED_PACKAGE_SITE_DETAILS_PATH,
+  GENERATED_PACKAGE_SITE_ROUTES_PATH,
+} from './package-site-routes-path.ts'
 
 export { getSiteRoutePaths, publicSitePath } from '../src/modules/site/presentation/routes/siteRoutes.ts'
 
@@ -66,6 +70,19 @@ export function readGeneratedPackageSiteCatalog(): unknown {
   }
 
   return JSON.parse(readFileSync(GENERATED_PACKAGE_SITE_CATALOG_PATH, 'utf8'))
+}
+
+export function readGeneratedPackageSiteDetails(): Record<string, unknown> | null {
+  if (!existsSync(GENERATED_PACKAGE_SITE_DETAILS_PATH)) {
+    return null
+  }
+
+  const parsed: unknown = JSON.parse(readFileSync(GENERATED_PACKAGE_SITE_DETAILS_PATH, 'utf8'))
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new TypeError('scripts/.generated/package-site-details.json must be a JSON object')
+  }
+
+  return parsed as Record<string, unknown>
 }
 
 export function resolveViteSiteUrl(mode = process.env.MODE ?? 'production'): string | undefined {

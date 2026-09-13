@@ -51,12 +51,12 @@ export function resolveConfiguredIndexUrl(mode, options = {}) {
   }
 }
 
-export async function resolveProductionIndexUrl(mode, options = {}) {
+export async function resolveProductionBaseUrl(mode, options = {}) {
   const configured = resolveConfiguredIndexUrl(mode, options)
   const alias = extractMajorVersionLineAliasFromSourceUrl(configured.baseUrl)
 
   if (!alias) {
-    return configured.indexUrl
+    return configured.baseUrl
   }
 
   const identity = inferRegistryRepositoryIdentity(configured.baseUrl, configured.githubRepositoryUrl)
@@ -68,7 +68,13 @@ export async function resolveProductionIndexUrl(mode, options = {}) {
     sourceUrl: configured.baseUrl,
     fallbackRepositoryUrl: configured.githubRepositoryUrl,
   })
-  const resolvedBaseUrl = normalizeRegistryBaseUrl(substituteRegistryRef(configured.baseUrl, resolvedRef))
+
+  return normalizeRegistryBaseUrl(substituteRegistryRef(configured.baseUrl, resolvedRef))
+}
+
+export async function resolveProductionIndexUrl(mode, options = {}) {
+  const configured = resolveConfiguredIndexUrl(mode, options)
+  const resolvedBaseUrl = await resolveProductionBaseUrl(mode, options)
   return buildRegistryIndexUrl(resolvedBaseUrl, configured.indexPath)
 }
 

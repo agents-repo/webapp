@@ -7,11 +7,14 @@ import {
   injectSpaFallbackHeadIntoHtml,
   injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
+import { injectRouteBodyFallbackIntoHtml } from '../src/modules/site/application/seo/routeBodyFallback.ts';
+import { parsePackageSitePath } from '../src/modules/registry/application/packageSiteRoutes.ts';
 import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts';
 import { setRuntimePackageCatalog } from '../src/modules/registry/application/runtimePackageCatalog.ts';
 import {
   getBuildSitemapPaths,
   readGeneratedPackageSiteCatalog,
+  readGeneratedPackageSiteDetails,
   resolveBuildSiteOrigin,
   rewriteSitemapLocsToPublicPaths,
 } from './seo-build-config.ts';
@@ -40,6 +43,9 @@ if (generatedCatalog && isRegistryCatalog(generatedCatalog)) {
 
 const baseHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8');
 const buildRoutePaths = getBuildSitemapPaths();
+const generatedDetails = readGeneratedPackageSiteDetails();
+const resolvedCatalog =
+  generatedCatalog && isRegistryCatalog(generatedCatalog) ? generatedCatalog : null;
 
 function assertKnownSiteRoute(routePath) {
   if (!buildRoutePaths.includes(routePath)) {
@@ -74,11 +80,28 @@ function writeRouteDistHtml(routePath, html) {
   writeFileSync(distSegmentFile, html);
 }
 
-for (const routePath of buildRoutePaths) {
-  const html = injectLegacyDomainRedirectIntoHtml(
-    injectRouteHeadIntoHtml(baseHtml, routePath, siteOrigin),
+function buildRouteHtml(routePath) {
+  const packageRoute = parsePackageSitePath(routePath);
+  const packageDetail =
+    packageRoute?.kind === 'detail'
+      ? generatedDetails?.[`${packageRoute.namespace}/${packageRoute.packageId}`]
+      : undefined;
+
+  return injectRouteBodyFallbackIntoHtml(
+    injectLegacyDomainRedirectIntoHtml(
+      injectRouteHeadIntoHtml(baseHtml, routePath, siteOrigin),
+    ),
+    routePath,
+    siteOrigin,
+    {
+      catalog: resolvedCatalog,
+      packageDetail,
+    },
   );
-  writeRouteDistHtml(routePath, html);
+}
+
+for (const routePath of buildRoutePaths) {
+  writeRouteDistHtml(routePath, buildRouteHtml(routePath));
 }
 
 writeFileSync(

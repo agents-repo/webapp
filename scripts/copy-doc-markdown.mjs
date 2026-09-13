@@ -4,7 +4,9 @@ import { dirname, join } from 'node:path'
 import { localizedSitePath } from '../src/modules/site/application/i18n/localePath.ts'
 import { defaultAppLocale, localeFromUrlSlug } from '../src/modules/site/application/i18n/supportedLocales.ts'
 import { normalizeSitePathname } from '../src/modules/site/application/routes/sitePath.ts'
-import { resolveBuildSiteOrigin } from './seo-build-config.ts'
+import { buildPackageSiteMarkdownDocument, getPackageSiteMarkdownPublicPath } from '../src/modules/registry/application/packageSiteMarkdown.ts'
+import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts'
+import { resolveBuildSiteOrigin, readGeneratedPackageSiteCatalog, readGeneratedPackageSiteDetails } from './seo-build-config.ts'
 
 const modeArgIndex = process.argv.indexOf('--mode')
 const mode = modeArgIndex >= 0 ? process.argv[modeArgIndex + 1] : (process.env.MODE ?? 'production')
@@ -60,7 +62,34 @@ for (const entry of readdirSync(docSourceDir, { withFileTypes: true })) {
   }
 }
 
+const generatedCatalog = readGeneratedPackageSiteCatalog()
+const generatedDetails = readGeneratedPackageSiteDetails()
+let packageMarkdownCount = 0
+
+if (generatedCatalog && isRegistryCatalog(generatedCatalog) && generatedDetails) {
+  llmsLines.push('', '## Package markdown fallbacks', '')
+
+  for (const pkg of generatedCatalog.packages) {
+    const detail = generatedDetails[`${pkg.namespace}/${pkg.package}`]
+    if (!detail) {
+      throw new Error(`Missing package detail for ${pkg.namespace}/${pkg.package}`)
+    }
+
+    const publicPath = getPackageSiteMarkdownPublicPath(pkg.namespace, pkg.package)
+    const destinationPath = join(distRoot, ...publicPath.slice(1).split('/'))
+    const markdown = buildPackageSiteMarkdownDocument(pkg.namespace, pkg.package, detail, siteOrigin)
+
+    mkdirSync(dirname(destinationPath), { recursive: true })
+    writeFileSync(destinationPath, markdown, 'utf8')
+    llmsLines.push(`${siteOrigin}${publicPath}`)
+    packageMarkdownCount += 1
+  }
+}
+
 llmsLines.push('')
 writeFileSync(join(distRoot, 'llms.txt'), `${llmsLines.join('\n')}\n`, 'utf8')
 
 console.log(`Copied ${copiedCount} doc markdown files into dist/`)
+if (packageMarkdownCount > 0) {
+  console.log(`Wrote ${packageMarkdownCount} package markdown fallbacks into dist/`)
+}
