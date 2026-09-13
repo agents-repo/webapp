@@ -7,6 +7,7 @@ import {
   injectSpaFallbackHeadIntoHtml,
   injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
+import { stripLocalePrefix } from '../src/modules/site/application/i18n/localePath.ts';
 import { injectRouteBodyFallbackIntoHtml } from '../src/modules/site/application/seo/routeBodyFallback.ts';
 import { parsePackageSitePath } from '../src/modules/registry/application/packageSiteRoutes.ts';
 import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts';
@@ -81,7 +82,7 @@ function writeRouteDistHtml(routePath, html) {
 }
 
 function buildRouteHtml(routePath) {
-  const packageRoute = parsePackageSitePath(routePath);
+  const packageRoute = parsePackageSitePath(stripLocalePrefix(routePath));
   const packageDetail =
     packageRoute?.kind === 'detail'
       ? generatedDetails?.[`${packageRoute.namespace}/${packageRoute.packageId}`]

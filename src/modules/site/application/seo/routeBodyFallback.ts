@@ -1,5 +1,6 @@
 import { formatDocumentTitle } from '../accessibility/documentTitleFormat.ts'
 import { getSitePageMeta } from '../accessibility/sitePageMeta.ts'
+import { parseLocaleFromPathname } from '../i18n/localePath.ts'
 import { publicSitePath } from '../routes/sitePath.ts'
 import { siteRoutes } from '../../presentation/routes/siteRoutes.ts'
 import { parsePackageSitePath } from '../../../registry/application/packageSiteRoutes.ts'
@@ -117,12 +118,13 @@ export function renderRouteBodyFallbackHtml(
   const head = getRouteHeadData(pathname, siteOriginOverride, options)
   const origin = getSiteOrigin(siteOriginOverride)
   const pageMeta = getSitePageMeta(pathname, options.catalog ?? null)
+  const { pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
 
-  if (pathname === siteRoutes.home) {
+  if (pathnameWithoutLocale === siteRoutes.home) {
     return renderHomeFallback(origin, head.description)
   }
 
-  const packageRoute = parsePackageSitePath(pathname)
+  const packageRoute = parsePackageSitePath(pathnameWithoutLocale)
   if (packageRoute?.kind === 'detail') {
     return renderPackageDetailFallback(
       origin,

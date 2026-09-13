@@ -21,6 +21,14 @@ describe('renderRouteBodyFallbackHtml', () => {
     expect(html).toContain('https://agents-repo.org/docs/for-ai-agents.md')
   })
 
+  it('renders localized homepage fallback with catalog links', () => {
+    const html = renderRouteBodyFallbackHtml('/es/', 'https://agents-repo.org')
+
+    expect(html).toContain(`id="${STATIC_ROUTE_FALLBACK_ID}"`)
+    expect(html).toContain('https://agents-repo.org/llms.txt')
+    expect(html).toContain('https://agents-repo.org/docs/for-ai-agents.md')
+  })
+
   it('renders package detail fallback with markdown link and readme excerpt', () => {
     const html = renderRouteBodyFallbackHtml(
       '/packages/agents-repo/sample-agent',
@@ -34,6 +42,20 @@ describe('renderRouteBodyFallbackHtml', () => {
     expect(html).toContain('/packages/agents-repo/sample-agent.md')
     expect(html).toContain('README excerpt')
     expect(html).toContain('sample-agent')
+  })
+
+  it('renders localized package detail fallback with markdown link', () => {
+    const html = renderRouteBodyFallbackHtml(
+      '/es/packages/agents-repo/sample-agent',
+      'https://agents-repo.org',
+      {
+        catalog: sampleRegistryCatalog,
+        packageDetail: samplePackageDetail,
+      },
+    )
+
+    expect(html).toContain('/packages/agents-repo/sample-agent.md')
+    expect(html).toContain('README excerpt')
   })
 })
 
