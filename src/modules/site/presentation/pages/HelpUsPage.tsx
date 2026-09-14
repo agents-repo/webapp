@@ -1,19 +1,18 @@
 import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import {
+  REGISTRY_CONTRIBUTING_URL,
+  REGISTRY_ISSUES_URL,
+  REGISTRY_REPO_URL,
+  WEBAPP_CONTRIBUTING_URL,
+  WEBAPP_ISSUES_URL,
+  WEBAPP_REPO_URL,
+} from '../../application/community/githubProjectUrls.ts'
 import { getDocDetailPath } from '../../application/docs/docsManifest.ts'
 import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../routes/siteRoutes'
-
-const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
-const REGISTRY_CONTRIBUTING_URL =
-  'https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md'
-const REGISTRY_ISSUES_URL = 'https://github.com/agents-repo/registry/issues'
-const WEBAPP_REPO_URL = 'https://github.com/agents-repo/webapp'
-const WEBAPP_CONTRIBUTING_URL =
-  'https://github.com/agents-repo/webapp/blob/main/.github/CONTRIBUTING.md'
-const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
 
 function HelpUsPage() {
   const { t } = useTranslation('pages')

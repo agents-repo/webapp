@@ -1,23 +1,22 @@
 import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import {
+  CLI_CONTRIBUTING_URL,
+  CLI_ISSUES_URL,
+  ORG_CONTRIBUTING_URL,
+  ORG_ROADMAP_URL,
+  REGISTRY_CONTRIBUTING_URL,
+  REGISTRY_ISSUES_URL,
+  WEBAPP_CONTRIBUTING_URL,
+  WEBAPP_ISSUES_URL,
+} from '../../application/community/githubProjectUrls.ts'
 import { getDocDetailPath } from '../../application/docs/docsCatalog.ts'
 import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import { listRepositoryManifestEntries } from '../../application/repositories/repositoryManifest.ts'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../routes/siteRoutes'
-import RepositoryCard from '../repositories/RepositoryCard.tsx'
-
-const ORG_CONTRIBUTING_URL = 'https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md'
-const ORG_ROADMAP_URL = 'https://github.com/agents-repo/.github/blob/main/ROADMAP.md'
-const REGISTRY_CONTRIBUTING_URL =
-  'https://github.com/agents-repo/registry/blob/main/.github/CONTRIBUTING.md'
-const REGISTRY_ISSUES_URL = 'https://github.com/agents-repo/registry/issues'
-const WEBAPP_CONTRIBUTING_URL =
-  'https://github.com/agents-repo/webapp/blob/main/.github/CONTRIBUTING.md'
-const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
-const CLI_CONTRIBUTING_URL = 'https://github.com/agents-repo/cli/blob/main/.github/CONTRIBUTING.md'
-const CLI_ISSUES_URL = 'https://github.com/agents-repo/cli/issues'
+import RepositoryCardGrid from '../repositories/RepositoryCardGrid.tsx'
 
 type ContributeWayId =
   | 'publishPackage'
@@ -255,16 +254,10 @@ function ContributePage() {
               {t('contribute.builtInTheOpenBodyPrefix')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.repositories)}>
                 {t('contribute.builtInTheOpenRepositoriesLink')}
-              </NavLink>
+              </NavLink>{' '}
               {t('contribute.builtInTheOpenBodySuffix')}
             </p>
-            <Row className="g-4">
-              {entries.map((entry) => (
-                <Col key={entry.slug} md={6} lg={4}>
-                  <RepositoryCard entry={entry} />
-                </Col>
-              ))}
-            </Row>
+            <RepositoryCardGrid entries={entries} />
           </section>
 
           <Card>
