@@ -1,8 +1,9 @@
 import { test, expect } from './fixtures/registry-mock'
 import { waitForCatalogSettled } from './fixtures/catalog-load'
+import { homeHeading } from './fixtures/home-copy'
 
 const routeHeadings = [
-  { path: '/', heading: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' },
+  { path: '/', heading: homeHeading },
   { path: '/packages', heading: 'All packages' },
   { path: '/about', heading: 'About' },
   { path: '/community', heading: 'Community' },
@@ -39,9 +40,7 @@ test.describe('Navigation', () => {
   test('redirects unknown paths to home', async ({ page }) => {
     await page.goto('/unknown-route')
 
-    await expect(
-      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: homeHeading })).toBeVisible()
   })
 
   test('redirects unknown repository slugs to the repositories index', async ({ page }) => {
@@ -55,7 +54,7 @@ test.describe('Navigation', () => {
 
     await expect(page.getByRole('heading', { name: 'Package not found', level: 1 })).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
+      page.getByRole('heading', { name: homeHeading }),
     ).toHaveCount(0)
   })
 

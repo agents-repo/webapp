@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
+import { homeHeading } from './fixtures/home-copy'
 
 const nonHomeRoutes = [
   '/about',
@@ -13,8 +14,6 @@ const nonHomeRoutes = [
   '/privacy',
   '/es/about',
 ] as const
-
-const homeHeading = 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 async function waitForActiveServiceWorker(page: Page): Promise<void> {
   await expect
