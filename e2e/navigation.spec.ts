@@ -9,6 +9,7 @@ const routeHeadings = [
   { path: '/community', heading: 'Community' },
   { path: '/contact', heading: 'Contact' },
   { path: '/help-us', heading: 'Help Us' },
+  { path: '/contribute', heading: 'Contribute' },
   { path: '/repositories', heading: 'Repositories' },
   { path: '/repositories/registry', heading: 'Registry' },
   { path: '/accessibility', heading: 'Accessibility statement' },

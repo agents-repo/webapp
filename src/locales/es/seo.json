@@ -39,6 +39,11 @@
     "routeLabel": "Ayúdanos",
     "description": "Ayuda a mejorar el registro abierto de agents. Contribuye con paquetes para GitHub Copilot, Cursor, Claude Code y OpenAI Codex."
   },
+  "contribute": {
+    "title": "Contribuir",
+    "routeLabel": "Contribuir",
+    "description": "Centro de contribución de la organización agents-repo en abierto: publicar paquetes, mejorar documentación, corregir errores, ampliar la CLI y la webapp, añadir pruebas y proponer especificaciones."
+  },
   "docs": {
     "title": "Documentación",
     "routeLabel": "Documentación",

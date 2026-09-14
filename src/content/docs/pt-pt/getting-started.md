@@ -13,6 +13,7 @@ O Agents Repo é o site público do registry aberto **agents-repo**: **agentes**
 2. **Ler como o registry está estruturado** em [Como o registry funciona](/docs/how-the-registry-works).
 3. **Instalar pacotes no seu projeto** com a CLI — comece em [Instalar pacotes](/docs/installing-packages).
 4. **Contribuir pacotes** — veja [Enviar um pacote](/docs/submitting-a-package).
+5. **Explorar todas as formas de contribuir** — visite o hub [Contribuir](/contribute) para documentação, repositórios, issues e especificações.
 
 ## Destinos de instalação compatíveis
 

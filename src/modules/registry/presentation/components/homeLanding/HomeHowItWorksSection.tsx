@@ -13,8 +13,7 @@ function HomeHowItWorksSection() {
   const packagesIndexPath = localizedSitePath(getPackagesIndexPath())
   const installingPackagesPath = localizedSitePath(getDocDetailPath('installing-packages'))
   const installTargetsPath = localizedSitePath(getDocDetailPath('install-targets'))
-  const submittingPackagePath = localizedSitePath(getDocDetailPath('submitting-a-package'))
-  const helpUsPath = localizedSitePath(siteRoutes.helpUs)
+  const contributePath = localizedSitePath(siteRoutes.contribute)
 
   const steps = [
     {
@@ -52,8 +51,7 @@ function HomeHowItWorksSection() {
       body: (
         <>
           {t('homeLanding.howItWorks.step4BodyPrefix')}
-          {/* Interim link until /contribute hub ships in webapp#284 */}
-          <Link to={submittingPackagePath}>{t('homeLanding.howItWorks.step4SubmitPackageLink')}</Link>
+          <Link to={contributePath}>{t('homeLanding.howItWorks.step4ContributeLink')}</Link>
           {t('homeLanding.howItWorks.step4BodySuffix')}
         </>
       ),
@@ -63,8 +61,7 @@ function HomeHowItWorksSection() {
       body: (
         <>
           {t('homeLanding.howItWorks.step5BodyPrefix')}
-          {/* Interim link until /contribute hub ships in webapp#284 */}
-          <Link to={helpUsPath}>{t('homeLanding.howItWorks.step5HelpUsLink')}</Link>
+          <Link to={contributePath}>{t('homeLanding.howItWorks.step5ContributeLink')}</Link>
           {t('homeLanding.howItWorks.step5BodySuffix')}
         </>
       ),

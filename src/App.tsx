@@ -49,6 +49,7 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
     AccessibilityPage,
     ContactPage,
     HelpUsPage,
+    ContributePage,
     DocArticlePage,
     DocIndexPage,
     PrivacyPage,
@@ -68,6 +69,7 @@ function AppRoutes({ lazyPages, setHeaderSearchSlot }: AppRoutesProps) {
       <Route path={siteRoutes.community} element={<CommunityPage />} />
       <Route path={siteRoutes.contact} element={<ContactPage />} />
       <Route path={siteRoutes.helpUs} element={<HelpUsPage />} />
+      <Route path={siteRoutes.contribute} element={<ContributePage />} />
       <Route path={siteRoutes.docs} element={<DocIndexPage />} />
       <Route path={`${siteRoutes.docs}/:slug`} element={<DocArticlePage />} />
       <Route path={`${siteRoutes.docs}/*`} element={<Navigate to={localizedSitePath(siteRoutes.docs, locale)} replace />} />

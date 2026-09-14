@@ -314,13 +314,9 @@ describe('HomePage landing sections', () => {
     )
     expect(screen.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Help grow the catalog' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Submit a package' })).toHaveAttribute(
-      'href',
-      '/docs/submitting-a-package/',
-    )
-    const helpUsLinks = screen.getAllByRole('link', { name: 'Help Us' })
-    expect(helpUsLinks.length).toBeGreaterThanOrEqual(1)
-    expect(helpUsLinks.every((link) => link.getAttribute('href') === '/help-us/')).toBe(true)
+    const contributeLinks = screen.getAllByRole('link', { name: 'Contribute' })
+    expect(contributeLinks.length).toBeGreaterThanOrEqual(3)
+    expect(contributeLinks.every((link) => link.getAttribute('href') === '/contribute/')).toBe(true)
   })
 })
 

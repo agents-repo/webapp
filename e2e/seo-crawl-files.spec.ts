@@ -5,6 +5,7 @@ const nonHomeRoutes = [
   '/about',
   '/contact',
   '/help-us',
+  '/contribute',
   '/docs',
   '/docs/getting-started',
   '/docs/installing-packages',
@@ -13,6 +14,7 @@ const nonHomeRoutes = [
   '/accessibility',
   '/privacy',
   '/es/about',
+  '/es/contribute',
 ] as const
 
 async function waitForActiveServiceWorker(page: Page): Promise<void> {

@@ -68,6 +68,10 @@ export const siteSeoMeta: Record<SiteRoutePath, SiteSeoMeta> = {
     description: getLocalizedSiteRouteMeta('en', siteRoutes.helpUs).description ?? '',
     canonicalPath: siteRoutes.helpUs,
   },
+  [siteRoutes.contribute]: {
+    description: getLocalizedSiteRouteMeta('en', siteRoutes.contribute).description ?? '',
+    canonicalPath: siteRoutes.contribute,
+  },
   [siteRoutes.docs]: {
     description: getLocalizedSiteRouteMeta('en', siteRoutes.docs).description ?? '',
     canonicalPath: siteRoutes.docs,

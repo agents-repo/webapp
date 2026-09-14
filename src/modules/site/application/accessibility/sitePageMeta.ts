@@ -49,6 +49,7 @@ export const sitePageMeta: Record<SiteRoutePath, SitePageMeta> = {
   [siteRoutes.community]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.community)),
   [siteRoutes.contact]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.contact)),
   [siteRoutes.helpUs]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.helpUs)),
+  [siteRoutes.contribute]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.contribute)),
   [siteRoutes.docs]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.docs)),
   [siteRoutes.repositories]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.repositories)),
   [siteRoutes.accessibility]: toSitePageMeta(getLocalizedSiteRouteMeta('en', siteRoutes.accessibility)),

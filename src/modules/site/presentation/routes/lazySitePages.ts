@@ -6,6 +6,7 @@ export interface LazySitePages {
   readonly AccessibilityPage: LazyExoticComponent<ComponentType>
   readonly ContactPage: LazyExoticComponent<ComponentType>
   readonly HelpUsPage: LazyExoticComponent<ComponentType>
+  readonly ContributePage: LazyExoticComponent<ComponentType>
   readonly PrivacyPage: LazyExoticComponent<ComponentType>
   readonly RepositoriesIndexPage: LazyExoticComponent<ComponentType>
   readonly DocArticlePage: LazyExoticComponent<ComponentType>
@@ -20,6 +21,7 @@ export function createLazySitePages(): LazySitePages {
     AccessibilityPage: lazy(() => import('../pages/AccessibilityPage')),
     ContactPage: lazy(() => import('../pages/ContactPage')),
     HelpUsPage: lazy(() => import('../pages/HelpUsPage')),
+    ContributePage: lazy(() => import('../pages/ContributePage')),
     PrivacyPage: lazy(() => import('../pages/PrivacyPage')),
     RepositoriesIndexPage: lazy(() => import('../pages/RepositoriesIndexPage')),
     DocArticlePage: lazy(() => import('../pages/docs/DocArticlePage')),

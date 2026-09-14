@@ -68,13 +68,13 @@
       "step3InstallTargetsLink": "install targets",
       "step3BodySuffix": " for path details.",
       "step4Title": "Publish a package",
-      "step4BodyPrefix": "Submit a maintained agent or flow—start with ",
-      "step4SubmitPackageLink": "submitting a package",
-      "step4BodySuffix": ".",
+      "step4BodyPrefix": "Submit a maintained agent or flow—see ",
+      "step4ContributeLink": "Contribute",
+      "step4BodySuffix": " for publishing paths.",
       "step5Title": "Share and grow the catalog",
       "step5BodyPrefix": "Help others discover tools—see ",
-      "step5HelpUsLink": "Help Us",
-      "step5BodySuffix": " for ways to contribute."
+      "step5ContributeLink": "Contribute",
+      "step5BodySuffix": " for ways to help."
     },
     "cliQuickstart": {
       "heading": "Install with the CLI",
@@ -97,8 +97,8 @@
     "contribute": {
       "heading": "Help grow the catalog",
       "body": "The project needs agents and flows packages most. Submit a maintained package, or see other ways to help.",
-      "submitPackage": "Submit a package",
-      "helpUs": "Help Us"
+      "primaryButton": "Contribute",
+      "secondaryButton": "Ways to contribute"
     }
   },
   "packageCard": {
