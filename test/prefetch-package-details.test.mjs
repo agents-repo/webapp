@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, unlinkSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { afterEach, describe, it } from 'node:test'
 import { searchableCatalog } from '../e2e/fixtures/catalog.ts'
@@ -28,7 +28,11 @@ const snapshotCatalog = {
 
 describe('prefetch package details', () => {
   afterEach(() => {
-    rmSync(dirname(GENERATED_PACKAGE_SITE_CATALOG_PATH), { recursive: true, force: true })
+    try {
+      unlinkSync(GENERATED_PACKAGE_SITE_CATALOG_PATH)
+    } catch {
+      // Best-effort cleanup when another test already removed the artifact.
+    }
   })
 
   it('reuses the generated catalog snapshot when available', async () => {
