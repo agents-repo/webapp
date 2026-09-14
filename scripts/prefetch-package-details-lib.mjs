@@ -2,6 +2,8 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { sampleAgentPackageDetail } from '../e2e/fixtures/package-detail.ts'
 import { buildRegistryPackageDetailUrl } from '../src/modules/registry/infrastructure/registrySourceUrl.ts'
+import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts'
+import { readGeneratedPackageSiteCatalog } from './seo-build-config.ts'
 import { GENERATED_PACKAGE_SITE_DETAILS_PATH } from './package-site-routes-path.ts'
 import {
   loadPackageSiteCatalogForBuild,
@@ -77,8 +79,26 @@ async function fetchPackageDetail(detailUrl, fetchImpl = fetch) {
   return payload
 }
 
+function readValidatedGeneratedCatalog() {
+  const catalog = readGeneratedPackageSiteCatalog()
+  if (catalog === null) {
+    return null
+  }
+
+  if (!isRegistryCatalog(catalog)) {
+    throw new Error(
+      'scripts/.generated/package-site-catalog.json does not match the expected catalog schema',
+    )
+  }
+
+  return catalog
+}
+
 export async function loadPackageDetailsForBuild(mode, options = {}) {
-  const catalog = options.catalog ?? await loadPackageSiteCatalogForBuild(mode, options)
+  const catalog =
+    options.catalog ??
+    readValidatedGeneratedCatalog() ??
+    await loadPackageSiteCatalogForBuild(mode, options)
   const concurrency = options.concurrency ?? DEFAULT_CONCURRENCY
 
   if (mode === 'e2e') {
