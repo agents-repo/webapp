@@ -120,7 +120,9 @@ function HomeCliQuickstartSection() {
               </div>
             </Stack>
             <p className="text-center small mt-3 mb-0">
-              <Link to={featuredPackagePath}>{t('homeLanding.cliQuickstart.featuredPackageLink')}</Link>
+              <Link to={featuredPackagePath}>
+                {t('homeLanding.cliQuickstart.featuredPackageLink', { packageId: FEATURED_PACKAGE_ID })}
+              </Link>
             </p>
             <p className="text-center small mt-4 mb-0">
               <Link to={localizedSitePath(getDocDetailPath('installing-packages'))}>

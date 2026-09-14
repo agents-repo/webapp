@@ -79,7 +79,7 @@
     "cliQuickstart": {
       "heading": "Instalar con la CLI",
       "lead": "Inicializa tu proyecto y luego instala un paquete. En proyectos reales, fija la CLI como devDependency para que el equipo y CI usen la misma versión.",
-      "featuredPackageLink": "Ver detalles del paquete hello-agent",
+      "featuredPackageLink": "Ver detalles del paquete {{packageId}}",
       "initLabel": "Inicializar destinos de instalación",
       "installLabel": "Instalar un paquete",
       "copyInitLabel": "Copiar comando init",
