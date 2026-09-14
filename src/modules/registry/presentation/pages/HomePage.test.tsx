@@ -284,7 +284,7 @@ describe('HomePage landing sections', () => {
       '/docs/submitting-a-package/',
     )
     expect(
-      screen.getByRole('link', { name: 'View Agents Repo organization on GitHub (opens in a new tab)' }),
+      screen.getByRole('link', { name: 'View on GitHub — Agents Repo organization (opens in a new tab)' }),
     ).toHaveAttribute('href', 'https://github.com/agents-repo')
     expect(screen.getByRole('heading', { name: 'Works with your AI coding tools' })).toBeInTheDocument()
     expect(screen.getByText('GitHub Copilot')).toBeInTheDocument()

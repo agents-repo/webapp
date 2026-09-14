@@ -20,6 +20,7 @@ function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) 
   const externalLinkName = useExternalLinkAccessibleName()
   const packagesIndexPath = localizedSitePath(getPackagesIndexPath())
   const publishAgentPath = localizedSitePath(getDocDetailPath('submitting-a-package'))
+  const viewOnGitHubLabel = t('home.viewOnGitHub')
 
   return (
     <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
@@ -45,9 +46,11 @@ function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) 
                   className="btn btn-outline-secondary"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={externalLinkName(t('home.viewOnGitHubAriaLabel'))}
+                  aria-label={externalLinkName(
+                    t('home.viewOnGitHubAriaLabel', { label: viewOnGitHubLabel }),
+                  )}
                 >
-                  {t('home.viewOnGitHub')}
+                  {viewOnGitHubLabel}
                 </a>
               </div>
               <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>

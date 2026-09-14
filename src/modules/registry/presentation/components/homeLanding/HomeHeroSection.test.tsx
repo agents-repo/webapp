@@ -16,7 +16,7 @@ describe('HomeHeroSection', () => {
       'href',
       '/docs/submitting-a-package/',
     )
-    expect(screen.getByRole('link', { name: 'View Agents Repo organization on GitHub (opens in a new tab)' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'View on GitHub — Agents Repo organization (opens in a new tab)' })).toHaveAttribute(
       'href',
       'https://github.com/agents-repo',
     )

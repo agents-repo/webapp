@@ -37,7 +37,7 @@
     "browsePackages": "Browse packages",
     "publishAgent": "Publish an agent",
     "viewOnGitHub": "View on GitHub",
-    "viewOnGitHubAriaLabel": "View Agents Repo organization on GitHub",
+    "viewOnGitHubAriaLabel": "{{label}} — Agents Repo organization",
     "brandLogoAlt": "Agents Repo brand symbol"
   },
   "homeLanding": {
