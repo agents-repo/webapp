@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 import { Badge, Col, Container, Row, Stack } from 'react-bootstrap'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import brandLogo from '../../../../../assets/logo/agents-repo-logo.svg'
-import { applyHashTargetScroll } from '../../../../site/application/accessibility/routeScroll'
+import { useExternalLinkAccessibleName } from '../../../../site/application/accessibility/useExternalLinkAccessibleName'
+import { getDocDetailPath } from '../../../../site/application/docs/docsCatalog'
+import { GITHUB_ORGANIZATION_URL } from '../../../../site/application/community/socialLinks'
 import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
-import { siteRoutes } from '../../../../site/presentation/routes/siteRoutes'
 import { getPackagesIndexPath } from '../../../application/packageSiteRoutes'
-import { CLI_QUICKSTART_ID } from './homeLandingCopy'
 
 export interface HomeHeroSectionProps {
   readonly searchControl: ReactNode
@@ -17,10 +17,10 @@ export interface HomeHeroSectionProps {
 function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) {
   const { t } = useTranslation('catalog')
   const localizedSitePath = useLocalizedSitePath()
-  const location = useLocation()
+  const externalLinkName = useExternalLinkAccessibleName()
   const packagesIndexPath = localizedSitePath(getPackagesIndexPath())
-  const cliQuickstartHash = `#${CLI_QUICKSTART_ID}`
-  const cliQuickstartHref = `${localizedSitePath(siteRoutes.home)}${cliQuickstartHash}`
+  const publishAgentPath = localizedSitePath(getDocDetailPath('submitting-a-package'))
+  const viewOnGitHubLabel = t('home.viewOnGitHub')
 
   return (
     <section className="py-4 py-lg-5 border-bottom border-secondary-subtle app-hero">
@@ -38,17 +38,20 @@ function HomeHeroSection({ searchControl, stickySearch }: HomeHeroSectionProps) 
                 <Link to={packagesIndexPath} className="btn btn-primary">
                   {t('home.browsePackages')}
                 </Link>
-                <Link
-                  to={cliQuickstartHref}
-                  className="btn btn-outline-primary"
-                  onClick={() => {
-                    if (location.hash === cliQuickstartHash) {
-                      applyHashTargetScroll(cliQuickstartHash)
-                    }
-                  }}
-                >
-                  {t('home.useCli')}
+                <Link to={publishAgentPath} className="btn btn-outline-primary">
+                  {t('home.publishAgent')}
                 </Link>
+                <a
+                  href={GITHUB_ORGANIZATION_URL}
+                  className="btn btn-outline-secondary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={externalLinkName(
+                    t('home.viewOnGitHubAriaLabel', { label: viewOnGitHubLabel }),
+                  )}
+                >
+                  {viewOnGitHubLabel}
+                </a>
               </div>
               <div className={`w-100 hero-search${stickySearch ? ' d-lg-none' : ''}`}>
                 {searchControl}

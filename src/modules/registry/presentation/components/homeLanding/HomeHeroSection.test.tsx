@@ -1,36 +1,24 @@
 import { cleanup, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { renderWithProviders } from '../../../../../test/renderWithProviders'
-import HomeCliQuickstartSection from './HomeCliQuickstartSection'
 import HomeHeroSection from './HomeHeroSection'
-import { CLI_QUICKSTART_ID } from './homeLandingCopy'
 
 describe('HomeHeroSection', () => {
   afterEach(() => {
     cleanup()
-    vi.restoreAllMocks()
   })
 
-  it('scrolls to the CLI section when Use the CLI is clicked with the hash already present', async () => {
-    const user = userEvent.setup()
-    const scrollIntoView = vi.fn()
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      writable: true,
-      value: scrollIntoView,
-    })
+  it('renders install-first hero CTAs', () => {
+    renderWithProviders(<HomeHeroSection searchControl={<div />} stickySearch={false} />)
 
-    renderWithProviders(
-      <>
-        <HomeHeroSection searchControl={<div />} stickySearch={false} />
-        <HomeCliQuickstartSection />
-      </>,
-      { initialEntries: [`/#${CLI_QUICKSTART_ID}`] },
+    expect(screen.getByRole('link', { name: 'Browse packages' })).toHaveAttribute('href', '/packages/')
+    expect(screen.getByRole('link', { name: 'Publish an agent' })).toHaveAttribute(
+      'href',
+      '/docs/submitting-a-package/',
     )
-
-    await user.click(screen.getByRole('link', { name: 'Use the CLI' }))
-
-    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start', behavior: 'instant' })
+    expect(screen.getByRole('link', { name: 'View on GitHub — Agents Repo organization (opens in a new tab)' })).toHaveAttribute(
+      'href',
+      'https://github.com/agents-repo',
+    )
   })
 })

@@ -13,13 +13,13 @@ import {
 } from '../../../../test/fixtures/homePageTestFixtures'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
+import enCatalog from '../../../../locales/en/catalog.json' with { type: 'json' }
 import {
   CLI_INIT_COMMAND,
   CLI_INSTALL_COMMAND,
+  FEATURED_PACKAGE_ID,
+  FEATURED_PACKAGE_REF,
 } from '../components/homeLanding/homeLandingCopy'
-
-const HOME_HERO_HEADING =
-  'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -277,17 +277,32 @@ describe('HomePage landing sections', () => {
 
     renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    expect(await screen.findByRole('heading', { level: 1, name: HOME_HERO_HEADING })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: enCatalog.home.heroHeading }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Browse packages' })).toHaveAttribute('href', '/packages/')
-    expect(screen.getByRole('link', { name: 'Use the CLI' })).toHaveAttribute('href', '/#cli-quickstart')
+    expect(screen.getByRole('link', { name: 'Publish an agent' })).toHaveAttribute(
+      'href',
+      '/docs/submitting-a-package/',
+    )
+    expect(
+      screen.getByRole('link', { name: 'View on GitHub — Agents Repo organization (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://github.com/agents-repo')
     expect(screen.getByRole('heading', { name: 'Works with your AI coding tools' })).toBeInTheDocument()
     expect(screen.getByText('GitHub Copilot')).toBeInTheDocument()
     expect(screen.getByText('OpenAI Codex')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'What you gain' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'How it works' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Install with the CLI' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Discover packages' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Share and grow the catalog' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Install with the CLI' })).toBeInTheDocument()
     expect(screen.getByTestId('home-cli-init-terminal')).toHaveTextContent(CLI_INIT_COMMAND)
     expect(screen.getByTestId('home-cli-install-terminal')).toHaveTextContent(CLI_INSTALL_COMMAND)
+    expect(CLI_INSTALL_COMMAND).toContain(FEATURED_PACKAGE_ID)
+    expect(screen.getByRole('link', { name: `View ${FEATURED_PACKAGE_ID} package details` })).toHaveAttribute(
+      'href',
+      `/packages/${FEATURED_PACKAGE_REF}/`,
+    )
     expect(screen.getByRole('link', { name: 'Installing packages' })).toHaveAttribute(
       'href',
       '/docs/installing-packages/',
@@ -303,7 +318,9 @@ describe('HomePage landing sections', () => {
       'href',
       '/docs/submitting-a-package/',
     )
-    expect(screen.getByRole('link', { name: 'Help Us' })).toHaveAttribute('href', '/help-us/')
+    const helpUsLinks = screen.getAllByRole('link', { name: 'Help Us' })
+    expect(helpUsLinks.length).toBeGreaterThanOrEqual(1)
+    expect(helpUsLinks.every((link) => link.getAttribute('href') === '/help-us/')).toBe(true)
   })
 })
 

@@ -1,6 +1,7 @@
 import { test, expect, mockPackageDetailArtifacts } from './fixtures/registry-mock'
 import { E2E_REGISTRY_BASE_URL } from './fixtures/catalog'
 import { waitForCatalogSettled } from './fixtures/catalog-load'
+import { homeHeading } from './fixtures/home-copy'
 import { sampleAgentPackageDetail } from './fixtures/package-detail'
 
 const sampleAgentDetailUrl = `${E2E_REGISTRY_BASE_URL}/packages/agents-repo/sample-agent/detail.json`
@@ -190,7 +191,7 @@ test.describe('Package pages', () => {
     await page.goto('/packages/agents-repo/not-a-real-package')
     await expect(page.getByRole('heading', { name: 'Package not found', level: 1 })).toBeVisible()
     await expect(
-      page.getByRole('heading', { name: 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex' }),
+      page.getByRole('heading', { name: homeHeading }),
     ).toHaveCount(0)
 
     await page.goto('/packages/missing-ns/also-missing/extra')

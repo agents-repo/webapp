@@ -2,7 +2,7 @@
   "home": {
     "title": "Inicio",
     "routeLabel": "Inicio",
-    "description": "Encuentra agents y flows seleccionados para Copilot, Cursor, Claude Code y Codex. Instálalos con la CLI o prueba instrucciones en el chat."
+    "description": "Descubre agentes y flows en nuestro registry abierto. Instala con la CLI para Copilot, Cursor, Claude Code y Codex—o comparte los tuyos."
   },
   "packages": {
     "title": "Paquetes",
