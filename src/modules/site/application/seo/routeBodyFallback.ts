@@ -10,6 +10,7 @@ import { getRouteHeadData, type RouteHeadOptions } from './buildRouteHead.ts'
 import { getSiteOrigin, siteName } from './siteSeo.ts'
 
 const STATIC_ROUTE_FALLBACK_ID = 'static-route-fallback'
+const ROOT_INJECTION_POINT = /<div\s+id="root"\s*><\/div>/
 
 function escapeHtml(value: string): string {
   return value
@@ -165,7 +166,20 @@ export function injectRouteBodyFallbackIntoHtml(
     return html
   }
 
-  return html.replace('<div id="root"></div>', `${fallback}\n    <div id="root"></div>`)
+  if (!ROOT_INJECTION_POINT.test(html)) {
+    throw new Error(
+      'Cannot inject route body fallback: HTML shell is missing the <div id="root"></div> injection point',
+    )
+  }
+
+  const injected = html.replace(ROOT_INJECTION_POINT, `${fallback}\n    <div id="root"></div>`)
+  if (injected === html) {
+    throw new Error(
+      'Cannot inject route body fallback: HTML shell injection point was not replaced',
+    )
+  }
+
+  return injected
 }
 
 export { STATIC_ROUTE_FALLBACK_ID }

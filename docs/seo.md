@@ -34,9 +34,11 @@ the latest stable registry tag (same resolution as runtime catalog loading).
 markdown fallbacks. Production uses the proxy (`ref` query); `--mode e2e` uses
 Playwright fixtures. A failed fetch or schema mismatch **fails the production
 Pages build**. It writes gitignored `scripts/.generated/package-site-routes.json`,
-`package-site-catalog.json`, and `package-site-details.json` used by
-`getBuildSiteRoutePaths()` and `getBuildSitemapPaths()` in
-`vite.config.ts` and `scripts/prepare-pages-dist.mjs`. `prepare-pages-dist.mjs`
+`package-site-catalog.json`, and `package-site-details.json`. The routes list
+feeds `getBuildSiteRoutePaths()` and `getBuildSitemapPaths()` in
+`vite.config.ts`; catalog and detail snapshots are consumed by
+`scripts/prepare-pages-dist.mjs` and `scripts/copy-doc-markdown.mjs`.
+`prepare-pages-dist.mjs`
 injects route-specific head tags into `dist/**/index.html`, including package
 JSON-LD `codeRepository` from `VITE_REGISTRY_GITHUB_REPOSITORY_URL` for the
 build mode (not a hardcoded default). `404.html` uses a

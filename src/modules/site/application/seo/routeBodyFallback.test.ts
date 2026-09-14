@@ -76,4 +76,14 @@ describe('injectRouteBodyFallbackIntoHtml', () => {
     expect(once.match(/id="static-route-fallback"/g)?.length).toBe(1)
     expect(twice.match(/id="static-route-fallback"/g)?.length).toBe(1)
   })
+
+  it('throws when the HTML shell is missing the root injection point', () => {
+    expect(() =>
+      injectRouteBodyFallbackIntoHtml(
+        '<!doctype html><html><body></body></html>',
+        siteRoutes.home,
+        'https://agents-repo.org',
+      ),
+    ).toThrow(/missing the <div id="root"><\/div> injection point/)
+  })
 })
