@@ -86,14 +86,12 @@ describe('crawl files integration', { concurrency: 1 }, () => {
     assert.ok(homeHtml.includes('/packages/'))
   })
 
-  it('writes package markdown fallbacks and lists them in llms.txt when present', () => {
+  it('writes package markdown fallbacks and lists them in llms.txt', () => {
     requireCrawlFiles()
     const llms = readFileSync(resolve(distDir, 'llms.txt'), 'utf8')
     const packageMarkdownMatch = llms.match(/https:\/\/agents-repo\.org\/packages\/[^/\s]+\/[^/\s]+\.md/)
 
-    if (!packageMarkdownMatch) {
-      return
-    }
+    assert.ok(packageMarkdownMatch, 'llms.txt must list at least one package markdown fallback URL')
 
     const packageMarkdownUrl = packageMarkdownMatch[0]
     const packageMarkdownPath = packageMarkdownUrl.replace('https://agents-repo.org', '')

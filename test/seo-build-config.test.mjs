@@ -84,28 +84,35 @@ describe('seo-build-config', () => {
 
   it('validates generated package detail entry shape', () => {
     mkdirSync(dirname(GENERATED_PACKAGE_SITE_DETAILS_PATH), { recursive: true })
-    writeFileSync(
-      GENERATED_PACKAGE_SITE_DETAILS_PATH,
-      JSON.stringify({
-        'agents-repo/sample-agent': samplePackageDetail,
-      }),
-    )
 
-    const details = readGeneratedPackageSiteDetails()
-    assert.equal(details?.['agents-repo/sample-agent']?.metadata.name, 'sample-agent')
+    try {
+      writeFileSync(
+        GENERATED_PACKAGE_SITE_DETAILS_PATH,
+        JSON.stringify({
+          'agents-repo/sample-agent': samplePackageDetail,
+        }),
+      )
 
-    writeFileSync(
-      GENERATED_PACKAGE_SITE_DETAILS_PATH,
-      JSON.stringify({
-        'agents-repo/sample-agent': { package: 'agents-repo/sample-agent' },
-      }),
-    )
+      const details = readGeneratedPackageSiteDetails()
+      assert.equal(details?.['agents-repo/sample-agent']?.metadata.name, 'sample-agent')
 
-    assert.throws(
-      () => readGeneratedPackageSiteDetails(),
-      /entry "agents-repo\/sample-agent" is not a valid package detail document/,
-    )
+      writeFileSync(
+        GENERATED_PACKAGE_SITE_DETAILS_PATH,
+        JSON.stringify({
+          'agents-repo/sample-agent': { package: 'agents-repo/sample-agent' },
+        }),
+      )
 
-    unlinkSync(GENERATED_PACKAGE_SITE_DETAILS_PATH)
+      assert.throws(
+        () => readGeneratedPackageSiteDetails(),
+        /entry "agents-repo\/sample-agent" is not a valid package detail document/,
+      )
+    } finally {
+      try {
+        unlinkSync(GENERATED_PACKAGE_SITE_DETAILS_PATH)
+      } catch {
+        // Best-effort cleanup when another test already removed the artifact.
+      }
+    }
   })
 })

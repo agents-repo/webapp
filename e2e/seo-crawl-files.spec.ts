@@ -86,18 +86,16 @@ test.describe('SEO crawl files', () => {
     expect(homeBody).toContain('/llms.txt')
 
     const llmsResponse = await request.get('/llms.txt')
+    await expect(llmsResponse).toBeOK()
     const llmsBody = await llmsResponse.text()
     const packageMarkdownMatch = llmsBody.match(
       /https:\/\/agents-repo\.org\/packages\/[^/\s]+\/[^/\s]+\.md/,
     )
 
-    if (!packageMarkdownMatch) {
-      return
-    }
+    expect(packageMarkdownMatch).not.toBeNull()
+    const packageMarkdownPath = packageMarkdownMatch![0].replace('https://agents-repo.org', '')
 
-    const packageMarkdownResponse = await request.get(
-      packageMarkdownMatch[0].replace('https://agents-repo.org', ''),
-    )
+    const packageMarkdownResponse = await request.get(packageMarkdownPath)
     await expect(packageMarkdownResponse).toBeOK()
     const packageMarkdownBody = await packageMarkdownResponse.text()
     expect(packageMarkdownBody.startsWith('# ')).toBe(true)
