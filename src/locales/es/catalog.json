@@ -188,6 +188,17 @@
     "byOwner": "por",
     "viewOnGitHub": "Ver en GitHub",
     "viewOnGitHubAriaLabel": "Ver {{name}} en GitHub",
+    "reportIssue": "Informar de un problema",
+    "reportIssueAriaLabel": "Informar de un problema de {{name}}",
+    "reportInRegistry": "Informar en el registro",
+    "reportInRegistryAriaLabel": "Informar de un problema del registro para {{name}}",
+    "publishSimilar": "Publicar un paquete similar",
+    "recentlyUpdated": "Actualizado recientemente",
+    "lastUpdated": "Última actualización",
+    "trustStripAriaLabel": "Señales de confianza del paquete",
+    "trustStripLicense": "Licencia",
+    "trustStripInstallTargets": "Destinos de instalación",
+    "trustStripDownloads": "Descargas",
     "metadataHeading": "Metadatos",
     "license": "Licencia",
     "homepage": "Página web",
@@ -206,5 +217,16 @@
     "noReadme": "Esta instantánea del paquete no incluye README.",
     "loadingPackage": "Cargando paquete",
     "detailLoadError": "No se pudo cargar el detalle del paquete."
+  },
+  "packageNotFound": {
+    "title": "Paquete no encontrado",
+    "lead": "La ruta de paquete {{path}} no está en el catálogo actual del registro.",
+    "leadGeneric": "Esta ruta de paquete no está en el catálogo actual del registro.",
+    "recoveryHeading": "Prueba uno de estos siguientes pasos",
+    "searchPackages": "Buscar paquetes",
+    "searchPackagesAriaLabel": "Buscar en el catálogo {{query}}",
+    "browsePackages": "Ver todos los paquetes",
+    "readDocs": "Leer primeros pasos",
+    "returnHome": "Volver al inicio"
   }
 }

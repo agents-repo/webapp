@@ -27,6 +27,10 @@ const isPackageCostBand = (value: unknown): value is PackageCostBand => {
   return typeof value === 'string' && (PACKAGE_COST_BANDS as readonly string[]).includes(value)
 }
 
+const isValidDateString = (value: string): boolean => {
+  return Number.isFinite(Date.parse(value))
+}
+
 const isEstimateCost = (value: unknown): value is PackageDetailEntry['estimateCost'] => {
   if (!isRecord(value)) {
     return false
@@ -110,12 +114,16 @@ const isMetadata = (value: unknown): value is PackageDetailMetadata => {
     return false
   }
 
-  return (
-    typeof value.schemaVersion === 'string' &&
-    typeof value.name === 'string' &&
-    typeof value.description === 'string' &&
-    typeof value.owner === 'string'
-  )
+  if (
+    typeof value.schemaVersion !== 'string' ||
+    typeof value.name !== 'string' ||
+    typeof value.description !== 'string' ||
+    typeof value.owner !== 'string'
+  ) {
+    return false
+  }
+
+  return value.updatedAt === undefined || (typeof value.updatedAt === 'string' && isValidDateString(value.updatedAt))
 }
 
 function hasOptionalDetailFields(value: Record<string, unknown>): boolean {

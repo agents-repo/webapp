@@ -188,6 +188,17 @@
     "byOwner": "por",
     "viewOnGitHub": "Ver no GitHub",
     "viewOnGitHubAriaLabel": "Ver {{name}} no GitHub",
+    "reportIssue": "Reportar problema",
+    "reportIssueAriaLabel": "Reportar um problema de {{name}}",
+    "reportInRegistry": "Reportar no registro",
+    "reportInRegistryAriaLabel": "Reportar um problema do registro para {{name}}",
+    "publishSimilar": "Publicar pacote similar",
+    "recentlyUpdated": "Atualizado recentemente",
+    "lastUpdated": "Última atualização",
+    "trustStripAriaLabel": "Sinais de confiança do pacote",
+    "trustStripLicense": "Licença",
+    "trustStripInstallTargets": "Destinos de instalação",
+    "trustStripDownloads": "Downloads",
     "metadataHeading": "Metadados",
     "license": "Licença",
     "homepage": "Página inicial",
@@ -206,5 +217,16 @@
     "noReadme": "Este snapshot do pacote não inclui README.",
     "loadingPackage": "Carregando pacote",
     "detailLoadError": "Não foi possível carregar os detalhes do pacote."
+  },
+  "packageNotFound": {
+    "title": "Pacote não encontrado",
+    "lead": "O caminho do pacote {{path}} não está no catálogo atual do registro.",
+    "leadGeneric": "Este caminho de pacote não está no catálogo atual do registro.",
+    "recoveryHeading": "Tente um destes próximos passos",
+    "searchPackages": "Buscar pacotes",
+    "searchPackagesAriaLabel": "Buscar no catálogo por {{query}}",
+    "browsePackages": "Ver todos os pacotes",
+    "readDocs": "Ler primeiros passos",
+    "returnHome": "Voltar ao início"
   }
 }
