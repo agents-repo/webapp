@@ -32,6 +32,22 @@ describe('PackageSiteNotFound', () => {
     expect(screen.getByRole('link', { name: 'Return home' })).toHaveAttribute('href', '/')
   })
 
+  it('echoes the requested package path for localized routes', () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/es/packages/:namespace/:packageId" element={<PackageSiteNotFound />} />
+      </Routes>,
+      { initialEntries: ['/es/packages/agents-repo/missing-agent'] },
+    )
+
+    expect(
+      screen.getByText('The package path agents-repo/missing-agent is not in the current registry catalog.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Search the catalog for agents-repo/missing-agent' }),
+    ).toHaveAttribute('href', '/es/packages/?q=agents-repo%2Fmissing-agent')
+  })
+
   it('echoes invalid catch-all package paths', () => {
     renderWithProviders(
       <Routes>

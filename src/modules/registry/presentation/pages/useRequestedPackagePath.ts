@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { stripLocalePrefix } from '../../../site/application/i18n/localePath.ts'
 import {
   getPackagesIndexPath,
   isPackagePathSegment,
@@ -28,15 +29,11 @@ export function getRequestedPackagePath(
   namespaceParam?: string,
   packageIdParam?: string,
 ): RequestedPackagePath {
-  if (
-    namespaceParam &&
-    packageIdParam &&
-    isPackagePathSegment(namespaceParam) &&
-    isPackagePathSegment(packageIdParam)
-  ) {
+  if (namespaceParam && packageIdParam && isPackagePathSegment(namespaceParam)) {
+    const combined = `${namespaceParam}/${packageIdParam}`
     return {
-      displayPath: `${namespaceParam}/${packageIdParam}`,
-      searchQuery: `${namespaceParam}/${packageIdParam}`,
+      displayPath: combined,
+      searchQuery: combined,
     }
   }
 
@@ -93,7 +90,7 @@ export function useRequestedPackagePath(): RequestedPackagePath {
   const location = useLocation()
 
   return useMemo(
-    () => getRequestedPackagePath(location.pathname, namespace, packageId),
+    () => getRequestedPackagePath(stripLocalePrefix(location.pathname), namespace, packageId),
     [location.pathname, namespace, packageId],
   )
 }

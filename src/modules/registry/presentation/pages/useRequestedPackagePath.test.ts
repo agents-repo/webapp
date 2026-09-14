@@ -22,4 +22,12 @@ describe('getRequestedPackagePath', () => {
       searchQuery: 'agents-repo/sample-agent',
     })
   })
+
+  it('keeps the full path when packageId is invalid', () => {
+    expect(getRequestedPackagePath('/packages/agents-repo/not-valid!!!', 'agents-repo', 'not-valid!!!')).toEqual({
+      displayPath: 'agents-repo/not-valid!!!',
+      searchQuery: 'agents-repo/not-valid!!!',
+    })
+  })
+
 })
