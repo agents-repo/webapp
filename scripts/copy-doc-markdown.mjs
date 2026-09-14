@@ -1,10 +1,11 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- dist output paths derived from locale doc slugs and content/docs directories */
+/* eslint-disable security/detect-non-literal-fs-filename -- dist output paths derived from locale doc slugs, content/docs directories, and package segments validated via isPackagePathSegment */
 import { copyFileSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { localizedSitePath } from '../src/modules/site/application/i18n/localePath.ts'
 import { defaultAppLocale, localeFromUrlSlug } from '../src/modules/site/application/i18n/supportedLocales.ts'
 import { normalizeSitePathname } from '../src/modules/site/application/routes/sitePath.ts'
 import { buildPackageSiteMarkdownDocument, getPackageSiteMarkdownPublicPath } from '../src/modules/registry/application/packageSiteMarkdown.ts'
+import { isPackagePathSegment } from '../src/modules/registry/application/packageSiteRoutes.ts'
 import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts'
 import { resolveBuildSiteOrigin, readGeneratedPackageSiteCatalog, readGeneratedPackageSiteDetails } from './seo-build-config.ts'
 
@@ -70,6 +71,10 @@ if (generatedCatalog && isRegistryCatalog(generatedCatalog) && generatedDetails)
   llmsLines.push('', '## Package markdown fallbacks', '')
 
   for (const pkg of generatedCatalog.packages) {
+    if (!isPackagePathSegment(pkg.namespace) || !isPackagePathSegment(pkg.package)) {
+      throw new Error(`Unsafe package path segment for markdown output: ${pkg.namespace}/${pkg.package}`)
+    }
+
     const detail = generatedDetails[`${pkg.namespace}/${pkg.package}`]
     if (!detail) {
       throw new Error(`Missing package detail for ${pkg.namespace}/${pkg.package}`)
