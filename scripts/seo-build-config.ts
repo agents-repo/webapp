@@ -6,7 +6,11 @@ import {
   getSiteRoutePaths as getStaticAndManifestSiteRoutePaths,
   publicSitePath,
 } from '../src/modules/site/presentation/routes/siteRoutes.ts'
-import { GENERATED_PACKAGE_SITE_CATALOG_PATH, GENERATED_PACKAGE_SITE_ROUTES_PATH } from './package-site-routes-path.ts'
+import {
+  GENERATED_PACKAGE_SITE_CATALOG_PATH,
+  GENERATED_PACKAGE_SITE_DETAILS_PATH,
+  GENERATED_PACKAGE_SITE_ROUTES_PATH,
+} from './package-site-routes-path.ts'
 
 export { getSiteRoutePaths, publicSitePath } from '../src/modules/site/presentation/routes/siteRoutes.ts'
 
@@ -66,6 +70,62 @@ export function readGeneratedPackageSiteCatalog(): unknown {
   }
 
   return JSON.parse(readFileSync(GENERATED_PACKAGE_SITE_CATALOG_PATH, 'utf8'))
+}
+
+function isValidPackageDetailEntry(value: unknown): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    typeof (value as Record<string, unknown>).name === 'string' &&
+    typeof (value as Record<string, unknown>).description === 'string'
+  )
+}
+
+function isGeneratedPackageSiteDetailEntry(value: unknown): boolean {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false
+  }
+
+  const detail = value as Record<string, unknown>
+  const metadata = detail.metadata
+
+  return (
+    typeof detail.package === 'string' &&
+    typeof detail.version === 'string' &&
+    typeof metadata === 'object' &&
+    metadata !== null &&
+    !Array.isArray(metadata) &&
+    typeof (metadata as Record<string, unknown>).name === 'string' &&
+    typeof (metadata as Record<string, unknown>).description === 'string' &&
+    (detail.readmeMarkdown === undefined || typeof detail.readmeMarkdown === 'string') &&
+    Array.isArray(detail.agents) &&
+    detail.agents.every(isValidPackageDetailEntry) &&
+    Array.isArray(detail.flows) &&
+    detail.flows.every(isValidPackageDetailEntry)
+  )
+}
+
+export function readGeneratedPackageSiteDetails(): Record<string, unknown> | null {
+  if (!existsSync(GENERATED_PACKAGE_SITE_DETAILS_PATH)) {
+    return null
+  }
+
+  const parsed: unknown = JSON.parse(readFileSync(GENERATED_PACKAGE_SITE_DETAILS_PATH, 'utf8'))
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new TypeError('scripts/.generated/package-site-details.json must be a JSON object')
+  }
+
+  const details = parsed as Record<string, unknown>
+  for (const [key, value] of Object.entries(details)) {
+    if (!isGeneratedPackageSiteDetailEntry(value)) {
+      throw new TypeError(
+        `scripts/.generated/package-site-details.json entry "${key}" is not a valid package detail document`,
+      )
+    }
+  }
+
+  return details
 }
 
 export function resolveViteSiteUrl(mode = process.env.MODE ?? 'production'): string | undefined {

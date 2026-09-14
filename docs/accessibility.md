@@ -57,9 +57,9 @@ Every routed page should:
 ### Route scroll
 
 `RouteScrollManager` owns window scroll on client-side route changes and on the
-initial client load when the URL includes a hash. Focusing `#main-content` does
-not reset scroll: the app-shell `main` is persistent and tall, so `focus()` uses
-a nearest policy.
+initial client load when the URL includes a hash. `RouteAnnouncer` focuses
+`#main-content` with `preventScroll: true` so route announcements do not move the
+window after scroll reset or restore.
 
 - Link clicks and `navigate()` to a different pathname start at the top of the
   window (`behavior: instant`).

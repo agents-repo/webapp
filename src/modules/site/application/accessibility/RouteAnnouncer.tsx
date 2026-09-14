@@ -42,7 +42,7 @@ function RouteAnnouncer() {
 
       const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
       if (!skipLinkWasUsed && mainContent) {
-        mainContent.focus({ preventScroll: false })
+        mainContent.focus({ preventScroll: true })
       }
 
       return true

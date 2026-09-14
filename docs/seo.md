@@ -30,12 +30,15 @@ between routes. It does **not** set `<title>`.
 **Build (GitHub Pages):** `npm run prefetch:package-site-routes` fetches live
 `packages/index.json` after resolving a major-version alias such as `v2.x` to
 the latest stable registry tag (same resolution as runtime catalog loading).
-Production uses the proxy (`ref` query); `--mode e2e` uses Playwright fixtures.
-A failed fetch or schema mismatch **fails the production Pages build**. It writes
-gitignored `scripts/.generated/package-site-routes.json` and
-`package-site-catalog.json` used by `getBuildSiteRoutePaths()` and
-`getBuildSitemapPaths()` in
-`vite.config.ts` and `scripts/prepare-pages-dist.mjs`. `prepare-pages-dist.mjs`
+`npm run prefetch:package-details` fetches each package `detail.json` for
+markdown fallbacks. Production uses the proxy (`ref` query); `--mode e2e` uses
+Playwright fixtures. A failed fetch or schema mismatch **fails the production
+Pages build**. It writes gitignored `scripts/.generated/package-site-routes.json`,
+`package-site-catalog.json`, and `package-site-details.json`. The routes list
+feeds `getBuildSiteRoutePaths()` and `getBuildSitemapPaths()` in
+`vite.config.ts`; catalog and detail snapshots are consumed by
+`scripts/prepare-pages-dist.mjs` and `scripts/copy-doc-markdown.mjs`.
+`prepare-pages-dist.mjs`
 injects route-specific head tags into `dist/**/index.html`, including package
 JSON-LD `codeRepository` from `VITE_REGISTRY_GITHUB_REPOSITORY_URL` for the
 build mode (not a hardcoded default). `404.html` uses a
@@ -164,12 +167,31 @@ static files instead of the SPA shell.
 Unknown `/docs/:slug` values redirect to `/docs` (same pattern as unlisted
 repository slugs).
 
+## Crawler and AI fallbacks (fallback-only)
+
+Browser users keep the dynamic SPA. Build output adds **non-JS fallbacks** for
+URL fetchers:
+
+| Surface | Fallback | Generator |
+| --- | --- | --- |
+| Homepage `/` | `<noscript>` summary + links | `routeBodyFallback.ts` |
+| Package detail HTML | `<noscript>` excerpt + `.md` link | same |
+| Package content | `/packages/<ns>/<id>.md` | `copy-doc-markdown.mjs` |
+| Discovery | `llms.txt` package section | `copy-doc-markdown.mjs` |
+
+`npm run prefetch:package-details` fetches each `detail.json` once per
+`build:pages` (production mode fails on error; e2e uses fixtures). Registry-proxy
+cost is CI-only — crawlers read GitHub Pages static files.
+
+The PWA service worker excludes `/packages/*.md` from HTML `NetworkFirst`
+matching (see `scripts/pwa-workbox.ts`), same as `/docs/*.md`.
+
 ## SPA limitations
 
 - GitHub Pages cannot SSR. `build:pages` fetches live `packages/index.json` and
-  emits one HTML shell per known package route (title, description, canonical,
-  JSON-LD). Package README and agent/flow bodies stay in the registry and load
-  in the browser.
+  `detail.json` snapshots, then emits HTML shells (title, description, canonical,
+  JSON-LD, `<noscript>` fallback) plus package `.md` files. Package README and
+  agent/flow bodies still load dynamically in the browser for interactive users.
 - Packages published after the last webapp deploy work via client navigation and
   `404.html`, but that fallback HTML is `noindex`. They join the sitemap on the
   next successful `build:pages`. Scheduled rebuilds are out of scope.

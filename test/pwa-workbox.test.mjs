@@ -32,6 +32,7 @@ describe('pwa-workbox matchers', () => {
     assert.equal(isCrawlFilePath('/llms.txt'), true)
     assert.equal(isCrawlFilePath('/docs/getting-started.md'), true)
     assert.equal(isCrawlFilePath('/es/docs/getting-started.md'), true)
+    assert.equal(isCrawlFilePath('/packages/agents-repo/sample-agent.md'), true)
     assert.equal(isCrawlFilePath('/docs/getting-started'), false)
   })
 
@@ -68,6 +69,12 @@ describe('pwa-workbox matchers', () => {
     assert.equal(
       isHtmlNavigationRequest(
         context({ pathname: '/es/docs/getting-started.md', mode: 'navigate' }),
+      ),
+      false,
+    )
+    assert.equal(
+      isHtmlNavigationRequest(
+        context({ pathname: '/packages/agents-repo/sample-agent.md', mode: 'navigate' }),
       ),
       false,
     )

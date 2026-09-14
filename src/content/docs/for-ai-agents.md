@@ -61,6 +61,23 @@ curl -fsSL 'https://registry.agents-repo.org/packages/<namespace>/<package-id>/d
 
 `?ref=v2.x` resolves to the latest registry Git tag. After package merges, index and detail at that ref may not update until the next daily catalog release (~00:05 UTC). For bleeding-edge reads, use an explicit tag or `main` on a fork via registry-proxy.
 
+## Site homepage (HTML)
+
+Browser users load the interactive catalog at `https://agents-repo.org/`. For automated
+readers, prefer `llms.txt` or the `.md` URLs below. The homepage HTML shell also includes
+a `<noscript>` fallback summary for URL fetchers that do not execute JavaScript.
+
+## Package markdown fallbacks
+
+Each catalog package also has a static markdown URL on the site (build output):
+
+```text
+https://agents-repo.org/packages/<namespace>/<package-id>.md
+```
+
+`llms.txt` lists every doc and package `.md` URL after `npm run build:pages`.
+
 ## HTML routes
 
 Human-readable pages live under `/docs` and `/docs/<slug>` with the same content as the `.md` files.
+Package pages under `/packages/.../` remain the interactive SPA for browsers.

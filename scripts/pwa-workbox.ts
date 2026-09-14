@@ -19,11 +19,14 @@ export interface RuntimeCachingUrlMatchContext {
 
 export const DOC_MARKDOWN_PATH_PATTERN = /^\/(?:(?:es|pt-br|pt-pt)\/)?docs\/[^/]+\.md$/
 
+export const PACKAGE_MARKDOWN_PATH_PATTERN = /^\/packages\/[^/]+\/[^/]+\.md$/
+
 export const CRAWL_FILE_NAVIGATE_DENYLIST: readonly RegExp[] = [
   /^\/sitemap\.xml$/,
   /^\/robots\.txt$/,
   /^\/llms\.txt$/,
   DOC_MARKDOWN_PATH_PATTERN,
+  PACKAGE_MARKDOWN_PATH_PATTERN,
 ]
 
 /** Precache hashed assets. HTML is not globbed so `/` is not served from precache. */
@@ -60,7 +63,8 @@ export function isHtmlNavigationRequest({
     !/^\/sitemap\.xml$/.test(url.pathname) &&
     !/^\/robots\.txt$/.test(url.pathname) &&
     !/^\/llms\.txt$/.test(url.pathname) &&
-    !/^\/(?:(?:es|pt-br|pt-pt)\/)?docs\/[^/]+\.md$/.test(url.pathname)
+    !/^\/(?:(?:es|pt-br|pt-pt)\/)?docs\/[^/]+\.md$/.test(url.pathname) &&
+    !/^\/packages\/[^/]+\/[^/]+\.md$/.test(url.pathname)
   )
 }
 

@@ -12,3 +12,8 @@ export const GENERATED_PACKAGE_SITE_CATALOG_PATH = resolve(
   scriptsDir,
   '.generated/package-site-catalog.json',
 )
+
+export const GENERATED_PACKAGE_SITE_DETAILS_PATH = resolve(
+  scriptsDir,
+  '.generated/package-site-details.json',
+)
