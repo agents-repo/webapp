@@ -50,6 +50,7 @@ function isMinimalPackageDetail(value) {
     typeof value.metadata === 'object' &&
     typeof value.metadata.name === 'string' &&
     typeof value.metadata.description === 'string' &&
+    (value.readmeMarkdown === undefined || typeof value.readmeMarkdown === 'string') &&
     Array.isArray(value.agents) &&
     value.agents.every(isValidPackageDetailEntry) &&
     Array.isArray(value.flows) &&
