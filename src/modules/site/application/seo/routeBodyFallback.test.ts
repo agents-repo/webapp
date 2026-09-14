@@ -27,8 +27,10 @@ describe('renderRouteBodyFallbackHtml', () => {
     const html = renderRouteBodyFallbackHtml('/es/', 'https://agents-repo.org')
 
     expect(html).toContain(`id="${STATIC_ROUTE_FALLBACK_ID}"`)
+    expect(html).toContain('https://agents-repo.org/es/packages/')
     expect(html).toContain('https://agents-repo.org/llms.txt')
     expect(html).toContain('https://agents-repo.org/docs/for-ai-agents.md')
+    expect(html).not.toContain('https://agents-repo.org/packages/')
   })
 
   it('renders package detail fallback with markdown link and readme excerpt', () => {
@@ -59,6 +61,8 @@ describe('renderRouteBodyFallbackHtml', () => {
     )
 
     expect(html).toContain('/packages/agents-repo/sample-agent.md')
+    expect(html).toContain('https://agents-repo.org/es/packages/agents-repo/sample-agent/')
+    expect(html).not.toContain('https://agents-repo.org/packages/agents-repo/sample-agent/')
     expect(html).toContain('README excerpt')
   })
 })

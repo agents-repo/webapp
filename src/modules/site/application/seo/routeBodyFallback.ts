@@ -1,5 +1,6 @@
 import { getSitePageMeta } from '../accessibility/sitePageMeta.ts'
-import { parseLocaleFromPathname } from '../i18n/localePath.ts'
+import { localizedSitePath, parseLocaleFromPathname } from '../i18n/localePath.ts'
+import type { AppLocale } from '../i18n/supportedLocales.ts'
 import { publicSitePath } from '../routes/sitePath.ts'
 import { siteRoutes } from '../../presentation/routes/siteRoutes.ts'
 import { parsePackageSitePath } from '../../../registry/application/packageSiteRoutes.ts'
@@ -19,16 +20,16 @@ function escapeHtml(value: string): string {
 }
 
 function renderFallbackLink(origin: string, path: string, label: string): string {
-  const href = `${origin}${publicSitePath(path)}`
+  const href = `${origin}${path}`
   return `<li><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`
 }
 
-function renderHomeFallback(origin: string, description: string): string {
+function renderHomeFallback(origin: string, description: string, locale: AppLocale): string {
   const heading = siteName
   const links = [
-    renderFallbackLink(origin, siteRoutes.packages, 'Browse packages'),
-    renderFallbackLink(origin, '/llms.txt', 'llms.txt (docs index for agents)'),
-    renderFallbackLink(origin, '/docs/for-ai-agents.md', 'For AI agents (.md)'),
+    renderFallbackLink(origin, localizedSitePath(siteRoutes.packages, locale), 'Browse packages'),
+    renderFallbackLink(origin, publicSitePath('/llms.txt'), 'llms.txt (docs index for agents)'),
+    renderFallbackLink(origin, publicSitePath('/docs/for-ai-agents.md'), 'For AI agents (.md)'),
   ].join('\n      ')
 
   return [
@@ -50,11 +51,12 @@ function renderPackageDetailFallback(
   description: string,
   namespace: string,
   packageId: string,
+  locale: AppLocale,
   detail?: PackageDetailDocument,
 ): string {
   const markdownPath = getPackageSiteMarkdownPublicPath(namespace, packageId)
   const markdownUrl = `${origin}${markdownPath}`
-  const htmlPath = publicSitePath(`/packages/${namespace}/${packageId}`)
+  const htmlPath = localizedSitePath(`/packages/${namespace}/${packageId}`, locale)
   const htmlUrl = `${origin}${htmlPath}`
 
   const agentLines =
@@ -91,8 +93,13 @@ function renderPackageDetailFallback(
   ].join('\n')
 }
 
-function renderGenericFallback(origin: string, pageTitle: string, description: string): string {
-  const homeUrl = escapeHtml(`${origin}/`)
+function renderGenericFallback(
+  origin: string,
+  pageTitle: string,
+  description: string,
+  locale: AppLocale,
+): string {
+  const homeUrl = escapeHtml(`${origin}${localizedSitePath('/', locale)}`)
 
   return [
     `<noscript id="${STATIC_ROUTE_FALLBACK_ID}">`,
@@ -117,10 +124,10 @@ export function renderRouteBodyFallbackHtml(
   const head = getRouteHeadData(pathname, siteOriginOverride, options)
   const origin = getSiteOrigin(siteOriginOverride)
   const pageMeta = getSitePageMeta(pathname, options.catalog ?? null)
-  const { pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
+  const { locale, pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
 
   if (pathnameWithoutLocale === siteRoutes.home) {
-    return renderHomeFallback(origin, head.description)
+    return renderHomeFallback(origin, head.description, locale)
   }
 
   const packageRoute = parsePackageSitePath(pathnameWithoutLocale)
@@ -131,15 +138,16 @@ export function renderRouteBodyFallbackHtml(
       head.description,
       packageRoute.namespace,
       packageRoute.packageId,
+      locale,
       options.packageDetail,
     )
   }
 
   if (packageRoute?.kind === 'index' || packageRoute?.kind === 'namespace') {
-    return renderGenericFallback(origin, pageMeta.title, head.description)
+    return renderGenericFallback(origin, pageMeta.title, head.description, locale)
   }
 
-  return renderGenericFallback(origin, pageMeta.title, head.description)
+  return renderGenericFallback(origin, pageMeta.title, head.description, locale)
 }
 
 export function injectRouteBodyFallbackIntoHtml(
