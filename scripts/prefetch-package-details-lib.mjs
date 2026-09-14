@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
-import { sampleAgentPackageDetail } from '../e2e/fixtures/package-detail.ts'
+import { createE2ePackageDetailFromCatalogEntry } from '../e2e/fixtures/package-detail.ts'
 import { buildRegistryPackageDetailUrl } from '../src/modules/registry/infrastructure/registrySourceUrl.ts'
 import { isRegistryCatalog } from '../src/modules/registry/infrastructure/registryCatalogValidation.ts'
 import { readGeneratedPackageSiteCatalog } from './seo-build-config.ts'
@@ -103,7 +103,8 @@ export async function loadPackageDetailsForBuild(mode, options = {}) {
   if (mode === 'e2e') {
     const details = {}
     for (const pkg of catalog.packages) {
-      details[packageDetailKey(pkg.namespace, pkg.package)] = sampleAgentPackageDetail
+      details[packageDetailKey(pkg.namespace, pkg.package)] =
+        createE2ePackageDetailFromCatalogEntry(pkg)
     }
     return details
   }

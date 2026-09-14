@@ -43,5 +43,22 @@ describe('prefetch package details', () => {
 
     assert.deepEqual(detailKeys, ['agents-repo/hello-agent'])
     assert.notEqual(detailKeys.length, searchableCatalog.packages.length)
+    assert.equal(details['agents-repo/hello-agent'].metadata.name, 'hello-agent')
+    assert.equal(details['agents-repo/hello-agent'].package, 'agents-repo/hello-agent')
+  })
+
+  it('generates distinct E2E details per catalog entry', async () => {
+    const details = await loadPackageDetailsForBuild('e2e')
+
+    for (const pkg of searchableCatalog.packages) {
+      const key = `${pkg.namespace}/${pkg.package}`
+      const detail = details[key]
+
+      assert.ok(detail, `missing detail for ${key}`)
+      assert.equal(detail.package, key)
+      assert.equal(detail.version, pkg.latest)
+      assert.equal(detail.metadata.name, pkg.name)
+      assert.equal(detail.metadata.description, pkg.description)
+    }
   })
 })
