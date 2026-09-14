@@ -15,6 +15,7 @@ import { getDocDetailPath } from '../../application/docs/docsCatalog.ts'
 import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
 import { listRepositoryManifestEntries } from '../../application/repositories/repositoryManifest.ts'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
+import ExternalLinkListItem from '../layout/ExternalLinkListItem'
 import { siteRoutes } from '../routes/siteRoutes'
 import RepositoryCardGrid from '../repositories/RepositoryCardGrid.tsx'
 
@@ -27,6 +28,21 @@ type ContributeWayId =
   | 'addTests'
   | 'proposeSpecs'
 
+type ContributeInternalLink = {
+  readonly kind: 'internal'
+  readonly route: string
+  readonly labelKey: string
+}
+
+type ContributeExternalLink = {
+  readonly kind: 'external'
+  readonly href: string
+  readonly ariaLabelKey: string
+  readonly labelKey: string
+}
+
+type ContributeWayLink = ContributeInternalLink | ContributeExternalLink
+
 const contributeWayIds: readonly ContributeWayId[] = [
   'publishPackage',
   'improveDocs',
@@ -36,6 +52,131 @@ const contributeWayIds: readonly ContributeWayId[] = [
   'addTests',
   'proposeSpecs',
 ]
+
+const contributeWayLinks: Record<ContributeWayId, readonly ContributeWayLink[]> = {
+  publishPackage: [
+    {
+      kind: 'internal',
+      route: getDocDetailPath('submitting-a-package'),
+      labelKey: 'contribute.ways.publishPackage.submitPackageLink',
+    },
+    {
+      kind: 'external',
+      href: REGISTRY_CONTRIBUTING_URL,
+      ariaLabelKey: 'contribute.ways.publishPackage.contributingAriaLabel',
+      labelKey: 'contribute.ways.publishPackage.contributingLink',
+    },
+  ],
+  improveDocs: [
+    {
+      kind: 'internal',
+      route: siteRoutes.docs,
+      labelKey: 'contribute.ways.improveDocs.docsLink',
+    },
+    {
+      kind: 'internal',
+      route: getDocDetailPath('contributing-to-webapp'),
+      labelKey: 'contribute.ways.improveDocs.contributingWebappLink',
+    },
+  ],
+  fixBugs: [
+    {
+      kind: 'external',
+      href: WEBAPP_ISSUES_URL,
+      ariaLabelKey: 'contribute.ways.fixBugs.webappIssuesAriaLabel',
+      labelKey: 'contribute.ways.fixBugs.webappIssuesLink',
+    },
+    {
+      kind: 'external',
+      href: REGISTRY_ISSUES_URL,
+      ariaLabelKey: 'contribute.ways.fixBugs.registryIssuesAriaLabel',
+      labelKey: 'contribute.ways.fixBugs.registryIssuesLink',
+    },
+    {
+      kind: 'external',
+      href: CLI_ISSUES_URL,
+      ariaLabelKey: 'contribute.ways.fixBugs.cliIssuesAriaLabel',
+      labelKey: 'contribute.ways.fixBugs.cliIssuesLink',
+    },
+  ],
+  improveCli: [
+    {
+      kind: 'external',
+      href: CLI_CONTRIBUTING_URL,
+      ariaLabelKey: 'contribute.ways.improveCli.contributingAriaLabel',
+      labelKey: 'contribute.ways.improveCli.contributingLink',
+    },
+    {
+      kind: 'internal',
+      route: getDocDetailPath('cli-commands'),
+      labelKey: 'contribute.ways.improveCli.cliDocsLink',
+    },
+  ],
+  improveWebapp: [
+    {
+      kind: 'internal',
+      route: getDocDetailPath('contributing-to-webapp'),
+      labelKey: 'contribute.ways.improveWebapp.contributingWebappLink',
+    },
+    {
+      kind: 'external',
+      href: WEBAPP_ISSUES_URL,
+      ariaLabelKey: 'contribute.ways.improveWebapp.issuesAriaLabel',
+      labelKey: 'contribute.ways.improveWebapp.issuesLink',
+    },
+  ],
+  addTests: [
+    {
+      kind: 'external',
+      href: ORG_CONTRIBUTING_URL,
+      ariaLabelKey: 'contribute.ways.addTests.orgContributingAriaLabel',
+      labelKey: 'contribute.ways.addTests.orgContributingLink',
+    },
+    {
+      kind: 'external',
+      href: WEBAPP_CONTRIBUTING_URL,
+      ariaLabelKey: 'contribute.ways.addTests.webappContributingAriaLabel',
+      labelKey: 'contribute.ways.addTests.webappContributingLink',
+    },
+  ],
+  proposeSpecs: [
+    {
+      kind: 'internal',
+      route: getDocDetailPath('how-the-registry-works'),
+      labelKey: 'contribute.ways.proposeSpecs.registryDocsLink',
+    },
+    {
+      kind: 'external',
+      href: REGISTRY_CONTRIBUTING_URL,
+      ariaLabelKey: 'contribute.ways.proposeSpecs.contributingAriaLabel',
+      labelKey: 'contribute.ways.proposeSpecs.contributingLink',
+    },
+  ],
+}
+
+function ContributeWayLinkItem({
+  link,
+  localizedSitePath,
+}: {
+  readonly link: ContributeWayLink
+  readonly localizedSitePath: (path: string) => string
+}) {
+  const { t } = useTranslation('pages')
+
+  if (link.kind === 'external') {
+    return (
+      <ExternalLinkListItem href={link.href} accessibleLabel={t(link.ariaLabelKey)}>
+        {t(link.labelKey)}
+      </ExternalLinkListItem>
+    )
+  }
+
+  return (
+    <li>
+      <NavLink to={localizedSitePath(link.route)}>{t(link.labelKey)}</NavLink>
+    </li>
+  )
+}
 
 function ContributePage() {
   const { t } = useTranslation('pages')
@@ -90,154 +231,13 @@ function ContributePage() {
                         {t(`contribute.ways.${wayId}.body`)}
                       </p>
                       <ul className="mb-0">
-                        {wayId === 'publishPackage' ? (
-                          <>
-                            <li>
-                              <NavLink to={localizedSitePath(getDocDetailPath('submitting-a-package'))}>
-                                {t('contribute.ways.publishPackage.submitPackageLink')}
-                              </NavLink>
-                            </li>
-                            <li>
-                              <a
-                                href={REGISTRY_CONTRIBUTING_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.publishPackage.contributingAriaLabel'))}
-                              >
-                                {t('contribute.ways.publishPackage.contributingLink')}
-                              </a>
-                            </li>
-                          </>
-                        ) : null}
-                        {wayId === 'improveDocs' ? (
-                          <>
-                            <li>
-                              <NavLink to={localizedSitePath(siteRoutes.docs)}>
-                                {t('contribute.ways.improveDocs.docsLink')}
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink to={localizedSitePath(getDocDetailPath('contributing-to-webapp'))}>
-                                {t('contribute.ways.improveDocs.contributingWebappLink')}
-                              </NavLink>
-                            </li>
-                          </>
-                        ) : null}
-                        {wayId === 'fixBugs' ? (
-                          <>
-                            <li>
-                              <a
-                                href={WEBAPP_ISSUES_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.fixBugs.webappIssuesAriaLabel'))}
-                              >
-                                {t('contribute.ways.fixBugs.webappIssuesLink')}
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                href={REGISTRY_ISSUES_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.fixBugs.registryIssuesAriaLabel'))}
-                              >
-                                {t('contribute.ways.fixBugs.registryIssuesLink')}
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                href={CLI_ISSUES_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.fixBugs.cliIssuesAriaLabel'))}
-                              >
-                                {t('contribute.ways.fixBugs.cliIssuesLink')}
-                              </a>
-                            </li>
-                          </>
-                        ) : null}
-                        {wayId === 'improveCli' ? (
-                          <>
-                            <li>
-                              <a
-                                href={CLI_CONTRIBUTING_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.improveCli.contributingAriaLabel'))}
-                              >
-                                {t('contribute.ways.improveCli.contributingLink')}
-                              </a>
-                            </li>
-                            <li>
-                              <NavLink to={localizedSitePath(getDocDetailPath('cli-commands'))}>
-                                {t('contribute.ways.improveCli.cliDocsLink')}
-                              </NavLink>
-                            </li>
-                          </>
-                        ) : null}
-                        {wayId === 'improveWebapp' ? (
-                          <>
-                            <li>
-                              <NavLink to={localizedSitePath(getDocDetailPath('contributing-to-webapp'))}>
-                                {t('contribute.ways.improveWebapp.contributingWebappLink')}
-                              </NavLink>
-                            </li>
-                            <li>
-                              <a
-                                href={WEBAPP_ISSUES_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.improveWebapp.issuesAriaLabel'))}
-                              >
-                                {t('contribute.ways.improveWebapp.issuesLink')}
-                              </a>
-                            </li>
-                          </>
-                        ) : null}
-                        {wayId === 'addTests' ? (
-                          <>
-                            <li>
-                              <a
-                                href={ORG_CONTRIBUTING_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.addTests.orgContributingAriaLabel'))}
-                              >
-                                {t('contribute.ways.addTests.orgContributingLink')}
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                href={WEBAPP_CONTRIBUTING_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.addTests.webappContributingAriaLabel'))}
-                              >
-                                {t('contribute.ways.addTests.webappContributingLink')}
-                              </a>
-                            </li>
-                          </>
-                        ) : null}
-                        {wayId === 'proposeSpecs' ? (
-                          <>
-                            <li>
-                              <NavLink to={localizedSitePath(getDocDetailPath('how-the-registry-works'))}>
-                                {t('contribute.ways.proposeSpecs.registryDocsLink')}
-                              </NavLink>
-                            </li>
-                            <li>
-                              <a
-                                href={REGISTRY_CONTRIBUTING_URL}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={externalLinkName(t('contribute.ways.proposeSpecs.contributingAriaLabel'))}
-                              >
-                                {t('contribute.ways.proposeSpecs.contributingLink')}
-                              </a>
-                            </li>
-                          </>
-                        ) : null}
+                        {contributeWayLinks[wayId].map((link) => (
+                          <ContributeWayLinkItem
+                            key={link.labelKey}
+                            link={link}
+                            localizedSitePath={localizedSitePath}
+                          />
+                        ))}
                       </ul>
                     </Card.Body>
                   </Card>
