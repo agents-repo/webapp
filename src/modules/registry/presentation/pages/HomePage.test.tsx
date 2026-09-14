@@ -16,6 +16,8 @@ import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/pagina
 import {
   CLI_INIT_COMMAND,
   CLI_INSTALL_COMMAND,
+  FEATURED_PACKAGE_ID,
+  FEATURED_PACKAGE_REF,
   HOME_HERO_HEADING,
 } from '../components/homeLanding/homeLandingCopy'
 
@@ -294,10 +296,10 @@ describe('HomePage landing sections', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Install with the CLI' })).toBeInTheDocument()
     expect(screen.getByTestId('home-cli-init-terminal')).toHaveTextContent(CLI_INIT_COMMAND)
     expect(screen.getByTestId('home-cli-install-terminal')).toHaveTextContent(CLI_INSTALL_COMMAND)
-    expect(CLI_INSTALL_COMMAND).toContain('hello-agent')
-    expect(screen.getByRole('link', { name: 'View hello-agent package details' })).toHaveAttribute(
+    expect(CLI_INSTALL_COMMAND).toContain(FEATURED_PACKAGE_ID)
+    expect(screen.getByRole('link', { name: `View ${FEATURED_PACKAGE_ID} package details` })).toHaveAttribute(
       'href',
-      '/packages/agents-repo/hello-agent/',
+      `/packages/${FEATURED_PACKAGE_REF}/`,
     )
     expect(screen.getByRole('link', { name: 'Installing packages' })).toHaveAttribute(
       'href',
