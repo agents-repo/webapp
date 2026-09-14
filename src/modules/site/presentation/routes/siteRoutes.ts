@@ -26,6 +26,7 @@ export const siteRoutes = {
   community: '/community',
   contact: '/contact',
   helpUs: '/help-us',
+  contribute: '/contribute',
   docs: DOCS_BASE_PATH,
   repositories: REPOSITORIES_BASE_PATH,
   accessibility: '/accessibility',

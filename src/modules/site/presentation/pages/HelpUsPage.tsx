@@ -164,6 +164,7 @@ function HelpUsPage() {
             <Card.Body>
               <h2 className="h4">{t('helpUs.relatedHeading')}</h2>
               <p className="text-body-secondary mb-0">
+                <NavLink to={localizedSitePath(siteRoutes.contribute)}>{t('helpUs.contributeLink')}</NavLink>,{' '}
                 <NavLink to={localizedSitePath(siteRoutes.community)}>{t('helpUs.communityLink')}</NavLink>,{' '}
                 <NavLink to={localizedSitePath(siteRoutes.docs)}>{t('helpUs.docsLink')}</NavLink>,{' '}
                 {t('helpUs.relatedRepositoriesOn')}{' '}

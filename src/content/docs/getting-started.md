@@ -15,6 +15,7 @@ Agents Repo is the public site for the open **agents-repo** registry: curated **
 2. **Read how the registry is structured** in [How the registry works](/docs/how-the-registry-works).
 3. **Install packages into your project** with the CLI — start at [Installing packages](/docs/installing-packages).
 4. **Contribute packages** — see [Submit a package](/docs/submitting-a-package).
+5. **Explore all contribution paths** — visit the [Contribute](/contribute) hub for docs, repos, issues, and specs.
 
 ## Supported install targets
 

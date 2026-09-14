@@ -54,6 +54,8 @@ function AboutPage() {
               {t('about.getInvolvedIntro')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.contact)}>{t('about.contactLink')}</NavLink>,{' '}
               {t('about.getInvolvedMiddle')}{' '}
+              <NavLink to={localizedSitePath(siteRoutes.contribute)}>{t('about.contributeLink')}</NavLink>
+              {t('about.getInvolvedAfterContribute')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('about.helpUsLink')}</NavLink>
               {t('about.getInvolvedAfterHelpUs')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.repositories)}>{t('about.repositoriesLink')}</NavLink>

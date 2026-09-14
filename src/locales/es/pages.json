@@ -26,6 +26,8 @@
     "getInvolvedHeading": "Participa",
     "getInvolvedIntro": "Preguntas, comentarios y contribuciones son bienvenidos. Escríbenos en",
     "getInvolvedMiddle": ", consulta cómo contribuir en",
+    "contributeLink": "Contribuir",
+    "getInvolvedAfterContribute": ", crecimiento de paquetes en",
     "getInvolvedAfterHelpUs": ", o explora todos los repositorios de la organización en",
     "getInvolvedSuffix": ". El código fuente y el contenido del registro también están en GitHub:",
     "contactLink": "Contacto",
@@ -34,11 +36,92 @@
     "webappRepoDescription": "— esta aplicación web",
     "registryRepoDescription": "— agents, flows e índice del registro"
   },
+  "contribute": {
+    "title": "Contribuir",
+    "introHeading": "Libre y de código abierto",
+    "introBodyPrefix": "Agents Repo se construye en abierto. Cualquiera puede inspeccionar, usar y mejorar el registro, la webapp, la CLI y las políticas de la organización. Empieza con la",
+    "introContributingLink": "guía de contribución",
+    "introContributingAriaLabel": "Guía de contribución de la organización",
+    "introMiddle": "de la organización y consulta lo que estamos construyendo en la",
+    "introRoadmapLink": "hoja de ruta",
+    "introRoadmapAriaLabel": "Hoja de ruta de la organización",
+    "introSuffix": ".",
+    "waysHeading": "Formas de contribuir",
+    "ways": {
+      "publishPackage": {
+        "heading": "Publicar un paquete",
+        "body": "Añade agents o flows mantenidos al registro para los destinos de instalación compatibles.",
+        "submitPackageLink": "Enviar un paquete",
+        "contributingLink": "Guía de contribución del registro",
+        "contributingAriaLabel": "Guía de contribución del registro"
+      },
+      "improveDocs": {
+        "heading": "Mejorar la documentación",
+        "body": "Aclara las guías del catálogo, la CLI, el registro y la contribución en este sitio.",
+        "docsLink": "Explorar la documentación del sitio",
+        "contributingWebappLink": "Contribuir a la webapp"
+      },
+      "fixBugs": {
+        "heading": "Corregir errores",
+        "body": "Informa y corrige incidencias en los repositorios de la webapp, el registro o la CLI.",
+        "webappIssuesLink": "Incidencias de la webapp",
+        "webappIssuesAriaLabel": "Incidencias de la webapp",
+        "registryIssuesLink": "Incidencias del registro",
+        "registryIssuesAriaLabel": "Incidencias del registro",
+        "cliIssuesLink": "Incidencias de la CLI",
+        "cliIssuesAriaLabel": "Incidencias de la CLI"
+      },
+      "improveCli": {
+        "heading": "Mejorar la CLI",
+        "body": "Amplía los flujos de instalación, diagnósticos y cobertura de comandos.",
+        "contributingLink": "Guía de contribución de la CLI",
+        "contributingAriaLabel": "Guía de contribución de la CLI",
+        "cliDocsLink": "Referencia de comandos de la CLI"
+      },
+      "improveWebapp": {
+        "heading": "Mejorar la webapp",
+        "body": "Aporta mejoras de UI, UX, integración con el registro, accesibilidad y contenido del sitio.",
+        "contributingWebappLink": "Contribuir a la webapp",
+        "issuesLink": "Incidencias de la webapp",
+        "issuesAriaLabel": "Incidencias de la webapp"
+      },
+      "addTests": {
+        "heading": "Añadir pruebas",
+        "body": "Refuerza la cobertura de pruebas unitarias, de accesibilidad, end-to-end y de validación en los repositorios.",
+        "orgContributingLink": "Guía de contribución de la organización",
+        "orgContributingAriaLabel": "Guía de contribución de la organización",
+        "webappContributingLink": "Guía de contribución de la webapp",
+        "webappContributingAriaLabel": "Guía de contribución de la webapp"
+      },
+      "proposeSpecs": {
+        "heading": "Proponer especificaciones",
+        "body": "Evoluciona las especificaciones del registro, reglas de validación y contratos de metadatos de paquetes.",
+        "registryDocsLink": "Cómo funciona el registro",
+        "contributingLink": "Guía de contribución del registro",
+        "contributingAriaLabel": "Guía de contribución del registro"
+      }
+    },
+    "builtInTheOpenHeading": "Construido en abierto",
+    "builtInTheOpenBodyPrefix": "Cada proyecto de la organización agents-repo se desarrolla en público en GitHub. Explora el catálogo completo en",
+    "builtInTheOpenRepositoriesLink": "Repositorios",
+    "builtInTheOpenBodySuffix": "o revisa cada proyecto a continuación.",
+    "relatedHeading": "Relacionado",
+    "relatedPrefix": "Crecimiento de paquetes en",
+    "relatedHelpUsLink": "Ayúdanos",
+    "relatedAfterHelpUs": ", personas en",
+    "relatedCommunityLink": "Comunidad",
+    "relatedAfterCommunity": ", misión en",
+    "relatedAboutLink": "Acerca de",
+    "relatedAfterAbout": " y guías en",
+    "relatedDocsLink": "Documentación"
+  },
   "community": {
     "title": "Comunidad",
     "introPrefix": "Estas son las personas que mantienen los repositorios de la plataforma Agents Repo. Los colaboradores que ayuden mediante pull requests también aparecerán aquí. Si quieres unirte, empieza en",
+    "introMiddle": "o explora todas las formas de contribuir en",
     "introSuffix": ".",
     "helpUsLink": "Ayúdanos",
+    "contributeLink": "Contribuir",
     "maintainersHeading": "Mantenedores",
     "contributorsHeading": "Colaboradores",
     "noContributorsPrefix": "Aún no tenemos ningún colaborador",
@@ -121,6 +204,8 @@
     "supportComingSoon": "Próximamente:",
     "supportBody": "apoyo financiero a través de GitHub Sponsors, Patreon y plataformas similares. Las contribuciones de paquetes siguen siendo la forma más directa de ayudar hoy.",
     "relatedHeading": "Relacionado",
+    "contributeLink": "Contribuir",
+    "relatedContributeOn": "formas de contribución en",
     "relatedRepositoriesOn": "repositorios de la organización en",
     "relatedQuestionsOn": "preguntas en",
     "relatedContextOn": "y contexto en"
@@ -145,8 +230,10 @@
     "organizationHeading": "Repositorios de la organización",
     "contributeHeading": "Contribuir",
     "contributePrefix": "Empieza con la",
-    "contributeMiddle": " de la organización, consulta cómo ayudar en",
+    "contributeMiddle": " de la organización, explora formas de contribuir en",
+    "contributeAfterContribute": ", crecimiento de paquetes en",
     "contributeAfterHelpUs": ", o explora ideas de paquetes en",
+    "contributeLink": "Contribuir",
     "contributeAfterHome": ". Lee la",
     "contributeSuffix": "del sitio para documentación del catálogo, CLI y contribución.",
     "contributingGuide": "guía de contribución",

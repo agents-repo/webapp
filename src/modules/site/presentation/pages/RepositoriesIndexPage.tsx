@@ -84,6 +84,8 @@ function RepositoriesIndexPage() {
                   {t('repositories.contributingGuide')}
                 </a>
                 {t('repositories.contributeMiddle')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.contribute)}>{t('repositories.contributeLink')}</NavLink>
+                {t('repositories.contributeAfterContribute')}{' '}
                 <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('repositories.helpUsLink')}</NavLink>
                 {t('repositories.contributeAfterHelpUs')}{' '}
                 <NavLink to={localizedSitePath(siteRoutes.home)}>{t('repositories.homeLink')}</NavLink>

@@ -68,13 +68,13 @@
       "step3InstallTargetsLink": "destinos de instalación",
       "step3BodySuffix": " para detalles de rutas.",
       "step4Title": "Publica un paquete",
-      "step4BodyPrefix": "Envía un agente o flow mantenido—empieza con ",
-      "step4SubmitPackageLink": "enviar un paquete",
-      "step4BodySuffix": ".",
+      "step4BodyPrefix": "Envía un agente o flow mantenido—consulta ",
+      "step4ContributeLink": "Contribuir",
+      "step4BodySuffix": " para rutas de publicación.",
       "step5Title": "Comparte y haz crecer el catálogo",
       "step5BodyPrefix": "Ayuda a otros a descubrir herramientas—consulta ",
-      "step5HelpUsLink": "Ayúdanos",
-      "step5BodySuffix": " para formas de contribuir."
+      "step5ContributeLink": "Contribuir",
+      "step5BodySuffix": " para formas de ayudar."
     },
     "cliQuickstart": {
       "heading": "Instalar con la CLI",
@@ -97,8 +97,8 @@
     "contribute": {
       "heading": "Ayuda a hacer crecer el catálogo",
       "body": "El proyecto necesita sobre todo paquetes de agentes y flows. Envía un paquete mantenido u otras formas de ayudar.",
-      "submitPackage": "Enviar un paquete",
-      "helpUs": "Ayúdanos"
+      "primaryButton": "Contribuir",
+      "secondaryButton": "Formas de contribuir"
     }
   },
   "packageCard": {

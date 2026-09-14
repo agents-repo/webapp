@@ -26,6 +26,8 @@
     "getInvolvedHeading": "Get involved",
     "getInvolvedIntro": "Questions, feedback, and contributions are welcome. Reach out on",
     "getInvolvedMiddle": ", see how to contribute on",
+    "contributeLink": "Contribute",
+    "getInvolvedAfterContribute": ", package growth on",
     "getInvolvedAfterHelpUs": ", or browse all organization repositories on",
     "getInvolvedSuffix": ". Source code and registry content also live on GitHub:",
     "contactLink": "Contact",
@@ -34,11 +36,92 @@
     "webappRepoDescription": "— this web application",
     "registryRepoDescription": "— agents, flows, and registry index"
   },
+  "contribute": {
+    "title": "Contribute",
+    "introHeading": "Free and open source",
+    "introBodyPrefix": "Agents Repo is built in the open. Everyone can inspect, use, and improve the registry, webapp, CLI, and organization policies. Start with the organization",
+    "introContributingLink": "contributing guide",
+    "introContributingAriaLabel": "Organization contributing guide",
+    "introMiddle": "and see what we are building on the",
+    "introRoadmapLink": "roadmap",
+    "introRoadmapAriaLabel": "Organization roadmap",
+    "introSuffix": ".",
+    "waysHeading": "Ways to contribute",
+    "ways": {
+      "publishPackage": {
+        "heading": "Publish a package",
+        "body": "Add maintained agents or flows to the registry for supported install targets.",
+        "submitPackageLink": "Submit a package",
+        "contributingLink": "Registry contributing guide",
+        "contributingAriaLabel": "Registry contributing guide"
+      },
+      "improveDocs": {
+        "heading": "Improve docs",
+        "body": "Clarify catalog, CLI, registry, and contribution guides on this site.",
+        "docsLink": "Browse site docs",
+        "contributingWebappLink": "Contributing to webapp"
+      },
+      "fixBugs": {
+        "heading": "Fix bugs",
+        "body": "Report and fix issues in the webapp, registry, or CLI repositories.",
+        "webappIssuesLink": "Webapp issues",
+        "webappIssuesAriaLabel": "Webapp issues",
+        "registryIssuesLink": "Registry issues",
+        "registryIssuesAriaLabel": "Registry issues",
+        "cliIssuesLink": "CLI issues",
+        "cliIssuesAriaLabel": "CLI issues"
+      },
+      "improveCli": {
+        "heading": "Improve the CLI",
+        "body": "Extend install workflows, diagnostics, and command coverage.",
+        "contributingLink": "CLI contributing guide",
+        "contributingAriaLabel": "CLI contributing guide",
+        "cliDocsLink": "CLI command reference"
+      },
+      "improveWebapp": {
+        "heading": "Improve the webapp",
+        "body": "Ship UI, UX, registry integration, accessibility, and site content improvements.",
+        "contributingWebappLink": "Contributing to webapp",
+        "issuesLink": "Webapp issues",
+        "issuesAriaLabel": "Webapp issues"
+      },
+      "addTests": {
+        "heading": "Add tests",
+        "body": "Strengthen unit, accessibility, end-to-end, and validation coverage across repositories.",
+        "orgContributingLink": "Organization contributing guide",
+        "orgContributingAriaLabel": "Organization contributing guide",
+        "webappContributingLink": "Webapp contributing guide",
+        "webappContributingAriaLabel": "Webapp contributing guide"
+      },
+      "proposeSpecs": {
+        "heading": "Propose specs",
+        "body": "Evolve registry specifications, validation rules, and package metadata contracts.",
+        "registryDocsLink": "How the registry works",
+        "contributingLink": "Registry contributing guide",
+        "contributingAriaLabel": "Registry contributing guide"
+      }
+    },
+    "builtInTheOpenHeading": "Built in the open",
+    "builtInTheOpenBodyPrefix": "Every project in the agents-repo organization is developed in public on GitHub. Browse the full catalog on",
+    "builtInTheOpenRepositoriesLink": "Repositories",
+    "builtInTheOpenBodySuffix": "or explore each project below.",
+    "relatedHeading": "Related",
+    "relatedPrefix": "Package growth on",
+    "relatedHelpUsLink": "Help Us",
+    "relatedAfterHelpUs": ", people on",
+    "relatedCommunityLink": "Community",
+    "relatedAfterCommunity": ", mission on",
+    "relatedAboutLink": "About",
+    "relatedAfterAbout": ", and guides in",
+    "relatedDocsLink": "Docs"
+  },
   "community": {
     "title": "Community",
     "introPrefix": "These are the people who maintain the Agents Repo platform repositories. Contributors who help through pull requests will appear here as well. If you want to join in, start on",
+    "introMiddle": "or explore all contribution paths on",
     "introSuffix": ".",
     "helpUsLink": "Help Us",
+    "contributeLink": "Contribute",
     "maintainersHeading": "Maintainers",
     "contributorsHeading": "Contributors",
     "noContributorsPrefix": "We don't have any contributor yet",
@@ -121,6 +204,8 @@
     "supportComingSoon": "Coming soon:",
     "supportBody": "financial support through GitHub Sponsors, Patreon, and similar platforms. Package contributions remain the most direct way to help today.",
     "relatedHeading": "Related",
+    "contributeLink": "Contribute",
+    "relatedContributeOn": "contribution paths on",
     "relatedRepositoriesOn": "organization repositories on",
     "relatedQuestionsOn": "questions on",
     "relatedContextOn": "and context on"
@@ -145,8 +230,10 @@
     "organizationHeading": "Organization repositories",
     "contributeHeading": "Contribute",
     "contributePrefix": "Start with the organization",
-    "contributeMiddle": ", see how to help on",
+    "contributeMiddle": ", explore contribution paths on",
+    "contributeAfterContribute": ", package growth on",
     "contributeAfterHelpUs": ", or browse package ideas on",
+    "contributeLink": "Contribute",
     "contributeAfterHome": ". Read the site",
     "contributeSuffix": "for catalog, CLI, and contribution docs.",
     "contributingGuide": "contributing guide",

@@ -36,6 +36,7 @@ test.describe('Primary header', () => {
 
   const aboutItems = [
     { name: 'About', heading: 'About' },
+    { name: 'Contribute', heading: 'Contribute' },
     { name: 'Community', heading: 'Community' },
     { name: 'Contact', heading: 'Contact' },
   ] as const
