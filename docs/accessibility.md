@@ -75,8 +75,7 @@ window after scroll reset or restore.
   scrolls to the matching element when it exists; otherwise the window stays at
   the top. Initial load without a hash does not move the window. Same-path hash
   changes are not treated as query-only no-ops. Hash restore on Back/Forward
-  uses the saved offset, not the fragment. Home's **Use the CLI** control also
-  re-applies the `#cli-quickstart` scroll when the hash is already present.
+  uses the saved offset, not the fragment.
 - Lazy routes wait until `main` is not `aria-busy` before restoring or
   applying a hash target.
 
