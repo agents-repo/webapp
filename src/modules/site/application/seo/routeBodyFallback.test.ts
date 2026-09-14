@@ -44,6 +44,8 @@ describe('renderRouteBodyFallbackHtml', () => {
     expect(html).toContain('/packages/agents-repo/sample-agent.md')
     expect(html).toContain('README excerpt')
     expect(html).toContain('sample-agent')
+    expect(html).toContain('<h1>sample-agent</h1>')
+    expect(html).not.toContain('sample-agent — Agents Repo')
   })
 
   it('renders localized package detail fallback with markdown link', () => {

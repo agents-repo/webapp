@@ -1,4 +1,3 @@
-import { formatDocumentTitle } from '../accessibility/documentTitleFormat.ts'
 import { getSitePageMeta } from '../accessibility/sitePageMeta.ts'
 import { parseLocaleFromPathname } from '../i18n/localePath.ts'
 import { publicSitePath } from '../routes/sitePath.ts'
@@ -64,7 +63,7 @@ function renderPackageDetailFallback(
     detail?.flows.map((flow) => `- ${flow.name}: ${flow.description}`).join('\n') ?? ''
 
   const sections = [
-    `<h1>${escapeHtml(formatDocumentTitle(pageTitle))}</h1>`,
+    `<h1>${escapeHtml(pageTitle)}</h1>`,
     `<p>${escapeHtml(description)}</p>`,
     `<p>Markdown fallback: <a href="${escapeHtml(markdownUrl)}">${escapeHtml(markdownPath)}</a></p>`,
     `<p>Interactive catalog page: <a href="${escapeHtml(htmlUrl)}">${escapeHtml(htmlPath)}</a></p>`,
@@ -98,7 +97,7 @@ function renderGenericFallback(origin: string, pageTitle: string, description: s
   return [
     `<noscript id="${STATIC_ROUTE_FALLBACK_ID}">`,
     '  <main>',
-    `    <h1>${escapeHtml(formatDocumentTitle(pageTitle))}</h1>`,
+    `    <h1>${escapeHtml(pageTitle)}</h1>`,
     `    <p>${escapeHtml(description)}</p>`,
     `    <p><a href="${homeUrl}">${escapeHtml(siteName)}</a></p>`,
     '  </main>',

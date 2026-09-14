@@ -16,21 +16,20 @@ function packageDetailKey(namespace, packageId) {
   return `${namespace}/${packageId}`
 }
 
-async function mapWithConcurrency(items, concurrency, mapper) {
-  const results = new Array(items.length)
+async function forEachWithConcurrency(items, concurrency, worker) {
   let nextIndex = 0
 
-  async function worker() {
+  async function runWorker() {
     while (nextIndex < items.length) {
       const currentIndex = nextIndex
       nextIndex += 1
-      results[currentIndex] = await mapper(items[currentIndex], currentIndex)
+      await worker(items[currentIndex], currentIndex)
     }
   }
 
-  const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker())
-  await Promise.all(workers)
-  return results
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, () => runWorker()),
+  )
 }
 
 function isValidPackageDetailEntry(entry) {
@@ -112,7 +111,7 @@ export async function loadPackageDetailsForBuild(mode, options = {}) {
   const registryBaseUrl = await resolveProductionBaseUrl(mode, options)
   const details = {}
 
-  await mapWithConcurrency(catalog.packages, concurrency, async (pkg) => {
+  await forEachWithConcurrency(catalog.packages, concurrency, async (pkg) => {
     const detailUrl = buildRegistryPackageDetailUrl(
       registryBaseUrl,
       pkg.namespace,
