@@ -72,8 +72,10 @@ function ContributePage() {
             <Col key={wayId} md={6} lg={4}>
               <Card className="h-100">
                 <Card.Body className="d-flex flex-column">
-                  <h3 className="h5">{t(`contribute.ways.${wayId}.heading`)}</h3>
-                  <p className="text-body-secondary flex-grow-1">{t(`contribute.ways.${wayId}.body`)}</p>
+                  <h3 className="h5">{t(`contribute.ways.${wayId}.heading`, { defaultValue: wayId })}</h3>
+                  <p className="text-body-secondary flex-grow-1">
+                    {t(`contribute.ways.${wayId}.body`, { defaultValue: wayId })}
+                  </p>
                   <ul className="mb-0">
                     {contributeWayLinks[wayId].map((link) => (
                       <ContributeWayLinkItem

@@ -94,4 +94,12 @@ export const contributeWayLinks: Record<ContributeWayId, readonly ContributeWayL
   ],
 }
 
-export const contributeWayIds = Object.keys(contributeWayLinks) as ContributeWayId[]
+export const contributeWayIds: readonly ContributeWayId[] = [
+  'publishPackage',
+  'improveDocs',
+  'fixBugs',
+  'improveCli',
+  'improveWebapp',
+  'addTests',
+  'proposeSpecs',
+]
