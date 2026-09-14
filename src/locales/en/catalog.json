@@ -188,6 +188,17 @@
     "byOwner": "by",
     "viewOnGitHub": "View on GitHub",
     "viewOnGitHubAriaLabel": "View {{name}} on GitHub",
+    "reportIssue": "Report issue",
+    "reportIssueAriaLabel": "Report an issue for {{name}}",
+    "reportInRegistry": "Report in registry",
+    "reportInRegistryAriaLabel": "Report a registry issue for {{name}}",
+    "publishSimilar": "Publish similar package",
+    "recentlyUpdated": "Recently updated",
+    "lastUpdated": "Last updated",
+    "trustStripAriaLabel": "Package trust signals",
+    "trustStripLicense": "License",
+    "trustStripInstallTargets": "Install targets",
+    "trustStripDownloads": "Downloads",
     "metadataHeading": "Metadata",
     "license": "License",
     "homepage": "Homepage",
@@ -206,5 +217,16 @@
     "noReadme": "This package snapshot does not include a README.",
     "loadingPackage": "Loading package",
     "detailLoadError": "Unable to load package detail."
+  },
+  "packageNotFound": {
+    "title": "Package not found",
+    "lead": "The package path {{path}} is not in the current registry catalog.",
+    "leadGeneric": "This package path is not in the current registry catalog.",
+    "recoveryHeading": "Try one of these next steps",
+    "searchPackages": "Search packages",
+    "searchPackagesAriaLabel": "Search the catalog for {{query}}",
+    "browsePackages": "Browse all packages",
+    "readDocs": "Read getting started",
+    "returnHome": "Return home"
   }
 }

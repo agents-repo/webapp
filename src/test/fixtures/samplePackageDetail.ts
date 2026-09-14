@@ -12,6 +12,7 @@ export const samplePackageDetail: PackageDetailDocument = {
     license: 'MIT',
     homepage: 'https://agents-repo.org',
     maintainers: ['agents-repo'],
+    updatedAt: '2026-01-01T00:00:00.000Z',
     tags: ['sample'],
     status: 'active',
     category: 'agent',

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { NavLink, useParams } from 'react-router-dom'
 import GoogleTranslateLink from '../../../site/presentation/components/GoogleTranslateLink.tsx'
 import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
+import { getDocDetailPath } from '../../../site/application/docs/docsCatalog'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
 import {
@@ -22,8 +23,15 @@ import type { PackageDetailDocument } from '../../domain/packageDetail'
 import { loadPackageDetail } from '../../infrastructure/packageDetailRepository'
 import { buildRegistryPackageBrowseUrl } from '../../infrastructure/registrySourceUrl'
 import { getPackageDownloadStats } from '../../application/packageDownloadStats'
+import {
+  getPackageFreshnessLabel,
+  getPackageLastUpdatedAt,
+} from '../../application/packageFreshness'
+import { buildPackageIssuesUrl } from '../../application/packageIssuesUrl'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { PackageDownloadStatsSummary } from '../components/PackageDownloadStatsSummary'
+import { PackageFreshnessBadge } from '../components/PackageFreshnessBadge'
+import { PackageTrustStrip } from '../components/PackageTrustStrip'
 import { useCatalogMembershipRecheck } from '../catalog/useCatalogMembershipRecheck'
 import PackageCliInstallAction from '../components/PackageCliInstallAction'
 import { PackageDownloadMenu } from '../components/PackageDownloadMenu'
@@ -44,12 +52,15 @@ function PackageDetailHeader(options: {
   readonly catalogPackage: RegistryPackage
   readonly registryBaseUrl: string
   readonly githubRepositoryUrl: string
+  readonly detail: PackageDetailDocument | null
+  readonly isDetailLoading: boolean
 }): ReactNode {
   const { t } = useTranslation('catalog')
   const externalLinkName = useExternalLinkAccessibleName()
   const localizedSitePath = useLocalizedSitePath()
-  const { catalogPackage, registryBaseUrl, githubRepositoryUrl } = options
+  const { catalogPackage, registryBaseUrl, githubRepositoryUrl, detail, isDetailLoading } = options
   const packageSlug = toPackageSlug(catalogPackage.namespace, catalogPackage.package)
+  const packageRef = `${catalogPackage.namespace}/${catalogPackage.package}`
   const downloadTargets = getPackageDownloadTargets(catalogPackage, registryBaseUrl)
   const cliPackageRef = formatRegistryPackageRef(catalogPackage.namespace, catalogPackage.package)
   const githubUrl = buildRegistryPackageBrowseUrl(
@@ -58,12 +69,17 @@ function PackageDetailHeader(options: {
     catalogPackage.package,
   )
   const safeGithubUrl = githubUrl && isSafeExternalHttpUrl(githubUrl) ? githubUrl : null
+  const lastUpdatedAt = detail ? getPackageLastUpdatedAt(detail) : null
+  const freshness = lastUpdatedAt ? getPackageFreshnessLabel(lastUpdatedAt) : null
+  const issuesLink = detail && !isDetailLoading ? buildPackageIssuesUrl(detail.metadata, packageRef) : null
+  const publishSimilarPath = localizedSitePath(getDocDetailPath('submitting-a-package'))
 
   return (
     <div>
       <Stack direction="horizontal" gap={2} className="flex-wrap align-items-center mb-2">
         <h1 className="h2 mb-0">{catalogPackage.name}</h1>
         <PackageStatusBadge status={catalogPackage.status} />
+        <PackageFreshnessBadge freshness={freshness} />
       </Stack>
       <p className="text-body-secondary mb-2">
         {t('packageDetail.byOwner')}{' '}
@@ -111,6 +127,32 @@ function PackageDetailHeader(options: {
             <span className="package-card-action-label">{t('packageDetail.viewOnGitHub')}</span>
           </a>
         ) : null}
+        {issuesLink ? (
+          <a
+            href={issuesLink.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center package-card-action"
+            aria-label={externalLinkName(
+              issuesLink.kind === 'packageRepo'
+                ? t('packageDetail.reportIssueAriaLabel', { name: catalogPackage.name })
+                : t('packageDetail.reportInRegistryAriaLabel', { name: catalogPackage.name }),
+            )}
+          >
+            <FontAwesomeIcon icon={faExternalLink} aria-hidden="true" />
+            <span className="package-card-action-label">
+              {issuesLink.kind === 'packageRepo'
+                ? t('packageDetail.reportIssue')
+                : t('packageDetail.reportInRegistry')}
+            </span>
+          </a>
+        ) : null}
+        <NavLink
+          to={publishSimilarPath}
+          className="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center package-card-action"
+        >
+          <span className="package-card-action-label">{t('packageDetail.publishSimilar')}</span>
+        </NavLink>
       </div>
     </div>
   )
@@ -154,22 +196,18 @@ function getSafeHomepage(homepage: string | undefined): string | null {
 }
 
 function PackageDetailMetadataCard(options: {
-  readonly catalogPackage: RegistryPackage
   readonly detail: PackageDetailDocument | null
 }): ReactNode {
   const { t } = useTranslation('catalog')
   const metadata = options.detail?.metadata
   const homepage = getSafeHomepage(metadata?.homepage)
   const maintainers = metadata?.maintainers ?? []
-  const installTargets = options.catalogPackage.installTargets ?? []
-  const license = metadata?.license
 
   return (
     <Card className="flex-fill w-100 border-secondary-subtle">
       <Card.Body>
         <h2 className="h4">{t('packageDetail.metadataHeading')}</h2>
         <dl className="row mb-0 small">
-          {license ? <MetadataRow term={t('packageDetail.license')}>{license}</MetadataRow> : null}
           {homepage ? (
             <MetadataRow term={t('packageDetail.homepage')}>
               <PackageHomepageLink homepage={homepage} />
@@ -177,11 +215,6 @@ function PackageDetailMetadataCard(options: {
           ) : null}
           {maintainers.length > 0 ? (
             <MetadataRow term={t('packageDetail.maintainers')}>{maintainers.join(', ')}</MetadataRow>
-          ) : null}
-          {installTargets.length > 0 ? (
-            <MetadataRow term={t('packageDetail.installTargets')}>
-              {installTargets.map((target) => `${target.id} (${target.status})`).join(', ')}
-            </MetadataRow>
           ) : null}
         </dl>
       </Card.Body>
@@ -276,6 +309,13 @@ function PackageDetailLoaded(options: {
     }
   }, [catalogPackage, detailRequestKey, registryBaseUrl, t])
 
+  const downloadStats = getPackageDownloadStats(
+    downloadStatsById,
+    catalogPackage.namespace,
+    catalogPackage.package,
+  )
+  const lastUpdatedAt = detail ? getPackageLastUpdatedAt(detail) : null
+
   return (
     <div className="py-4 py-lg-5">
       <Container>
@@ -302,11 +342,20 @@ function PackageDetailLoaded(options: {
             catalogPackage={catalogPackage}
             registryBaseUrl={registryBaseUrl}
             githubRepositoryUrl={githubRepositoryUrl}
+            detail={detail}
+            isDetailLoading={isDetailLoading}
+          />
+
+          <PackageTrustStrip
+            catalogPackage={catalogPackage}
+            license={detail?.metadata.license}
+            lastUpdatedAt={lastUpdatedAt}
+            downloadStats={downloadStats}
           />
 
           <Row className="g-3">
             <Col md={6} className="d-flex">
-              <PackageDetailMetadataCard catalogPackage={catalogPackage} detail={detail} />
+              <PackageDetailMetadataCard detail={detail} />
             </Col>
             <Col md={6} className="d-flex">
               <Row className="g-3 flex-fill w-100">
@@ -317,11 +366,7 @@ function PackageDetailLoaded(options: {
                   <Card className="flex-fill w-100 border-secondary-subtle">
                     <Card.Body>
                       <PackageDownloadStatsSummary
-                        stats={getPackageDownloadStats(
-                          downloadStatsById,
-                          catalogPackage.namespace,
-                          catalogPackage.package,
-                        )}
+                        stats={downloadStats}
                         packageName={catalogPackage.name}
                         variant="detail"
                       />
