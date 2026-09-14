@@ -13,12 +13,12 @@ import {
 } from '../../../../test/fixtures/homePageTestFixtures'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
+import enCatalog from '../../../../locales/en/catalog.json' with { type: 'json' }
 import {
   CLI_INIT_COMMAND,
   CLI_INSTALL_COMMAND,
   FEATURED_PACKAGE_ID,
   FEATURED_PACKAGE_REF,
-  HOME_HERO_HEADING,
 } from '../components/homeLanding/homeLandingCopy'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
@@ -277,7 +277,9 @@ describe('HomePage landing sections', () => {
 
     renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    expect(await screen.findByRole('heading', { level: 1, name: HOME_HERO_HEADING })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: enCatalog.home.heroHeading }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Browse packages' })).toHaveAttribute('href', '/packages/')
     expect(screen.getByRole('link', { name: 'Publish an agent' })).toHaveAttribute(
       'href',
