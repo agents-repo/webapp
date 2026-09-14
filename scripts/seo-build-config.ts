@@ -76,6 +76,7 @@ function isValidPackageDetailEntry(value: unknown): boolean {
   return (
     typeof value === 'object' &&
     value !== null &&
+    !Array.isArray(value) &&
     typeof (value as Record<string, unknown>).name === 'string' &&
     typeof (value as Record<string, unknown>).description === 'string'
   )

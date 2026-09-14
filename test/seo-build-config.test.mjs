@@ -107,6 +107,21 @@ describe('seo-build-config', () => {
         () => readGeneratedPackageSiteDetails(),
         /entry "agents-repo\/sample-agent" is not a valid package detail document/,
       )
+
+      writeFileSync(
+        GENERATED_PACKAGE_SITE_DETAILS_PATH,
+        JSON.stringify({
+          'agents-repo/sample-agent': {
+            ...samplePackageDetail,
+            agents: [[]],
+          },
+        }),
+      )
+
+      assert.throws(
+        () => readGeneratedPackageSiteDetails(),
+        /entry "agents-repo\/sample-agent" is not a valid package detail document/,
+      )
     } finally {
       try {
         unlinkSync(GENERATED_PACKAGE_SITE_DETAILS_PATH)

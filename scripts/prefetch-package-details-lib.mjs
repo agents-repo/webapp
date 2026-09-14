@@ -36,6 +36,7 @@ function isValidPackageDetailEntry(entry) {
   return (
     entry &&
     typeof entry === 'object' &&
+    !Array.isArray(entry) &&
     typeof entry.name === 'string' &&
     typeof entry.description === 'string'
   )
@@ -45,10 +46,12 @@ function isMinimalPackageDetail(value) {
   return (
     value &&
     typeof value === 'object' &&
+    !Array.isArray(value) &&
     typeof value.package === 'string' &&
     typeof value.version === 'string' &&
     value.metadata &&
     typeof value.metadata === 'object' &&
+    !Array.isArray(value.metadata) &&
     typeof value.metadata.name === 'string' &&
     typeof value.metadata.description === 'string' &&
     (value.readmeMarkdown === undefined || typeof value.readmeMarkdown === 'string') &&
