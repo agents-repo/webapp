@@ -6,6 +6,7 @@ import { getPackagesIndexPath } from '../../application/packageSiteRoutes'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { CatalogResultsPanel } from '../components/PackageCatalogResults'
 import HomeCliQuickstartSection from '../components/homeLanding/HomeCliQuickstartSection'
+import HomeStartHereSection from '../components/homeLanding/HomeStartHereSection'
 import HomeContributeSection from '../components/homeLanding/HomeContributeSection'
 import HomeHeroSection from '../components/homeLanding/HomeHeroSection'
 import HomeHowItWorksSection from '../components/homeLanding/HomeHowItWorksSection'
@@ -36,6 +37,7 @@ function HomePage({ setHeaderSearchSlot }: HomePageProps) {
       <HomeValueSection />
       <HomeHowItWorksSection />
       <HomeCliQuickstartSection />
+      <HomeStartHereSection />
       <HomeUseInChatSection />
 
       <CatalogResultsPanel

@@ -4,6 +4,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Card, Col, Dropdown, Stack } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import type { CatalogSearchMatchField, PackageSearchMatchContext } from '../../application/catalogSearch'
 import { formatRegistryPackageRef, toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getNamespacePackagesPath, getPackageDetailPath } from '../../application/packageSiteRoutes'
 import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
@@ -13,6 +14,7 @@ import { useRegistryCatalog } from '../catalog/registryCatalogContext'
 import { PackageDownloadStatsSummary } from './PackageDownloadStatsSummary'
 import PackageCliInstallAction from './PackageCliInstallAction'
 import { PackageDownloadMenu } from './PackageDownloadMenu'
+import PackageInlineInstallCommand from './PackageInlineInstallCommand'
 import { PackageMetaBadges } from './PackageMetaBadges'
 import { PackageStatusBadge } from './PackageStatusBadge'
 import PackageUseInChatAction from './PackageUseInChatAction'
@@ -23,6 +25,14 @@ export interface PackageCardProps {
   readonly onFilterByOwner: (owner: string) => void
   readonly onToggleFacet?: (facet: 'category' | 'tag', value: string) => void
   readonly isFacetSelected?: (facet: 'category' | 'tag', value: string) => boolean
+  readonly searchMatchContext?: PackageSearchMatchContext | null
+}
+
+function formatSearchMatchFields(
+  fields: readonly CatalogSearchMatchField[],
+  translateField: (field: CatalogSearchMatchField) => string,
+): string {
+  return fields.map((field) => translateField(field)).join(', ')
 }
 
 export function PackageCard({
@@ -31,6 +41,7 @@ export function PackageCard({
   onFilterByOwner,
   onToggleFacet,
   isFacetSelected,
+  searchMatchContext = null,
 }: PackageCardProps) {
   const { t } = useTranslation('catalog')
   const localizedSitePath = useLocalizedSitePath()
@@ -42,6 +53,12 @@ export function PackageCard({
   const cliPackageRef = formatRegistryPackageRef(pkg.namespace, pkg.package)
   const showCli = cliPackageRef !== null
   const showUseInChat = pkg.chatWeb === true
+  const descriptionText = searchMatchContext?.descriptionSnippet ?? pkg.description
+  const matchFieldLabels = searchMatchContext
+    ? formatSearchMatchFields(searchMatchContext.fields, (field) =>
+        t(`packageCard.searchMatchField.${field}`),
+      )
+    : ''
 
   return (
     <Col>
@@ -101,9 +118,21 @@ export function PackageCard({
         </Card.Header>
 
         <Card.Body className="d-flex flex-column flex-grow-1 gap-3 p-3 p-lg-4">
+          {searchMatchContext ? (
+            <p className="small text-body-secondary mb-0 package-card-match-context">
+              {t('packageCard.searchMatchContext', { fields: matchFieldLabels })}
+            </p>
+          ) : null}
           <Card.Text as="p" className="small text-body-secondary mb-0 package-description">
-            {pkg.description}
+            {descriptionText}
           </Card.Text>
+          {showCli && cliPackageRef ? (
+            <PackageInlineInstallCommand
+              packageName={pkg.name}
+              packageRef={cliPackageRef}
+              controlId={packageSlug}
+            />
+          ) : null}
           <PackageMetaBadges pkg={pkg} onToggleFacet={onToggleFacet} isFacetSelected={isFacetSelected} />
         </Card.Body>
 
