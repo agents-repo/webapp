@@ -18,7 +18,12 @@
     "lead": "A crawlable index of every published package in the registry. Search by name, owner, description, tag, or category, and narrow results with filters.",
     "searchResults": "Search results for \"{{query}}\"",
     "publishedPackages": "Published packages",
-    "searchAriaLabel": "Search all packages"
+    "searchAriaLabel": "Search all packages",
+    "startHere": {
+      "title": "Start here",
+      "lead": "A curated set of beginner-friendly packages to install first. Search and filters still apply within this collection.",
+      "resultsHeading": "Start here packages"
+    }
   },
   "namespacePackages": {
     "title": "{{namespace}} packages",
@@ -89,6 +94,11 @@
       "installingPackagesLink": "Installing packages",
       "cliCommandsLink": "CLI command reference"
     },
+    "startHere": {
+      "heading": "Start here",
+      "viewAllButton": "View all in Start here",
+      "empty": "No Start here packages are available in the current catalog."
+    },
     "useInChat": {
       "heading": "Use in chat without installing",
       "body": "Some packages are chat-ready. Copy an instruction URL or markdown and a starter prompt into ChatGPT, Grok, Gemini, or Microsoft Copilot in the browser—no project install required.",
@@ -125,6 +135,15 @@
     "cliInstallHeading": "Install package",
     "cliCopyInitLabel": "Copy init command for {{name}}",
     "cliCopyInstallLabel": "Copy install command for {{name}}",
+    "inlineInstallCopyLabel": "Copy install command for {{name}}",
+    "searchMatchContext": "Matched in: {{fields}}",
+    "searchMatchField": {
+      "name": "name",
+      "description": "description",
+      "tag": "tag",
+      "owner": "owner",
+      "category": "category"
+    },
     "copySuccess": "Copied to clipboard.",
     "copyFailure": "Could not copy to clipboard. Copy the command manually.",
     "copyTextFailure": "Could not copy to clipboard. Copy the text manually.",

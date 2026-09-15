@@ -18,7 +18,12 @@
     "lead": "Um índice rastreável de cada pacote publicado no registry. Busque por nome, proprietário, descrição, tag ou categoria, e refine os resultados com filtros.",
     "searchResults": "Resultados da busca por \"{{query}}\"",
     "publishedPackages": "Pacotes publicados",
-    "searchAriaLabel": "Buscar todos os pacotes"
+    "searchAriaLabel": "Buscar todos os pacotes",
+    "startHere": {
+      "title": "Comece aqui",
+      "lead": "Um conjunto selecionado de pacotes para iniciantes que você pode instalar primeiro. A busca e os filtros continuam valendo dentro desta coleção.",
+      "resultsHeading": "Pacotes para começar"
+    }
   },
   "namespacePackages": {
     "title": "Pacotes de {{namespace}}",
@@ -89,6 +94,11 @@
       "installingPackagesLink": "Instalar pacotes",
       "cliCommandsLink": "Referência de comandos CLI"
     },
+    "startHere": {
+      "heading": "Comece aqui",
+      "viewAllButton": "Ver tudo em Comece aqui",
+      "empty": "Nenhum pacote de Comece aqui está disponível no catálogo atual."
+    },
     "useInChat": {
       "heading": "Usar no chat sem instalar",
       "body": "Alguns pacotes estão prontos para chat. Copie uma URL de instruções ou markdown e um prompt inicial para ChatGPT, Grok, Gemini ou Microsoft Copilot no navegador — sem instalar no projeto.",
@@ -125,6 +135,15 @@
     "cliInstallHeading": "Instalar pacote",
     "cliCopyInitLabel": "Copiar comando init para {{name}}",
     "cliCopyInstallLabel": "Copiar comando de instalação para {{name}}",
+    "inlineInstallCopyLabel": "Copiar comando de instalação para {{name}}",
+    "searchMatchContext": "Correspondência em: {{fields}}",
+    "searchMatchField": {
+      "name": "nome",
+      "description": "descrição",
+      "tag": "tag",
+      "owner": "proprietário",
+      "category": "categoria"
+    },
     "copySuccess": "Copiado para a área de transferência.",
     "copyFailure": "Não foi possível copiar para a área de transferência. Copie o comando manualmente.",
     "copyTextFailure": "Não foi possível copiar para a área de transferência. Copie o texto manualmente.",

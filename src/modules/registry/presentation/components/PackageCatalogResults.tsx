@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Alert, Card, Col, Container, Row } from 'react-bootstrap'
+import type { PackageSearchMatchContext } from '../../application/catalogSearch'
 import { useExternalLinkAccessibleName } from '../../../site/application/accessibility/useExternalLinkAccessibleName'
 import { toPackageSlug, type RegistryPackage } from '../../domain/package'
 import { getCatalogAlertState } from '../pages/homePageCatalogState'
@@ -79,6 +80,7 @@ export function PackageCatalogGrid(options: {
   readonly onFilterByOwner: (owner: string) => void
   readonly onToggleFacet?: (facet: 'category' | 'tag', value: string) => void
   readonly isFacetSelected?: (facet: 'category' | 'tag', value: string) => boolean
+  readonly searchMatchContextById?: ReadonlyMap<string, PackageSearchMatchContext>
   readonly xl?: number
 }): ReactNode {
   return (
@@ -91,6 +93,7 @@ export function PackageCatalogGrid(options: {
           onFilterByOwner={options.onFilterByOwner}
           onToggleFacet={options.onToggleFacet}
           isFacetSelected={options.isFacetSelected}
+          searchMatchContext={options.searchMatchContextById?.get(pkg.id) ?? null}
         />
       ))}
     </Row>
@@ -109,6 +112,7 @@ export function CatalogResultsPanel(options: {
   readonly hasCatalog: boolean
   readonly registryBaseUrl: string
   readonly onFilterByOwner: (owner: string) => void
+  readonly searchMatchContextById?: ReadonlyMap<string, PackageSearchMatchContext>
   readonly resultsActions?: ReactNode
   readonly resultsFooter?: ReactNode
   readonly emptyMatchMessage?: string
@@ -152,6 +156,7 @@ export function CatalogResultsPanel(options: {
               packages={options.filteredPackages}
               registryBaseUrl={options.registryBaseUrl}
               onFilterByOwner={options.onFilterByOwner}
+              searchMatchContextById={options.searchMatchContextById}
             />
 
             {options.filteredPackages.length === 0 ? (
