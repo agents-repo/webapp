@@ -11,6 +11,14 @@ import {
 } from './buildRouteHead'
 import { getSiteSeoMeta } from './siteSeoMeta'
 
+function escapeHtmlAttributeContent(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+}
+
 describe('getRouteHeadData', () => {
   it('uses absolute canonical and OG image URLs', () => {
     const head = getRouteHeadData(siteRoutes.about, 'https://agents-repo.org')
@@ -39,8 +47,12 @@ describe('getRouteHeadData', () => {
     expect(head.description).toBe(plainDescription)
     expect(head.ogDescription).toContain('npx agents-repo install agents-repo/sample-agent')
     expect(head.twitterDescription).toBe(head.ogDescription)
-    expect(html).toContain(`property="og:description" content="${head.ogDescription.replaceAll('"', '&quot;')}"`)
-    expect(html).toContain(`name="description" content="${plainDescription.replaceAll('"', '&quot;')}"`)
+    expect(html).toContain(
+      `property="og:description" content="${escapeHtmlAttributeContent(head.ogDescription)}"`,
+    )
+    expect(html).toContain(
+      `name="description" content="${escapeHtmlAttributeContent(plainDescription)}"`,
+    )
   })
 
   it('emits CollectionPage JSON-LD on package indexes and SoftwareSourceCode on detail', () => {

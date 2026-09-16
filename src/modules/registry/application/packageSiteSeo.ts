@@ -103,10 +103,6 @@ export function getPackageDetailShareSeoDescription(pkg: RegistryPackage): strin
     return clampSeoDescription(installCommand)
   }
 
-  if (description.length <= maxDescriptionLength) {
-    return `${description}${suffix}`
-  }
-
   const maxDescriptionWithEllipsis = maxLength - suffix.length - ellipsis.length
   if (maxDescriptionWithEllipsis < 1) {
     return clampSeoDescription(installCommand)
