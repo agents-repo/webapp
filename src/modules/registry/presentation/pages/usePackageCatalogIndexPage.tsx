@@ -359,12 +359,12 @@ export function usePackageCatalogIndexPage(options: {
   )
 
   useEffect(() => {
-    setHeaderSearchSlot(stickySearch ? searchControl : null)
+    setHeaderSearchSlot(stickySearch && isLgViewport ? searchControl : null)
 
     return () => {
       setHeaderSearchSlot(null)
     }
-  }, [searchControl, setHeaderSearchSlot, stickySearch])
+  }, [isLgViewport, searchControl, setHeaderSearchSlot, stickySearch])
 
   const previousStickySearchRef = useRef(stickySearch)
   useLayoutEffect(() => {
