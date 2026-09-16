@@ -255,8 +255,8 @@ export function usePackageCatalogIndexPage(options: {
       ),
     [downloadPeriod, downloadStatsById, filters, listingPackages],
   )
-  const sidebarVisible = !sidebarCollapsed
-  const catalogPageSize = getPackageCatalogPageSize(sidebarVisible)
+  const sidebarVisibleForPageSize = isLgViewport && !sidebarCollapsed
+  const catalogPageSize = getPackageCatalogPageSize(sidebarVisibleForPageSize)
   const catalogPageCount = getPackageCatalogPageCount(filteredPackages.length, catalogPageSize)
   const catalogPage = clampPackageCatalogPage(requestedPage, catalogPageCount)
   const pagedPackages = useMemo(
