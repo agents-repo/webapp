@@ -12,7 +12,10 @@ import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/pagina
 import { START_HERE_PACKAGE_REFS } from '../../application/startHereCollection'
 import type { RegistryPackage } from '../../domain/package'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
-import { withPackageCatalogSearchFocusState } from '../../application/catalogSearchNavigation'
+import {
+  completePackageCatalogSearchFocusHandoff,
+  withPackageCatalogSearchFocusState,
+} from '../../application/catalogSearchNavigation'
 import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { localizedSitePath } from '../../../site/application/i18n/localePath.ts'
@@ -34,6 +37,7 @@ describe('PackagesIndexPage', () => {
     cleanup()
     vi.clearAllMocks()
     clearTestStorage()
+    completePackageCatalogSearchFocusHandoff()
   })
 
   it('hides the Google Translate link on the English packages page', async () => {
