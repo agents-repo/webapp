@@ -30,6 +30,7 @@ export interface PackageCatalogIndexLayoutProps {
   readonly searchAriaLabel: string
   readonly packages: readonly RegistryPackage[]
   readonly catalog: RegistryCatalog | null
+  readonly enableCollection?: boolean
 }
 
 function FilterToggleButtons(options: {
@@ -99,6 +100,7 @@ function PackageCatalogListingColumn(options: {
         onFilterByOwner={page.filterByOwner}
         onToggleFacet={(facet, value) => page.toggleFilter(facet, value)}
         isFacetSelected={page.isFacetSelected}
+        searchMatchContextById={page.searchMatchContextById}
         xl={sidebarVisible ? 2 : 3}
       />
       {page.showCatalogPagination ? (
@@ -126,6 +128,7 @@ export function PackageCatalogIndexLayout({
   searchAriaLabel,
   packages,
   catalog,
+  enableCollection = false,
 }: PackageCatalogIndexLayoutProps) {
   const { t } = useTranslation('catalog')
   const page = usePackageCatalogIndexPage({
@@ -134,6 +137,7 @@ export function PackageCatalogIndexLayout({
     searchInputId,
     searchAriaLabel,
     setHeaderSearchSlot,
+    enableCollection,
   })
   const sidebarVisible = !page.sidebarCollapsed
 

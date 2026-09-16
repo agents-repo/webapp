@@ -9,6 +9,8 @@ import PackagesIndexPage from './PackagesIndexPage'
 import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixtures'
 import { filterableRegistryCatalog } from '../../../../test/fixtures/filterableRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
+import { START_HERE_PACKAGE_REFS } from '../../application/startHereCollection'
+import type { RegistryPackage } from '../../domain/package'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
 import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
@@ -427,5 +429,53 @@ describe('PackagesIndexPage', () => {
       expect(screen.getByTestId('location-search')).toHaveTextContent('period=7d')
       expect(screen.getByTestId('location-search')).not.toHaveTextContent('page=')
     })
+  })
+
+  it('shows the start-here collection view', async () => {
+    const startHerePackages: RegistryPackage[] = START_HERE_PACKAGE_REFS.map((ref) => {
+      const [namespace, packageId] = ref.split('/')
+      return {
+        id: ref,
+        namespace,
+        package: packageId,
+        path: `packages/${ref}`,
+        name: packageId,
+        description: `Description for ${packageId}`,
+        owner: namespace,
+        latest: '1.0.0',
+        tags: ['starter'],
+        status: 'active',
+        category: 'assistant',
+        estimateOverallCost: { band: 'low' },
+        installTargets: [{ id: 'cursor', status: 'supported' }],
+      }
+    })
+
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: {
+        ...loadedCatalogContext.catalog!,
+        packages: [...startHerePackages, ...filterableRegistryCatalog.packages],
+      },
+    })
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: ['/packages?collection=start-here'],
+    })
+
+    expect(screen.getByRole('heading', { name: 'Start here', level: 1 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'hello-agent' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'review-agent' })).not.toBeInTheDocument()
+  })
+
+  it('shows per-card search match context when query is non-empty', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: ['/packages?q=accessibility'],
+    })
+
+    expect(await screen.findByText(/Matched in: description/i)).toBeInTheDocument()
+    expect(screen.getByText(/accessibility testing/i)).toBeInTheDocument()
   })
 })

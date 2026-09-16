@@ -5,6 +5,7 @@ import { Button, Overlay, Tooltip } from 'react-bootstrap'
 
 export interface CliTerminalCommandRowProps {
   readonly commandText: string
+  readonly commandAccessibleLabel: string
   readonly copyLabel: string
   readonly onCopy: () => void
   readonly copyDisabled?: boolean
@@ -16,6 +17,7 @@ export interface CliTerminalCommandRowProps {
 
 function CliTerminalCommandRow({
   commandText,
+  commandAccessibleLabel,
   copyLabel,
   onCopy,
   copyDisabled = false,
@@ -35,7 +37,7 @@ function CliTerminalCommandRow({
   return (
     <div className={terminalClassName} data-testid={dataTestId}>
       <span id={labelId} className="visually-hidden">
-        {copyLabel.replace(/^Copy /i, '')}
+        {commandAccessibleLabel}
       </span>
       <span className="package-cli-terminal__prompt" aria-hidden="true">
         $

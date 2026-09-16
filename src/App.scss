@@ -139,6 +139,19 @@
   }
 }
 
+.package-card-inline-install {
+  min-width: 0;
+
+  .package-cli-terminal {
+    font-size: 0.75rem;
+    padding: 0.45rem 0.55rem;
+  }
+}
+
+.package-card-match-context {
+  font-style: italic;
+}
+
 .package-card-title-link {
   color: inherit;
   text-decoration: none;

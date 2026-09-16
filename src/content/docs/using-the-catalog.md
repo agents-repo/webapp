@@ -7,14 +7,28 @@ section: Catalog
 
 [Home](/) is an end-user landing page: a value-focused hero with search,
 explainer blocks (supported tools, what you gain, how it works), a copyable CLI
-quickstart, a Use in chat callout, then a first slice of packages most
-downloaded in the last year, and a short contribute CTA. **View all packages**
+quickstart (with a link to the **Start here** curated collection), a Use in chat callout, then a
+first slice of packages most downloaded in the last year, and a short contribute
+CTA. **View all packages**
 links go to the crawlable [Packages](/packages) index (one in the results
 heading row, and a larger button below the package cards or empty-catalog
 message). Catalog schema version is shown in
 **Website settings**, not on Home or Packages listings. Each card shows metadata, status, supported
 install targets, download counts, and actions. Footer actions use short labels (**CLI**, **Use in chat**, **Download**, **View**). **View** and the package title open the in-app
-package page. **View on GitHub** is on that page. On narrow screens those labels stay visible; on medium and larger screens they stay collapsed (icon-first) until you hover or keyboard-focus that control, or until a menu or dialog from that control is open.
+package page. **View on GitHub** is on that page. On medium and larger screens,
+each card also shows a one-line `npx agents-repo install <ref>` command with a
+copy button in the card body (the inline row hides on narrow screens to avoid
+clutter; the CLI popover remains available). On narrow screens those footer
+labels stay visible; on medium and larger screens they stay collapsed
+(icon-first) until you hover or keyboard-focus that control, or until a menu or
+dialog from that control is open.
+
+## Start here collection
+
+The **Start here** curated set of beginner-friendly packages is available at
+[Packages](/packages/?collection=start-here). Home links to it from the CLI
+quickstart section. Search and facet filters still apply inside that collection.
+Namespace listings ignore the `collection` parameter.
 
 ## Catalog freshness
 
@@ -45,7 +59,10 @@ screens. Facet groups that already have a selected value in the URL start
 expanded. Yanked packages stay hidden on those listings.
 
 Use the header search on large screens to filter packages by name or
-description. Review status badges and target compatibility before installing.
+description. When the search query is non-empty, each matching card shows
+which fields matched (name, description, tag, owner, or category) and may shorten the
+description around the match. Review status badges and target compatibility
+before installing.
 
 Package cards show the all-time download count under the status badge. Hover,
 keyboard-focus, or click that count for last 7, 30, and 365 day windows (click
@@ -73,9 +90,11 @@ Package cards may offer:
   files. Gemini and Microsoft Copilot remain copy-paste.
 - **Direct download** links for version ZIPs per install target (when the registry publishes artifacts).
 - **Copy CLI install** commands (`npx agents-repo install …`) for quick trials.
-  The CLI popover stays inside the viewport: it flips below the button when
-  there is not enough room above, and the panel scrolls if it is taller than
-  the window.
+  On medium and larger screens, cards also show the install command inline with
+  a copy button. The **CLI** popover still offers init commands and install
+  target selection. The CLI popover stays inside the viewport: it flips below
+  the button when there is not enough room above, and the panel scrolls if it
+  is taller than the window.
 - **View** opens the in-app package page (`/packages/<namespace>/<package-id>`).
   That page repeats CLI, Use in chat, and Download, and adds **View on GitHub**
   to inspect package source in the registry repository. The README on that page

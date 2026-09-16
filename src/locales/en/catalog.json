@@ -18,7 +18,12 @@
     "lead": "A crawlable index of every published package in the registry. Search by name, owner, description, tag, or category, and narrow results with filters.",
     "searchResults": "Search results for \"{{query}}\"",
     "publishedPackages": "Published packages",
-    "searchAriaLabel": "Search all packages"
+    "searchAriaLabel": "Search all packages",
+    "startHere": {
+      "title": "Start here",
+      "lead": "A curated set of beginner-friendly packages to install first. Search and filters still apply within this collection.",
+      "resultsHeading": "Start here packages"
+    }
   },
   "namespacePackages": {
     "title": "{{namespace}} packages",
@@ -83,11 +88,15 @@
       "initLabel": "Initialize install targets",
       "installLabel": "Install a package",
       "copyInitLabel": "Copy init command",
+      "initCommandLabel": "Init command",
       "copyInstallLabel": "Copy install command",
+      "installCommandLabel": "Install command",
       "copySuccess": "Copied to clipboard.",
       "copyFailure": "Could not copy to clipboard. Copy the command manually.",
       "installingPackagesLink": "Installing packages",
-      "cliCommandsLink": "CLI command reference"
+      "cliCommandsLink": "CLI command reference",
+      "startHerePrompt": "New to the registry?",
+      "startHereLink": "Browse Start here packages"
     },
     "useInChat": {
       "heading": "Use in chat without installing",
@@ -124,7 +133,19 @@
     "cliInitHeading": "Initialize project",
     "cliInstallHeading": "Install package",
     "cliCopyInitLabel": "Copy init command for {{name}}",
+    "cliInitCommandLabel": "Init command for {{name}}",
     "cliCopyInstallLabel": "Copy install command for {{name}}",
+    "cliInstallCommandLabel": "Install command for {{name}}",
+    "inlineInstallCopyLabel": "Copy install command for {{name}}",
+    "inlineInstallCommandLabel": "Install command for {{name}}",
+    "searchMatchContext": "Matched in: {{fields}}",
+    "searchMatchField": {
+      "name": "name",
+      "description": "description",
+      "tag": "tag",
+      "owner": "owner",
+      "category": "category"
+    },
     "copySuccess": "Copied to clipboard.",
     "copyFailure": "Could not copy to clipboard. Copy the command manually.",
     "copyTextFailure": "Could not copy to clipboard. Copy the text manually.",

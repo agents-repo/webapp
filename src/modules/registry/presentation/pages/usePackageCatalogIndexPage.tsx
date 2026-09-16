@@ -5,7 +5,11 @@ import {
   getInitialCatalogFiltersSidebarCollapsed,
   persistCatalogFiltersSidebarCollapsed,
 } from '../../application/catalogFilterPreferences'
-import { CATALOG_SEARCH_DEBOUNCE_MS } from '../../application/catalogSearch'
+import { buildPackageSearchMatchContextMap, CATALOG_SEARCH_DEBOUNCE_MS } from '../../application/catalogSearch'
+import {
+  parsePackageCatalogCollection,
+  restrictPackagesToCollection,
+} from '../../application/startHereCollection'
 import {
   applyPackageCatalogFiltersToSearchParams,
   collectPackageCatalogFacets,
@@ -70,8 +74,16 @@ export function usePackageCatalogIndexPage(options: {
   readonly searchInputId: string
   readonly searchAriaLabel?: string
   readonly setHeaderSearchSlot: (slot: ReactNode | null) => void
+  readonly enableCollection?: boolean
 }) {
-  const { catalog, packages, searchInputId, searchAriaLabel, setHeaderSearchSlot } = options
+  const {
+    catalog,
+    packages,
+    searchInputId,
+    searchAriaLabel,
+    setHeaderSearchSlot,
+    enableCollection = false,
+  } = options
   const {
     cacheState: catalogCacheState,
     indexUrl: catalogSourceUrl,
@@ -149,7 +161,15 @@ export function usePackageCatalogIndexPage(options: {
     [setSearchParams],
   )
 
-  const listingPackages = useMemo(() => excludeYankedPackages(packages), [packages])
+  const activeCollection = useMemo(
+    () => (enableCollection ? parsePackageCatalogCollection(searchParams) : null),
+    [enableCollection, searchParams],
+  )
+
+  const listingPackages = useMemo(() => {
+    const visiblePackages = excludeYankedPackages(packages)
+    return restrictPackagesToCollection(visiblePackages, activeCollection)
+  }, [activeCollection, packages])
 
   const filteredPackages = useMemo(
     () =>
@@ -165,6 +185,10 @@ export function usePackageCatalogIndexPage(options: {
   const pagedPackages = useMemo(
     () => slicePackageCatalogPage(filteredPackages, catalogPage),
     [catalogPage, filteredPackages],
+  )
+  const searchMatchContextById = useMemo(
+    () => buildPackageSearchMatchContextMap(pagedPackages, filters.query),
+    [filters.query, pagedPackages],
   )
   const shouldFocusResultsSummaryRef = useRef(false)
 
@@ -310,6 +334,8 @@ export function usePackageCatalogIndexPage(options: {
     searchControl,
     stickySearch,
     trimmedQuery: draftQuery.trim(),
+    activeCollection,
+    searchMatchContextById,
     selectedFacetCount: countSelectedPackageCatalogFacets(filters),
     sidebarCollapsed,
     filtersOffcanvasOpen,

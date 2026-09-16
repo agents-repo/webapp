@@ -18,7 +18,12 @@
     "lead": "Un índice rastreable de cada paquete publicado en el registry. Busca por nombre, propietario, descripción, etiqueta o categoría, y reduce los resultados con filtros.",
     "searchResults": "Resultados de búsqueda para \"{{query}}\"",
     "publishedPackages": "Paquetes publicados",
-    "searchAriaLabel": "Buscar todos los paquetes"
+    "searchAriaLabel": "Buscar todos los paquetes",
+    "startHere": {
+      "title": "Empieza aquí",
+      "lead": "Un conjunto seleccionado de paquetes para principiantes que puedes instalar primero. La búsqueda y los filtros siguen aplicándose dentro de esta colección.",
+      "resultsHeading": "Paquetes para empezar"
+    }
   },
   "namespacePackages": {
     "title": "Paquetes de {{namespace}}",
@@ -83,11 +88,15 @@
       "initLabel": "Inicializar destinos de instalación",
       "installLabel": "Instalar un paquete",
       "copyInitLabel": "Copiar comando init",
+      "initCommandLabel": "Comando init",
       "copyInstallLabel": "Copiar comando install",
+      "installCommandLabel": "Comando install",
       "copySuccess": "Copiado al portapapeles.",
       "copyFailure": "No se pudo copiar al portapapeles. Copia el comando manualmente.",
       "installingPackagesLink": "Instalar paquetes",
-      "cliCommandsLink": "Referencia de comandos CLI"
+      "cliCommandsLink": "Referencia de comandos CLI",
+      "startHerePrompt": "¿Nuevo en el registro?",
+      "startHereLink": "Explorar paquetes de Empieza aquí"
     },
     "useInChat": {
       "heading": "Usar en chat sin instalar",
@@ -124,7 +133,19 @@
     "cliInitHeading": "Inicializar proyecto",
     "cliInstallHeading": "Instalar paquete",
     "cliCopyInitLabel": "Copiar comando init para {{name}}",
+    "cliInitCommandLabel": "Comando init para {{name}}",
     "cliCopyInstallLabel": "Copiar comando de instalación para {{name}}",
+    "cliInstallCommandLabel": "Comando de instalación para {{name}}",
+    "inlineInstallCopyLabel": "Copiar comando de instalación para {{name}}",
+    "inlineInstallCommandLabel": "Comando de instalación para {{name}}",
+    "searchMatchContext": "Coincidencia en: {{fields}}",
+    "searchMatchField": {
+      "name": "nombre",
+      "description": "descripción",
+      "tag": "etiqueta",
+      "owner": "propietario",
+      "category": "categoría"
+    },
     "copySuccess": "Copiado al portapapeles.",
     "copyFailure": "No se pudo copiar al portapapeles. Copia el comando manualmente.",
     "copyTextFailure": "No se pudo copiar al portapapeles. Copia el texto manualmente.",

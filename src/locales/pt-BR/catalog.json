@@ -18,7 +18,12 @@
     "lead": "Um índice rastreável de cada pacote publicado no registry. Busque por nome, proprietário, descrição, tag ou categoria, e refine os resultados com filtros.",
     "searchResults": "Resultados da busca por \"{{query}}\"",
     "publishedPackages": "Pacotes publicados",
-    "searchAriaLabel": "Buscar todos os pacotes"
+    "searchAriaLabel": "Buscar todos os pacotes",
+    "startHere": {
+      "title": "Comece aqui",
+      "lead": "Um conjunto selecionado de pacotes para iniciantes que você pode instalar primeiro. A busca e os filtros continuam valendo dentro desta coleção.",
+      "resultsHeading": "Pacotes para começar"
+    }
   },
   "namespacePackages": {
     "title": "Pacotes de {{namespace}}",
@@ -83,11 +88,15 @@
       "initLabel": "Inicializar destinos de instalação",
       "installLabel": "Instalar um pacote",
       "copyInitLabel": "Copiar comando init",
+      "initCommandLabel": "Comando init",
       "copyInstallLabel": "Copiar comando install",
+      "installCommandLabel": "Comando install",
       "copySuccess": "Copiado para a área de transferência.",
       "copyFailure": "Não foi possível copiar para a área de transferência. Copie o comando manualmente.",
       "installingPackagesLink": "Instalar pacotes",
-      "cliCommandsLink": "Referência de comandos CLI"
+      "cliCommandsLink": "Referência de comandos CLI",
+      "startHerePrompt": "Novo no registro?",
+      "startHereLink": "Explorar pacotes Comece aqui"
     },
     "useInChat": {
       "heading": "Usar no chat sem instalar",
@@ -124,7 +133,19 @@
     "cliInitHeading": "Inicializar projeto",
     "cliInstallHeading": "Instalar pacote",
     "cliCopyInitLabel": "Copiar comando init para {{name}}",
+    "cliInitCommandLabel": "Comando init para {{name}}",
     "cliCopyInstallLabel": "Copiar comando de instalação para {{name}}",
+    "cliInstallCommandLabel": "Comando de instalação para {{name}}",
+    "inlineInstallCopyLabel": "Copiar comando de instalação para {{name}}",
+    "inlineInstallCommandLabel": "Comando de instalação para {{name}}",
+    "searchMatchContext": "Correspondência em: {{fields}}",
+    "searchMatchField": {
+      "name": "nome",
+      "description": "descrição",
+      "tag": "tag",
+      "owner": "proprietário",
+      "category": "categoria"
+    },
     "copySuccess": "Copiado para a área de transferência.",
     "copyFailure": "Não foi possível copiar para a área de transferência. Copie o comando manualmente.",
     "copyTextFailure": "Não foi possível copiar para a área de transferência. Copie o texto manualmente.",

@@ -34,4 +34,13 @@ describe('HomeCliQuickstartSection', () => {
       expect(writeText).toHaveBeenCalledWith(CLI_INSTALL_COMMAND)
     })
   })
+
+  it('links to the Start here packages collection', () => {
+    renderWithProviders(<HomeCliQuickstartSection />)
+
+    expect(screen.getByRole('link', { name: 'Browse Start here packages' })).toHaveAttribute(
+      'href',
+      '/packages/?collection=start-here',
+    )
+  })
 })
