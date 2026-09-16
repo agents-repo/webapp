@@ -12,8 +12,14 @@ test.describe('Home search', () => {
     await searchInput.fill('demo-flow')
     await expect(page).toHaveURL(/\/packages\/?\?q=demo-flow/)
     await waitForCatalogSettled(page)
+    const packagesSearchInput = page.locator('#packages-index-search')
+    await expect(packagesSearchInput).toBeFocused()
+    await expect(packagesSearchInput).toHaveValue('demo-flow')
     await expect(page.getByRole('heading', { name: 'demo-flow', level: 3 })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'sample-agent', level: 3 })).toHaveCount(0)
+    await packagesSearchInput.press('x')
+    await expect(packagesSearchInput).toBeFocused()
+    await expect(packagesSearchInput).toHaveValue('demo-flowx')
   })
 
   test('stays on home when search is empty', async ({ page }) => {

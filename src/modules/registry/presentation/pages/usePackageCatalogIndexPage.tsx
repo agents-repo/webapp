@@ -1,6 +1,21 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { whenMainRouteContentReady } from '../../../site/application/accessibility/routeContentReady'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
+import {
+  completePackageCatalogSearchFocusHandoff,
+  hasActivePackageCatalogSearchFocusHandoff,
+  shouldFocusPackageCatalogSearch,
+} from '../../application/catalogSearchNavigation'
 import {
   getInitialCatalogFiltersSidebarCollapsed,
   persistCatalogFiltersSidebarCollapsed,
@@ -33,8 +48,8 @@ import {
   applyPackageCatalogPageToSearchParams,
   clampPackageCatalogPage,
   getPackageCatalogPageCount,
+  getPackageCatalogPageSize,
   getPackageCatalogPageWindow,
-  PACKAGE_CATALOG_PAGE_SIZE,
   parsePackageCatalogPage,
   slicePackageCatalogPage,
 } from '../../application/packageCatalogPagination'
@@ -45,7 +60,43 @@ import { PackageCatalogSearch } from '../components/PackageCatalogSearch'
 import { useStickySearch } from '../components/useStickySearch'
 import { getCatalogAlertState, getCatalogResultsSummary } from './homePageCatalogState'
 
-const STICKY_SEARCH_THRESHOLD = 180
+export const PACKAGE_CATALOG_STICKY_SEARCH_THRESHOLD = 180
+
+const PACKAGE_CATALOG_LG_VIEWPORT_QUERY = '(min-width: 992px)'
+
+function subscribeToPackageCatalogLgViewport(onStoreChange: () => void): () => void {
+  const mediaQuery = window.matchMedia(PACKAGE_CATALOG_LG_VIEWPORT_QUERY)
+  mediaQuery.addEventListener('change', onStoreChange)
+  return () => {
+    mediaQuery.removeEventListener('change', onStoreChange)
+  }
+}
+
+function getPackageCatalogLgViewportSnapshot(): boolean {
+  return window.matchMedia(PACKAGE_CATALOG_LG_VIEWPORT_QUERY).matches
+}
+
+function focusVisiblePackageCatalogSearchInput(searchInputId: string): void {
+  const searchInputs = document.querySelectorAll<HTMLInputElement>(
+    `input#${CSS.escape(searchInputId)}`,
+  )
+  if (searchInputs.length === 0) {
+    return
+  }
+
+  const visibleInput =
+    searchInputs.length === 1
+      ? searchInputs[0]
+      : Array.from(searchInputs).find((input) => input.offsetParent !== null)
+
+  if (!visibleInput) {
+    return
+  }
+
+  visibleInput.focus({ preventScroll: true })
+  const caretIndex = visibleInput.value.length
+  visibleInput.setSelectionRange(caretIndex, caretIndex)
+}
 
 function toggleFilterValue(
   filters: PackageCatalogFilters,
@@ -93,7 +144,26 @@ export function usePackageCatalogIndexPage(options: {
     downloadStatsById,
   } = useRegistryCatalog()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { pathname } = useLocation()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const locationRef = useRef(location)
+  useLayoutEffect(() => {
+    locationRef.current = location
+  }, [location])
+  const { pathname } = location
+
+  const getReplaceSearchParamsOptions = useCallback(() => {
+    const currentLocation = locationRef.current
+    const options: { replace: true; state?: unknown } = { replace: true }
+    if (
+      shouldFocusPackageCatalogSearch(currentLocation.state) ||
+      hasActivePackageCatalogSearchFocusHandoff()
+    ) {
+      options.state = currentLocation.state
+    }
+
+    return options
+  }, [])
   const urlFilters = useMemo(() => parsePackageCatalogFilters(searchParams), [searchParams])
   const downloadPeriod = useMemo(() => parseDownloadStatsPeriod(searchParams), [searchParams])
   const requestedPage = useMemo(() => parsePackageCatalogPage(searchParams), [searchParams])
@@ -105,7 +175,13 @@ export function usePackageCatalogIndexPage(options: {
   }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(getInitialCatalogFiltersSidebarCollapsed)
   const [filtersOffcanvasOpen, setFiltersOffcanvasOpen] = useState(false)
-  const stickySearch = useStickySearch(STICKY_SEARCH_THRESHOLD)
+  const stickySearch = useStickySearch(PACKAGE_CATALOG_STICKY_SEARCH_THRESHOLD)
+  const isLgViewport = useSyncExternalStore(
+    subscribeToPackageCatalogLgViewport,
+    getPackageCatalogLgViewportSnapshot,
+    () => false,
+  )
+  const showHeroSearch = !stickySearch || !isLgViewport
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
     cacheState: catalogCacheState,
@@ -140,14 +216,14 @@ export function usePackageCatalogIndexPage(options: {
             query: draftQuery,
           })
         },
-        { replace: true },
+        getReplaceSearchParamsOptions(),
       )
     }, CATALOG_SEARCH_DEBOUNCE_MS)
 
     return () => {
       window.clearTimeout(timeoutId)
     }
-  }, [draftQuery, setSearchParams, urlFilters.query])
+  }, [draftQuery, getReplaceSearchParamsOptions, setSearchParams, urlFilters.query])
 
   const commitFilters = useCallback(
     (nextFilters: PackageCatalogFilters, replace = false) => {
@@ -155,10 +231,10 @@ export function usePackageCatalogIndexPage(options: {
       setDraftQuery(nextFilters.query)
       setSearchParams(
         (previousParams) => applyPackageCatalogFiltersToSearchParams(previousParams, nextFilters),
-        { replace },
+        replace ? getReplaceSearchParamsOptions() : { replace },
       )
     },
-    [setSearchParams],
+    [getReplaceSearchParamsOptions, setSearchParams],
   )
 
   const activeCollection = useMemo(
@@ -180,11 +256,13 @@ export function usePackageCatalogIndexPage(options: {
       ),
     [downloadPeriod, downloadStatsById, filters, listingPackages],
   )
-  const catalogPageCount = getPackageCatalogPageCount(filteredPackages.length)
+  const sidebarVisibleForPageSize = isLgViewport && !sidebarCollapsed
+  const catalogPageSize = getPackageCatalogPageSize(sidebarVisibleForPageSize)
+  const catalogPageCount = getPackageCatalogPageCount(filteredPackages.length, catalogPageSize)
   const catalogPage = clampPackageCatalogPage(requestedPage, catalogPageCount)
   const pagedPackages = useMemo(
-    () => slicePackageCatalogPage(filteredPackages, catalogPage),
-    [catalogPage, filteredPackages],
+    () => slicePackageCatalogPage(filteredPackages, catalogPage, catalogPageSize),
+    [catalogPage, catalogPageSize, filteredPackages],
   )
   const searchMatchContextById = useMemo(
     () => buildPackageSearchMatchContextMap(pagedPackages, filters.query),
@@ -202,8 +280,37 @@ export function usePackageCatalogIndexPage(options: {
       return
     }
 
-    setSearchParams(nextParams, { replace: true })
-  }, [catalog, catalogPage, searchParams, setSearchParams])
+    setSearchParams(nextParams, getReplaceSearchParamsOptions())
+  }, [catalog, catalogPage, getReplaceSearchParamsOptions, searchParams, setSearchParams])
+
+  const previousCatalogPageSizeRef = useRef(catalogPageSize)
+  useEffect(() => {
+    if (!catalog) {
+      return
+    }
+
+    if (previousCatalogPageSizeRef.current === catalogPageSize) {
+      return
+    }
+
+    previousCatalogPageSizeRef.current = catalogPageSize
+    const nextPageCount = getPackageCatalogPageCount(filteredPackages.length, catalogPageSize)
+    const nextPage = clampPackageCatalogPage(requestedPage, nextPageCount)
+    const nextParams = applyPackageCatalogPageToSearchParams(searchParams, nextPage)
+    if (nextParams.toString() === searchParams.toString()) {
+      return
+    }
+
+    setSearchParams(nextParams, getReplaceSearchParamsOptions())
+  }, [
+    catalog,
+    catalogPageSize,
+    filteredPackages.length,
+    getReplaceSearchParamsOptions,
+    requestedPage,
+    searchParams,
+    setSearchParams,
+  ])
 
   useEffect(() => {
     if (!shouldFocusResultsSummaryRef.current) {
@@ -241,12 +348,13 @@ export function usePackageCatalogIndexPage(options: {
     filteredCount: filteredPackages.length,
     isLoading: isCatalogLoading,
     listingCount: listingPackages.length,
-    pageWindow: getPackageCatalogPageWindow(filteredPackages.length, catalogPage),
+    pageWindow: getPackageCatalogPageWindow(filteredPackages.length, catalogPage, catalogPageSize),
   })
 
   const searchControl = useMemo(
     () => (
       <PackageCatalogSearch
+        key={searchInputId}
         query={draftQuery}
         onQueryChange={setDraftQuery}
         inputId={searchInputId}
@@ -256,13 +364,104 @@ export function usePackageCatalogIndexPage(options: {
     [draftQuery, searchAriaLabel, searchInputId],
   )
 
-  useEffect(() => {
-    setHeaderSearchSlot(stickySearch ? searchControl : null)
+  useLayoutEffect(() => {
+    setHeaderSearchSlot(stickySearch && isLgViewport ? searchControl : null)
 
     return () => {
       setHeaderSearchSlot(null)
     }
-  }, [searchControl, setHeaderSearchSlot, stickySearch])
+  }, [isLgViewport, searchControl, setHeaderSearchSlot, stickySearch])
+
+  const previousStickySearchRef = useRef(stickySearch)
+  useLayoutEffect(() => {
+    const stickyChanged = previousStickySearchRef.current !== stickySearch
+    previousStickySearchRef.current = stickySearch
+    if (!stickyChanged) {
+      return
+    }
+
+    const activeElement = document.activeElement
+    if (!(activeElement instanceof HTMLInputElement) || activeElement.id !== searchInputId) {
+      return
+    }
+
+    window.requestAnimationFrame(() => {
+      focusVisiblePackageCatalogSearchInput(searchInputId)
+    })
+  }, [searchInputId, stickySearch])
+
+  const catalogSearchFocusHandoffKeyRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!shouldFocusPackageCatalogSearch(location.state)) {
+      return
+    }
+
+    if (catalogSearchFocusHandoffKeyRef.current === location.key) {
+      return
+    }
+
+    let cancelled = false
+    let frameId = 0
+    let attempts = 0
+    const maxAttempts = 24
+
+    const clearNavigationState = (): void => {
+      const currentLocation = locationRef.current
+      if (!shouldFocusPackageCatalogSearch(currentLocation.state)) {
+        return
+      }
+
+      void navigate(
+        {
+          pathname: currentLocation.pathname,
+          search: currentLocation.search,
+        },
+        { replace: true, state: null },
+      )
+    }
+
+    const tryFocusSearch = (): void => {
+      if (cancelled) {
+        return
+      }
+
+      attempts += 1
+      focusVisiblePackageCatalogSearchInput(searchInputId)
+      if (document.activeElement?.id === searchInputId) {
+        catalogSearchFocusHandoffKeyRef.current = locationRef.current.key
+        clearNavigationState()
+        return
+      }
+
+      if (attempts < maxAttempts) {
+        frameId = window.requestAnimationFrame(tryFocusSearch)
+        return
+      }
+
+      catalogSearchFocusHandoffKeyRef.current = locationRef.current.key
+      completePackageCatalogSearchFocusHandoff()
+      clearNavigationState()
+
+      const mainContent = document.getElementById('main-content')
+      const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
+      if (!skipLinkWasUsed && mainContent) {
+        mainContent.focus({ preventScroll: true })
+      }
+    }
+
+    const startFocusHandoff = (): void => {
+      frameId = window.requestAnimationFrame(tryFocusSearch)
+    }
+
+    const stopWaitingForContent = whenMainRouteContentReady(startFocusHandoff)
+
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(frameId)
+      stopWaitingForContent()
+    }
+  }, [location.key, location.pathname, location.state, navigate, searchInputId])
 
   const toggleFilter = useCallback(
     (facet: PackageCatalogFilterFacet, value = '') => {
@@ -294,10 +493,10 @@ export function usePackageCatalogIndexPage(options: {
     (period: DownloadStatsPeriod) => {
       setSearchParams(
         (previousParams) => applyDownloadStatsPeriodToSearchParams(previousParams, period),
-        { replace: true },
+        getReplaceSearchParamsOptions(),
       )
     },
-    [setSearchParams],
+    [getReplaceSearchParamsOptions, setSearchParams],
   )
 
   const isFacetSelected = useCallback(
@@ -323,7 +522,7 @@ export function usePackageCatalogIndexPage(options: {
     catalogPageCount,
     catalogPathname: pathname,
     searchParams,
-    showCatalogPagination: filteredPackages.length > PACKAGE_CATALOG_PAGE_SIZE,
+    showCatalogPagination: filteredPackages.length > catalogPageSize,
     onCatalogPageNavigate: () => {
       shouldFocusResultsSummaryRef.current = true
     },
@@ -332,6 +531,7 @@ export function usePackageCatalogIndexPage(options: {
     popularChips,
     registryBaseUrl,
     searchControl,
+    showHeroSearch,
     stickySearch,
     trimmedQuery: draftQuery.trim(),
     activeCollection,

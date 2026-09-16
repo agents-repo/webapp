@@ -105,6 +105,13 @@
     0 0.55rem 1.25rem rgba(0, 0, 0, 0.24);
 }
 
+.package-detail-actions .package-card-action-label {
+  max-width: none;
+  overflow: visible;
+  white-space: normal;
+  opacity: 1;
+}
+
 .package-card-action-label {
   display: inline-block;
   max-width: 8rem;

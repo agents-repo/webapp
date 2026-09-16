@@ -29,10 +29,23 @@ afterEach(async () => {
   await resetRegistryMemoryCachesForTests()
 })
 
+function testMatchMediaMatches(query: string): boolean {
+  if (query === '(prefers-color-scheme: dark)') {
+    return true
+  }
+
+  const minWidthMatch = /^\(min-width:\s*(\d+)px\)$/.exec(query)
+  if (minWidthMatch) {
+    return window.innerWidth >= Number.parseInt(minWidthMatch[1], 10)
+  }
+
+  return false
+}
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: (query: string) => ({
-    matches: query === '(prefers-color-scheme: dark)',
+    matches: testMatchMediaMatches(query),
     media: query,
     onchange: null,
     addListener: () => {},

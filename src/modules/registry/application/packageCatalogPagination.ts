@@ -1,8 +1,17 @@
-export const PACKAGE_CATALOG_PAGE_SIZE = 9
+export const PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH = 9
+export const PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR = 8
+/** @deprecated Prefer layout-aware {@link getPackageCatalogPageSize}. */
+export const PACKAGE_CATALOG_PAGE_SIZE = PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH
 export const PACKAGE_CATALOG_PAGE_PARAM = 'page'
 export const PACKAGE_CATALOG_PAGINATION_ELLIPSIS_AFTER = 7
 
 export type PackageCatalogPageItem = number | 'ellipsis-start' | 'ellipsis-end'
+
+export function getPackageCatalogPageSize(sidebarVisible: boolean): number {
+  return sidebarVisible
+    ? PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR
+    : PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH
+}
 
 export function parsePackageCatalogPage(searchParams: URLSearchParams): number {
   const raw = (searchParams.get(PACKAGE_CATALOG_PAGE_PARAM) ?? '').trim()
@@ -27,12 +36,15 @@ export function applyPackageCatalogPageToSearchParams(
   return next
 }
 
-export function getPackageCatalogPageCount(itemCount: number): number {
+export function getPackageCatalogPageCount(
+  itemCount: number,
+  pageSize: number = PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH,
+): number {
   if (itemCount <= 0) {
     return 1
   }
 
-  return Math.ceil(itemCount / PACKAGE_CATALOG_PAGE_SIZE)
+  return Math.ceil(itemCount / pageSize)
 }
 
 export function clampPackageCatalogPage(page: number, pageCount: number): number {
@@ -44,23 +56,28 @@ export function clampPackageCatalogPage(page: number, pageCount: number): number
   return Math.min(Math.trunc(page), maxPage)
 }
 
-export function slicePackageCatalogPage<T>(items: readonly T[], page: number): readonly T[] {
-  const currentPage = clampPackageCatalogPage(page, getPackageCatalogPageCount(items.length))
-  const start = (currentPage - 1) * PACKAGE_CATALOG_PAGE_SIZE
-  return items.slice(start, start + PACKAGE_CATALOG_PAGE_SIZE)
+export function slicePackageCatalogPage<T>(
+  items: readonly T[],
+  page: number,
+  pageSize: number = PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH,
+): readonly T[] {
+  const currentPage = clampPackageCatalogPage(page, getPackageCatalogPageCount(items.length, pageSize))
+  const start = (currentPage - 1) * pageSize
+  return items.slice(start, start + pageSize)
 }
 
 export function getPackageCatalogPageWindow(
   filteredCount: number,
   page: number,
+  pageSize: number = PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH,
 ): { readonly start: number; readonly end: number } | null {
-  if (filteredCount <= PACKAGE_CATALOG_PAGE_SIZE) {
+  if (filteredCount <= pageSize) {
     return null
   }
 
-  const currentPage = clampPackageCatalogPage(page, getPackageCatalogPageCount(filteredCount))
-  const start = (currentPage - 1) * PACKAGE_CATALOG_PAGE_SIZE + 1
-  const end = Math.min(currentPage * PACKAGE_CATALOG_PAGE_SIZE, filteredCount)
+  const currentPage = clampPackageCatalogPage(page, getPackageCatalogPageCount(filteredCount, pageSize))
+  const start = (currentPage - 1) * pageSize + 1
+  const end = Math.min(currentPage * pageSize, filteredCount)
   return { start, end }
 }
 

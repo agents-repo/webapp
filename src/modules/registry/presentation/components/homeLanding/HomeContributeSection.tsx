@@ -19,9 +19,6 @@ function HomeContributeSection() {
               <Link to={localizedSitePath(siteRoutes.contribute)} className="btn btn-primary">
                 {t('homeLanding.contribute.primaryButton')}
               </Link>
-              <Link to={localizedSitePath(siteRoutes.contribute)} className="btn btn-outline-primary">
-                {t('homeLanding.contribute.secondaryButton')}
-              </Link>
             </div>
           </Col>
         </Row>
