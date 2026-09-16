@@ -16,8 +16,11 @@ import {
 } from './siteSeo.ts'
 import { getOrganizationSameAsUrls } from '../community/socialLinks.ts'
 import { getSiteSeoMeta } from './siteSeoMeta.ts'
-import { parsePackageSitePath } from '../../../registry/application/packageSiteRoutes.ts'
-import { getPackageCodeRepositoryUrl } from '../../../registry/application/packageSiteSeo.ts'
+import { findRegistryPackage, parsePackageSitePath } from '../../../registry/application/packageSiteRoutes.ts'
+import {
+  getPackageCodeRepositoryUrl,
+  getPackageDetailShareSeoDescription,
+} from '../../../registry/application/packageSiteSeo.ts'
 import {
   getRuntimeGithubRepositoryUrl,
   getRuntimePackageCatalog,
@@ -162,12 +165,21 @@ export function getRouteHeadData(
   const ogImage = getOgImageUrl(origin)
   const hreflangAlternates = getLocaleHreflangAlternates(pathnameWithoutLocale, origin)
 
+  const packageRoute = parsePackageSitePath(seoMeta.canonicalPath)
+  const catalogPackage =
+    packageRoute?.kind === 'detail' && catalog
+      ? findRegistryPackage(catalog, packageRoute.namespace, packageRoute.packageId)
+      : undefined
+  const socialDescription = catalogPackage
+    ? getPackageDetailShareSeoDescription(catalogPackage)
+    : seoMeta.description
+
   return {
     documentTitle,
     description: seoMeta.description,
     canonicalUrl,
     ogTitle: documentTitle,
-    ogDescription: seoMeta.description,
+    ogDescription: socialDescription,
     ogUrl: canonicalUrl,
     ogImage,
     ogImageWidth,
@@ -180,7 +192,7 @@ export function getRouteHeadData(
     twitterCard,
     twitterSite,
     twitterTitle: documentTitle,
-    twitterDescription: seoMeta.description,
+    twitterDescription: socialDescription,
     twitterImage: ogImage,
     jsonLd: buildJsonLd(
       origin,

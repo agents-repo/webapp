@@ -29,6 +29,20 @@ describe('getRouteHeadData', () => {
     }
   })
 
+  it('includes the install command in og and twitter descriptions on package detail', () => {
+    const head = getRouteHeadData('/packages/agents-repo/sample-agent', 'https://agents-repo.org', {
+      catalog: sampleRegistryCatalog,
+    })
+    const html = renderRouteHeadHtml(head)
+    const plainDescription = sampleRegistryCatalog.packages[0].description
+
+    expect(head.description).toBe(plainDescription)
+    expect(head.ogDescription).toContain('npx agents-repo install agents-repo/sample-agent')
+    expect(head.twitterDescription).toBe(head.ogDescription)
+    expect(html).toContain(`property="og:description" content="${head.ogDescription.replaceAll('"', '&quot;')}"`)
+    expect(html).toContain(`name="description" content="${plainDescription.replaceAll('"', '&quot;')}"`)
+  })
+
   it('emits CollectionPage JSON-LD on package indexes and SoftwareSourceCode on detail', () => {
     const indexHead = getRouteHeadData(siteRoutes.packages)
     const namespaceHead = getRouteHeadData('/packages/agents-repo', 'https://agents-repo.org', {
