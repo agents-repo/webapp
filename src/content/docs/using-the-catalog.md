@@ -60,7 +60,7 @@ expanded. Yanked packages stay hidden on those listings.
 
 Use the header search on large screens to filter packages by name or
 description. When the search query is non-empty, each matching card shows
-which fields matched (name, description, tag, or owner) and may shorten the
+which fields matched (name, description, tag, owner, or category) and may shorten the
 description around the match. Review status badges and target compatibility
 before installing.
 
