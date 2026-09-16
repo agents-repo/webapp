@@ -227,6 +227,7 @@ function PackageCliInstallActionInner({
               <div className="h6 small fw-semibold mb-2">{t('packageCard.cliInitHeading')}</div>
               <CliTerminalCommandRow
                 commandText={initCommandText}
+                commandAccessibleLabel={t('packageCard.cliInitCommandLabel', { name: packageName })}
                 copyLabel={t('packageCard.cliCopyInitLabel', { name: packageName })}
                 onCopy={handleCopyInit}
                 copyDisabled={!hasSelectedTargets}
@@ -241,6 +242,7 @@ function PackageCliInstallActionInner({
               <div className="h6 small fw-semibold mb-2">{t('packageCard.cliInstallHeading')}</div>
               <CliTerminalCommandRow
                 commandText={buildCliInstallCommand(packageId)}
+                commandAccessibleLabel={t('packageCard.cliInstallCommandLabel', { name: packageName })}
                 copyLabel={t('packageCard.cliCopyInstallLabel', { name: packageName })}
                 onCopy={handleCopyInstall}
                 labelId={installLabelId}

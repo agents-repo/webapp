@@ -49,6 +49,7 @@ function PackageInlineInstallCommand({
     <div className="package-card-inline-install d-none d-md-block">
       <CliTerminalCommandRow
         commandText={commandText}
+        commandAccessibleLabel={t('packageCard.inlineInstallCommandLabel', { name: packageName })}
         copyLabel={t('packageCard.inlineInstallCopyLabel', { name: packageName })}
         onCopy={() => {
           void handleCopy()

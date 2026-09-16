@@ -104,6 +104,7 @@ function HomeCliQuickstartSection() {
                 <div className="h6 small fw-semibold mb-2">{t('homeLanding.cliQuickstart.initLabel')}</div>
                 <CliTerminalCommandRow
                   commandText={CLI_INIT_COMMAND}
+                  commandAccessibleLabel={t('homeLanding.cliQuickstart.initCommandLabel')}
                   copyLabel={t('homeLanding.cliQuickstart.copyInitLabel')}
                   onCopy={handleCopyInit}
                   labelId="home-cli-init-label"
@@ -115,6 +116,7 @@ function HomeCliQuickstartSection() {
                 <div className="h6 small fw-semibold mb-2">{t('homeLanding.cliQuickstart.installLabel')}</div>
                 <CliTerminalCommandRow
                   commandText={CLI_INSTALL_COMMAND}
+                  commandAccessibleLabel={t('homeLanding.cliQuickstart.installCommandLabel')}
                   copyLabel={t('homeLanding.cliQuickstart.copyInstallLabel')}
                   onCopy={handleCopyInstall}
                   labelId="home-cli-install-label"
