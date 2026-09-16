@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLink } from '@fortawesome/free-solid-svg-icons'
+import { faExternalLink, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -91,7 +91,7 @@ function PackageDetailHeader(options: {
         className="flex-wrap mb-3"
         getFacetHref={(facet, value) => localizedSitePath(getPackageCatalogFacetQueryPath(facet, value))}
       />
-      <div className="d-flex gap-2 flex-wrap">
+      <div className="d-flex gap-2 flex-wrap package-detail-actions">
         {cliPackageRef ? (
           <PackageCliInstallAction
             packageName={catalogPackage.name}
@@ -151,6 +151,7 @@ function PackageDetailHeader(options: {
           to={publishSimilarPath}
           className="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center package-card-action"
         >
+          <FontAwesomeIcon icon={faUpload} aria-hidden="true" />
           <span className="package-card-action-label">{t('packageDetail.publishSimilar')}</span>
         </NavLink>
       </div>
