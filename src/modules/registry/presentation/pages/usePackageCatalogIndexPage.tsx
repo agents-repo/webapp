@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
@@ -46,6 +55,36 @@ import { useStickySearch } from '../components/useStickySearch'
 import { getCatalogAlertState, getCatalogResultsSummary } from './homePageCatalogState'
 
 export const PACKAGE_CATALOG_STICKY_SEARCH_THRESHOLD = 180
+
+const PACKAGE_CATALOG_LG_VIEWPORT_QUERY = '(min-width: 992px)'
+
+function subscribeToPackageCatalogLgViewport(onStoreChange: () => void): () => void {
+  const mediaQuery = window.matchMedia(PACKAGE_CATALOG_LG_VIEWPORT_QUERY)
+  mediaQuery.addEventListener('change', onStoreChange)
+  return () => {
+    mediaQuery.removeEventListener('change', onStoreChange)
+  }
+}
+
+function getPackageCatalogLgViewportSnapshot(): boolean {
+  return window.matchMedia(PACKAGE_CATALOG_LG_VIEWPORT_QUERY).matches
+}
+
+function focusVisiblePackageCatalogSearchInput(searchInputId: string): void {
+  const searchInputs = document.querySelectorAll<HTMLInputElement>(
+    `input#${CSS.escape(searchInputId)}`,
+  )
+  if (searchInputs.length === 0) {
+    return
+  }
+
+  const visibleInput =
+    searchInputs.length === 1
+      ? searchInputs[0]
+      : Array.from(searchInputs).find((input) => input.offsetParent !== null)
+
+  visibleInput?.focus({ preventScroll: true })
+}
 
 function toggleFilterValue(
   filters: PackageCatalogFilters,
@@ -106,6 +145,12 @@ export function usePackageCatalogIndexPage(options: {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(getInitialCatalogFiltersSidebarCollapsed)
   const [filtersOffcanvasOpen, setFiltersOffcanvasOpen] = useState(false)
   const stickySearch = useStickySearch(PACKAGE_CATALOG_STICKY_SEARCH_THRESHOLD)
+  const isLgViewport = useSyncExternalStore(
+    subscribeToPackageCatalogLgViewport,
+    getPackageCatalogLgViewportSnapshot,
+    () => false,
+  )
+  const showHeroSearch = !stickySearch || !isLgViewport
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
     cacheState: catalogCacheState,
@@ -269,14 +314,17 @@ export function usePackageCatalogIndexPage(options: {
     pageWindow: getPackageCatalogPageWindow(filteredPackages.length, catalogPage, catalogPageSize),
   })
 
-  const searchControl = (
-    <PackageCatalogSearch
-      key={searchInputId}
-      query={draftQuery}
-      onQueryChange={setDraftQuery}
-      inputId={searchInputId}
-      ariaLabel={searchAriaLabel}
-    />
+  const searchControl = useMemo(
+    () => (
+      <PackageCatalogSearch
+        key={searchInputId}
+        query={draftQuery}
+        onQueryChange={setDraftQuery}
+        inputId={searchInputId}
+        ariaLabel={searchAriaLabel}
+      />
+    ),
+    [draftQuery, searchAriaLabel, searchInputId],
   )
 
   useEffect(() => {
@@ -296,13 +344,12 @@ export function usePackageCatalogIndexPage(options: {
     }
 
     const activeElement = document.activeElement
-    const searchInput = document.getElementById(searchInputId)
-    if (!searchInput || activeElement !== searchInput) {
+    if (!(activeElement instanceof HTMLInputElement) || activeElement.id !== searchInputId) {
       return
     }
 
     window.requestAnimationFrame(() => {
-      searchInput.focus({ preventScroll: true })
+      focusVisiblePackageCatalogSearchInput(searchInputId)
     })
   }, [searchInputId, stickySearch])
 
@@ -374,6 +421,7 @@ export function usePackageCatalogIndexPage(options: {
     popularChips,
     registryBaseUrl,
     searchControl,
+    showHeroSearch,
     stickySearch,
     trimmedQuery: draftQuery.trim(),
     activeCollection,
