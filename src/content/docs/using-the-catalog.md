@@ -26,7 +26,7 @@ dialog from that control is open.
 ## Start here collection
 
 The **Start here** curated set of beginner-friendly packages is available at
-[Packages](/packages?collection=start-here). Home links to it from the CLI
+[Packages](/packages/?collection=start-here). Home links to it from the CLI
 quickstart section. Search and facet filters still apply inside that collection.
 Namespace listings ignore the `collection` parameter.
 
