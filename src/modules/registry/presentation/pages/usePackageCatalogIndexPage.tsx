@@ -285,6 +285,10 @@ export function usePackageCatalogIndexPage(options: {
 
   const previousCatalogPageSizeRef = useRef(catalogPageSize)
   useEffect(() => {
+    if (!catalog) {
+      return
+    }
+
     if (previousCatalogPageSizeRef.current === catalogPageSize) {
       return
     }
@@ -299,6 +303,7 @@ export function usePackageCatalogIndexPage(options: {
 
     setSearchParams(nextParams, getReplaceSearchParamsOptions())
   }, [
+    catalog,
     catalogPageSize,
     filteredPackages.length,
     getReplaceSearchParamsOptions,
