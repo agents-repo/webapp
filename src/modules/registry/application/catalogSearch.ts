@@ -22,6 +22,14 @@ function getSearchTerms(normalizedQuery: string): readonly string[] {
     const withoutAt = normalizedQuery.slice(1)
     if (withoutAt.length > 0) {
       terms.add(withoutAt)
+      if (withoutAt.includes('/')) {
+        for (const segment of withoutAt.split('/')) {
+          const trimmed = segment.trim()
+          if (trimmed.length > 0) {
+            terms.add(trimmed)
+          }
+        }
+      }
     }
     return [...terms]
   }

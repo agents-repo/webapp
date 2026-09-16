@@ -57,6 +57,13 @@ describe('getPackageSearchMatchContext', () => {
     expect(context?.fields).toContain('owner')
   })
 
+  it('detects matches for an @namespace/package query', () => {
+    const context = getPackageSearchMatchContext(samplePackage, '@agents-repo/sample-agent')
+    expect(context).not.toBeNull()
+    expect(context?.fields).toContain('name')
+    expect(context?.fields).toContain('owner')
+  })
+
   it('builds description snippets using the term that matched', () => {
     const padding = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(3)
     const pkg: RegistryPackage = {
