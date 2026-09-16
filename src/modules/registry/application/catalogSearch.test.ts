@@ -49,6 +49,26 @@ describe('getPackageSearchMatchContext', () => {
   it('detects category matches', () => {
     expect(getPackageSearchMatchContext(samplePackage, 'assistant')?.fields).toContain('category')
   })
+
+  it('detects matches for a namespace/package query', () => {
+    const context = getPackageSearchMatchContext(samplePackage, 'agents-repo/sample-agent')
+    expect(context).not.toBeNull()
+    expect(context?.fields).toContain('name')
+    expect(context?.fields).toContain('owner')
+  })
+
+  it('builds description snippets using the term that matched', () => {
+    const padding = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(3)
+    const pkg: RegistryPackage = {
+      ...samplePackage,
+      description: `${padding}Maintained by agents-repo for sample workflows.${padding}`,
+    }
+    const context = getPackageSearchMatchContext(pkg, '@agents-repo')
+    expect(context?.fields).toContain('description')
+    expect(context?.descriptionSnippet).toContain('agents-repo')
+    expect(context?.descriptionSnippet?.startsWith('…')).toBe(true)
+    expect(context?.descriptionSnippet?.endsWith('…')).toBe(true)
+  })
 })
 
 describe('buildPackageSearchMatchContextMap', () => {

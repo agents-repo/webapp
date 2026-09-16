@@ -28,6 +28,14 @@ export interface PackageCardProps {
   readonly searchMatchContext?: PackageSearchMatchContext | null
 }
 
+const SEARCH_MATCH_FIELD_DEFAULT_LABELS: Record<CatalogSearchMatchField, string> = {
+  name: 'name',
+  description: 'description',
+  tag: 'tag',
+  owner: 'owner',
+  category: 'category',
+}
+
 function formatSearchMatchFields(
   fields: readonly CatalogSearchMatchField[],
   translateField: (field: CatalogSearchMatchField) => string,
@@ -56,7 +64,9 @@ export function PackageCard({
   const descriptionText = searchMatchContext?.descriptionSnippet ?? pkg.description
   const matchFieldLabels = searchMatchContext
     ? formatSearchMatchFields(searchMatchContext.fields, (field) =>
-        t(`packageCard.searchMatchField.${field}`),
+        t(`packageCard.searchMatchField.${field}`, {
+          defaultValue: SEARCH_MATCH_FIELD_DEFAULT_LABELS[field],
+        }),
       )
     : ''
 

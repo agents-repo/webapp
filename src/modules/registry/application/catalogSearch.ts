@@ -16,12 +16,36 @@ function normalizeSearchQuery(query: string): string {
 }
 
 function getSearchTerms(normalizedQuery: string): readonly string[] {
+  const terms = new Set<string>([normalizedQuery])
+
   if (normalizedQuery.startsWith('@')) {
     const withoutAt = normalizedQuery.slice(1)
-    return withoutAt.length > 0 ? [normalizedQuery, withoutAt] : [normalizedQuery]
+    if (withoutAt.length > 0) {
+      terms.add(withoutAt)
+    }
+    return [...terms]
   }
 
-  return [normalizedQuery]
+  if (normalizedQuery.includes('/')) {
+    for (const segment of normalizedQuery.split('/')) {
+      const trimmed = segment.trim()
+      if (trimmed.length > 0) {
+        terms.add(trimmed)
+      }
+    }
+  }
+
+  return [...terms]
+}
+
+function findFirstMatchingTerm(value: string, terms: readonly string[]): string | null {
+  const lower = value.toLowerCase()
+  for (const term of terms) {
+    if (lower.includes(term)) {
+      return term
+    }
+  }
+  return null
 }
 
 function fieldMatches(value: string, terms: readonly string[]): boolean {
@@ -82,7 +106,10 @@ export function getPackageSearchMatchContext(
   }
 
   const descriptionSnippet = fields.includes('description')
-    ? buildDescriptionSnippet(pkg.description, normalizedQuery)
+    ? buildDescriptionSnippet(
+        pkg.description,
+        findFirstMatchingTerm(pkg.description, terms) ?? normalizedQuery,
+      )
     : undefined
 
   return { fields, descriptionSnippet }
