@@ -151,8 +151,12 @@ export function PackageCatalogIndexLayout({
                 <h1 className="display-6 fw-semibold mb-0">{title}</h1>
                 <p className="lead fs-6 text-body-secondary mb-0">{lead}</p>
                 <GoogleTranslateLink />
-                <div className={`w-100 hero-search${page.stickySearch ? ' d-lg-none' : ''}`}>
-                  {page.searchControl}
+                <div className="w-100 hero-search">
+                  {page.stickySearch ? (
+                    <div className="d-lg-none">{page.searchControl}</div>
+                  ) : (
+                    page.searchControl
+                  )}
                 </div>
               </Stack>
             </Col>

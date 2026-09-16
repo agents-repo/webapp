@@ -106,8 +106,7 @@
     "contribute": {
       "heading": "Help grow the catalog",
       "body": "The project needs agents and flows packages most. Submit a maintained package, or see other ways to help.",
-      "primaryButton": "Contribute",
-      "secondaryButton": "Ways to contribute"
+      "primaryButton": "Contribute"
     }
   },
   "packageCard": {

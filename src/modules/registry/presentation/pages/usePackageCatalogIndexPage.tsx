@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
@@ -33,8 +33,8 @@ import {
   applyPackageCatalogPageToSearchParams,
   clampPackageCatalogPage,
   getPackageCatalogPageCount,
+  getPackageCatalogPageSize,
   getPackageCatalogPageWindow,
-  PACKAGE_CATALOG_PAGE_SIZE,
   parsePackageCatalogPage,
   slicePackageCatalogPage,
 } from '../../application/packageCatalogPagination'
@@ -45,7 +45,7 @@ import { PackageCatalogSearch } from '../components/PackageCatalogSearch'
 import { useStickySearch } from '../components/useStickySearch'
 import { getCatalogAlertState, getCatalogResultsSummary } from './homePageCatalogState'
 
-const STICKY_SEARCH_THRESHOLD = 180
+export const PACKAGE_CATALOG_STICKY_SEARCH_THRESHOLD = 180
 
 function toggleFilterValue(
   filters: PackageCatalogFilters,
@@ -105,7 +105,7 @@ export function usePackageCatalogIndexPage(options: {
   }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(getInitialCatalogFiltersSidebarCollapsed)
   const [filtersOffcanvasOpen, setFiltersOffcanvasOpen] = useState(false)
-  const stickySearch = useStickySearch(STICKY_SEARCH_THRESHOLD)
+  const stickySearch = useStickySearch(PACKAGE_CATALOG_STICKY_SEARCH_THRESHOLD)
   const catalogAlertState = getCatalogAlertState({
     hasCatalog: catalog !== null,
     cacheState: catalogCacheState,
@@ -180,11 +180,13 @@ export function usePackageCatalogIndexPage(options: {
       ),
     [downloadPeriod, downloadStatsById, filters, listingPackages],
   )
-  const catalogPageCount = getPackageCatalogPageCount(filteredPackages.length)
+  const sidebarVisible = !sidebarCollapsed
+  const catalogPageSize = getPackageCatalogPageSize(sidebarVisible)
+  const catalogPageCount = getPackageCatalogPageCount(filteredPackages.length, catalogPageSize)
   const catalogPage = clampPackageCatalogPage(requestedPage, catalogPageCount)
   const pagedPackages = useMemo(
-    () => slicePackageCatalogPage(filteredPackages, catalogPage),
-    [catalogPage, filteredPackages],
+    () => slicePackageCatalogPage(filteredPackages, catalogPage, catalogPageSize),
+    [catalogPage, catalogPageSize, filteredPackages],
   )
   const searchMatchContextById = useMemo(
     () => buildPackageSearchMatchContextMap(pagedPackages, filters.query),
@@ -204,6 +206,29 @@ export function usePackageCatalogIndexPage(options: {
 
     setSearchParams(nextParams, { replace: true })
   }, [catalog, catalogPage, searchParams, setSearchParams])
+
+  const previousCatalogPageSizeRef = useRef(catalogPageSize)
+  useEffect(() => {
+    if (previousCatalogPageSizeRef.current === catalogPageSize) {
+      return
+    }
+
+    previousCatalogPageSizeRef.current = catalogPageSize
+    const nextPageCount = getPackageCatalogPageCount(filteredPackages.length, catalogPageSize)
+    const nextPage = clampPackageCatalogPage(requestedPage, nextPageCount)
+    const nextParams = applyPackageCatalogPageToSearchParams(searchParams, nextPage)
+    if (nextParams.toString() === searchParams.toString()) {
+      return
+    }
+
+    setSearchParams(nextParams, { replace: true })
+  }, [
+    catalogPageSize,
+    filteredPackages.length,
+    requestedPage,
+    searchParams,
+    setSearchParams,
+  ])
 
   useEffect(() => {
     if (!shouldFocusResultsSummaryRef.current) {
@@ -241,19 +266,17 @@ export function usePackageCatalogIndexPage(options: {
     filteredCount: filteredPackages.length,
     isLoading: isCatalogLoading,
     listingCount: listingPackages.length,
-    pageWindow: getPackageCatalogPageWindow(filteredPackages.length, catalogPage),
+    pageWindow: getPackageCatalogPageWindow(filteredPackages.length, catalogPage, catalogPageSize),
   })
 
-  const searchControl = useMemo(
-    () => (
-      <PackageCatalogSearch
-        query={draftQuery}
-        onQueryChange={setDraftQuery}
-        inputId={searchInputId}
-        ariaLabel={searchAriaLabel}
-      />
-    ),
-    [draftQuery, searchAriaLabel, searchInputId],
+  const searchControl = (
+    <PackageCatalogSearch
+      key={searchInputId}
+      query={draftQuery}
+      onQueryChange={setDraftQuery}
+      inputId={searchInputId}
+      ariaLabel={searchAriaLabel}
+    />
   )
 
   useEffect(() => {
@@ -263,6 +286,25 @@ export function usePackageCatalogIndexPage(options: {
       setHeaderSearchSlot(null)
     }
   }, [searchControl, setHeaderSearchSlot, stickySearch])
+
+  const previousStickySearchRef = useRef(stickySearch)
+  useLayoutEffect(() => {
+    const stickyChanged = previousStickySearchRef.current !== stickySearch
+    previousStickySearchRef.current = stickySearch
+    if (!stickyChanged) {
+      return
+    }
+
+    const activeElement = document.activeElement
+    const searchInput = document.getElementById(searchInputId)
+    if (!searchInput || activeElement !== searchInput) {
+      return
+    }
+
+    window.requestAnimationFrame(() => {
+      searchInput.focus({ preventScroll: true })
+    })
+  }, [searchInputId, stickySearch])
 
   const toggleFilter = useCallback(
     (facet: PackageCatalogFilterFacet, value = '') => {
@@ -323,7 +365,7 @@ export function usePackageCatalogIndexPage(options: {
     catalogPageCount,
     catalogPathname: pathname,
     searchParams,
-    showCatalogPagination: filteredPackages.length > PACKAGE_CATALOG_PAGE_SIZE,
+    showCatalogPagination: filteredPackages.length > catalogPageSize,
     onCatalogPageNavigate: () => {
       shouldFocusResultsSummaryRef.current = true
     },

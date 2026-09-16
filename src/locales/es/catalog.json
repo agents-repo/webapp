@@ -106,8 +106,7 @@
     "contribute": {
       "heading": "Ayuda a hacer crecer el catálogo",
       "body": "El proyecto necesita sobre todo paquetes de agentes y flows. Envía un paquete mantenido u otras formas de ayudar.",
-      "primaryButton": "Contribuir",
-      "secondaryButton": "Formas de contribuir"
+      "primaryButton": "Contribuir"
     }
   },
   "packageCard": {

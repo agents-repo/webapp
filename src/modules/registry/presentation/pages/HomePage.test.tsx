@@ -315,7 +315,7 @@ describe('HomePage landing sections', () => {
     expect(screen.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Help grow the catalog' })).toBeInTheDocument()
     const contributeLinks = screen.getAllByRole('link', { name: 'Contribute' })
-    expect(contributeLinks.length).toBeGreaterThanOrEqual(3)
+    expect(contributeLinks.length).toBeGreaterThanOrEqual(2)
     expect(contributeLinks.every((link) => link.getAttribute('href') === '/contribute/')).toBe(true)
   })
 })
