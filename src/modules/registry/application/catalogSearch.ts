@@ -15,6 +15,19 @@ function normalizeSearchQuery(query: string): string {
   return query.trim().toLowerCase()
 }
 
+function addPathSegmentTerms(terms: Set<string>, scopedValue: string): void {
+  if (!scopedValue.includes('/')) {
+    return
+  }
+
+  for (const segment of scopedValue.split('/')) {
+    const trimmed = segment.trim()
+    if (trimmed.length > 0) {
+      terms.add(trimmed)
+    }
+  }
+}
+
 function getSearchTerms(normalizedQuery: string): readonly string[] {
   const terms = new Set<string>([normalizedQuery])
 
@@ -22,27 +35,12 @@ function getSearchTerms(normalizedQuery: string): readonly string[] {
     const withoutAt = normalizedQuery.slice(1)
     if (withoutAt.length > 0) {
       terms.add(withoutAt)
-      if (withoutAt.includes('/')) {
-        for (const segment of withoutAt.split('/')) {
-          const trimmed = segment.trim()
-          if (trimmed.length > 0) {
-            terms.add(trimmed)
-          }
-        }
-      }
+      addPathSegmentTerms(terms, withoutAt)
     }
     return [...terms]
   }
 
-  if (normalizedQuery.includes('/')) {
-    for (const segment of normalizedQuery.split('/')) {
-      const trimmed = segment.trim()
-      if (trimmed.length > 0) {
-        terms.add(trimmed)
-      }
-    }
-  }
-
+  addPathSegmentTerms(terms, normalizedQuery)
   return [...terms]
 }
 
