@@ -431,7 +431,7 @@ describe('PackagesIndexPage', () => {
     })
   })
 
-  it('shows the start-here collection view and search match context', async () => {
+  it('shows the start-here collection view', async () => {
     const startHerePackages: RegistryPackage[] = START_HERE_PACKAGE_REFS.map((ref) => {
       const [namespace, packageId] = ref.split('/')
       return {
