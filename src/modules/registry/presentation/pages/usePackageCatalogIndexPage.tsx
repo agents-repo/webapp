@@ -12,6 +12,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { whenMainRouteContentReady } from '../../../site/application/accessibility/routeContentReady'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import {
+  completePackageCatalogSearchFocusHandoff,
   hasActivePackageCatalogSearchFocusHandoff,
   shouldFocusPackageCatalogSearch,
 } from '../../application/catalogSearchNavigation'
@@ -430,6 +431,17 @@ export function usePackageCatalogIndexPage(options: {
 
       if (attempts < maxAttempts) {
         frameId = window.requestAnimationFrame(tryFocusSearch)
+        return
+      }
+
+      catalogSearchFocusHandoffKeyRef.current = locationRef.current.key
+      completePackageCatalogSearchFocusHandoff()
+      clearNavigationState()
+
+      const mainContent = document.getElementById('main-content')
+      const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
+      if (!skipLinkWasUsed && mainContent) {
+        mainContent.focus({ preventScroll: true })
       }
     }
 
