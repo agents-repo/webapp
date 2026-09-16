@@ -358,7 +358,7 @@ export function usePackageCatalogIndexPage(options: {
     [draftQuery, searchAriaLabel, searchInputId],
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setHeaderSearchSlot(stickySearch && isLgViewport ? searchControl : null)
 
     return () => {
