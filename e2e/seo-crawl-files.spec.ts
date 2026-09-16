@@ -73,6 +73,11 @@ test.describe('SEO crawl files', () => {
     const markdownBody = await markdownResponse.text()
     expect(markdownBody).toContain('Agents Repo')
 
+    const contributingPackagesResponse = await request.get('/docs/contributing-packages.md')
+    await expect(contributingPackagesResponse).toBeOK()
+    const contributingPackagesBody = await contributingPackagesResponse.text()
+    expect(contributingPackagesBody).toContain('package:validate')
+
     const llmsResponse = await request.get('/llms.txt')
     await expect(llmsResponse).toBeOK()
     const llmsBody = await llmsResponse.text()

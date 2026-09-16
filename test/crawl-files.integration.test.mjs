@@ -99,5 +99,9 @@ describe('crawl files integration', { concurrency: 1 }, () => {
 
     assert.ok(packageMarkdown.startsWith('# '))
     assert.ok(llms.includes('## Package markdown fallbacks'))
+    assert.ok(
+      llms.includes('https://agents-repo.org/docs/contributing-packages.md'),
+      'llms.txt must list contributing-packages doc markdown URL',
+    )
   })
 })

@@ -15,6 +15,35 @@ O código-fonte dos pacotes vive no repositório [registry](https://github.com/a
   (formato de pacote, `package-detail-schema.md`, formato agent/flow, metadados,
   manifests, versionamento).
 
+## Introdução ao formato de pacote
+
+Esta secção orienta autores antes de abrir as specs normativas. É **ilustrativa**; não substitui [registry/specs](https://github.com/agents-repo/registry/tree/main/specs).
+
+O código-fonte fica em `packages/<namespace>/<package-id>/`. Artefactos gerados (`versions/`, `detail.json`) vêm dos scripts npm do registry — não os escreva à mão. Submissão passo a passo: **[Enviar um pacote](/docs/submitting-a-package)**.
+
+```text
+packages/<namespace>/<package-id>/
+  metadata.json
+  agents/          # definições de agent (conforme specs)
+  flows/           # definições de flow opcionais
+  README.md        # opcional; copiado para o snapshot de versão no build
+  versions/        # gerado por package:build — não editar à mão
+```
+
+Regras normativas de formato, metadados, agent/flow, manifests e versionamento permanecem em [registry/specs](https://github.com/agents-repo/registry/tree/main/specs).
+
+### Validar localmente
+
+Num clone local do [registry](https://github.com/agents-repo/registry), conclua a configuração de [Development Environment](https://github.com/agents-repo/registry/blob/main/README.md#development-environment) (`npm ci`, `npm run env:check`) e execute:
+
+```bash
+npm run package:validate -- --package <namespace>/<package-id>
+npm run package:build -- --package <namespace>/<package-id>
+npm run package:validate-artifacts -- --package <namespace>/<package-id> --version <version>
+```
+
+O **`full-package-creation-flow`** sugerido executa este pipeline ao concluir; veja [Enviar um pacote](/docs/submitting-a-package) se autorar ficheiros manualmente.
+
 ## Fluxo de submissão
 
 A maioria dos contribuidores faz **fork** do registry, trabalha no fork e abre um pull request para **agents-repo/registry** `main`. Uma issue de acompanhamento no upstream é **recomendada mas não obrigatória**.
@@ -32,3 +61,5 @@ Correções a pacotes publicados usam o mesmo modelo fork → pull request upstr
 ## Ajuda
 
 Questões: [Contacto](/contact) ou GitHub Discussions do registry. Ideias de pacotes: explore a [Home](/) para exemplos.
+
+Direção do ecossistema (resultados, sem datas de entrega): [ROADMAP da organização](https://github.com/agents-repo/.github/blob/main/ROADMAP.md).
