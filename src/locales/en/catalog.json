@@ -92,12 +92,9 @@
       "copySuccess": "Copied to clipboard.",
       "copyFailure": "Could not copy to clipboard. Copy the command manually.",
       "installingPackagesLink": "Installing packages",
-      "cliCommandsLink": "CLI command reference"
-    },
-    "startHere": {
-      "heading": "Start here",
-      "viewAllButton": "View all in Start here",
-      "empty": "No Start here packages are available in the current catalog."
+      "cliCommandsLink": "CLI command reference",
+      "startHerePrompt": "New to the registry?",
+      "startHereLink": "Browse Start here packages"
     },
     "useInChat": {
       "heading": "Use in chat without installing",

@@ -7,7 +7,7 @@ section: Catalog
 
 [Home](/) is an end-user landing page: a value-focused hero with search,
 explainer blocks (supported tools, what you gain, how it works), a copyable CLI
-quickstart, a **Start here** curated slice, a Use in chat callout, then a
+quickstart (with a link to the **Start here** curated collection), a Use in chat callout, then a
 first slice of packages most downloaded in the last year, and a short contribute
 CTA. **View all packages**
 links go to the crawlable [Packages](/packages) index (one in the results
@@ -25,11 +25,10 @@ dialog from that control is open.
 
 ## Start here collection
 
-Home shows a **Start here** section with a small curated set of
-beginner-friendly packages. The same collection is available at
-[Packages](/packages?collection=start-here). Search and facet filters still
-apply inside that collection. Namespace listings ignore the `collection`
-parameter.
+The **Start here** curated set of beginner-friendly packages is available at
+[Packages](/packages?collection=start-here). Home links to it from the CLI
+quickstart section. Search and facet filters still apply inside that collection.
+Namespace listings ignore the `collection` parameter.
 
 ## Catalog freshness
 

@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next'
 import { copyTextToClipboard } from '../../../../site/application/clipboard/copyTextToClipboard'
 import { getDocDetailPath } from '../../../../site/application/docs/docsCatalog'
 import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
-import { getPackageDetailPath } from '../../../application/packageSiteRoutes'
+import { START_HERE_COLLECTION_ID } from '../../../application/startHereCollection'
+import { getPackageDetailPath, getPackagesIndexPath } from '../../../application/packageSiteRoutes'
 import CliTerminalCommandRow from '../CliTerminalCommandRow'
 import {
   CLI_INIT_COMMAND,
@@ -22,6 +23,9 @@ function HomeCliQuickstartSection() {
   const localizedSitePath = useLocalizedSitePath()
   const featuredPackagePath = localizedSitePath(
     getPackageDetailPath(FEATURED_PACKAGE_NAMESPACE, FEATURED_PACKAGE_ID),
+  )
+  const startHereCollectionPath = localizedSitePath(
+    `${getPackagesIndexPath()}?collection=${START_HERE_COLLECTION_ID}`,
   )
   const [initCopyFeedback, setInitCopyFeedback] = useState('')
   const [installCopyFeedback, setInstallCopyFeedback] = useState('')
@@ -123,6 +127,10 @@ function HomeCliQuickstartSection() {
               <Link to={featuredPackagePath}>
                 {t('homeLanding.cliQuickstart.featuredPackageLink', { packageId: FEATURED_PACKAGE_ID })}
               </Link>
+            </p>
+            <p className="text-center small mt-3 mb-0">
+              {t('homeLanding.cliQuickstart.startHerePrompt')}{' '}
+              <Link to={startHereCollectionPath}>{t('homeLanding.cliQuickstart.startHereLink')}</Link>
             </p>
             <p className="text-center small mt-4 mb-0">
               <Link to={localizedSitePath(getDocDetailPath('installing-packages'))}>

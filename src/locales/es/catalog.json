@@ -92,12 +92,9 @@
       "copySuccess": "Copiado al portapapeles.",
       "copyFailure": "No se pudo copiar al portapapeles. Copia el comando manualmente.",
       "installingPackagesLink": "Instalar paquetes",
-      "cliCommandsLink": "Referencia de comandos CLI"
-    },
-    "startHere": {
-      "heading": "Empieza aquí",
-      "viewAllButton": "Ver todo en Empieza aquí",
-      "empty": "No hay paquetes de Empieza aquí disponibles en el catálogo actual."
+      "cliCommandsLink": "Referencia de comandos CLI",
+      "startHerePrompt": "¿Nuevo en el registro?",
+      "startHereLink": "Explorar paquetes de Empieza aquí"
     },
     "useInChat": {
       "heading": "Usar en chat sin instalar",

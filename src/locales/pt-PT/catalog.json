@@ -92,12 +92,9 @@
       "copySuccess": "Copiado para a área de transferência.",
       "copyFailure": "Não foi possível copiar para a área de transferência. Copie o comando manualmente.",
       "installingPackagesLink": "Instalar pacotes",
-      "cliCommandsLink": "Referência de comandos CLI"
-    },
-    "startHere": {
-      "heading": "Comece aqui",
-      "viewAllButton": "Ver tudo em Comece aqui",
-      "empty": "Nenhum pacote de Comece aqui está disponível no catálogo atual."
+      "cliCommandsLink": "Referência de comandos CLI",
+      "startHerePrompt": "Novo no registo?",
+      "startHereLink": "Explorar pacotes Comece aqui"
     },
     "useInChat": {
       "heading": "Usar no chat sem instalar",

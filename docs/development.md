@@ -213,13 +213,17 @@ Feature-area index (details in bullets below):
 - The landing page shows a first slice of packages most downloaded in the last
   year (with catalog loading and source chrome) and **View all packages**
   links to `/packages`: one in the results heading row and a larger CTA below
-  the package cards (or the empty-catalog message). Catalog schema version is
-  not shown on Home or Packages listings. Home search navigates to `/packages?q=…`; an empty query
-  stays on Home. `/packages` is the crawlable all-packages index (distinct
-  heading from Home) with URL-backed search, download-window sort, filters, and
-  numbered pagination when more than 9 packages match (`page` in the query
-  string, omitted on page 1). `/packages/:namespace` is the same search, sort,
-  filters, and pagination, scoped to that namespace.
+  the package cards (or the empty-catalog message). The CLI quickstart section
+  links to the curated **Start here** collection at
+  `/packages?collection=start-here` (no second package grid on Home). Catalog
+  schema version is not shown on Home or Packages listings. Home search
+  navigates to `/packages?q=…`; an empty query stays on Home. `/packages` is
+  the crawlable all-packages index (distinct heading from Home) with
+  URL-backed search, download-window sort, filters, optional `collection`
+  (for example `start-here`), and numbered pagination when more than 9 packages
+  match (`page` in the query string, omitted on page 1).
+  `/packages/:namespace` is the same search, sort, filters, and pagination,
+  scoped to that namespace.
   `/packages/:namespace/:packageId` is the latest-only package detail page.
 - Package card footer actions (CLI, Use in chat, Download, View) include short
   visible labels. **View** and the card title open the in-app package page.
