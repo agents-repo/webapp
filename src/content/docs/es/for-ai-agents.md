@@ -43,6 +43,45 @@ curl -fsSL 'https://agents-repo.org/docs/installing-packages.md'
 curl -fsSL 'https://agents-repo.org/llms.txt'
 ```
 
+Tras `npm run build:pages`, **`llms.txt` es la lista autoritativa** de cada URL `.md` de doc y paquete del sitio (el bloque estático abajo es una instantánea; prefiere obtener `llms.txt`).
+
+## Publicar paquetes
+
+Flujo de autor (humano o agente que asiste a un autor):
+
+1. Haz fork de [agents-repo/registry](https://github.com/agents-repo/registry), abre un pull request **en borrador** a `main` — consulta [Enviar un paquete](/docs/submitting-a-package).
+2. Crea el código del paquete bajo `packages/<namespace>/<package-id>/` (sugerido: **`full-package-creation-flow`** en el clon del registry).
+3. Ejecuta validación local (`package:validate`, `package:build`, `package:validate-artifacts`) — comandos en [Contribuir paquetes](/docs/contributing-packages).
+4. Marca el pull request listo para revisión cuando pase CI.
+
+Políticas e intro al formato: [Contribuir paquetes](/docs/contributing-packages). Prioridades del ecosistema: [ROADMAP de la organización](https://github.com/agents-repo/.github/blob/main/ROADMAP.md).
+
+Espejos markdown: `/docs/submitting-a-package.md`, `/docs/contributing-packages.md`.
+
+## Instalación CLI
+
+Docs de instalación para consumidores (agentes que ayudan a instalar paquetes del catálogo):
+
+```bash
+npm install -D agents-repo@<version>
+npx agents-repo init --targets cursor github-copilot
+npx agents-repo install <namespace>/<package-id>
+```
+
+Guía completa: [Instalar paquetes](/docs/installing-packages) (`/docs/installing-packages.md`).
+
+## Patrones de URL de paquetes
+
+| Superficie | Patrón de URL |
+| --- | --- |
+| Catálogo del sitio (HTML) | `https://agents-repo.org/packages/<namespace>/<package-id>/` |
+| Markdown de paquete en el sitio | `https://agents-repo.org/packages/<namespace>/<package-id>.md` |
+| Índice JSON del registry | `https://registry.agents-repo.org/packages/index.json?ref=v2.x` |
+| Detail JSON del registry | `https://registry.agents-repo.org/packages/<namespace>/<package-id>/detail.json?ref=v2.x` |
+| Markdown de doc del sitio | `https://agents-repo.org/docs/<slug>.md` |
+
+Los fallbacks `.md` de paquetes y todas las URLs `.md` de docs se listan en **`llms.txt`** tras cada build de producción.
+
 ## Datos del catálogo
 
 Índice del registry (ref de producción por defecto vía proxy — tu entorno puede diferir):

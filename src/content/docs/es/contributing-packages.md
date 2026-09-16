@@ -15,6 +15,35 @@ El código fuente de los paquetes vive en el repositorio [registry](https://gith
   (formato de paquete, `package-detail-schema.md`, formato agent/flow, metadatos,
   manifiestos, versionado).
 
+## Introducción al formato de paquete
+
+Esta sección orienta a autores antes de abrir las specs normativas. Es **ilustrativa**; no sustituye [registry/specs](https://github.com/agents-repo/registry/tree/main/specs).
+
+El código fuente vive bajo `packages/<namespace>/<package-id>/`. Los artefactos generados (`versions/`, `detail.json`) provienen de scripts npm del registry — no los escribas a mano. Envío paso a paso: **[Enviar un paquete](/docs/submitting-a-package)**.
+
+```text
+packages/<namespace>/<package-id>/
+  metadata.json
+  agents/          # definiciones de agent (según specs)
+  flows/           # definiciones de flow opcionales
+  README.md        # opcional; se copia al snapshot de versión en build
+  versions/        # generado por package:build — no editar a mano
+```
+
+Las reglas normativas de formato, metadatos, agent/flow, manifiestos y versionado siguen en [registry/specs](https://github.com/agents-repo/registry/tree/main/specs).
+
+### Validar en local
+
+Desde un clon local del [registry](https://github.com/agents-repo/registry), completa la configuración de [Development Environment](https://github.com/agents-repo/registry/blob/main/README.md#development-environment) (`npm ci`, `npm run env:check`) y ejecuta:
+
+```bash
+npm run package:validate -- --package <namespace>/<package-id>
+npm run package:build -- --package <namespace>/<package-id>
+npm run package:validate-artifacts -- --package <namespace>/<package-id> --version <version>
+```
+
+El **`full-package-creation-flow`** sugerido ejecuta este pipeline al completarse; consulta [Enviar un paquete](/docs/submitting-a-package) si autorizas archivos tú mismo.
+
 ## Flujo de envío
 
 La mayoría de contribuidores **hace fork** del registry, trabaja en el fork y abre un pull request a **agents-repo/registry** `main`. Un issue de seguimiento en upstream es **recomendado pero no obligatorio**.
@@ -32,3 +61,5 @@ Las correcciones a paquetes publicados usan el mismo modelo fork → pull reques
 ## Ayuda
 
 Preguntas: [Contacto](/contact) o GitHub Discussions del registry. Ideas de paquetes: explora [Inicio](/) para ejemplos.
+
+Dirección del ecosistema (resultados, sin fechas de entrega): [ROADMAP de la organización](https://github.com/agents-repo/.github/blob/main/ROADMAP.md).

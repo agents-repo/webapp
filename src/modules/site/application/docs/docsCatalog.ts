@@ -80,7 +80,7 @@ export const docsCatalog: readonly DocCatalogMeta[] = [
   {
     slug: 'contributing-packages',
     title: 'Contributing packages',
-    description: 'Policies, specs, and links for registry package authors.',
+    description: 'Policies, specs, format primer, and links for registry package authors.',
     order: 110,
     section: 'Contribute',
   },
@@ -102,7 +102,7 @@ export const docsCatalog: readonly DocCatalogMeta[] = [
   {
     slug: 'for-ai-agents',
     title: 'For AI agents',
-    description: 'Stable markdown URLs, llms.txt, and curl examples for automated readers.',
+    description: 'Stable markdown URLs, llms.txt, publish flow, and curl examples for automated readers.',
     order: 140,
     section: 'Agents',
   },
