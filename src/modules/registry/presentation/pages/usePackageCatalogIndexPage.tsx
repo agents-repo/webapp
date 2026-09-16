@@ -8,8 +8,13 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { whenMainRouteContentReady } from '../../../site/application/accessibility/routeContentReady'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
+import {
+  hasActivePackageCatalogSearchFocusHandoff,
+  shouldFocusPackageCatalogSearch,
+} from '../../application/catalogSearchNavigation'
 import {
   getInitialCatalogFiltersSidebarCollapsed,
   persistCatalogFiltersSidebarCollapsed,
@@ -83,7 +88,13 @@ function focusVisiblePackageCatalogSearchInput(searchInputId: string): void {
       ? searchInputs[0]
       : Array.from(searchInputs).find((input) => input.offsetParent !== null)
 
-  visibleInput?.focus({ preventScroll: true })
+  if (!visibleInput) {
+    return
+  }
+
+  visibleInput.focus({ preventScroll: true })
+  const caretIndex = visibleInput.value.length
+  visibleInput.setSelectionRange(caretIndex, caretIndex)
 }
 
 function toggleFilterValue(
@@ -132,7 +143,26 @@ export function usePackageCatalogIndexPage(options: {
     downloadStatsById,
   } = useRegistryCatalog()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { pathname } = useLocation()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const locationRef = useRef(location)
+  useLayoutEffect(() => {
+    locationRef.current = location
+  }, [location])
+  const { pathname } = location
+
+  const getReplaceSearchParamsOptions = useCallback(() => {
+    const currentLocation = locationRef.current
+    const options: { replace: true; state?: unknown } = { replace: true }
+    if (
+      shouldFocusPackageCatalogSearch(currentLocation.state) ||
+      hasActivePackageCatalogSearchFocusHandoff()
+    ) {
+      options.state = currentLocation.state
+    }
+
+    return options
+  }, [])
   const urlFilters = useMemo(() => parsePackageCatalogFilters(searchParams), [searchParams])
   const downloadPeriod = useMemo(() => parseDownloadStatsPeriod(searchParams), [searchParams])
   const requestedPage = useMemo(() => parsePackageCatalogPage(searchParams), [searchParams])
@@ -185,14 +215,14 @@ export function usePackageCatalogIndexPage(options: {
             query: draftQuery,
           })
         },
-        { replace: true },
+        getReplaceSearchParamsOptions(),
       )
     }, CATALOG_SEARCH_DEBOUNCE_MS)
 
     return () => {
       window.clearTimeout(timeoutId)
     }
-  }, [draftQuery, setSearchParams, urlFilters.query])
+  }, [draftQuery, getReplaceSearchParamsOptions, setSearchParams, urlFilters.query])
 
   const commitFilters = useCallback(
     (nextFilters: PackageCatalogFilters, replace = false) => {
@@ -200,10 +230,10 @@ export function usePackageCatalogIndexPage(options: {
       setDraftQuery(nextFilters.query)
       setSearchParams(
         (previousParams) => applyPackageCatalogFiltersToSearchParams(previousParams, nextFilters),
-        { replace },
+        replace ? getReplaceSearchParamsOptions() : { replace },
       )
     },
-    [setSearchParams],
+    [getReplaceSearchParamsOptions, setSearchParams],
   )
 
   const activeCollection = useMemo(
@@ -249,8 +279,8 @@ export function usePackageCatalogIndexPage(options: {
       return
     }
 
-    setSearchParams(nextParams, { replace: true })
-  }, [catalog, catalogPage, searchParams, setSearchParams])
+    setSearchParams(nextParams, getReplaceSearchParamsOptions())
+  }, [catalog, catalogPage, getReplaceSearchParamsOptions, searchParams, setSearchParams])
 
   const previousCatalogPageSizeRef = useRef(catalogPageSize)
   useEffect(() => {
@@ -266,10 +296,11 @@ export function usePackageCatalogIndexPage(options: {
       return
     }
 
-    setSearchParams(nextParams, { replace: true })
+    setSearchParams(nextParams, getReplaceSearchParamsOptions())
   }, [
     catalogPageSize,
     filteredPackages.length,
+    getReplaceSearchParamsOptions,
     requestedPage,
     searchParams,
     setSearchParams,
@@ -353,6 +384,68 @@ export function usePackageCatalogIndexPage(options: {
     })
   }, [searchInputId, stickySearch])
 
+  const catalogSearchFocusHandoffKeyRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (!shouldFocusPackageCatalogSearch(location.state)) {
+      return
+    }
+
+    if (catalogSearchFocusHandoffKeyRef.current === location.key) {
+      return
+    }
+
+    let cancelled = false
+    let frameId = 0
+    let attempts = 0
+    const maxAttempts = 24
+
+    const clearNavigationState = (): void => {
+      const currentLocation = locationRef.current
+      if (!shouldFocusPackageCatalogSearch(currentLocation.state)) {
+        return
+      }
+
+      void navigate(
+        {
+          pathname: currentLocation.pathname,
+          search: currentLocation.search,
+        },
+        { replace: true, state: null },
+      )
+    }
+
+    const tryFocusSearch = (): void => {
+      if (cancelled) {
+        return
+      }
+
+      attempts += 1
+      focusVisiblePackageCatalogSearchInput(searchInputId)
+      if (document.activeElement?.id === searchInputId) {
+        catalogSearchFocusHandoffKeyRef.current = locationRef.current.key
+        clearNavigationState()
+        return
+      }
+
+      if (attempts < maxAttempts) {
+        frameId = window.requestAnimationFrame(tryFocusSearch)
+      }
+    }
+
+    const startFocusHandoff = (): void => {
+      frameId = window.requestAnimationFrame(tryFocusSearch)
+    }
+
+    const stopWaitingForContent = whenMainRouteContentReady(startFocusHandoff)
+
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(frameId)
+      stopWaitingForContent()
+    }
+  }, [location.key, location.pathname, location.state, navigate, searchInputId])
+
   const toggleFilter = useCallback(
     (facet: PackageCatalogFilterFacet, value = '') => {
       commitFilters(toggleFilterValue(filtersRef.current, facet, value))
@@ -383,10 +476,10 @@ export function usePackageCatalogIndexPage(options: {
     (period: DownloadStatsPeriod) => {
       setSearchParams(
         (previousParams) => applyDownloadStatsPeriodToSearchParams(previousParams, period),
-        { replace: true },
+        getReplaceSearchParamsOptions(),
       )
     },
-    [setSearchParams],
+    [getReplaceSearchParamsOptions, setSearchParams],
   )
 
   const isFacetSelected = useCallback(

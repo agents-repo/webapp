@@ -12,6 +12,7 @@ import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/pagina
 import { START_HERE_PACKAGE_REFS } from '../../application/startHereCollection'
 import type { RegistryPackage } from '../../domain/package'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
+import { withPackageCatalogSearchFocusState } from '../../application/catalogSearchNavigation'
 import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { localizedSitePath } from '../../../site/application/i18n/localePath.ts'
@@ -466,6 +467,25 @@ describe('PackagesIndexPage', () => {
     expect(screen.getByRole('heading', { name: 'Start here', level: 1 })).toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: 'hello-agent' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'review-agent' })).not.toBeInTheDocument()
+  })
+
+  it('focuses package search after home search navigation handoff', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: [
+        {
+          pathname: '/packages',
+          search: '?q=demo-flow',
+          state: withPackageCatalogSearchFocusState(),
+        },
+      ],
+    })
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await waitFor(() => {
+      expect(document.activeElement).toBe(searchInput)
+    })
   })
 
   it('keeps package search focus while typing', async () => {

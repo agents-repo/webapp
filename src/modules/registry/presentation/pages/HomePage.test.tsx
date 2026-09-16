@@ -4,7 +4,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import RouteAnnouncer from '../../../site/application/accessibility/RouteAnnouncer'
 import HomePage from './HomePage'
+import PackagesIndexPage from './PackagesIndexPage'
 import {
   loadedCatalogContext,
   loadingCatalogContext,
@@ -32,14 +34,28 @@ function LocationProbe() {
   return <div data-testid="location">{`${location.pathname}${location.search}`}</div>
 }
 
-function renderHomeAtRoot() {
+function renderHomeAtRoot(options: { includePackagesIndex?: boolean } = {}) {
+  const includePackagesIndex = options.includePackagesIndex ?? false
+
   return renderWithProviders(
     <>
+      <RouteAnnouncer />
       <LocationProbe />
-      <Routes>
-        <Route path="/" element={<HomePage setHeaderSearchSlot={() => {}} />} />
-        <Route path="/packages" element={<p>packages index</p>} />
-      </Routes>
+      <main id="main-content" tabIndex={-1}>
+        <Routes>
+          <Route path="/" element={<HomePage setHeaderSearchSlot={() => {}} />} />
+          <Route
+            path="/packages"
+            element={
+              includePackagesIndex ? (
+                <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+              ) : (
+                <p>packages index</p>
+              )
+            }
+          />
+        </Routes>
+      </main>
     </>,
     { initialEntries: ['/'] },
   )
@@ -139,6 +155,28 @@ describe('HomePage search', () => {
     await waitFor(() => {
       expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=demo-flow')
     })
+  })
+
+  it('keeps search focus on the packages index after debounced home navigation', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderHomeAtRoot({ includePackagesIndex: true })
+
+    const homeSearchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.type(homeSearchInput, 'demo-flow')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=demo-flow')
+    })
+
+    const packagesSearchInput = await screen.findByRole('textbox', {
+      name: /search registry packages/i,
+    })
+    await waitFor(() => {
+      expect(document.activeElement).toBe(packagesSearchInput)
+    })
+    expect(packagesSearchInput).toHaveValue('demo-flow')
   })
 
   it('navigates immediately on search submit', async () => {

@@ -59,7 +59,11 @@ Every routed page should:
 `RouteScrollManager` owns window scroll on client-side route changes and on the
 initial client load when the URL includes a hash. `RouteAnnouncer` focuses
 `#main-content` with `preventScroll: true` so route announcements do not move the
-window after scroll reset or restore.
+window after scroll reset or restore. Debounced home search that navigates to the
+packages index sets router state so focus moves to the packages search field
+instead; the live-region announcement is unchanged. `RouteAnnouncer` also skips
+moving focus to `#main-content` when the package catalog search input already has
+focus after lazy route content finishes loading.
 
 - Link clicks and `navigate()` to a different pathname start at the top of the
   window (`behavior: instant`).
