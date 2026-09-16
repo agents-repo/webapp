@@ -360,16 +360,16 @@ describe('PackagesIndexPage', () => {
     )
 
     expect(await screen.findByRole('heading', { name: 'page-agent-01' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'page-agent-08' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'page-agent-09' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 1–8 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'page-agent-09' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'page-agent-10' })).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 1–9 of 13 packages')).toBeInTheDocument()
     const pagination = screen.getByRole('navigation', { name: 'Package results pages' })
     expect(pagination).toBeInTheDocument()
 
     await user.click(within(pagination).getByRole('link', { name: '2' }))
     expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'page-agent-01' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 9–13 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByText('Showing 10–13 of 13 packages')).toBeInTheDocument()
     expect(screen.getByTestId('location-search')).toHaveTextContent('page=2')
     expect(document.activeElement).toHaveAttribute('id', 'catalog-results-summary')
   })
@@ -508,6 +508,16 @@ describe('PackagesIndexPage', () => {
 
   it('shows nine cards per page when the filter sidebar is collapsed', async () => {
     const user = userEvent.setup()
+    vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({
+      matches: query === '(min-width: 992px)',
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }))
     useRegistryCatalogMock.mockReturnValue({
       ...loadedCatalogContext,
       catalog: createPaginatedRegistryCatalog(),
