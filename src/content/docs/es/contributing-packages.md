@@ -42,7 +42,7 @@ npm run package:build -- --package <namespace>/<package-id>
 npm run package:validate-artifacts -- --package <namespace>/<package-id> --version <version>
 ```
 
-El **`full-package-creation-flow`** sugerido ejecuta este pipeline al completarse; consulta [Enviar un paquete](/docs/submitting-a-package) si autorizas archivos tú mismo.
+El **`full-package-creation-flow`** sugerido ejecuta este pipeline al completarse; consulta [Enviar un paquete](/docs/submitting-a-package) si creas los archivos tú mismo.
 
 ## Flujo de envío
 

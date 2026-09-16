@@ -43,7 +43,7 @@ curl -fsSL 'https://agents-repo.org/docs/installing-packages.md'
 curl -fsSL 'https://agents-repo.org/llms.txt'
 ```
 
-Tras `npm run build:pages`, **`llms.txt` es la lista autoritativa** de cada URL `.md` de doc y paquete del sitio (el bloque estático abajo es una instantánea; prefiere obtener `llms.txt`).
+Tras `npm run build:pages`, **`llms.txt` es la lista autoritativa** de cada URL `.md` de doc y paquete del sitio (la lista de URLs de arriba es una instantánea; prefiere obtener `llms.txt`).
 
 ## Publicar paquetes
 
