@@ -1,5 +1,5 @@
 ---
-applyTo: "scripts/og/**"
+applyTo: "scripts/og/**,scripts/og-image.mjs"
 description: "Open Graph JPEG templates (Satori/sharp); not part of build:pages."
 ---
 

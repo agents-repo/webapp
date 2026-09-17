@@ -19,7 +19,7 @@ export async function renderRouteOgJpeg(routeId) {
   const cardModule = await import(artifact.cardModule)
   const createElement = cardModule[cardFactoryExportName(routeId)]
   if (typeof createElement !== 'function') {
-    throw new Error(`No OG card factory export in ${artifact.cardModule} for route id: ${routeId}`)
+    throw new TypeError(`No OG card factory export in ${artifact.cardModule} for route id: ${routeId}`)
   }
 
   const logoDataUrl = await loadBrandLogoDataUrl()
