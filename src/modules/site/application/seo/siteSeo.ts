@@ -1,6 +1,10 @@
 export { siteName, siteName as ogSiteName } from '../accessibility/documentTitleFormat.ts'
 
-import { siteRoutes } from '../../presentation/routes/siteRoutes.ts'
+import {
+  findSiteRoutePath,
+  siteRoutes,
+  type SiteRoutePath,
+} from '../../presentation/routes/siteRoutes.ts'
 
 const defaultSiteOrigin = 'https://agents-repo.org'
 
@@ -19,13 +23,13 @@ export const siteOrigin = getSiteOrigin()
 export const ogImagePath = '/og-image.jpg'
 
 /** Committed route-specific OG JPEGs (phase 2). Keys are canonical paths from `siteRoutes`. */
-export const routeOgImagePathByCanonicalPath: Readonly<Record<string, string>> = {
+export const routeOgImagePathByCanonicalPath: Readonly<Partial<Record<SiteRoutePath, string>>> = {
   [siteRoutes.home]: '/og/home.jpg',
   [siteRoutes.packages]: '/og/packages.jpg',
   [siteRoutes.docs]: '/og/docs.jpg',
 }
 
-export const routeOgImageAltByCanonicalPath: Readonly<Record<string, string>> = {
+export const routeOgImageAltByCanonicalPath: Readonly<Partial<Record<SiteRoutePath, string>>> = {
   [siteRoutes.home]:
     'Agents Repo home — discover agents and flows in the open registry and install with the CLI for Copilot, Cursor, Claude Code, and Codex.',
   [siteRoutes.packages]:
@@ -35,17 +39,18 @@ export const routeOgImageAltByCanonicalPath: Readonly<Record<string, string>> = 
 }
 
 export function getOgImageUrl(origin: string = siteOrigin, canonicalPath?: string): string {
-  const routePath =
-    canonicalPath && canonicalPath.length > 0
-      ? routeOgImagePathByCanonicalPath[canonicalPath]
-      : undefined
+  const matchedRoute =
+    canonicalPath && canonicalPath.length > 0 ? findSiteRoutePath(canonicalPath) : undefined
+  const routePath = matchedRoute ? routeOgImagePathByCanonicalPath[matchedRoute] : undefined
   const publicPath = routePath ?? ogImagePath
   return `${origin}${publicPath}`
 }
 
 export function getOgImageAlt(canonicalPath?: string): string {
-  if (canonicalPath && canonicalPath.length > 0) {
-    const routeAlt = routeOgImageAltByCanonicalPath[canonicalPath]
+  const matchedRoute =
+    canonicalPath && canonicalPath.length > 0 ? findSiteRoutePath(canonicalPath) : undefined
+  if (matchedRoute) {
+    const routeAlt = routeOgImageAltByCanonicalPath[matchedRoute]
     if (routeAlt) {
       return routeAlt
     }
