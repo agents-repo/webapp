@@ -18,6 +18,7 @@ jobs:
       slides: ${{ steps.match.outputs.slides }}
       agents: ${{ steps.match.outputs.agents }}
       pages: ${{ steps.match.outputs.pages }}
+      cliDocs: ${{ steps.match.outputs.cliDocs }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -102,3 +103,28 @@ jobs:
       - name: Skip Pages and crawl extras
         if: needs.changes.outputs.pages != 'true'
         run: echo "Skipping build:pages and test:crawl-files; PR paths do not match the pages group (src/**, public/**, scripts/** except slides.mjs, Vite/tsconfig, npm lockfiles, crawl tests, or pr-baseline.yml). eslint.config.js-only changes do not trigger this extra."
+
+      - name: Checkout CLI for docs sync
+        if: needs.changes.outputs.cliDocs == 'true'
+        uses: actions/checkout@v6
+        with:
+          repository: agents-repo/cli
+          path: .ci-cli
+          ref: main
+
+      - name: Sync CLI command inventory
+        if: needs.changes.outputs.cliDocs == 'true'
+        env:
+          AGENTS_REPO_WEBAPP_ROOT: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/.ci-cli
+        run: |
+          if [ ! -f scripts/check-docs-sync.mjs ]; then
+            echo "Skipping check:docs-sync; agents-repo/cli main does not have scripts/check-docs-sync.mjs yet."
+            exit 0
+          fi
+          npm ci
+          npm run check:docs-sync
+
+      - name: Skip CLI docs sync
+        if: needs.changes.outputs.cliDocs != 'true'
+        run: echo "Skipping check:docs-sync; PR paths do not match cli-commands.md locales, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs."

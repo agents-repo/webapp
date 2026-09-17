@@ -6,6 +6,12 @@ import { pathToFileURL } from 'node:url';
 const NPM_LOCKFILES = ['package.json', 'package-lock.json'];
 const PR_BASELINE_WORKFLOW = '.github/workflows/pr-baseline.yml';
 const PATH_FILTER_MATCHER = 'scripts/ci-pr-path-filters.mjs';
+const CLI_COMMANDS_DOCS = [
+  'src/content/docs/cli-commands.md',
+  'src/content/docs/es/cli-commands.md',
+  'src/content/docs/pt-br/cli-commands.md',
+  'src/content/docs/pt-pt/cli-commands.md',
+];
 
 /**
  * Repo-specific extra groups for PR baseline.
@@ -55,6 +61,14 @@ export const PATH_GROUPS = {
       'test/pwa-sw.integration.test.mjs',
     ],
     exclude: ['scripts/slides.mjs'],
+  },
+  cliDocs: {
+    include: [
+      ...CLI_COMMANDS_DOCS,
+      PR_BASELINE_WORKFLOW,
+      PATH_FILTER_MATCHER,
+    ],
+    exclude: [],
   },
 };
 
