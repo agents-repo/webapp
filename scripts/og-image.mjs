@@ -85,7 +85,8 @@ async function generate() {
   const failures = []
   await assertJpegConstraints(jpeg, failures)
   if (failures.length > 0) {
-    throw new Error(failures.join('\n'))
+    const message = failures.join('\n').trim()
+    throw new Error(message || 'OG image generation failed validation')
   }
   const digest = await fingerprintTemplateSources()
   await fs.writeFile(jpegPath, jpeg)
@@ -94,7 +95,7 @@ async function generate() {
   console.log(`Wrote ${path.relative(root, fingerprintPath)}`)
 }
 
-async function checkSourceFingerprint(committedDigest, expectedDigest, failures) {
+function checkSourceFingerprint(committedDigest, expectedDigest, failures) {
   if (!committedDigest) {
     return
   }
