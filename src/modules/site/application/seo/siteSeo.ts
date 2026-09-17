@@ -1,5 +1,7 @@
 export { siteName, siteName as ogSiteName } from '../accessibility/documentTitleFormat.ts'
 
+import { siteRoutes } from '../../presentation/routes/siteRoutes.ts'
+
 const defaultSiteOrigin = 'https://agents-repo.org'
 
 interface SiteImportMetaEnv {
@@ -16,8 +18,39 @@ export const siteOrigin = getSiteOrigin()
 
 export const ogImagePath = '/og-image.jpg'
 
-export function getOgImageUrl(origin: string = siteOrigin): string {
-  return `${origin}${ogImagePath}`
+/** Committed route-specific OG JPEGs (phase 2). Keys are canonical paths from `siteRoutes`. */
+export const routeOgImagePathByCanonicalPath: Readonly<Record<string, string>> = {
+  [siteRoutes.home]: '/og/home.jpg',
+  [siteRoutes.packages]: '/og/packages.jpg',
+  [siteRoutes.docs]: '/og/docs.jpg',
+}
+
+export const routeOgImageAltByCanonicalPath: Readonly<Record<string, string>> = {
+  [siteRoutes.home]:
+    'Agents Repo home — discover agents and flows in the open registry and install with the CLI for Copilot, Cursor, Claude Code, and Codex.',
+  [siteRoutes.packages]:
+    'Agents Repo packages — browse published agents and flows for Copilot, Cursor, Claude Code, and Codex.',
+  [siteRoutes.docs]:
+    'Agents Repo docs — catalog browsing, CLI install, contributing, and markdown downloads for AI agents.',
+}
+
+export function getOgImageUrl(origin: string = siteOrigin, canonicalPath?: string): string {
+  const routePath =
+    canonicalPath && canonicalPath.length > 0
+      ? routeOgImagePathByCanonicalPath[canonicalPath]
+      : undefined
+  const publicPath = routePath ?? ogImagePath
+  return `${origin}${publicPath}`
+}
+
+export function getOgImageAlt(canonicalPath?: string): string {
+  if (canonicalPath && canonicalPath.length > 0) {
+    const routeAlt = routeOgImageAltByCanonicalPath[canonicalPath]
+    if (routeAlt) {
+      return routeAlt
+    }
+  }
+  return ogImageAlt
 }
 
 export const ogImageWidth = 1200
