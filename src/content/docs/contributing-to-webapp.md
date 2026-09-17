@@ -38,8 +38,8 @@ npm run test:crawl-files
 
 For UI changes, also run `npm run test:a11y` and `npm run test:e2e` when applicable.
 
-PR baseline CI path-filters Chrome/`slides:check`, `agents:ci`, and Pages/crawl
-extras. Local validation still uses the full list. See the organization
+PR baseline CI path-filters Chrome/`slides:check`, `agents:ci`, Pages/crawl, and
+CLI `check:docs-sync` extras. Local validation still uses the full list. See the organization
 [PR baseline extras policy](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 
 ## Registry workflow packages in this repo

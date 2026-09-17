@@ -29,6 +29,7 @@ scale, not monorepo ceremony.
 | `npm run test:watch` | Local TDD while writing tests |
 | `npm run test:e2e` | Playwright browser specs — **local only** |
 | `npm run a11y:ci` | Post-build Lighthouse and pa11y scans — **local only** |
+| `npm run check:docs-sync` | `cli-commands.md` edits — run from sibling CLI checkout |
 
 `npm run test` includes accessibility smoke tests (`*.a11y.test.tsx`). The
 `test:a11y` script runs the same files via [`vitest.a11y.config.ts`](../vitest.a11y.config.ts)
@@ -38,8 +39,9 @@ For dependency or router changes, also run `npm run test:e2e` locally (Playwrigh
 not part of PR baseline CI).
 
 PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
-typecheck, and `npm run test`. Chrome/`slides:check`, `agents:ci`, and
-`build:pages` plus `test:crawl-files` are path-filtered extras. See
+typecheck, and `npm run test`. Chrome/`slides:check`, `agents:ci`,
+`build:pages` plus `test:crawl-files`, and CLI `check:docs-sync` are
+path-filtered extras. See
 [CONTRIBUTING.md](../.github/CONTRIBUTING.md) and the organization
 [PR baseline extras policy](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 Local handoff still runs the full validation set, including Pages/crawl.
