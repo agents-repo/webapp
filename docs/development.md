@@ -157,7 +157,9 @@ The cards embed the brand mark from `src/assets/logo/agents-repo-logo.svg`
 `site-default-card.mjs` and shared render helpers; route fingerprints cover
 `home-card.mjs`, `packages-card.mjs`, `docs-card.mjs`, and shared layout code.
 After logo or template edits, run `npm run og:generate` and commit all JPEGs and
-fingerprints.
+fingerprints. The pre-commit hook runs `og:generate` and `og:check` when
+`scripts/og/**` or `scripts/og-image.mjs` are staged, and re-stages `public/`
+OG artifacts.
 
 ### Third-party build tools (MIT project)
 
