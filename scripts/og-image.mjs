@@ -35,6 +35,7 @@ const routeFingerprintPath = path.join(routeOgDir, 'routes.src.sha256')
 const SITE_DEFAULT_TEMPLATE_BASENAMES = [
   'constants.mjs',
   'render-lib.mjs',
+  'route-card-layout.mjs',
   'site-default-card.mjs',
   'render-site-default.mjs',
 ]
