@@ -21,6 +21,18 @@ const CLI_COMMANDS_DOCS = [
  * (path filters).
  */
 export const PATH_GROUPS = {
+  og: {
+    include: [
+      'scripts/og/**',
+      'scripts/og-image.mjs',
+      'public/og-image.jpg',
+      'public/og-image.src.sha256',
+      ...NPM_LOCKFILES,
+      PR_BASELINE_WORKFLOW,
+      PATH_FILTER_MATCHER,
+    ],
+    exclude: [],
+  },
   slides: {
     include: [
       'docs/slides/**',
@@ -60,7 +72,7 @@ export const PATH_GROUPS = {
       'test/crawl-files.integration.test.mjs',
       'test/pwa-sw.integration.test.mjs',
     ],
-    exclude: ['scripts/slides.mjs'],
+    exclude: ['scripts/slides.mjs', 'scripts/og-image.mjs', 'scripts/og/**'],
   },
   cliDocs: {
     include: [

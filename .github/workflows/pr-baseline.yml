@@ -16,6 +16,7 @@ jobs:
       pull-requests: read
     outputs:
       slides: ${{ steps.match.outputs.slides }}
+      og: ${{ steps.match.outputs.og }}
       agents: ${{ steps.match.outputs.agents }}
       pages: ${{ steps.match.outputs.pages }}
       cliDocs: ${{ steps.match.outputs.cliDocs }}
@@ -65,6 +66,14 @@ jobs:
       - name: Skip slide PDF check
         if: needs.changes.outputs.slides != 'true'
         run: echo "Skipping slides:check; PR paths do not match the slides group (docs/slides/**, scripts/slides.mjs, npm lockfiles, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs)."
+
+      - name: Check committed OG JPEG drift
+        if: needs.changes.outputs.og == 'true'
+        run: npm run og:check
+
+      - name: Skip OG JPEG check
+        if: needs.changes.outputs.og != 'true'
+        run: echo "Skipping og:check; PR paths do not match the og group (scripts/og/**, scripts/og-image.mjs, public/og-image.jpg, public/og-image.src.sha256, npm lockfiles, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs)."
 
       - name: Verify registry package installs from lock
         if: needs.changes.outputs.agents == 'true'

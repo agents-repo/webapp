@@ -122,6 +122,28 @@ remain the per-item crawl surface.
 Do **not** block JavaScript or CSS in `robots.txt` — Google needs assets to
 render pages.
 
+## Open Graph image (site default)
+
+Social previews use a **single committed JPEG** at `public/og-image.jpg`
+(1200×630). Meta tags reference `{siteOrigin}/og-image.jpg` via
+`getOgImageUrl()` in `siteSeo.ts`. Every public route shares this card until
+per-route OG images are added in a later phase.
+
+| Concern | Policy |
+| --- | --- |
+| Format | JPEG only (smaller bytes; unfurl reliability) |
+| Generation | `npm run og:generate` — **not** part of `npm run build:pages` |
+| Drift check | `npm run og:check` (PR baseline when OG paths change) |
+| Artifacts | Commit `public/og-image.jpg` and `public/og-image.src.sha256` |
+| Template | `scripts/og/` (Satori + `@resvg/resvg-js` + `sharp` devDependencies) |
+
+After editing the template, run `npm run og:generate`, commit the JPEG and
+fingerprint, and smoke-test unfurls (X, LinkedIn, Slack). Keep the file well
+under 300 KiB (`scripts/og/constants.mjs` enforces a check-time limit).
+
+Contributor workflow and third-party build-tool licenses are documented in
+[development.md](development.md#open-graph-image-generation).
+
 ## Per-route checklist
 
 When adding a public route:

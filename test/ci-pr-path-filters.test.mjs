@@ -79,14 +79,28 @@ test('scripts/slides.mjs turns slides on and pages off', () => {
 test('matcher script turns every extra this job defines on', () => {
   const matches = matchPathGroups(['scripts/ci-pr-path-filters.mjs']);
   assert.equal(matches.slides, true);
+  assert.equal(matches.og, true);
   assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
   assert.equal(matches.cliDocs, true);
 });
 
+test('scripts/og-image.mjs turns og on and pages off', () => {
+  const matches = matchPathGroups(['scripts/og-image.mjs']);
+  assert.equal(matches.og, true);
+  assert.equal(matches.pages, false);
+});
+
+test('public/og-image.jpg turns og and pages on', () => {
+  const matches = matchPathGroups(['public/og-image.jpg']);
+  assert.equal(matches.og, true);
+  assert.equal(matches.pages, true);
+});
+
 test('pr-baseline.yml turns every extra this job defines on', () => {
   const matches = matchPathGroups(['.github/workflows/pr-baseline.yml']);
   assert.equal(matches.slides, true);
+  assert.equal(matches.og, true);
   assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
   assert.equal(matches.cliDocs, true);
