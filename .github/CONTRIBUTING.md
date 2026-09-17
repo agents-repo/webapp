@@ -178,7 +178,8 @@ npm run test:crawl-files
 ```
 
 PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
-typecheck, and tests. Chrome/`slides:check`, `agents:ci`, and Pages/crawl are
+typecheck, and tests. Chrome/`slides:check`, `agents:ci`, Pages/crawl, and CLI
+`check:docs-sync` (when `**/cli-commands.md` or related CI paths change) are
 path-filtered extras. Follow the organization
 [PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)
 policy, including the checksum exception: npm lockfiles do **not** trigger

@@ -38,8 +38,8 @@ npm run test:crawl-files
 
 Para alterações de UI, execute também `npm run test:a11y` e `npm run test:e2e` quando aplicável.
 
-O PR baseline CI filtra por caminho Chrome/`slides:check`, `agents:ci` e extras
-Pages/crawl. A validação local ainda usa a lista completa. Veja a
+O PR baseline CI filtra por caminho Chrome/`slides:check`, `agents:ci`, extras
+Pages/crawl e `check:docs-sync` do CLI. A validação local ainda usa a lista completa. Veja a
 [política de extras do PR baseline da organização](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 
 ## Pacotes de workflow do registry neste repo
