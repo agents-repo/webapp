@@ -101,7 +101,7 @@ These patterns already help SEO and must stay in place:
 | --- | --- |
 | Self-referential canonical (absolute URL) | `buildRouteHead()` + `publicSitePath()` |
 | `og:url` matches canonical | Same builder function |
-| Absolute `og:image` | Default `/og-image.jpg`; home, packages, docs hub use `/og/*.jpg` |
+| Absolute `og:image` | `getOgImageUrl()`; `https://agents-repo.org/og-image.jpg` (route cards) |
 | OG image dimensions and alt | `og:image:width`, `og:image:height`, `og:image:alt` |
 | Twitter large image card | `twitter:card=summary_large_image` |
 | Twitter site handle | `twitter:site` from the X catalog URL (`@AgentsRepo`) |
