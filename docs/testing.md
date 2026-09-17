@@ -29,7 +29,7 @@ scale, not monorepo ceremony.
 | `npm run test:watch` | Local TDD while writing tests |
 | `npm run test:e2e` | Playwright browser specs — **local only** |
 | `npm run a11y:ci` | Post-build Lighthouse and pa11y scans — **local only** |
-| `check:docs-sync` (sibling CLI) | After `**/cli-commands.md` edits — inventory vs CLI docs |
+| `npm run check:docs-sync` | `cli-commands.md` edits — run from sibling CLI checkout |
 
 `npm run test` includes accessibility smoke tests (`*.a11y.test.tsx`). The
 `test:a11y` script runs the same files via [`vitest.a11y.config.ts`](../vitest.a11y.config.ts)
