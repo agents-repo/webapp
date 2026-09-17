@@ -74,7 +74,7 @@ after `build:pages`. For routing, registry integration, or modal flows, also run
 machine). E2E is not part of PR baseline CI — see [e2e-testing.md](e2e-testing.md).
 
 PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
-typecheck, and unit tests. Chrome/`slides:check`, `agents:ci`, and
+typecheck, and unit tests. Chrome/`slides:check`, `og:check`, `agents:ci`, and
 `build:pages` plus `test:crawl-files` run only when matching paths change
 (organization [PR baseline extras](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)).
 Local handoff still uses the full command list above. Release, Pages deploy,
@@ -137,6 +137,38 @@ Co-located tests remain in `sonar.sources` for issue detection.
 Coverage report paths (`sonar.javascript.lcov.reportPaths`) and other external
 analyzer reports are unsupported under Automatic Analysis. Do not add them
 while Automatic Analysis is on.
+
+## Open Graph image generation
+
+The site default social preview card is a **committed JPEG** in `public/og-image.jpg`.
+It is generated from `scripts/og/` with dev-only tooling — not during
+`npm run build` or `npm run build:pages`.
+
+```bash
+npm run og:generate   # after template edits; commit JPEG + public/og-image.src.sha256
+npm run og:check      # drift check (also runs in PR baseline when OG paths change)
+```
+
+See [seo.md](seo.md#open-graph-image-site-default) for meta-tag behavior and size
+guidance.
+
+### Third-party build tools (MIT project)
+
+The webapp stays under the MIT [`LICENSE`](../LICENSE). OG generation uses
+unmodified npm **devDependencies** only; they are not bundled into the browser
+or shipped as application source:
+
+| Package | License | Role |
+| --- | --- | --- |
+| `satori` | MPL-2.0 | JSX/CSS layout → SVG |
+| `@resvg/resvg-js` | MPL-2.0 | SVG → PNG raster |
+| `sharp` | Apache-2.0 | PNG → JPEG |
+| `@fontsource/inter` | SIL OFL-1.1 | Bundled font files for Satori |
+
+Using MPL-2.0 packages as build-time tools does not relicense this repository.
+MPL obligations apply if you modify and distribute MPL-covered source — not for
+running the published packages in Node. Generated JPEG bytes are project-owned
+artifacts.
 
 ## Project Layout
 
