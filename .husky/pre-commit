@@ -8,16 +8,16 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
   nvm use --silent >/dev/null 2>&1 || true
 fi
 
-og_template_staged() {
+og_inputs_staged() {
   git diff --cached --name-only --diff-filter=ACMR \
-    | grep -qE '^(scripts/og/|scripts/og-image\.mjs)'
+    | grep -qE '^(scripts/og/|scripts/og-image\.mjs|src/assets/logo/agents-repo-logo\.svg)'
 }
 
 run_og_if_templates_staged() {
-  if ! og_template_staged; then
+  if ! og_inputs_staged; then
     return 0
   fi
-  echo "[husky] OG template paths staged; running og:generate and og:check" >&2
+  echo "[husky] OG template or brand logo staged; running og:generate and og:check" >&2
   if command -v corepack >/dev/null 2>&1; then
     corepack npm run og:generate || return $?
     corepack npm run og:check || return $?

@@ -97,6 +97,12 @@ test('public/og-image.jpg turns og and pages on', () => {
   assert.equal(matches.pages, true);
 });
 
+test('brand logo SVG turns og and pages on', () => {
+  const matches = matchPathGroups(['src/assets/logo/agents-repo-logo.svg']);
+  assert.equal(matches.og, true);
+  assert.equal(matches.pages, true);
+});
+
 test('pr-baseline.yml turns every extra this job defines on', () => {
   const matches = matchPathGroups(['.github/workflows/pr-baseline.yml']);
   assert.equal(matches.slides, true);
