@@ -58,6 +58,16 @@ describe('PackageDetailPage', () => {
 
     expect(screen.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /View sample-agent on GitHub/ })).toBeInTheDocument()
+    expect(await screen.findByRole('link', { name: /Report a registry issue for sample-agent/ })).toHaveAttribute(
+      'href',
+      expect.stringContaining('github.com/agents-repo/registry/issues/new'),
+    )
+    expect(screen.getByRole('link', { name: 'Publish similar package' })).toHaveAttribute(
+      'href',
+      '/docs/submitting-a-package/',
+    )
+    expect(screen.getByLabelText('Package trust signals')).toBeInTheDocument()
+    expect(screen.getByText('MIT')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Packages in category agent' })).toHaveAttribute(
       'href',
       '/packages/?category=agent',
@@ -259,6 +269,87 @@ describe('PackageDetailPage', () => {
 
     expect(screen.getByRole('heading', { name: 'sample-agent', level: 1 })).toBeInTheDocument()
     expect(reloadCatalog).not.toHaveBeenCalled()
+  })
+
+  it('shows a recently updated badge when detail was updated within 90 days', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url: string) => {
+        if (String(url).includes('detail.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                ...samplePackageDetail,
+                metadata: {
+                  ...samplePackageDetail.metadata,
+                  updatedAt: '2026-09-01T00:00:00.000Z',
+                },
+              }),
+          })
+        }
+
+        return Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve('# Agent body'),
+        })
+      }),
+    )
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace/:packageId"
+          element={<PackageDetailPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/agents-repo/sample-agent'] },
+    )
+
+    expect(await screen.findByText('Recently updated')).toBeInTheDocument()
+  })
+
+  it('builds a package repo report link when metadata.repository is present', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url: string) => {
+        if (String(url).includes('detail.json')) {
+          return Promise.resolve({
+            ok: true,
+            json: () =>
+              Promise.resolve({
+                ...samplePackageDetail,
+                metadata: {
+                  ...samplePackageDetail.metadata,
+                  repository: 'https://github.com/example/sample-agent',
+                },
+              }),
+          })
+        }
+
+        return Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve('# Agent body'),
+        })
+      }),
+    )
+
+    renderWithProviders(
+      <Routes>
+        <Route
+          path="/packages/:namespace/:packageId"
+          element={<PackageDetailPage setHeaderSearchSlot={() => {}} />}
+        />
+      </Routes>,
+      { initialEntries: ['/packages/agents-repo/sample-agent'] },
+    )
+
+    expect(await screen.findByRole('link', { name: /Report an issue for sample-agent/ })).toHaveAttribute(
+      'href',
+      'https://github.com/example/sample-agent/issues',
+    )
   })
 
   it('shows not-found for invalid package path segments without reloading the catalog', () => {

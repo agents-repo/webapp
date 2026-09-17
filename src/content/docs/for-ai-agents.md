@@ -1,6 +1,6 @@
 ---
 title: For AI agents
-description: Stable markdown URLs, llms.txt, and curl examples for automated readers.
+description: Stable markdown URLs, llms.txt, publish flow, and curl examples for automated readers.
 order: 140
 section: Agents
 ---
@@ -43,6 +43,45 @@ curl -fsSL 'https://agents-repo.org/docs/installing-packages.md'
 curl -fsSL 'https://agents-repo.org/llms.txt'
 ```
 
+After `npm run build:pages`, **`llms.txt` is the authoritative list** of every site doc and package `.md` URL (the enumerated doc URL list above is a snapshot; prefer fetching `llms.txt`).
+
+## Publishing packages
+
+Author workflow (human or agent assisting an author):
+
+1. Fork [agents-repo/registry](https://github.com/agents-repo/registry), open a **draft** pull request to `main` — see [Submit a package](/docs/submitting-a-package).
+2. Create package source under `packages/<namespace>/<package-id>/` (suggested: **`full-package-creation-flow`** in the registry clone).
+3. Run local validation (`package:validate`, `package:build`, `package:validate-artifacts`) — commands in [Contributing packages](/docs/contributing-packages).
+4. Mark the pull request ready for review after CI passes.
+
+Policies and format primer: [Contributing packages](/docs/contributing-packages). Ecosystem priorities: [organization ROADMAP](https://github.com/agents-repo/.github/blob/main/ROADMAP.md).
+
+Markdown mirrors: `/docs/submitting-a-package.md`, `/docs/contributing-packages.md`.
+
+## CLI install
+
+Consumer install docs (for agents helping users install catalog packages):
+
+```bash
+npm install -D agents-repo@<version>
+npx agents-repo init --targets cursor github-copilot
+npx agents-repo install <namespace>/<package-id>
+```
+
+Full guidance: [Installing packages](/docs/installing-packages) (`/docs/installing-packages.md`).
+
+## Package URL patterns
+
+| Surface | URL pattern |
+| --- | --- |
+| Site catalog (HTML) | `https://agents-repo.org/packages/<namespace>/<package-id>/` |
+| Site package markdown | `https://agents-repo.org/packages/<namespace>/<package-id>.md` |
+| Registry index JSON | `https://registry.agents-repo.org/packages/index.json?ref=v2.x` |
+| Registry detail JSON | `https://registry.agents-repo.org/packages/<namespace>/<package-id>/detail.json?ref=v2.x` |
+| Site doc markdown | `https://agents-repo.org/docs/<slug>.md` |
+
+Package `.md` fallbacks and all doc `.md` URLs are listed in **`llms.txt`** after each production build.
+
 ## Catalog data
 
 Registry index (default production ref via proxy — your environment may differ):
@@ -61,6 +100,23 @@ curl -fsSL 'https://registry.agents-repo.org/packages/<namespace>/<package-id>/d
 
 `?ref=v2.x` resolves to the latest registry Git tag. After package merges, index and detail at that ref may not update until the next daily catalog release (~00:05 UTC). For bleeding-edge reads, use an explicit tag or `main` on a fork via registry-proxy.
 
+## Site homepage (HTML)
+
+Browser users load the interactive catalog at `https://agents-repo.org/`. For automated
+readers, prefer `llms.txt` or the `.md` URLs below. The homepage HTML shell also includes
+a `<noscript>` fallback summary for URL fetchers that do not execute JavaScript.
+
+## Package markdown fallbacks
+
+Each catalog package also has a static markdown URL on the site (build output):
+
+```text
+https://agents-repo.org/packages/<namespace>/<package-id>.md
+```
+
+`llms.txt` lists every doc and package `.md` URL after `npm run build:pages`.
+
 ## HTML routes
 
 Human-readable pages live under `/docs` and `/docs/<slug>` with the same content as the `.md` files.
+Package pages under `/packages/.../` remain the interactive SPA for browsers.

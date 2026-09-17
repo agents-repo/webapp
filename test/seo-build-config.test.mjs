@@ -1,13 +1,18 @@
 import assert from 'node:assert/strict'
+import { mkdirSync, unlinkSync, writeFileSync } from 'node:fs'
+import { dirname } from 'node:path'
 import { afterEach, beforeEach, describe, it } from 'node:test'
+import { GENERATED_PACKAGE_SITE_DETAILS_PATH } from '../scripts/package-site-routes-path.ts'
 import {
   expandRoutesWithLocalePrefixes,
   getBuildSitemapPaths,
+  readGeneratedPackageSiteDetails,
   resolveBuildSiteOrigin,
   resolveViteSiteUrl,
   rewriteSitemapLocsToPublicPaths,
 } from '../scripts/seo-build-config.ts'
 import { previewTestOrigin } from '../scripts/crawl-file-origins.mjs'
+import { samplePackageDetail } from '../src/test/fixtures/samplePackageDetail.ts'
 
 const productionOrigin = 'https://agents-repo.org'
 
@@ -75,5 +80,54 @@ describe('seo-build-config', () => {
     assert.equal(expanded.includes('/es/about/'), true)
     assert.equal(expanded.includes('/pt-br/about/'), true)
     assert.equal(getBuildSitemapPaths().length >= expanded.length, true)
+  })
+
+  it('validates generated package detail entry shape', () => {
+    mkdirSync(dirname(GENERATED_PACKAGE_SITE_DETAILS_PATH), { recursive: true })
+
+    try {
+      writeFileSync(
+        GENERATED_PACKAGE_SITE_DETAILS_PATH,
+        JSON.stringify({
+          'agents-repo/sample-agent': samplePackageDetail,
+        }),
+      )
+
+      const details = readGeneratedPackageSiteDetails()
+      assert.equal(details?.['agents-repo/sample-agent']?.metadata.name, 'sample-agent')
+
+      writeFileSync(
+        GENERATED_PACKAGE_SITE_DETAILS_PATH,
+        JSON.stringify({
+          'agents-repo/sample-agent': { package: 'agents-repo/sample-agent' },
+        }),
+      )
+
+      assert.throws(
+        () => readGeneratedPackageSiteDetails(),
+        /entry "agents-repo\/sample-agent" is not a valid package detail document/,
+      )
+
+      writeFileSync(
+        GENERATED_PACKAGE_SITE_DETAILS_PATH,
+        JSON.stringify({
+          'agents-repo/sample-agent': {
+            ...samplePackageDetail,
+            agents: [[]],
+          },
+        }),
+      )
+
+      assert.throws(
+        () => readGeneratedPackageSiteDetails(),
+        /entry "agents-repo\/sample-agent" is not a valid package detail document/,
+      )
+    } finally {
+      try {
+        unlinkSync(GENERATED_PACKAGE_SITE_DETAILS_PATH)
+      } catch {
+        // Best-effort cleanup when another test already removed the artifact.
+      }
+    }
   })
 })

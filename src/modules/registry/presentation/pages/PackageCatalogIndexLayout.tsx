@@ -30,6 +30,7 @@ export interface PackageCatalogIndexLayoutProps {
   readonly searchAriaLabel: string
   readonly packages: readonly RegistryPackage[]
   readonly catalog: RegistryCatalog | null
+  readonly enableCollection?: boolean
 }
 
 function FilterToggleButtons(options: {
@@ -99,6 +100,7 @@ function PackageCatalogListingColumn(options: {
         onFilterByOwner={page.filterByOwner}
         onToggleFacet={(facet, value) => page.toggleFilter(facet, value)}
         isFacetSelected={page.isFacetSelected}
+        searchMatchContextById={page.searchMatchContextById}
         xl={sidebarVisible ? 2 : 3}
       />
       {page.showCatalogPagination ? (
@@ -126,6 +128,7 @@ export function PackageCatalogIndexLayout({
   searchAriaLabel,
   packages,
   catalog,
+  enableCollection = false,
 }: PackageCatalogIndexLayoutProps) {
   const { t } = useTranslation('catalog')
   const page = usePackageCatalogIndexPage({
@@ -134,6 +137,7 @@ export function PackageCatalogIndexLayout({
     searchInputId,
     searchAriaLabel,
     setHeaderSearchSlot,
+    enableCollection,
   })
   const sidebarVisible = !page.sidebarCollapsed
 
@@ -147,9 +151,9 @@ export function PackageCatalogIndexLayout({
                 <h1 className="display-6 fw-semibold mb-0">{title}</h1>
                 <p className="lead fs-6 text-body-secondary mb-0">{lead}</p>
                 <GoogleTranslateLink />
-                <div className={`w-100 hero-search${page.stickySearch ? ' d-lg-none' : ''}`}>
-                  {page.searchControl}
-                </div>
+                {page.showHeroSearch ? (
+                  <div className="w-100 hero-search">{page.searchControl}</div>
+                ) : null}
               </Stack>
             </Col>
           </Row>

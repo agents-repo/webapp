@@ -28,6 +28,7 @@ const routeMetaKeyByPath: Record<SiteRoutePath, SiteRouteMetaKey> = {
   [siteRoutes.community]: 'community',
   [siteRoutes.contact]: 'contact',
   [siteRoutes.helpUs]: 'helpUs',
+  [siteRoutes.contribute]: 'contribute',
   [siteRoutes.docs]: 'docs',
   [siteRoutes.repositories]: 'repositories',
   [siteRoutes.accessibility]: 'accessibility',

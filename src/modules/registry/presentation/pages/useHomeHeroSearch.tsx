@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { isSafeExternalHttpUrl } from '../../../site/application/urlSafety'
 import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { CATALOG_SEARCH_DEBOUNCE_MS } from '../../application/catalogSearch'
+import { withPackageCatalogSearchFocusState } from '../../application/catalogSearchNavigation'
 import { excludeYankedPackages } from '../../application/packageCatalogFilters'
 import { selectHomePopularPackages } from '../../application/packageDownloadStats'
 import { getPackagesIndexPath } from '../../application/packageSiteRoutes'
@@ -77,7 +78,9 @@ export function useHomeHeroSearch(options: {
         return
       }
 
-      void navigate(packagesSearchPath(trimmed))
+      void navigate(packagesSearchPath(trimmed), {
+        state: withPackageCatalogSearchFocusState(),
+      })
     },
     [navigate, packagesSearchPath],
   )

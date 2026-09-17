@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures/registry-mock'
-
-const homeHeading = 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
+import { homeHeading } from './fixtures/home-copy'
 
 function primaryNav(page: Page) {
   return page.getByRole('navigation', { name: 'Primary' })
@@ -37,6 +36,7 @@ test.describe('Primary header', () => {
 
   const aboutItems = [
     { name: 'About', heading: 'About' },
+    { name: 'Contribute', heading: 'Contribute' },
     { name: 'Community', heading: 'Community' },
     { name: 'Contact', heading: 'Contact' },
   ] as const

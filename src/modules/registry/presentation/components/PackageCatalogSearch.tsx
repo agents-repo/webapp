@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Form, InputGroup } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import { PACKAGE_CATALOG_SEARCH_INPUT_MARKER } from '../../application/catalogSearchNavigation'
 
 export interface PackageCatalogSearchProps {
   readonly query: string
@@ -42,6 +43,7 @@ export function PackageCatalogSearch({
         </InputGroup.Text>
         <Form.Control
           id={inputId}
+          {...{ [PACKAGE_CATALOG_SEARCH_INPUT_MARKER]: '' }}
           size="sm"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}

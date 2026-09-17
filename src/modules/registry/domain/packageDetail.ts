@@ -38,6 +38,7 @@ export interface PackageDetailMetadata {
   readonly homepage?: string
   readonly repository?: string
   readonly maintainers?: readonly string[]
+  readonly updatedAt?: string
   readonly tags?: readonly string[]
   readonly status?: PackageStatus
   readonly category?: string

@@ -9,7 +9,13 @@ import PackagesIndexPage from './PackagesIndexPage'
 import { loadedCatalogContext } from '../../../../test/fixtures/homePageTestFixtures'
 import { filterableRegistryCatalog } from '../../../../test/fixtures/filterableRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
+import { START_HERE_PACKAGE_REFS } from '../../application/startHereCollection'
+import type { RegistryPackage } from '../../domain/package'
 import { CATALOG_FILTERS_SIDEBAR_COLLAPSED_KEY } from '../../application/catalogFilterPreferences'
+import {
+  completePackageCatalogSearchFocusHandoff,
+  withPackageCatalogSearchFocusState,
+} from '../../application/catalogSearchNavigation'
 import esShell from '../../../../locales/es/shell.json' with { type: 'json' }
 import { externalLinkAccessibleName } from '../../../site/application/accessibility/externalLink'
 import { localizedSitePath } from '../../../site/application/i18n/localePath.ts'
@@ -31,6 +37,7 @@ describe('PackagesIndexPage', () => {
     cleanup()
     vi.clearAllMocks()
     clearTestStorage()
+    completePackageCatalogSearchFocusHandoff()
   })
 
   it('hides the Google Translate link on the English packages page', async () => {
@@ -353,16 +360,16 @@ describe('PackagesIndexPage', () => {
     )
 
     expect(await screen.findByRole('heading', { name: 'page-agent-01' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'page-agent-09' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'page-agent-10' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 1–9 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'page-agent-08' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'page-agent-09' })).not.toBeInTheDocument()
+    expect(screen.getByText('Showing 1–8 of 13 packages')).toBeInTheDocument()
     const pagination = screen.getByRole('navigation', { name: 'Package results pages' })
     expect(pagination).toBeInTheDocument()
 
     await user.click(within(pagination).getByRole('link', { name: '2' }))
     expect(await screen.findByRole('heading', { name: 'page-agent-13' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'page-agent-01' })).not.toBeInTheDocument()
-    expect(screen.getByText('Showing 10–13 of 13 packages')).toBeInTheDocument()
+    expect(screen.getByText('Showing 9–13 of 13 packages')).toBeInTheDocument()
     expect(screen.getByTestId('location-search')).toHaveTextContent('page=2')
     expect(document.activeElement).toHaveAttribute('id', 'catalog-results-summary')
   })
@@ -427,5 +434,104 @@ describe('PackagesIndexPage', () => {
       expect(screen.getByTestId('location-search')).toHaveTextContent('period=7d')
       expect(screen.getByTestId('location-search')).not.toHaveTextContent('page=')
     })
+  })
+
+  it('shows the start-here collection view', async () => {
+    const startHerePackages: RegistryPackage[] = START_HERE_PACKAGE_REFS.map((ref) => {
+      const [namespace, packageId] = ref.split('/')
+      return {
+        id: ref,
+        namespace,
+        package: packageId,
+        path: `packages/${ref}`,
+        name: packageId,
+        description: `Description for ${packageId}`,
+        owner: namespace,
+        latest: '1.0.0',
+        tags: ['starter'],
+        status: 'active',
+        category: 'assistant',
+        estimateOverallCost: { band: 'low' },
+        installTargets: [{ id: 'cursor', status: 'supported' }],
+      }
+    })
+
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: {
+        ...loadedCatalogContext.catalog!,
+        packages: [...startHerePackages, ...filterableRegistryCatalog.packages],
+      },
+    })
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: ['/packages?collection=start-here'],
+    })
+
+    expect(screen.getByRole('heading', { name: 'Start here', level: 1 })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'hello-agent' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'review-agent' })).not.toBeInTheDocument()
+  })
+
+  it('focuses package search after home search navigation handoff', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: [
+        {
+          pathname: '/packages',
+          search: '?q=demo-flow',
+          state: withPackageCatalogSearchFocusState(),
+        },
+      ],
+    })
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await waitFor(() => {
+      expect(document.activeElement).toBe(searchInput)
+    })
+  })
+
+  it('keeps package search focus while typing', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />)
+
+    const searchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.click(searchInput)
+    await user.type(searchInput, 'demo')
+
+    expect(document.activeElement).toBe(searchInput)
+    expect(searchInput).toHaveValue('demo')
+  })
+
+  it('shows nine cards per page when the filter sidebar is collapsed', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue({
+      ...loadedCatalogContext,
+      catalog: createPaginatedRegistryCatalog(),
+    })
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />)
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-08' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'page-agent-09' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Hide filters' }))
+
+    expect(await screen.findByRole('heading', { name: 'page-agent-09' })).toBeInTheDocument()
+    expect(screen.getByText('Showing 1–9 of 13 packages')).toBeInTheDocument()
+  })
+
+  it('shows per-card search match context when query is non-empty', async () => {
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderWithProviders(<PackagesIndexPage setHeaderSearchSlot={() => {}} />, {
+      initialEntries: ['/packages?q=accessibility'],
+    })
+
+    expect(await screen.findByText(/Matched in: description/i)).toBeInTheDocument()
+    expect(screen.getByText(/accessibility testing/i)).toBeInTheDocument()
   })
 })

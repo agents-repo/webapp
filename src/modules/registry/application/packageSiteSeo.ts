@@ -4,6 +4,7 @@ import enSeo from '../../../locales/en/seo.json' with { type: 'json' }
 import esSeo from '../../../locales/es/seo.json' with { type: 'json' }
 import ptBrSeo from '../../../locales/pt-BR/seo.json' with { type: 'json' }
 import ptPtSeo from '../../../locales/pt-PT/seo.json' with { type: 'json' }
+import { formatRegistryPackageRef } from '../domain/package.ts'
 import type { RegistryCatalog, RegistryPackage } from '../domain/package.ts'
 import {
   findRegistryPackage,
@@ -71,6 +72,44 @@ export function getNamespacePackagesSeoDescription(
 
 export function getPackageDetailSeoDescription(pkg: RegistryPackage): string {
   return clampSeoDescription(pkg.description)
+}
+
+const PACKAGE_DETAIL_SHARE_DESCRIPTION_SEPARATOR = ' — '
+
+export function getPackageDetailShareSeoDescription(pkg: RegistryPackage): string {
+  const description = pkg.description.trim()
+  const packageRef = formatRegistryPackageRef(pkg.namespace, pkg.package)
+  if (!packageRef) {
+    return getPackageDetailSeoDescription(pkg)
+  }
+
+  const installCommand = `npx agents-repo install ${packageRef}`
+  const separator = PACKAGE_DETAIL_SHARE_DESCRIPTION_SEPARATOR
+  const suffix = `${separator}${installCommand}`
+  const maxLength = PACKAGE_SEO_DESCRIPTION_MAX_LENGTH
+
+  if (!description) {
+    return clampSeoDescription(installCommand)
+  }
+
+  const combined = `${description}${suffix}`
+  if (combined.length <= maxLength) {
+    return combined
+  }
+
+  const ellipsis = '…'
+  const maxDescriptionLength = maxLength - suffix.length
+  if (maxDescriptionLength < 1) {
+    return clampSeoDescription(installCommand)
+  }
+
+  const maxDescriptionWithEllipsis = maxLength - suffix.length - ellipsis.length
+  if (maxDescriptionWithEllipsis < 1) {
+    return clampSeoDescription(installCommand)
+  }
+
+  const truncatedDescription = description.slice(0, maxDescriptionWithEllipsis).trimEnd()
+  return `${truncatedDescription}${ellipsis}${suffix}`
 }
 
 export function getPackageSitePageTitle(

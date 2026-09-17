@@ -1,14 +1,12 @@
-import { Card, Col, Container, Row, Stack } from 'react-bootstrap'
+import { Card, Container, Stack } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ECOSYSTEM_DOC_URL, ORG_CONTRIBUTING_URL } from '../../application/community/githubProjectUrls.ts'
 import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName.ts'
 import { listRepositoryManifestEntries } from '../../application/repositories/repositoryManifest.ts'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../routes/siteRoutes'
-import RepositoryCard from '../repositories/RepositoryCard.tsx'
-
-const ORG_CONTRIBUTING_URL = 'https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md'
-const ECOSYSTEM_DOC_URL = 'https://github.com/agents-repo/.github/blob/main/docs/ecosystem.md'
+import RepositoryCardGrid from '../repositories/RepositoryCardGrid.tsx'
 
 function RepositoriesIndexPage() {
   const { t } = useTranslation('pages')
@@ -61,13 +59,7 @@ function RepositoriesIndexPage() {
 
           <div>
             <h2 className="h4 mb-3">{t('repositories.organizationHeading')}</h2>
-            <Row className="g-4">
-              {entries.map((entry) => (
-                <Col key={entry.slug} md={6} lg={4}>
-                  <RepositoryCard entry={entry} />
-                </Col>
-              ))}
-            </Row>
+            <RepositoryCardGrid entries={entries} />
           </div>
 
           <Card>
@@ -84,6 +76,8 @@ function RepositoriesIndexPage() {
                   {t('repositories.contributingGuide')}
                 </a>
                 {t('repositories.contributeMiddle')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.contribute)}>{t('repositories.contributeLink')}</NavLink>
+                {t('repositories.contributeAfterContribute')}{' '}
                 <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('repositories.helpUsLink')}</NavLink>
                 {t('repositories.contributeAfterHelpUs')}{' '}
                 <NavLink to={localizedSitePath(siteRoutes.home)}>{t('repositories.homeLink')}</NavLink>

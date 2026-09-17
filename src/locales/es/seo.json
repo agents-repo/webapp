@@ -2,7 +2,7 @@
   "home": {
     "title": "Inicio",
     "routeLabel": "Inicio",
-    "description": "Encuentra agents y flows seleccionados para Copilot, Cursor, Claude Code y Codex. Instálalos con la CLI o prueba instrucciones en el chat."
+    "description": "Descubre agentes y flows en nuestro registry abierto. Instala con la CLI para Copilot, Cursor, Claude Code y Codex—o comparte los tuyos."
   },
   "packages": {
     "title": "Paquetes",
@@ -38,6 +38,11 @@
     "title": "Ayúdanos",
     "routeLabel": "Ayúdanos",
     "description": "Ayuda a mejorar el registro abierto de agents. Contribuye con paquetes para GitHub Copilot, Cursor, Claude Code y OpenAI Codex."
+  },
+  "contribute": {
+    "title": "Contribuir",
+    "routeLabel": "Contribuir",
+    "description": "Centro de contribución de la organización agents-repo en abierto: publicar paquetes, mejorar documentación, corregir errores, ampliar la CLI y la webapp, añadir pruebas y proponer especificaciones."
   },
   "docs": {
     "title": "Documentación",

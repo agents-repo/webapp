@@ -11,6 +11,7 @@ describe('CliTerminalCommandRow', () => {
     render(
       <CliTerminalCommandRow
         commandText="npx agents-repo install agents-repo/foo"
+        commandAccessibleLabel="Install command"
         copyLabel="Copy install command"
         onCopy={onCopy}
         labelId="test-label"
@@ -27,6 +28,7 @@ describe('CliTerminalCommandRow', () => {
     const { rerender } = render(
       <CliTerminalCommandRow
         commandText="npx agents-repo install agents-repo/foo"
+        commandAccessibleLabel="Install command"
         copyLabel="Copy install command"
         onCopy={() => {}}
         labelId="tooltip-label"
@@ -39,6 +41,7 @@ describe('CliTerminalCommandRow', () => {
     rerender(
       <CliTerminalCommandRow
         commandText="npx agents-repo install agents-repo/foo"
+        commandAccessibleLabel="Install command"
         copyLabel="Copy install command"
         onCopy={() => {}}
         labelId="tooltip-label"
@@ -52,10 +55,26 @@ describe('CliTerminalCommandRow', () => {
     })
   })
 
+  it('uses commandAccessibleLabel for the command text screen-reader name', () => {
+    render(
+      <CliTerminalCommandRow
+        commandText="npx agents-repo install agents-repo/foo"
+        commandAccessibleLabel="Comando de instalação para Foo"
+        copyLabel="Copiar comando de instalação para Foo"
+        onCopy={() => {}}
+        labelId="accessible-label"
+        dataTestId="accessible-terminal"
+      />,
+    )
+
+    expect(document.getElementById('accessible-label')).toHaveTextContent('Comando de instalação para Foo')
+  })
+
   it('applies placeholder styling and disables copy', () => {
     render(
       <CliTerminalCommandRow
         commandText="npx agents-repo init --targets"
+        commandAccessibleLabel="Init command"
         copyLabel="Copy init command"
         onCopy={() => {}}
         copyDisabled

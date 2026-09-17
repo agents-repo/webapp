@@ -39,6 +39,8 @@ function CommunityPage() {
               <p className="text-body-secondary mb-0">
                 {t('community.introPrefix')}{' '}
                 <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('community.helpUsLink')}</NavLink>
+                {t('community.introMiddle')}{' '}
+                <NavLink to={localizedSitePath(siteRoutes.contribute)}>{t('community.contributeLink')}</NavLink>
                 {t('community.introSuffix')}
               </p>
             </Card.Body>

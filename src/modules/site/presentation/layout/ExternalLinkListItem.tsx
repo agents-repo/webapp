@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useExternalLinkAccessibleName } from '../../application/accessibility/useExternalLinkAccessibleName'
+import ExternalLink from './ExternalLink'
 
 interface ExternalLinkListItemProps {
   readonly href: string
@@ -14,18 +14,11 @@ function ExternalLinkListItem({
   children,
   suffix,
 }: ExternalLinkListItemProps) {
-  const externalLinkName = useExternalLinkAccessibleName()
-
   return (
     <li>
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferrer noopener"
-        aria-label={externalLinkName(accessibleLabel)}
-      >
+      <ExternalLink href={href} accessibleLabel={accessibleLabel}>
         {children}
-      </a>
+      </ExternalLink>
       {suffix !== undefined && <> {suffix}</>}
     </li>
   )

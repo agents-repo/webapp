@@ -10,6 +10,7 @@ import {
   requireDistCrawlFiles,
   someUrlHasHostname,
 } from '../scripts/crawl-file-url-validation.mjs'
+import { STATIC_ROUTE_FALLBACK_ID } from '../src/modules/site/application/seo/routeBodyFallback.ts'
 import { getBuildSitemapPaths, publicSitePath, resolveBuildSiteOrigin } from '../scripts/seo-build-config.ts'
 import { previewTestHostname } from '../scripts/crawl-file-origins.mjs'
 
@@ -73,5 +74,34 @@ function assertCrawlFilesMatchOrigin(origin) {
 describe('crawl files integration', { concurrency: 1 }, () => {
   it('matches sitemap.xml and robots.txt for the production origin', () => {
     assertCrawlFilesMatchOrigin(resolveBuildSiteOrigin('production'))
+  })
+
+  it('includes static route fallback content on the homepage HTML shell', () => {
+    requireCrawlFiles()
+    const homeHtml = readFileSync(resolve(distDir, 'index.html'), 'utf8')
+
+    assert.ok(homeHtml.includes(`id="${STATIC_ROUTE_FALLBACK_ID}"`))
+    assert.ok(homeHtml.includes('<noscript'))
+    assert.ok(homeHtml.includes('/llms.txt'))
+    assert.ok(homeHtml.includes('/packages/'))
+  })
+
+  it('writes package markdown fallbacks and lists them in llms.txt', () => {
+    requireCrawlFiles()
+    const llms = readFileSync(resolve(distDir, 'llms.txt'), 'utf8')
+    const packageMarkdownMatch = llms.match(/https:\/\/agents-repo\.org\/packages\/[^/\s]+\/[^/\s]+\.md/)
+
+    assert.ok(packageMarkdownMatch, 'llms.txt must list at least one package markdown fallback URL')
+
+    const packageMarkdownUrl = packageMarkdownMatch[0]
+    const packageMarkdownPath = packageMarkdownUrl.replace('https://agents-repo.org', '')
+    const packageMarkdown = readFileSync(resolve(distDir, packageMarkdownPath.slice(1)), 'utf8')
+
+    assert.ok(packageMarkdown.startsWith('# '))
+    assert.ok(llms.includes('## Package markdown fallbacks'))
+    assert.ok(
+      llms.includes('https://agents-repo.org/docs/contributing-packages.md'),
+      'llms.txt must list contributing-packages doc markdown URL',
+    )
   })
 })

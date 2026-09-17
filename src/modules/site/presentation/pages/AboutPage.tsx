@@ -1,15 +1,13 @@
 import { Col, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { REGISTRY_REPO_URL, WEBAPP_REPO_URL } from '../../application/community/githubProjectUrls.ts'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import ExternalLinkListItem from '../layout/ExternalLinkListItem'
 import SitePageLayout from '../layout/SitePageLayout'
 import SiteTextCard from '../layout/SiteTextCard'
 import LocalizedCreatorProfileCard from '../people/LocalizedCreatorProfileCard'
 import { siteRoutes } from '../routes/siteRoutes'
-
-const WEBAPP_REPO_URL = 'https://github.com/agents-repo/webapp'
-const REGISTRY_REPO_URL = 'https://github.com/agents-repo/registry'
 
 function AboutPage() {
   const { t } = useTranslation('pages')
@@ -54,6 +52,8 @@ function AboutPage() {
               {t('about.getInvolvedIntro')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.contact)}>{t('about.contactLink')}</NavLink>,{' '}
               {t('about.getInvolvedMiddle')}{' '}
+              <NavLink to={localizedSitePath(siteRoutes.contribute)}>{t('about.contributeLink')}</NavLink>
+              {t('about.getInvolvedAfterContribute')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.helpUs)}>{t('about.helpUsLink')}</NavLink>
               {t('about.getInvolvedAfterHelpUs')}{' '}
               <NavLink to={localizedSitePath(siteRoutes.repositories)}>{t('about.repositoriesLink')}</NavLink>

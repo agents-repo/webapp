@@ -3,9 +3,11 @@ import {
   applyPackageCatalogPageToSearchParams,
   clampPackageCatalogPage,
   getPackageCatalogPageCount,
+  getPackageCatalogPageSize,
   getPackageCatalogPageWindow,
   getPackageCatalogPaginationItems,
-  PACKAGE_CATALOG_PAGE_SIZE,
+  PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH,
+  PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR,
   parsePackageCatalogPage,
   slicePackageCatalogPage,
 } from './packageCatalogPagination'
@@ -33,8 +35,8 @@ describe('packageCatalogPagination', () => {
 
   it('counts pages from the filtered length and clamps out-of-range values', () => {
     expect(getPackageCatalogPageCount(0)).toBe(1)
-    expect(getPackageCatalogPageCount(PACKAGE_CATALOG_PAGE_SIZE)).toBe(1)
-    expect(getPackageCatalogPageCount(PACKAGE_CATALOG_PAGE_SIZE + 1)).toBe(2)
+    expect(getPackageCatalogPageCount(PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH)).toBe(1)
+    expect(getPackageCatalogPageCount(PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH + 1)).toBe(2)
     expect(clampPackageCatalogPage(1, 3)).toBe(1)
     expect(clampPackageCatalogPage(3, 3)).toBe(3)
     expect(clampPackageCatalogPage(99, 2)).toBe(2)
@@ -52,6 +54,24 @@ describe('packageCatalogPagination', () => {
     expect(getPackageCatalogPageWindow(9, 1)).toBeNull()
     expect(getPackageCatalogPageWindow(13, 1)).toEqual({ start: 1, end: 9 })
     expect(getPackageCatalogPageWindow(13, 2)).toEqual({ start: 10, end: 13 })
+  })
+
+  it('uses layout-aware page sizes for sidebar and full-width grids', () => {
+    expect(getPackageCatalogPageSize(true)).toBe(PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR)
+    expect(getPackageCatalogPageSize(false)).toBe(PACKAGE_CATALOG_PAGE_SIZE_FULL_WIDTH)
+
+    const items = Array.from({ length: 13 }, (_, index) => index + 1)
+    expect(slicePackageCatalogPage(items, 1, PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR)).toEqual(
+      items.slice(0, 8),
+    )
+    expect(getPackageCatalogPageWindow(13, 1, PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR)).toEqual({
+      start: 1,
+      end: 8,
+    })
+    expect(getPackageCatalogPageWindow(13, 2, PACKAGE_CATALOG_PAGE_SIZE_WITH_SIDEBAR)).toEqual({
+      start: 9,
+      end: 13,
+    })
   })
 
   it('lists every page until ellipsis is needed', () => {

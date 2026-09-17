@@ -11,6 +11,14 @@ import {
 } from './buildRouteHead'
 import { getSiteSeoMeta } from './siteSeoMeta'
 
+function escapeHtmlAttributeContent(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+}
+
 describe('getRouteHeadData', () => {
   it('uses absolute canonical and OG image URLs', () => {
     const head = getRouteHeadData(siteRoutes.about, 'https://agents-repo.org')
@@ -27,6 +35,24 @@ describe('getRouteHeadData', () => {
     for (const route of routes) {
       expect(getRouteHeadData(route).documentTitle.length).toBeLessThanOrEqual(60)
     }
+  })
+
+  it('includes the install command in og and twitter descriptions on package detail', () => {
+    const head = getRouteHeadData('/packages/agents-repo/sample-agent', 'https://agents-repo.org', {
+      catalog: sampleRegistryCatalog,
+    })
+    const html = renderRouteHeadHtml(head)
+    const plainDescription = sampleRegistryCatalog.packages[0].description
+
+    expect(head.description).toBe(plainDescription)
+    expect(head.ogDescription).toContain('npx agents-repo install agents-repo/sample-agent')
+    expect(head.twitterDescription).toBe(head.ogDescription)
+    expect(html).toContain(
+      `property="og:description" content="${escapeHtmlAttributeContent(head.ogDescription)}"`,
+    )
+    expect(html).toContain(
+      `name="description" content="${escapeHtmlAttributeContent(plainDescription)}"`,
+    )
   })
 
   it('emits CollectionPage JSON-LD on package indexes and SoftwareSourceCode on detail', () => {

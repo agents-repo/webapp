@@ -1,9 +1,11 @@
 import { test, expect, type Page } from '@playwright/test'
+import { homeHeading } from './fixtures/home-copy'
 
 const nonHomeRoutes = [
   '/about',
   '/contact',
   '/help-us',
+  '/contribute',
   '/docs',
   '/docs/getting-started',
   '/docs/installing-packages',
@@ -12,9 +14,8 @@ const nonHomeRoutes = [
   '/accessibility',
   '/privacy',
   '/es/about',
+  '/es/contribute',
 ] as const
-
-const homeHeading = 'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 async function waitForActiveServiceWorker(page: Page): Promise<void> {
   await expect
@@ -72,10 +73,38 @@ test.describe('SEO crawl files', () => {
     const markdownBody = await markdownResponse.text()
     expect(markdownBody).toContain('Agents Repo')
 
+    const contributingPackagesResponse = await request.get('/docs/contributing-packages.md')
+    await expect(contributingPackagesResponse).toBeOK()
+    const contributingPackagesBody = await contributingPackagesResponse.text()
+    expect(contributingPackagesBody).toContain('package:validate')
+
     const llmsResponse = await request.get('/llms.txt')
     await expect(llmsResponse).toBeOK()
     const llmsBody = await llmsResponse.text()
     expect(llmsBody).toContain('https://agents-repo.org/docs/getting-started.md')
+  })
+
+  test('serves homepage noscript fallback and package markdown when built', async ({ request }) => {
+    const homeResponse = await request.get('/')
+    await expect(homeResponse).toBeOK()
+    const homeBody = await homeResponse.text()
+    expect(homeBody).toContain('id="static-route-fallback"')
+    expect(homeBody).toContain('/llms.txt')
+
+    const llmsResponse = await request.get('/llms.txt')
+    await expect(llmsResponse).toBeOK()
+    const llmsBody = await llmsResponse.text()
+    const packageMarkdownMatch = llmsBody.match(
+      /https:\/\/agents-repo\.org\/packages\/[^/\s]+\/[^/\s]+\.md/,
+    )
+
+    expect(packageMarkdownMatch).not.toBeNull()
+    const packageMarkdownPath = packageMarkdownMatch![0].replace('https://agents-repo.org', '')
+
+    const packageMarkdownResponse = await request.get(packageMarkdownPath)
+    await expect(packageMarkdownResponse).toBeOK()
+    const packageMarkdownBody = await packageMarkdownResponse.text()
+    expect(packageMarkdownBody.startsWith('# ')).toBe(true)
   })
 
   test('does not redirect robots.txt to home when service worker is active', async ({ page }) => {

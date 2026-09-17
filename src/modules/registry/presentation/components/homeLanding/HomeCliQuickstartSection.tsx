@@ -5,11 +5,15 @@ import { useTranslation } from 'react-i18next'
 import { copyTextToClipboard } from '../../../../site/application/clipboard/copyTextToClipboard'
 import { getDocDetailPath } from '../../../../site/application/docs/docsCatalog'
 import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
+import { START_HERE_COLLECTION_ID } from '../../../application/startHereCollection'
+import { getPackageDetailPath, getPackagesIndexPath } from '../../../application/packageSiteRoutes'
 import CliTerminalCommandRow from '../CliTerminalCommandRow'
 import {
   CLI_INIT_COMMAND,
   CLI_INSTALL_COMMAND,
   CLI_QUICKSTART_ID,
+  FEATURED_PACKAGE_ID,
+  FEATURED_PACKAGE_NAMESPACE,
 } from './homeLandingCopy'
 
 const COPY_FEEDBACK_DURATION_MS = 3000
@@ -17,6 +21,12 @@ const COPY_FEEDBACK_DURATION_MS = 3000
 function HomeCliQuickstartSection() {
   const { t } = useTranslation('catalog')
   const localizedSitePath = useLocalizedSitePath()
+  const featuredPackagePath = localizedSitePath(
+    getPackageDetailPath(FEATURED_PACKAGE_NAMESPACE, FEATURED_PACKAGE_ID),
+  )
+  const startHereCollectionPath = localizedSitePath(
+    `${getPackagesIndexPath()}?collection=${START_HERE_COLLECTION_ID}`,
+  )
   const [initCopyFeedback, setInitCopyFeedback] = useState('')
   const [installCopyFeedback, setInstallCopyFeedback] = useState('')
   const [liveMessage, setLiveMessage] = useState('')
@@ -94,6 +104,7 @@ function HomeCliQuickstartSection() {
                 <div className="h6 small fw-semibold mb-2">{t('homeLanding.cliQuickstart.initLabel')}</div>
                 <CliTerminalCommandRow
                   commandText={CLI_INIT_COMMAND}
+                  commandAccessibleLabel={t('homeLanding.cliQuickstart.initCommandLabel')}
                   copyLabel={t('homeLanding.cliQuickstart.copyInitLabel')}
                   onCopy={handleCopyInit}
                   labelId="home-cli-init-label"
@@ -105,6 +116,7 @@ function HomeCliQuickstartSection() {
                 <div className="h6 small fw-semibold mb-2">{t('homeLanding.cliQuickstart.installLabel')}</div>
                 <CliTerminalCommandRow
                   commandText={CLI_INSTALL_COMMAND}
+                  commandAccessibleLabel={t('homeLanding.cliQuickstart.installCommandLabel')}
                   copyLabel={t('homeLanding.cliQuickstart.copyInstallLabel')}
                   onCopy={handleCopyInstall}
                   labelId="home-cli-install-label"
@@ -113,6 +125,15 @@ function HomeCliQuickstartSection() {
                 />
               </div>
             </Stack>
+            <p className="text-center small mt-3 mb-0">
+              <Link to={featuredPackagePath}>
+                {t('homeLanding.cliQuickstart.featuredPackageLink', { packageId: FEATURED_PACKAGE_ID })}
+              </Link>
+            </p>
+            <p className="text-center small mt-3 mb-0">
+              {t('homeLanding.cliQuickstart.startHerePrompt')}{' '}
+              <Link to={startHereCollectionPath}>{t('homeLanding.cliQuickstart.startHereLink')}</Link>
+            </p>
             <p className="text-center small mt-4 mb-0">
               <Link to={localizedSitePath(getDocDetailPath('installing-packages'))}>
                 {t('homeLanding.cliQuickstart.installingPackagesLink')}

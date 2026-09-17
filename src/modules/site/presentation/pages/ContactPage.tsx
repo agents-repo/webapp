@@ -1,6 +1,12 @@
 import { Col, Row } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import {
+  REGISTRY_DISCUSSIONS_URL,
+  REGISTRY_ISSUES_URL,
+  WEBAPP_DISCUSSIONS_URL,
+  WEBAPP_ISSUES_URL,
+} from '../../application/community/githubProjectUrls.ts'
 import { socialLinks } from '../../application/community/socialLinks'
 import { useLocalizedSitePath } from '../../application/i18n/useLocalizedSitePath.ts'
 import SitePageLayout from '../layout/SitePageLayout'
@@ -9,11 +15,6 @@ import SocialExternalLink from '../layout/SocialExternalLink'
 import LocalizedCreatorProfileCard from '../people/LocalizedCreatorProfileCard'
 import { siteRoutes } from '../routes/siteRoutes'
 import RepositoryContactCard from './RepositoryContactCard'
-
-const WEBAPP_DISCUSSIONS_URL = 'https://github.com/agents-repo/webapp/discussions'
-const WEBAPP_ISSUES_URL = 'https://github.com/agents-repo/webapp/issues'
-const REGISTRY_DISCUSSIONS_URL = 'https://github.com/agents-repo/registry/discussions'
-const REGISTRY_ISSUES_URL = 'https://github.com/agents-repo/registry/issues'
 
 function ContactPage() {
   const { t } = useTranslation('pages')

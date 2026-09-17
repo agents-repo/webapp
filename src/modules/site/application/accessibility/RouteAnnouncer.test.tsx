@@ -4,6 +4,12 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { act, useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
+import {
+  completePackageCatalogSearchFocusHandoff,
+  hasActivePackageCatalogSearchFocusHandoff,
+  PACKAGE_CATALOG_SEARCH_INPUT_MARKER,
+  withPackageCatalogSearchFocusState,
+} from '../../../registry/application/catalogSearchNavigation'
 import RouteAnnouncer from './RouteAnnouncer'
 
 function RouteAnnouncerHarness({
@@ -44,6 +50,7 @@ function RouteAnnouncerHarness({
 describe('RouteAnnouncer', () => {
   afterEach(() => {
     cleanup()
+    completePackageCatalogSearchFocusHandoff()
   })
 
   it('skips announcing the initial route', () => {
@@ -65,6 +72,68 @@ describe('RouteAnnouncer', () => {
       expect(liveRegion?.textContent).toBe('Navigated to About')
       expect(document.getElementById('main-content')).toHaveFocus()
     })
+  })
+
+  it('does not move focus to main when catalog search handoff state is set', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    withPackageCatalogSearchFocusState()
+
+    act(() => {
+      void navigateRef.current!('/about', { state: { focusPackageCatalogSearch: true } })
+    })
+
+    await waitFor(() => {
+      const liveRegion = document.querySelector('[aria-live="polite"]')
+      expect(liveRegion?.textContent).toBe('Navigated to About')
+    })
+
+    expect(document.getElementById('main-content')).not.toHaveFocus()
+    expect(hasActivePackageCatalogSearchFocusHandoff()).toBe(false)
+  })
+
+  it('does not move focus to main when catalog search is already focused after lazy content loads', async () => {
+    const navigateRef: { current: ReturnType<typeof useNavigate> | null } = { current: null }
+
+    renderWithProviders(<RouteAnnouncerHarness navigateRef={navigateRef} />, { initialEntries: ['/'] })
+
+    await waitFor(() => {
+      expect(navigateRef.current).not.toBeNull()
+    })
+
+    const main = document.getElementById('main-content')
+    const catalogSearchInput = document.createElement('input')
+    catalogSearchInput.id = 'packages-index-search'
+    catalogSearchInput.setAttribute(PACKAGE_CATALOG_SEARCH_INPUT_MARKER, '')
+    main?.append(catalogSearchInput)
+
+    main?.setAttribute('aria-busy', 'true')
+
+    act(() => {
+      void navigateRef.current!('/about')
+    })
+
+    catalogSearchInput.focus()
+
+    act(() => {
+      main?.removeAttribute('aria-busy')
+    })
+
+    await waitFor(() => {
+      const liveRegion = document.querySelector('[aria-live="polite"]')
+      expect(liveRegion?.textContent).toBe('Navigated to About')
+    })
+
+    expect(catalogSearchInput).toHaveFocus()
+    expect(document.getElementById('main-content')).not.toHaveFocus()
+
+    catalogSearchInput.remove()
   })
 
   it('does not move focus when the skip link was used', async () => {

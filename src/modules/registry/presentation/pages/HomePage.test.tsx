@@ -4,7 +4,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { renderWithProviders } from '../../../../test/renderWithProviders'
 import { useRegistryCatalog } from '../catalog/registryCatalogContext'
+import RouteAnnouncer from '../../../site/application/accessibility/RouteAnnouncer'
 import HomePage from './HomePage'
+import PackagesIndexPage from './PackagesIndexPage'
 import {
   loadedCatalogContext,
   loadingCatalogContext,
@@ -13,13 +15,13 @@ import {
 } from '../../../../test/fixtures/homePageTestFixtures'
 import { sampleRegistryCatalog } from '../../../../test/fixtures/sampleRegistryCatalog'
 import { createPaginatedRegistryCatalog } from '../../../../test/fixtures/paginatedRegistryCatalog'
+import enCatalog from '../../../../locales/en/catalog.json' with { type: 'json' }
 import {
   CLI_INIT_COMMAND,
   CLI_INSTALL_COMMAND,
+  FEATURED_PACKAGE_ID,
+  FEATURED_PACKAGE_REF,
 } from '../components/homeLanding/homeLandingCopy'
-
-const HOME_HERO_HEADING =
-  'Ready-to-use agents and flows for Copilot, Cursor, Claude Code, and Codex'
 
 vi.mock('../catalog/registryCatalogContext', () => ({
   useRegistryCatalog: vi.fn(),
@@ -32,14 +34,28 @@ function LocationProbe() {
   return <div data-testid="location">{`${location.pathname}${location.search}`}</div>
 }
 
-function renderHomeAtRoot() {
+function renderHomeAtRoot(options: { includePackagesIndex?: boolean } = {}) {
+  const includePackagesIndex = options.includePackagesIndex ?? false
+
   return renderWithProviders(
     <>
+      <RouteAnnouncer />
       <LocationProbe />
-      <Routes>
-        <Route path="/" element={<HomePage setHeaderSearchSlot={() => {}} />} />
-        <Route path="/packages" element={<p>packages index</p>} />
-      </Routes>
+      <main id="main-content" tabIndex={-1}>
+        <Routes>
+          <Route path="/" element={<HomePage setHeaderSearchSlot={() => {}} />} />
+          <Route
+            path="/packages"
+            element={
+              includePackagesIndex ? (
+                <PackagesIndexPage setHeaderSearchSlot={() => {}} />
+              ) : (
+                <p>packages index</p>
+              )
+            }
+          />
+        </Routes>
+      </main>
     </>,
     { initialEntries: ['/'] },
   )
@@ -139,6 +155,28 @@ describe('HomePage search', () => {
     await waitFor(() => {
       expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=demo-flow')
     })
+  })
+
+  it('keeps search focus on the packages index after debounced home navigation', async () => {
+    const user = userEvent.setup()
+    useRegistryCatalogMock.mockReturnValue(loadedCatalogContext)
+
+    renderHomeAtRoot({ includePackagesIndex: true })
+
+    const homeSearchInput = await screen.findByRole('textbox', { name: /search registry packages/i })
+    await user.type(homeSearchInput, 'demo-flow')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent('/packages/?q=demo-flow')
+    })
+
+    const packagesSearchInput = await screen.findByRole('textbox', {
+      name: /search registry packages/i,
+    })
+    await waitFor(() => {
+      expect(document.activeElement).toBe(packagesSearchInput)
+    })
+    expect(packagesSearchInput).toHaveValue('demo-flow')
   })
 
   it('navigates immediately on search submit', async () => {
@@ -277,17 +315,32 @@ describe('HomePage landing sections', () => {
 
     renderWithProviders(<HomePage setHeaderSearchSlot={() => {}} />)
 
-    expect(await screen.findByRole('heading', { level: 1, name: HOME_HERO_HEADING })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: enCatalog.home.heroHeading }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Browse packages' })).toHaveAttribute('href', '/packages/')
-    expect(screen.getByRole('link', { name: 'Use the CLI' })).toHaveAttribute('href', '/#cli-quickstart')
+    expect(screen.getByRole('link', { name: 'Publish an agent' })).toHaveAttribute(
+      'href',
+      '/docs/submitting-a-package/',
+    )
+    expect(
+      screen.getByRole('link', { name: 'View on GitHub — Agents Repo organization (opens in a new tab)' }),
+    ).toHaveAttribute('href', 'https://github.com/agents-repo')
     expect(screen.getByRole('heading', { name: 'Works with your AI coding tools' })).toBeInTheDocument()
     expect(screen.getByText('GitHub Copilot')).toBeInTheDocument()
     expect(screen.getByText('OpenAI Codex')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'What you gain' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'How it works' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Install with the CLI' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Discover packages' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Share and grow the catalog' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2, name: 'Install with the CLI' })).toBeInTheDocument()
     expect(screen.getByTestId('home-cli-init-terminal')).toHaveTextContent(CLI_INIT_COMMAND)
     expect(screen.getByTestId('home-cli-install-terminal')).toHaveTextContent(CLI_INSTALL_COMMAND)
+    expect(CLI_INSTALL_COMMAND).toContain(FEATURED_PACKAGE_ID)
+    expect(screen.getByRole('link', { name: `View ${FEATURED_PACKAGE_ID} package details` })).toHaveAttribute(
+      'href',
+      `/packages/${FEATURED_PACKAGE_REF}/`,
+    )
     expect(screen.getByRole('link', { name: 'Installing packages' })).toHaveAttribute(
       'href',
       '/docs/installing-packages/',
@@ -299,11 +352,9 @@ describe('HomePage landing sections', () => {
     )
     expect(screen.getByRole('heading', { name: 'Most downloaded in the last year' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Help grow the catalog' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Submit a package' })).toHaveAttribute(
-      'href',
-      '/docs/submitting-a-package/',
-    )
-    expect(screen.getByRole('link', { name: 'Help Us' })).toHaveAttribute('href', '/help-us/')
+    const contributeLinks = screen.getAllByRole('link', { name: 'Contribute' })
+    expect(contributeLinks.length).toBeGreaterThanOrEqual(2)
+    expect(contributeLinks.every((link) => link.getAttribute('href') === '/contribute/')).toBe(true)
   })
 })
 

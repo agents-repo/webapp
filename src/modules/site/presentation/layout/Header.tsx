@@ -1,5 +1,13 @@
 import type { ReactNode } from 'react'
-import { faBook, faBoxesStacked, faCircleInfo, faEnvelope, faHandsHelping, faUsers } from '@fortawesome/free-solid-svg-icons'
+import {
+  faBook,
+  faBoxesStacked,
+  faCircleInfo,
+  faCodeBranch,
+  faEnvelope,
+  faHandsHelping,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -28,6 +36,7 @@ function Header({ searchSlot, onRegistrySettingsSaved, registryCatalogStatusNote
 
   const aboutNavItems = [
     { to: siteRoutes.about, label: t('nav.about'), icon: faCircleInfo },
+    { to: siteRoutes.contribute, label: t('nav.contribute'), icon: faCodeBranch },
     { to: siteRoutes.community, label: t('nav.community'), icon: faUsers },
     { to: siteRoutes.contact, label: t('nav.contact'), icon: faEnvelope },
   ] as const

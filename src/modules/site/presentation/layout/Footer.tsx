@@ -57,6 +57,10 @@ function Footer() {
                   <FontAwesomeIcon icon={faUsers} className="me-2" aria-hidden="true" />
                   {t('nav.community')}
                 </NavLink>
+                <NavLink to={localizedSitePath(siteRoutes.contribute)} className="footer-link">
+                  <FontAwesomeIcon icon={faCodeBranch} className="me-2" aria-hidden="true" />
+                  {t('nav.contribute')}
+                </NavLink>
                 <NavLink to={localizedSitePath(siteRoutes.docs)} className="footer-link">
                   <FontAwesomeIcon icon={faBook} className="me-2" aria-hidden="true" />
                   {t('nav.docs')}

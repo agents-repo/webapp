@@ -1,5 +1,10 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
+import {
+  completePackageCatalogSearchFocusHandoff,
+  isPackageCatalogSearchInputFocused,
+  shouldSkipMainContentFocusForCatalogSearch,
+} from '../../../registry/application/catalogSearchNavigation'
 import { getSitePageMeta } from './sitePageMeta'
 import { getRouteAnnouncementMessage, isMainRouteContentReady } from './routeContentReady'
 
@@ -8,10 +13,12 @@ function RouteAnnouncer() {
   const announcementRef = useRef<HTMLDivElement>(null)
   const isInitialRenderRef = useRef(true)
   const pathnameRef = useRef(location.pathname)
+  const locationRef = useRef(location)
 
   useLayoutEffect(() => {
     pathnameRef.current = location.pathname
-  }, [location.pathname])
+    locationRef.current = location
+  }, [location])
 
   useEffect(() => {
     const announcedPathname = location.pathname
@@ -41,8 +48,15 @@ function RouteAnnouncer() {
       }
 
       const skipLinkWasUsed = document.activeElement?.classList.contains('skip-link')
-      if (!skipLinkWasUsed && mainContent) {
-        mainContent.focus({ preventScroll: false })
+      const preserveCatalogSearchFocus =
+        shouldSkipMainContentFocusForCatalogSearch(locationRef.current.state) ||
+        isPackageCatalogSearchInputFocused()
+      if (!skipLinkWasUsed && !preserveCatalogSearchFocus && mainContent) {
+        mainContent.focus({ preventScroll: true })
+      }
+
+      if (preserveCatalogSearchFocus) {
+        completePackageCatalogSearchFocusHandoff()
       }
 
       return true
