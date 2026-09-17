@@ -6,8 +6,7 @@ import { ROUTE_OG_ARTIFACTS } from './routes.mjs'
  * @returns {Promise<Buffer>}
  */
 export async function renderRouteOgJpeg(routeId) {
-  const artifact = ROUTE_OG_ARTIFACTS.find((entry) => entry.id === routeId)
-  if (!artifact) {
+  if (!ROUTE_OG_ARTIFACTS.some((entry) => entry.id === routeId)) {
     throw new Error(`Unknown route OG id: ${routeId}`)
   }
 
