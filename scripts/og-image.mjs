@@ -116,29 +116,30 @@ async function checkCommittedJpeg(label, filePath, render, failures) {
 }
 
 async function generate() {
-  const siteJpeg = await renderSiteDefaultOgJpeg()
   const failures = []
+
+  const siteJpeg = await renderSiteDefaultOgJpeg()
   await assertJpegConstraints(siteJpeg, 'og-image.jpg', failures)
+
+  const routeJpegs = await renderAllRouteOgJpegs()
+  for (const { id, jpegFile } of ROUTE_OG_ARTIFACTS) {
+    const buffer = routeJpegs[id]
+    await assertJpegConstraints(buffer, jpegFile, failures)
+  }
+
   if (failures.length > 0) {
     throw new Error(failures.join('\n').trim() || 'OG image generation failed validation')
   }
 
   const siteDigest = await hashFiles(SITE_DEFAULT_TEMPLATE_BASENAMES)
+  const routeDigest = await hashFiles(ROUTE_OG_TEMPLATE_BASENAMES)
+
   await fs.writeFile(jpegPath, siteJpeg)
   await fs.writeFile(fingerprintPath, `${siteDigest}\n`, 'utf8')
   console.log(`Wrote ${path.relative(root, jpegPath)} (${siteJpeg.length} bytes)`)
   console.log(`Wrote ${path.relative(root, fingerprintPath)}`)
 
   await fs.mkdir(routeOgDir, { recursive: true })
-  const routeJpegs = await renderAllRouteOgJpegs()
-  for (const { id, jpegFile } of ROUTE_OG_ARTIFACTS) {
-    const buffer = routeJpegs[id]
-    await assertJpegConstraints(buffer, jpegFile, failures)
-  }
-  if (failures.length > 0) {
-    throw new Error(failures.join('\n').trim() || 'Route OG generation failed validation')
-  }
-
   for (const { id, jpegFile } of ROUTE_OG_ARTIFACTS) {
     const outPath = path.join(routeOgDir, jpegFile)
     const buffer = routeJpegs[id]
@@ -146,7 +147,6 @@ async function generate() {
     console.log(`Wrote ${path.relative(root, outPath)} (${buffer.length} bytes)`)
   }
 
-  const routeDigest = await hashFiles(ROUTE_OG_TEMPLATE_BASENAMES)
   await fs.writeFile(routeFingerprintPath, `${routeDigest}\n`, 'utf8')
   console.log(`Wrote ${path.relative(root, routeFingerprintPath)}`)
 }
