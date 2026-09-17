@@ -152,6 +152,11 @@ npm run og:check      # drift check (also runs in PR baseline when OG paths chan
 See [seo.md](seo.md#open-graph-image-site-default) for meta-tag behavior and size
 guidance.
 
+The card embeds the brand mark from `src/assets/logo/agents-repo-logo.svg`
+(rasterized at generate time). That SVG is included in the OG template
+fingerprint alongside `scripts/og/*.mjs`; after logo edits, run
+`npm run og:generate` and commit the JPEG and fingerprint.
+
 ### Third-party build tools (MIT project)
 
 The webapp stays under the MIT [`LICENSE`](../LICENSE). OG generation uses

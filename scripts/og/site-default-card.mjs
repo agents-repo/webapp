@@ -1,23 +1,35 @@
-import { theme } from './constants.mjs'
+import { ogDark } from './constants.mjs'
 
 const installTargets = ['GitHub Copilot', 'Cursor', 'Claude Code', 'OpenAI Codex']
 
+/** Aligned with `src/locales/en/catalog.json` → `home.*` (English site default OG). */
+const heroBadge = 'Open registry for agents and flows'
+const heroTitle = 'Agents Repo'
+const heroLead =
+  'Find maintained packages in an open registry, install them with the CLI into your AI coding tools, and publish your own agents for others to use.'
+const siteDomain = 'agents-repo.org'
+
 /**
  * Satori element tree for the site-wide default Open Graph card.
+ * @param {{ logoDataUrl: string }} options
  * @returns {import('satori').SatoriNode}
  */
-export function createSiteDefaultOgElement() {
+export function createSiteDefaultOgElement({ logoDataUrl }) {
   return {
     type: 'div',
     props: {
       style: {
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'space-between',
         width: '100%',
         height: '100%',
-        background: `linear-gradient(135deg, ${theme.bodyBg} 0%, #efe4ff 45%, ${theme.cardBg} 100%)`,
-        padding: '56px 64px',
+        backgroundColor: ogDark.bg,
+        backgroundImage: `radial-gradient(circle at 80% 20%, ${ogDark.accentPurple} 0%, transparent 50%), radial-gradient(circle at 0% 100%, ${ogDark.accentIndigo} 0%, transparent 40%)`,
+        padding: '64px',
         fontFamily: 'Inter',
+        color: ogDark.text,
+        boxSizing: 'border-box',
       },
       children: [
         {
@@ -26,61 +38,55 @@ export function createSiteDefaultOgElement() {
             style: {
               display: 'flex',
               alignItems: 'center',
-              marginBottom: '32px',
+              justifyContent: 'space-between',
+              width: '100%',
             },
             children: [
               {
                 type: 'div',
                 props: {
                   style: {
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '16px',
-                    background: theme.primary,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ffffff',
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    marginRight: '20px',
+                    gap: '16px',
                   },
-                  children: 'A',
+                  children: [
+                    {
+                      type: 'img',
+                      props: {
+                        src: logoDataUrl,
+                        width: 48,
+                        height: 48,
+                        style: {
+                          objectFit: 'contain',
+                        },
+                      },
+                    },
+                    {
+                      type: 'span',
+                      props: {
+                        style: {
+                          fontSize: '20px',
+                          fontWeight: 600,
+                          color: ogDark.muted,
+                          letterSpacing: '0.05em',
+                          textTransform: 'uppercase',
+                        },
+                        children: heroBadge,
+                      },
+                    },
+                  ],
                 },
               },
               {
                 type: 'div',
                 props: {
                   style: {
-                    display: 'flex',
-                    flexDirection: 'column',
+                    fontSize: '18px',
+                    fontWeight: 500,
+                    color: ogDark.subtle,
                   },
-                  children: [
-                    {
-                      type: 'div',
-                      props: {
-                        style: {
-                          fontSize: '42px',
-                          fontWeight: 700,
-                          color: theme.headingColor,
-                          lineHeight: 1.1,
-                        },
-                        children: 'Agents Repo',
-                      },
-                    },
-                    {
-                      type: 'div',
-                      props: {
-                        style: {
-                          fontSize: '22px',
-                          fontWeight: 400,
-                          color: theme.secondary,
-                          marginTop: '6px',
-                        },
-                        children: 'Open registry for agents and multi-agent flows',
-                      },
-                    },
-                  ],
+                  children: siteDomain,
                 },
               },
             ],
@@ -90,15 +96,42 @@ export function createSiteDefaultOgElement() {
           type: 'div',
           props: {
             style: {
-              fontSize: '28px',
-              fontWeight: 400,
-              color: theme.bodyColor,
-              lineHeight: 1.35,
-              maxWidth: '920px',
-              marginBottom: '40px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+              maxWidth: '880px',
+              marginTop: 'auto',
+              marginBottom: 'auto',
             },
-            children:
-              'Browse, compare, and install packages for your AI coding tools — catalog, docs, and chat-ready flows in one place.',
+            children: [
+              {
+                type: 'h1',
+                props: {
+                  style: {
+                    fontSize: '64px',
+                    fontWeight: 800,
+                    letterSpacing: '-0.025em',
+                    lineHeight: 1.05,
+                    margin: 0,
+                    color: ogDark.text,
+                  },
+                  children: heroTitle,
+                },
+              },
+              {
+                type: 'p',
+                props: {
+                  style: {
+                    fontSize: '24px',
+                    fontWeight: 400,
+                    lineHeight: 1.4,
+                    color: ogDark.muted,
+                    margin: 0,
+                  },
+                  children: heroLead,
+                },
+              },
+            ],
           },
         },
         {
@@ -106,40 +139,43 @@ export function createSiteDefaultOgElement() {
           props: {
             style: {
               display: 'flex',
+              alignItems: 'center',
               flexWrap: 'wrap',
               gap: '12px',
-              marginTop: 'auto',
             },
-            children: installTargets.map((label) => ({
-              type: 'div',
-              props: {
-                style: {
-                  display: 'flex',
-                  padding: '10px 18px',
-                  borderRadius: '999px',
-                  background: 'rgba(138, 42, 216, 0.12)',
-                  border: `1px solid ${theme.borderColor}`,
-                  color: theme.headingColor,
-                  fontSize: '18px',
-                  fontWeight: 600,
+            children: [
+              {
+                type: 'span',
+                props: {
+                  style: {
+                    fontSize: '15px',
+                    fontWeight: 600,
+                    color: ogDark.subtle,
+                    marginRight: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  },
+                  children: 'Supported in:',
                 },
-                children: label,
               },
-            })),
-          },
-        },
-        {
-          type: 'div',
-          props: {
-            style: {
-              position: 'absolute',
-              right: '-80px',
-              top: '-80px',
-              width: '320px',
-              height: '320px',
-              borderRadius: '50%',
-              background: 'rgba(138, 42, 216, 0.08)',
-            },
+              ...installTargets.map((label) => ({
+                type: 'div',
+                props: {
+                  style: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    background: ogDark.pillBg,
+                    border: `1px solid ${ogDark.pillBorder}`,
+                    color: ogDark.pillText,
+                    fontSize: '16px',
+                    fontWeight: 500,
+                  },
+                  children: label,
+                },
+              })),
+            ],
           },
         },
       ],

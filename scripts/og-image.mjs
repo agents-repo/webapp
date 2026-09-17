@@ -15,7 +15,12 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
-import { MAX_JPEG_BYTES, OG_HEIGHT, OG_WIDTH } from './og/constants.mjs'
+import {
+  brandLogoSvgRelativePath,
+  MAX_JPEG_BYTES,
+  OG_HEIGHT,
+  OG_WIDTH,
+} from './og/constants.mjs'
 import { renderSiteDefaultOgJpeg } from './og/render-site-default.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -48,6 +53,12 @@ async function fingerprintTemplateSources() {
     hash.update(body)
     hash.update('\n')
   }
+  const logoPath = path.join(root, brandLogoSvgRelativePath)
+  const logoBody = await fs.readFile(logoPath)
+  hash.update(path.basename(logoPath))
+  hash.update('\n')
+  hash.update(logoBody)
+  hash.update('\n')
   return hash.digest('hex')
 }
 
