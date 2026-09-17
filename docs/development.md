@@ -190,7 +190,8 @@ the same command names and aliases.
 
 The [agents-repo/cli](https://github.com/agents-repo/cli) repository owns
 `npm run check:docs-sync` (also part of that repo’s `lint:all`). After editing
-any `src/content/docs/**/cli-commands.md` file, run it from a sibling CLI
+any `cli-commands.md` locale file under `src/content/docs/` (English plus
+`es/`, `pt-br/`, and `pt-pt/`), run it from a sibling CLI
 checkout (or set `AGENTS_REPO_WEBAPP_ROOT` to this repository). Compare with
 [agents-repo/cli `docs/npm-cli-parity.md`](https://github.com/agents-repo/cli/blob/main/docs/npm-cli-parity.md)
 and [CLI development.md](https://github.com/agents-repo/cli/blob/main/docs/development.md).
