@@ -183,10 +183,19 @@ The in-app doc search indexes each page's title, description, and body text from
 the same manifest as the sidebar. Run `npm run lint:md` on new content.
 
 When CLI commands, install targets, or registry submission workflows change in
-upstream repos, manually update the affected doc pages (especially
-`cli-commands`, `install-targets`, `cli-doctor`, and `submitting-a-package`).
-Compare with [agents-repo/cli `docs/npm-cli-parity.md`](https://github.com/agents-repo/cli/blob/main/docs/npm-cli-parity.md)
-on CLI releases.
+upstream repos, update the affected doc pages (especially `cli-commands`,
+`install-targets`, `cli-doctor`, and `submitting-a-package`). The English
+`cli-commands.md` matrix and the `es`, `pt-br`, and `pt-pt` copies must list
+the same command names and aliases.
+
+The [agents-repo/cli](https://github.com/agents-repo/cli) repository owns
+`npm run check:docs-sync` (also part of that repo’s `lint:all`). After editing
+any `src/content/docs/**/cli-commands.md` file, run it from a sibling CLI
+checkout (or set `AGENTS_REPO_WEBAPP_ROOT` to this repository). Compare with
+[agents-repo/cli `docs/npm-cli-parity.md`](https://github.com/agents-repo/cli/blob/main/docs/npm-cli-parity.md)
+and [CLI development.md](https://github.com/agents-repo/cli/blob/main/docs/development.md).
+PR baseline runs the same check when `cli-commands.md` paths (or the matcher /
+`pr-baseline.yml`) change, after CLI `check:docs-sync` is on `main`.
 
 ## Styling
 

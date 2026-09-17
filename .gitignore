@@ -33,3 +33,4 @@ blob-report/
 .vitest/
 scripts/.generated/
 docs/slides/build/
+.ci-cli/

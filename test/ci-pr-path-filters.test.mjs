@@ -32,6 +32,7 @@ test('docs-only README turns no extras on', () => {
   assert.equal(matches.slides, false);
   assert.equal(matches.agents, false);
   assert.equal(matches.pages, false);
+  assert.equal(matches.cliDocs, false);
 });
 
 test('eslint.config.js-only does not turn pages on', () => {
@@ -41,8 +42,17 @@ test('eslint.config.js-only does not turn pages on', () => {
   assert.equal(matches.agents, false);
 });
 
-test('src change turns pages on without slides or agents', () => {
+test('src change turns pages on without slides, agents, or cliDocs', () => {
   const matches = matchPathGroups(['src/App.tsx']);
+  assert.equal(matches.pages, true);
+  assert.equal(matches.slides, false);
+  assert.equal(matches.agents, false);
+  assert.equal(matches.cliDocs, false);
+});
+
+test('cli-commands.md turns cliDocs and pages on', () => {
+  const matches = matchPathGroups(['src/content/docs/es/cli-commands.md']);
+  assert.equal(matches.cliDocs, true);
   assert.equal(matches.pages, true);
   assert.equal(matches.slides, false);
   assert.equal(matches.agents, false);
@@ -71,6 +81,7 @@ test('matcher script turns every extra this job defines on', () => {
   assert.equal(matches.slides, true);
   assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
+  assert.equal(matches.cliDocs, true);
 });
 
 test('pr-baseline.yml turns every extra this job defines on', () => {
@@ -78,6 +89,7 @@ test('pr-baseline.yml turns every extra this job defines on', () => {
   assert.equal(matches.slides, true);
   assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
+  assert.equal(matches.cliDocs, true);
 });
 
 test('rename previous_filename is collected for matching', () => {
