@@ -1,28 +1,25 @@
 import { loadBrandLogoDataUrl, renderOgElementToJpeg } from './render-lib.mjs'
 import { ROUTE_OG_ARTIFACTS } from './routes.mjs'
 
+/** @param {string} routeId */
+function cardFactoryExportName(routeId) {
+  return `create${routeId.charAt(0).toUpperCase()}${routeId.slice(1)}OgElement`
+}
+
 /**
  * @param {string} routeId
  * @returns {Promise<Buffer>}
  */
 export async function renderRouteOgJpeg(routeId) {
-  if (!ROUTE_OG_ARTIFACTS.some((entry) => entry.id === routeId)) {
+  const artifact = ROUTE_OG_ARTIFACTS.find((entry) => entry.id === routeId)
+  if (!artifact) {
     throw new Error(`Unknown route OG id: ${routeId}`)
   }
 
-  const { createHomeOgElement } = await import('./home-card.mjs')
-  const { createPackagesOgElement } = await import('./packages-card.mjs')
-  const { createDocsOgElement } = await import('./docs-card.mjs')
-
-  const factories = {
-    home: createHomeOgElement,
-    packages: createPackagesOgElement,
-    docs: createDocsOgElement,
-  }
-
-  const createElement = factories[routeId]
-  if (!createElement) {
-    throw new Error(`No OG card factory for route id: ${routeId}`)
+  const cardModule = await import(artifact.cardModule)
+  const createElement = cardModule[cardFactoryExportName(routeId)]
+  if (typeof createElement !== 'function') {
+    throw new Error(`No OG card factory export in ${artifact.cardModule} for route id: ${routeId}`)
   }
 
   const logoDataUrl = await loadBrandLogoDataUrl()

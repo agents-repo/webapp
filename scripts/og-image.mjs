@@ -48,7 +48,7 @@ if (!['generate', 'check'].includes(command)) {
 
 async function hashFiles(basenames) {
   const hash = createHash('sha256')
-  for (const name of basenames.sort()) {
+  for (const name of [...basenames].sort()) {
     const file = path.join(ogDir, name)
     const body = await fs.readFile(file)
     hash.update(name)
