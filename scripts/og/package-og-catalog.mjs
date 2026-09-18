@@ -12,7 +12,7 @@ export const PACKAGE_CATALOG_OG_TEMPLATE_BASENAMES = [
   'package-og-inputs.mjs',
 ]
 
-/** Build-time package OG scripts that must trigger PR baseline `pages` (not blanket `scripts/og/**` exclude). */
+/** Package-catalog OG build entrypoints (paths that affect dist JPEG generation; PR baseline `pages`/`og` via `scripts/ci-pr-path-filters.mjs`). */
 export const PACKAGE_CATALOG_OG_BUILD_PATH_PREFIXES = [
   'scripts/generate-package-og-dist.mjs',
   'scripts/og/package-detail-card.mjs',

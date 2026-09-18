@@ -39,7 +39,8 @@ export function hashPackageOgRenderInputs(inputs) {
 }
 
 /**
- * @param {{ namespace: string, package: string }} pkg
+ * @param {string} namespace
+ * @param {string} packageId
  */
 export function packageOgCacheKey(namespace, packageId) {
   return `${namespace}/${packageId}`
