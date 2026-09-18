@@ -68,6 +68,22 @@ function assertPackageSlug(value, label) {
   }
 }
 
+/** @param {string} targetDir */
+function assertSafeRecursiveRemoveDir(targetDir) {
+  const resolved = path.resolve(targetDir)
+  const root = path.parse(resolved).root
+  if (resolved === root) {
+    throw new Error(`Refusing to recursively remove filesystem root (${root})`)
+  }
+  const relativeToRoot = path.relative(root, resolved)
+  const segments = relativeToRoot.split(path.sep).filter((segment) => segment && segment !== '.')
+  if (segments.length < 2) {
+    throw new Error(
+      `Refusing to recursively remove shallow cache directory (${resolved}); expected at least two path segments below the filesystem root`,
+    )
+  }
+}
+
 /**
  * @param {import('../src/modules/registry/domain/package.ts').RegistryCatalog} catalog
  * @param {string} distDir
@@ -87,6 +103,7 @@ export async function generatePackageOgDist(catalog, distDir, options = {}) {
     // cold cache
   }
   if (previousDigest && previousDigest !== templateDigest) {
+    assertSafeRecursiveRemoveDir(cacheDir)
     await fs.rm(cacheDir, { recursive: true, force: true })
   }
   await fs.mkdir(cacheDir, { recursive: true })
