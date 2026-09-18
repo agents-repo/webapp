@@ -165,7 +165,8 @@ The cards embed the brand mark from `src/assets/logo/agents-repo-logo.svg`
 (rasterized at generate time). The site-default fingerprint covers
 `site-default-card.mjs` and shared render helpers; route fingerprints cover
 `home-card.mjs`, `packages-card.mjs`, `docs-card.mjs`, and shared layout code;
-`packages.template.sha256` covers package **catalog** card scripts (build-time JPEGs).
+`packages.template.sha256` covers package **catalog** card scripts and the brand logo
+(same `hashFiles()` helper as other OG fingerprints; catalog detail JPEGs remain build-time only).
 After logo or **pages** template edits, run `npm run og:generate` and commit all JPEGs and
 fingerprints. The pre-commit hook runs `og:generate` and `og:check` when
 `scripts/og/**`, `scripts/og-image.mjs`, or `src/assets/logo/agents-repo-logo.svg`

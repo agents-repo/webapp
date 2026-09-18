@@ -157,7 +157,7 @@ catalog snapshot as package site routes. Output URL path:
 | Concern | Policy |
 | --- | --- |
 | Generation | Automatic on `build:pages` only |
-| Drift check | Template scripts via `public/og/packages.template.sha256`; JPEGs on pages build |
+| Drift check | `packages.template.sha256` (scripts + logo); catalog JPEGs on `build:pages` |
 | `og:generate` | Pages JPEGs + fingerprints only (not catalog detail JPEGs) |
 
 Locale-prefixed URLs (for example `/es/docs/`) use the same OG image as the English
