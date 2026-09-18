@@ -2,9 +2,11 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { OG_HEIGHT, OG_WIDTH } from '../scripts/og/constants.mjs'
 import { ROUTE_OG_ARTIFACTS } from '../scripts/og/routes.mjs'
+import { getPackageDetailOgImagePublicPath } from '../scripts/og/package-og-inputs.mjs'
 import {
   ogImageHeight,
   ogImageWidth,
+  getPackageDetailOgImagePublicPath as getPackageDetailOgImagePublicPathFromSiteSeo,
   routeOgImagePathByCanonicalPath,
 } from '../src/modules/site/application/seo/siteSeo.ts'
 import { siteRoutes } from '../src/modules/site/presentation/routes/siteRoutes.ts'
@@ -41,4 +43,11 @@ test('route OG public paths are unique and live under /og/', () => {
       `siteSeo path must match scripts manifest for ${id}`,
     )
   }
+})
+
+test('package catalog OG public paths match siteSeo helper', () => {
+  const fromScripts = getPackageDetailOgImagePublicPath('agents-repo', 'sample-agent')
+  const fromSiteSeo = getPackageDetailOgImagePublicPathFromSiteSeo('agents-repo', 'sample-agent')
+  assert.equal(fromScripts, '/og/packages/agents-repo/sample-agent.jpg')
+  assert.equal(fromSiteSeo, fromScripts)
 })

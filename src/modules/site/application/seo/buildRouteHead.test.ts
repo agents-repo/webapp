@@ -64,6 +64,11 @@ describe('getRouteHeadData', () => {
     const html = renderRouteHeadHtml(head)
     const plainDescription = sampleRegistryCatalog.packages[0].description
 
+    expect(head.ogImage).toBe(
+      'https://agents-repo.org/og/packages/agents-repo/sample-agent.jpg',
+    )
+    expect(head.twitterImage).toBe(head.ogImage)
+    expect(head.ogImageAlt).toContain('sample-agent')
     expect(head.description).toBe(plainDescription)
     expect(head.ogDescription).toContain('npx agents-repo install agents-repo/sample-agent')
     expect(head.twitterDescription).toBe(head.ogDescription)
@@ -73,6 +78,14 @@ describe('getRouteHeadData', () => {
     expect(html).toContain(
       `name="description" content="${escapeHtmlAttributeContent(plainDescription)}"`,
     )
+  })
+
+  it('falls back to site default og:image for unknown package detail paths', () => {
+    const head = getRouteHeadData('/packages/missing-ns/missing-pkg', 'https://agents-repo.org', {
+      catalog: sampleRegistryCatalog,
+    })
+
+    expect(head.ogImage).toBe('https://agents-repo.org/og-image.jpg')
   })
 
   it('emits CollectionPage JSON-LD on package indexes and SoftwareSourceCode on detail', () => {

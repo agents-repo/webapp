@@ -91,6 +91,17 @@ test('scripts/og-image.mjs turns og on and pages off', () => {
   assert.equal(matches.pages, false);
 });
 
+test('scripts/og/package-detail-card.mjs turns og and pages on', () => {
+  const matches = matchPathGroups(['scripts/og/package-detail-card.mjs']);
+  assert.equal(matches.og, true);
+  assert.equal(matches.pages, true);
+});
+
+test('scripts/generate-package-og-dist.mjs turns pages on', () => {
+  const matches = matchPathGroups(['scripts/generate-package-og-dist.mjs']);
+  assert.equal(matches.pages, true);
+});
+
 test('public/og-image.jpg turns og and pages on', () => {
   const matches = matchPathGroups(['public/og-image.jpg']);
   assert.equal(matches.og, true);
