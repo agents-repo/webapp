@@ -86,7 +86,7 @@ export async function generatePackageOgDist(catalog, distDir, options = {}) {
   } catch {
     // cold cache
   }
-  if (previousDigest !== templateDigest) {
+  if (previousDigest && previousDigest !== templateDigest) {
     await fs.rm(cacheDir, { recursive: true, force: true })
   }
   await fs.mkdir(cacheDir, { recursive: true })

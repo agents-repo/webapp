@@ -30,6 +30,26 @@ test('generatePackageOgDist writes dist JPEGs and uses incremental cache', async
   await generatePackageOgDist(catalog, distDir, { cacheDir, concurrency: 2 })
 })
 
+test('generatePackageOgDist does not wipe cacheDir on cold template digest', async () => {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'package-og-dist-'))
+  const distDir = path.join(tempRoot, 'dist')
+  const cacheDir = path.join(tempRoot, 'cache')
+  await fs.mkdir(distDir, { recursive: true })
+  await fs.mkdir(cacheDir, { recursive: true })
+  const sentinelPath = path.join(cacheDir, 'sentinel.txt')
+  await fs.writeFile(sentinelPath, 'keep\n', 'utf8')
+
+  const catalog = {
+    ...searchableCatalog,
+    packages: searchableCatalog.packages.slice(0, 1),
+  }
+
+  await generatePackageOgDist(catalog, distDir, { cacheDir })
+
+  const sentinel = await fs.readFile(sentinelPath, 'utf8')
+  assert.equal(sentinel, 'keep\n')
+})
+
 test('generatePackageOgDist re-renders when package description changes', async () => {
   const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'package-og-dist-'))
   const distDir = path.join(tempRoot, 'dist')
