@@ -162,8 +162,8 @@ export function getRouteHeadData(
   const { locale, pathnameWithoutLocale } = parseLocaleFromPathname(pathname)
   const documentTitle = formatDocumentTitle(pageMeta.title)
   const canonicalUrl = `${origin}${localizedSitePath(seoMeta.canonicalPath, locale)}`
-  const ogImage = getOgImageUrl(origin, seoMeta.canonicalPath)
-  const ogImageAltText = getOgImageAlt(seoMeta.canonicalPath)
+  const ogImage = getOgImageUrl(origin, seoMeta.canonicalPath, { catalog })
+  const ogImageAltText = getOgImageAlt(seoMeta.canonicalPath, { catalog })
   const hreflangAlternates = getLocaleHreflangAlternates(pathnameWithoutLocale, origin)
 
   const packageRoute = parsePackageSitePath(seoMeta.canonicalPath)

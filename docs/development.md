@@ -140,23 +140,34 @@ while Automatic Analysis is on.
 
 ## Open Graph image generation
 
-Committed social preview JPEGs live in `public/og-image.jpg` (site default) and
-`public/og/` (home, packages, and docs hub). They are generated from
-`scripts/og/` with dev-only tooling — not during `npm run build` or
-`npm run build:pages`.
+Two pipelines — see [seo.md — Open Graph images](seo.md#open-graph-images).
+
+**Pages OG (phases 1–2):** committed JPEGs in `public/og-image.jpg` and
+`public/og/` (home, packages index hub, docs hub). Human workflow:
 
 ```bash
-npm run og:generate   # after template edits; commit JPEGs + fingerprint .sha256 files
-npm run og:check      # drift check (also runs in PR baseline when OG paths change)
+npm run og:generate   # after pages template edits; commit JPEGs + .sha256 fingerprints
+npm run og:check      # drift check (PR baseline when OG paths change)
 ```
+
+**Package catalog OG (phase 3):** per detail route JPEGs under
+`/og/packages/{namespace}/{packageId}.jpg`, generated during `npm run build:pages`
+(not `og:generate`). Gitignored incremental cache:
+`scripts/.generated/og-packages-cache/`. Template drift for catalog cards is checked
+via `public/og/packages.template.sha256` when `og:check` runs.
+
+Pages OG is **not** produced during `npm run build` or `npm run build:pages`.
+Catalog OG **is** produced during `build:pages` / `prepare-pages-dist`.
 
 See [seo.md](seo.md#open-graph-images) for meta-tag behavior and size guidance.
 
 The cards embed the brand mark from `src/assets/logo/agents-repo-logo.svg`
 (rasterized at generate time). The site-default fingerprint covers
 `site-default-card.mjs` and shared render helpers; route fingerprints cover
-`home-card.mjs`, `packages-card.mjs`, `docs-card.mjs`, and shared layout code.
-After logo or template edits, run `npm run og:generate` and commit all JPEGs and
+`home-card.mjs`, `packages-card.mjs`, `docs-card.mjs`, and shared layout code;
+`packages.template.sha256` covers package **catalog** card scripts and the brand logo
+(same `hashFiles()` helper as other OG fingerprints; catalog detail JPEGs remain build-time only).
+After logo or **pages** template edits, run `npm run og:generate` and commit all JPEGs and
 fingerprints. The pre-commit hook runs `og:generate` and `og:check` when
 `scripts/og/**`, `scripts/og-image.mjs`, or `src/assets/logo/agents-repo-logo.svg`
 are staged, and re-stages `public/` OG artifacts.

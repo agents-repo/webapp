@@ -74,7 +74,7 @@ export const PATH_GROUPS = {
       'test/crawl-files.integration.test.mjs',
       'test/pwa-sw.integration.test.mjs',
     ],
-    exclude: ['scripts/slides.mjs', 'scripts/og-image.mjs', 'scripts/og/**'],
+    exclude: ['scripts/slides.mjs', 'scripts/og-image.mjs'],
   },
   cliDocs: {
     include: [

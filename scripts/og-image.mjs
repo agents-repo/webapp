@@ -22,6 +22,10 @@ import {
   OG_WIDTH,
 } from './og/constants.mjs'
 import { ROUTE_OG_ARTIFACTS, ROUTE_OG_TEMPLATE_BASENAMES } from './og/routes.mjs'
+import {
+  PACKAGE_CATALOG_OG_TEMPLATE_BASENAMES,
+  PACKAGE_CATALOG_OG_TEMPLATE_FINGERPRINT_FILE,
+} from './og/package-og-catalog.mjs'
 import { renderAllRouteOgJpegs } from './og/render-route-og.mjs'
 import { renderSiteDefaultOgJpeg } from './og/render-site-default.mjs'
 
@@ -31,6 +35,7 @@ const routeOgDir = path.join(root, 'public', 'og')
 const jpegPath = path.join(root, 'public', 'og-image.jpg')
 const fingerprintPath = path.join(root, 'public', 'og-image.src.sha256')
 const routeFingerprintPath = path.join(routeOgDir, 'routes.src.sha256')
+const packageTemplateFingerprintPath = path.join(routeOgDir, PACKAGE_CATALOG_OG_TEMPLATE_FINGERPRINT_FILE)
 
 const SITE_DEFAULT_TEMPLATE_BASENAMES = [
   'constants.mjs',
@@ -150,6 +155,10 @@ async function generate() {
 
   await fs.writeFile(routeFingerprintPath, `${routeDigest}\n`, 'utf8')
   console.log(`Wrote ${path.relative(root, routeFingerprintPath)}`)
+
+  const packageTemplateDigest = await hashFiles(PACKAGE_CATALOG_OG_TEMPLATE_BASENAMES)
+  await fs.writeFile(packageTemplateFingerprintPath, `${packageTemplateDigest}\n`, 'utf8')
+  console.log(`Wrote ${path.relative(root, packageTemplateFingerprintPath)}`)
 }
 
 async function check() {
@@ -175,6 +184,22 @@ async function check() {
 
   checkSourceFingerprint('Route OG template', committedRouteDigest, expectedRouteDigest, failures)
 
+  const expectedPackageTemplateDigest = (await hashFiles(PACKAGE_CATALOG_OG_TEMPLATE_BASENAMES)).trim()
+  let committedPackageTemplateDigest = ''
+  try {
+    committedPackageTemplateDigest = (await fs.readFile(packageTemplateFingerprintPath, 'utf8')).trim()
+  } catch {
+    failures.push(
+      `missing ${path.relative(root, packageTemplateFingerprintPath)}; run npm run og:generate`,
+    )
+  }
+  checkSourceFingerprint(
+    'Package catalog OG template',
+    committedPackageTemplateDigest,
+    expectedPackageTemplateDigest,
+    failures,
+  )
+
   const { renderRouteOgJpeg } = await import('./og/render-route-og.mjs')
   for (const { id, jpegFile } of ROUTE_OG_ARTIFACTS) {
     const filePath = path.join(routeOgDir, jpegFile)
@@ -185,7 +210,7 @@ async function check() {
     console.error(failures.join('\n'))
     process.exit(1)
   }
-  console.log('og:check passed (site default + route OG JPEGs)')
+  console.log('og:check passed (site default + route OG JPEGs + package catalog OG templates)')
 }
 
 try {

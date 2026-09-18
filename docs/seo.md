@@ -124,15 +124,41 @@ render pages.
 
 ## Open Graph images
 
-Social previews use **committed JPEGs** at 1200×630. Meta tags reference absolute URLs via
-`getOgImageUrl()` in `siteSeo.ts`.
+Social previews use **1200×630 JPEGs**. Meta tags reference absolute URLs via
+`getOgImageUrl()` in `siteSeo.ts`. Two pipelines:
+
+### Pages OG (committed; phases 1–2)
+
+Human-maintained cards for fixed site routes — **not** generated during
+`npm run build:pages`.
 
 | Route (canonical path) | Public asset | Notes |
 | --- | --- | --- |
 | `/` (home) | `/og/home.jpg` | Route-specific card (phase 2) |
-| `/packages` | `/og/packages.jpg` | Route-specific card (phase 2) |
+| `/packages` | `/og/packages.jpg` | Packages **index** hub (phase 2); not catalog detail JPEGs |
 | `/docs` | `/og/docs.jpg` | Docs hub card (phase 2) |
-| All other public routes | `/og-image.jpg` | Site default (phase 1) |
+| All other public routes (except package detail below) | `/og-image.jpg` | Site default (phase 1) |
+
+| Concern | Policy |
+| --- | --- |
+| Generation | `npm run og:generate` after template or logo edits |
+| Drift check | `npm run og:check` (PR baseline when OG paths change) |
+| Artifacts | `public/og-image.jpg`, `public/og/*.jpg`, fingerprint `.sha256` files |
+
+### Package catalog OG (build-time; phase 3)
+
+One JPEG per **listed** package **detail** route (`/packages/:namespace/:packageId`).
+Generated during `npm run build:pages` / `prepare-pages-dist` from the same prefetch
+catalog snapshot as package site routes. Output URL path:
+`/og/packages/{namespace}/{packageId}.jpg` (under `dist/og/packages/…` on deploy).
+**Not** committed to git. Incremental cache:
+`scripts/.generated/og-packages-cache/` (gitignored).
+
+| Concern | Policy |
+| --- | --- |
+| Generation | Automatic on `build:pages` only |
+| Drift check | `packages.template.sha256` (scripts + logo); catalog JPEGs on `build:pages` |
+| `og:generate` | Pages JPEGs + fingerprints only (not catalog detail JPEGs) |
 
 Locale-prefixed URLs (for example `/es/docs/`) use the same OG image as the English
 canonical route.
@@ -140,16 +166,12 @@ canonical route.
 | Concern | Policy |
 | --- | --- |
 | Format | JPEG only (smaller bytes; unfurl reliability) |
-| Generation | `npm run og:generate` — **not** part of `npm run build:pages` |
-| Drift check | `npm run og:check` (PR baseline when OG paths change) |
-| Artifacts | Default JPEG + fingerprint; route JPEGs in `public/og/` + `routes.src.sha256` |
 | Template | `scripts/og/` (Satori + `@resvg/resvg-js` + `sharp` devDependencies) |
 
-After editing templates, run `npm run og:generate`, commit all JPEGs and fingerprint
-files, and smoke-test unfurls (X, LinkedIn, Slack). Keep each file well under 300 KiB
-(`scripts/og/constants.mjs` enforces a check-time limit).
-
-Per-package OG images remain a later phase; until then package detail routes keep the site default card.
+After editing **pages** templates, run `npm run og:generate`, commit all JPEGs and
+fingerprint files, and smoke-test unfurls (X, LinkedIn, Slack). Keep each file well
+under 300 KiB (`scripts/og/constants.mjs` enforces a check-time limit). Catalog
+detail cards refresh on the next successful site deploy after registry catalog changes.
 
 Contributor workflow and third-party build-tool licenses are documented in
 [development.md](development.md#open-graph-image-generation).

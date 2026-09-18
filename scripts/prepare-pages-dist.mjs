@@ -24,6 +24,7 @@ import {
   parsePrefetchModeArg,
   resolveConfiguredIndexUrl,
 } from './prefetch-package-site-routes-lib.mjs';
+import { generatePackageOgDist } from './generate-package-og-dist.mjs';
 
 const distDir = resolve(process.cwd(), 'dist');
 const e2eBuildMarkerPath = resolve(distDir, 'e2e-build-marker.json');
@@ -48,6 +49,10 @@ const buildRoutePaths = getBuildSitemapPaths();
 const generatedDetails = readGeneratedPackageSiteDetails();
 const resolvedCatalog =
   generatedCatalog && isRegistryCatalog(generatedCatalog) ? generatedCatalog : null;
+
+if (resolvedCatalog) {
+  await generatePackageOgDist(resolvedCatalog, distDir);
+}
 
 function assertKnownSiteRoute(routePath) {
   if (!buildRoutePaths.includes(routePath)) {
