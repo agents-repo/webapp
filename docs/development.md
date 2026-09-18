@@ -140,22 +140,26 @@ while Automatic Analysis is on.
 
 ## Open Graph image generation
 
-The site default social preview card is a **committed JPEG** in `public/og-image.jpg`.
-It is generated from `scripts/og/` with dev-only tooling — not during
-`npm run build` or `npm run build:pages`.
+Committed social preview JPEGs live in `public/og-image.jpg` (site default) and
+`public/og/` (home, packages, and docs hub). They are generated from
+`scripts/og/` with dev-only tooling — not during `npm run build` or
+`npm run build:pages`.
 
 ```bash
-npm run og:generate   # after template edits; commit JPEG + public/og-image.src.sha256
+npm run og:generate   # after template edits; commit JPEGs + fingerprint .sha256 files
 npm run og:check      # drift check (also runs in PR baseline when OG paths change)
 ```
 
-See [seo.md](seo.md#open-graph-image-site-default) for meta-tag behavior and size
-guidance.
+See [seo.md](seo.md#open-graph-images) for meta-tag behavior and size guidance.
 
-The card embeds the brand mark from `src/assets/logo/agents-repo-logo.svg`
-(rasterized at generate time). That SVG is included in the OG template
-fingerprint alongside `scripts/og/*.mjs`; after logo edits, run
-`npm run og:generate` and commit the JPEG and fingerprint.
+The cards embed the brand mark from `src/assets/logo/agents-repo-logo.svg`
+(rasterized at generate time). The site-default fingerprint covers
+`site-default-card.mjs` and shared render helpers; route fingerprints cover
+`home-card.mjs`, `packages-card.mjs`, `docs-card.mjs`, and shared layout code.
+After logo or template edits, run `npm run og:generate` and commit all JPEGs and
+fingerprints. The pre-commit hook runs `og:generate` and `og:check` when
+`scripts/og/**`, `scripts/og-image.mjs`, or `src/assets/logo/agents-repo-logo.svg`
+are staged, and re-stages `public/` OG artifacts.
 
 ### Third-party build tools (MIT project)
 

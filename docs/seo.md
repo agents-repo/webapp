@@ -101,7 +101,7 @@ These patterns already help SEO and must stay in place:
 | --- | --- |
 | Self-referential canonical (absolute URL) | `buildRouteHead()` + `publicSitePath()` |
 | `og:url` matches canonical | Same builder function |
-| Absolute `og:image` | `{siteOrigin}/og-image.jpg` (1200×630 JPEG) |
+| Absolute `og:image` | `getOgImageUrl()`; `/og/*.jpg` for routed pages; fallback `/og-image.jpg` |
 | OG image dimensions and alt | `og:image:width`, `og:image:height`, `og:image:alt` |
 | Twitter large image card | `twitter:card=summary_large_image` |
 | Twitter site handle | `twitter:site` from the X catalog URL (`@AgentsRepo`) |
@@ -122,24 +122,34 @@ remain the per-item crawl surface.
 Do **not** block JavaScript or CSS in `robots.txt` — Google needs assets to
 render pages.
 
-## Open Graph image (site default)
+## Open Graph images
 
-Social previews use a **single committed JPEG** at `public/og-image.jpg`
-(1200×630). Meta tags reference `{siteOrigin}/og-image.jpg` via
-`getOgImageUrl()` in `siteSeo.ts`. Every public route shares this card until
-per-route OG images are added in a later phase.
+Social previews use **committed JPEGs** at 1200×630. Meta tags reference absolute URLs via
+`getOgImageUrl()` in `siteSeo.ts`.
+
+| Route (canonical path) | Public asset | Notes |
+| --- | --- | --- |
+| `/` (home) | `/og/home.jpg` | Route-specific card (phase 2) |
+| `/packages` | `/og/packages.jpg` | Route-specific card (phase 2) |
+| `/docs` | `/og/docs.jpg` | Docs hub card (phase 2) |
+| All other public routes | `/og-image.jpg` | Site default (phase 1) |
+
+Locale-prefixed URLs (for example `/es/docs/`) use the same OG image as the English
+canonical route.
 
 | Concern | Policy |
 | --- | --- |
 | Format | JPEG only (smaller bytes; unfurl reliability) |
 | Generation | `npm run og:generate` — **not** part of `npm run build:pages` |
 | Drift check | `npm run og:check` (PR baseline when OG paths change) |
-| Artifacts | Commit `public/og-image.jpg` and `public/og-image.src.sha256` |
+| Artifacts | Default JPEG + fingerprint; route JPEGs in `public/og/` + `routes.src.sha256` |
 | Template | `scripts/og/` (Satori + `@resvg/resvg-js` + `sharp` devDependencies) |
 
-After editing the template, run `npm run og:generate`, commit the JPEG and
-fingerprint, and smoke-test unfurls (X, LinkedIn, Slack). Keep the file well
-under 300 KiB (`scripts/og/constants.mjs` enforces a check-time limit).
+After editing templates, run `npm run og:generate`, commit all JPEGs and fingerprint
+files, and smoke-test unfurls (X, LinkedIn, Slack). Keep each file well under 300 KiB
+(`scripts/og/constants.mjs` enforces a check-time limit).
+
+Per-package OG images remain a later phase; until then package detail routes keep the site default card.
 
 Contributor workflow and third-party build-tool licenses are documented in
 [development.md](development.md#open-graph-image-generation).

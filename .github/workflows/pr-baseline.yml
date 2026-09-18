@@ -73,7 +73,7 @@ jobs:
 
       - name: Skip OG JPEG check
         if: needs.changes.outputs.og != 'true'
-        run: echo "Skipping og:check; PR paths do not match the og group (scripts/og/**, scripts/og-image.mjs, public/og-image.jpg, public/og-image.src.sha256, npm lockfiles, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs)."
+        run: echo "Skipping og:check; PR paths do not match the og group (scripts/og/**, scripts/og-image.mjs, src/assets/logo/agents-repo-logo.svg, public/og-image.jpg, public/og-image.src.sha256, public/og/**, npm lockfiles, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs)."
 
       - name: Verify registry package installs from lock
         if: needs.changes.outputs.agents == 'true'

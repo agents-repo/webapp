@@ -29,6 +29,26 @@ describe('getRouteHeadData', () => {
     expect(head.ogImage).toMatch(/^https:\/\//)
   })
 
+  it('uses route-specific OG images for home, packages, and docs hub', () => {
+    const origin = 'https://agents-repo.org'
+    expect(getRouteHeadData(siteRoutes.home, origin).ogImage).toBe(`${origin}/og/home.jpg`)
+    expect(getRouteHeadData(siteRoutes.packages, origin).ogImage).toBe(`${origin}/og/packages.jpg`)
+    expect(getRouteHeadData(siteRoutes.docs, origin).ogImage).toBe(`${origin}/og/docs.jpg`)
+    expect(getRouteHeadData(siteRoutes.about, origin).ogImage).toBe(`${origin}/og-image.jpg`)
+  })
+
+  it('uses route-specific og:image alt text on mapped routes', () => {
+    const home = getRouteHeadData(siteRoutes.home)
+    const packages = getRouteHeadData(siteRoutes.packages)
+    const docs = getRouteHeadData(siteRoutes.docs)
+    const about = getRouteHeadData(siteRoutes.about)
+
+    expect(home.ogImageAlt).toContain('Agents Repo home')
+    expect(packages.ogImageAlt).toContain('packages')
+    expect(docs.ogImageAlt).toContain('docs')
+    expect(about.ogImageAlt).toContain('open registry')
+  })
+
   it('keeps document titles within a reasonable SERP length', () => {
     const routes = Object.values(siteRoutes)
 

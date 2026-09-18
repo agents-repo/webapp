@@ -7,6 +7,7 @@ import {
   injectSpaFallbackHeadIntoHtml,
   injectLegacyDomainRedirectIntoHtml,
 } from '../src/modules/site/application/seo/buildRouteHead.ts';
+// Route-specific og:image URLs are resolved in buildRouteHead (getOgImageUrl).
 import { stripLocalePrefix } from '../src/modules/site/application/i18n/localePath.ts';
 import { injectRouteBodyFallbackIntoHtml } from '../src/modules/site/application/seo/routeBodyFallback.ts';
 import { parsePackageSitePath } from '../src/modules/registry/application/packageSiteRoutes.ts';

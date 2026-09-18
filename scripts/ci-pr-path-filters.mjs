@@ -27,6 +27,8 @@ export const PATH_GROUPS = {
       'scripts/og-image.mjs',
       'public/og-image.jpg',
       'public/og-image.src.sha256',
+      'public/og/**',
+      'src/assets/logo/agents-repo-logo.svg',
       ...NPM_LOCKFILES,
       PR_BASELINE_WORKFLOW,
       PATH_FILTER_MATCHER,
