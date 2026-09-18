@@ -9,7 +9,7 @@ import {
   findRegistryPackage,
   parsePackageSitePath,
 } from '../../../registry/application/packageSiteRoutes.ts'
-import type { RegistryCatalog } from '../../../registry/domain/package.ts'
+import type { RegistryCatalog, RegistryPackage } from '../../../registry/domain/package.ts'
 import { formatRegistryPackageRef } from '../../../registry/domain/package.ts'
 
 const defaultSiteOrigin = 'https://agents-repo.org'
@@ -37,19 +37,43 @@ export interface OgImageResolutionOptions {
   readonly catalog?: RegistryCatalog | null
 }
 
-function resolvePackageDetailOgImagePath(
-  canonicalPath: string,
+function resolveListedPackageDetail(
+  canonicalPath: string | undefined,
   catalog: RegistryCatalog | null | undefined,
-): string | undefined {
+): { namespace: string; packageId: string; pkg: RegistryPackage } | undefined {
+  if (!canonicalPath || canonicalPath.length === 0 || !catalog) {
+    return undefined
+  }
   const packageRoute = parsePackageSitePath(canonicalPath)
-  if (packageRoute?.kind !== 'detail' || !catalog) {
+  if (packageRoute?.kind !== 'detail') {
     return undefined
   }
   const pkg = findRegistryPackage(catalog, packageRoute.namespace, packageRoute.packageId)
   if (!pkg) {
     return undefined
   }
-  return getPackageDetailOgImagePublicPath(packageRoute.namespace, packageRoute.packageId)
+  return { namespace: packageRoute.namespace, packageId: packageRoute.packageId, pkg }
+}
+
+function truncateOgAltText(alt: string): string {
+  return alt.length <= 200 ? alt : `${alt.slice(0, 199).trimEnd()}…`
+}
+
+function formatPackageDetailOgAlt(pkg: RegistryPackage): string {
+  const ref = formatRegistryPackageRef(pkg.namespace, pkg.package)
+  const alt = ref ? `${pkg.name} (${ref}) — Agents Repo package` : `${pkg.name} — Agents Repo package`
+  return truncateOgAltText(alt)
+}
+
+function resolvePackageDetailOgImagePath(
+  canonicalPath: string,
+  catalog: RegistryCatalog | null | undefined,
+): string | undefined {
+  const resolved = resolveListedPackageDetail(canonicalPath, catalog)
+  if (!resolved) {
+    return undefined
+  }
+  return getPackageDetailOgImagePublicPath(resolved.namespace, resolved.packageId)
 }
 
 /** Committed route-specific OG JPEGs (phase 2). Keys are canonical paths from `siteRoutes`. */
@@ -91,15 +115,9 @@ export function getOgImageAlt(
   canonicalPath?: string,
   options: OgImageResolutionOptions = {},
 ): string {
-  const packageRoute =
-    canonicalPath && canonicalPath.length > 0 ? parsePackageSitePath(canonicalPath) : undefined
-  if (packageRoute?.kind === 'detail' && options.catalog) {
-    const pkg = findRegistryPackage(options.catalog, packageRoute.namespace, packageRoute.packageId)
-    if (pkg) {
-      const ref = formatRegistryPackageRef(pkg.namespace, pkg.package)
-      const alt = ref ? `${pkg.name} (${ref}) — Agents Repo package` : `${pkg.name} — Agents Repo package`
-      return alt.length <= 200 ? alt : `${alt.slice(0, 199).trimEnd()}…`
-    }
+  const packageDetail = resolveListedPackageDetail(canonicalPath, options.catalog)
+  if (packageDetail) {
+    return formatPackageDetailOgAlt(packageDetail.pkg)
   }
 
   const matchedRoute =
