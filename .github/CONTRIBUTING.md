@@ -178,13 +178,13 @@ npm run test:crawl-files
 ```
 
 PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
-typecheck, and tests. Chrome/`slides:check`, `agents:ci`, Pages/crawl, and CLI
+typecheck, and tests. Chrome/`slides:check`, `agents:verify`, Pages/crawl, and CLI
 `check:docs-sync` (when `cli-commands.md` locale files under `src/content/docs/`
 or related CI paths change) are
 path-filtered extras. Follow the organization
 [PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)
 policy, including the checksum exception: npm lockfiles do **not** trigger
-`agents:ci`. Local handoff still uses the full command list above.
+`agents:verify`. Local handoff still uses the full command list above.
 
 For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci`
 after `build:pages`. Browser scans are local-only, not PR baseline CI. See
