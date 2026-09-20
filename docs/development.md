@@ -79,7 +79,9 @@ typecheck, and unit tests. Chrome/`slides:check`, `og:check`, `agents:verify`, a
 (organization [PR baseline extras](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)).
 Local handoff still uses the full command list above. Release, Pages deploy,
 and Deploy Webapp keep Pages/crawl as the skip safety net. Do not add
-`agents:verify` to those workflows.
+`agents:verify` to those workflows. `agents:ci` is local-only (see
+`.github/CONTRIBUTING.md`) and does not belong in CI workflows, including PR
+baseline.
 
 Use `npm run build` for a standard production build (includes `sitemap.xml` and
 `robots.txt` via `vite-plugin-sitemap`). Use `npm run build:pages` when
