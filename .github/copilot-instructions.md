@@ -91,8 +91,8 @@ machine). See `docs/testing.md`, `docs/accessibility.md`, and `docs/e2e-testing.
 If a command cannot be run, explicitly say why in the handoff.
 
 Local handoff keeps this full set. PR baseline CI path-filters Chrome/`slides:check`,
-`agents:ci`, Pages/crawl, and CLI `check:docs-sync` extras. npm lockfiles do **not**
-trigger `agents:ci`.
+`agents:verify`, Pages/crawl, and CLI `check:docs-sync` extras. npm lockfiles do **not**
+trigger `agents:verify`.
 See the organization
 [PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 

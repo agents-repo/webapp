@@ -251,13 +251,14 @@ npm exec agents-repo -- init --targets github-copilot claude-code cursor openai-
 
 Use the npm scripts for bulk install, update, and CI (CLI version is pinned in
 `package.json` / `package-lock.json`, distinct from registry packages in
-`agents-lock.json`). PR baseline runs `agents:ci` only when agents definition
+`agents-lock.json`). PR baseline runs `agents:verify` only when agents definition
 files change:
 
 ```bash
 npm run agents:install   # bulk sync from agents.json
 npm run agents:update    # refresh within semver ranges
-npm run agents:ci        # lock-pinned registry install (CI extra when agents paths change)
+npm run agents:ci        # lock-pinned registry install (local)
+npm run agents:verify    # lock + on-disk surfaces; PR baseline extra when agents paths change
 ```
 
 Commit `agents.json`, `agents-lock.json`, and extracted paths (`.github/agents/`,

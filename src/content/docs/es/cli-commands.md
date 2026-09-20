@@ -41,7 +41,7 @@ Fuente: [npm-cli-parity.md](https://github.com/agents-repo/cli/blob/main/docs/np
 
 ### `-g` / `--global`
 
-Soportado en `init`, `install`, `update`, `remove`, `list`, `targets`. **No** en `ci` ni `doctor` (alcance de proyecto).
+Soportado en `init`, `install`, `update`, `remove`, `list`, `targets`. **No** en `ci`, `doctor` ni `verify` (alcance de proyecto).
 
 ## Documentación por comando
 

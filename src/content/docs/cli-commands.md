@@ -41,7 +41,7 @@ Source: [npm-cli-parity.md](https://github.com/agents-repo/cli/blob/main/docs/np
 
 ### `-g` / `--global`
 
-Supported on `init`, `install`, `update`, `remove`, `list`, `targets`. **Not** on `ci` or `doctor` (project scope).
+Supported on `init`, `install`, `update`, `remove`, `list`, `targets`. **Not** on `ci`, `doctor`, or `verify` (project scope).
 
 ## Per-command docs
 
