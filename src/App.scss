@@ -259,8 +259,6 @@
 }
 
 .package-cli-install-popover {
-  --package-cli-terminal-bg: rgba(12, 8, 20, 0.96);
-  --package-cli-terminal-border: rgba(196, 124, 255, 0.45);
   width: 100%;
   max-width: min(100vw - 2rem, 22rem);
 
@@ -297,6 +295,9 @@
 }
 
 .package-cli-terminal {
+  --package-cli-terminal-bg: rgba(12, 8, 20, 0.96);
+  --package-cli-terminal-border: rgba(196, 124, 255, 0.45);
+  --package-cli-terminal-fg: rgba(255, 255, 255, 0.92);
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
@@ -305,7 +306,7 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   font-size: 0.8125rem;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--package-cli-terminal-fg);
   background: var(--package-cli-terminal-bg);
   border: 1px solid var(--package-cli-terminal-border);
   border-radius: 0.5rem;
