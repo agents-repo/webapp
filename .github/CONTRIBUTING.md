@@ -178,13 +178,13 @@ npm run test:crawl-files
 ```
 
 PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
-typecheck, and tests. Chrome/`slides:check`, `agents:ci`, Pages/crawl, and CLI
+typecheck, and tests. Chrome/`slides:check`, `agents:verify`, Pages/crawl, and CLI
 `check:docs-sync` (when `cli-commands.md` locale files under `src/content/docs/`
 or related CI paths change) are
 path-filtered extras. Follow the organization
 [PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)
 policy, including the checksum exception: npm lockfiles do **not** trigger
-`agents:ci`. Local handoff still uses the full command list above.
+`agents:verify`. Local handoff still uses the full command list above.
 
 For UI or accessibility changes, also run `npm run test:a11y` and `npm run a11y:ci`
 after `build:pages`. Browser scans are local-only, not PR baseline CI. See
@@ -251,13 +251,14 @@ npm exec agents-repo -- init --targets github-copilot claude-code cursor openai-
 
 Use the npm scripts for bulk install, update, and CI (CLI version is pinned in
 `package.json` / `package-lock.json`, distinct from registry packages in
-`agents-lock.json`). PR baseline runs `agents:ci` only when agents definition
+`agents-lock.json`). PR baseline runs `agents:verify` only when agents definition
 files change:
 
 ```bash
 npm run agents:install   # bulk sync from agents.json
 npm run agents:update    # refresh within semver ranges
-npm run agents:ci        # lock-pinned registry install (CI extra when agents paths change)
+npm run agents:ci        # lock-pinned registry install (local)
+npm run agents:verify    # lock + on-disk surfaces; PR baseline extra when agents paths change
 ```
 
 Commit `agents.json`, `agents-lock.json`, and extracted paths (`.github/agents/`,

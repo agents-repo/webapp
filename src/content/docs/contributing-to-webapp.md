@@ -38,7 +38,7 @@ npm run test:crawl-files
 
 For UI changes, also run `npm run test:a11y` and `npm run test:e2e` when applicable.
 
-PR baseline CI path-filters Chrome/`slides:check`, `agents:ci`, Pages/crawl, and
+PR baseline CI path-filters Chrome/`slides:check`, `agents:verify`, Pages/crawl, and
 CLI `check:docs-sync` extras. Local validation still uses the full list. See the organization
 [PR baseline extras policy](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 
@@ -50,6 +50,7 @@ The webapp pins `agents-repo` in **devDependencies** and uses:
 npm run agents:install
 npm run agents:update
 npm run agents:ci
+npm run agents:verify
 ```
 
 Commit `agents.json`, `agents-lock.json`, and extracted agent paths. See [Installing packages](/docs/installing-packages).

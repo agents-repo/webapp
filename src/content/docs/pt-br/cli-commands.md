@@ -15,6 +15,7 @@ O comportamento é definido no repositório [agents-repo/cli](https://github.com
 | `add-target` | — | — | Adicionar ids de target |
 | `install` | `npm install` | `i`, `add`, `inst` | Variádico; atualiza lock |
 | `ci` | `npm ci` | — | Instalação apenas do lock |
+| `verify` | — | — | Lock e superfícies no disco; sem download ZIP |
 | `doctor` | `npm doctor` (aproximado) | — | Diagnósticos somente leitura — [doc do doctor](/docs/cli-doctor) |
 | `update` | `npm update` | `up`, `upgrade` | Atualizar dentro dos intervalos |
 | `search` | `npm search` | `find`, `s`, `se` | Busca no registry |
@@ -40,7 +41,7 @@ Fonte: [npm-cli-parity.md](https://github.com/agents-repo/cli/blob/main/docs/npm
 
 ### `-g` / `--global`
 
-Suportado em `init`, `install`, `update`, `remove`, `list`, `targets`. **Não** em `ci` ou `doctor` (escopo de projeto).
+Suportado em `init`, `install`, `update`, `remove`, `list`, `targets`. **Não** em `ci`, `doctor` ou `verify` (escopo de projeto).
 
 ## Documentação por comando
 
@@ -50,6 +51,7 @@ Suportado em `init`, `install`, `update`, `remove`, `list`, `targets`. **Não** 
 | `add-target` | [add-target.md](https://github.com/agents-repo/cli/blob/main/docs/commands/add-target.md) |
 | `install` | [install.md](https://github.com/agents-repo/cli/blob/main/docs/commands/install.md) |
 | `ci` | [ci.md](https://github.com/agents-repo/cli/blob/main/docs/commands/ci.md) |
+| `verify` | [verify.md](https://github.com/agents-repo/cli/blob/main/docs/commands/verify.md) |
 | `update` | [update.md](https://github.com/agents-repo/cli/blob/main/docs/commands/update.md) |
 | `remove` | [remove.md](https://github.com/agents-repo/cli/blob/main/docs/commands/remove.md) |
 | `search` | [search.md](https://github.com/agents-repo/cli/blob/main/docs/commands/search.md) |

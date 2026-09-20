@@ -15,6 +15,7 @@ Behavior is defined in the [agents-repo/cli](https://github.com/agents-repo/cli)
 | `add-target` | — | — | Append target ids |
 | `install` | `npm install` | `i`, `add`, `inst` | Variadic; updates lock |
 | `ci` | `npm ci` | — | Lock-only install |
+| `verify` | — | — | Lock + on-disk surfaces; no ZIP download |
 | `doctor` | `npm doctor` (loose) | — | Read-only diagnostics — [doctor doc](/docs/cli-doctor) |
 | `update` | `npm update` | `up`, `upgrade` | Refresh within ranges |
 | `search` | `npm search` | `find`, `s`, `se` | Registry search |
@@ -40,7 +41,7 @@ Source: [npm-cli-parity.md](https://github.com/agents-repo/cli/blob/main/docs/np
 
 ### `-g` / `--global`
 
-Supported on `init`, `install`, `update`, `remove`, `list`, `targets`. **Not** on `ci` or `doctor` (project scope).
+Supported on `init`, `install`, `update`, `remove`, `list`, `targets`. **Not** on `ci`, `doctor`, or `verify` (project scope).
 
 ## Per-command docs
 
@@ -50,6 +51,7 @@ Supported on `init`, `install`, `update`, `remove`, `list`, `targets`. **Not** o
 | `add-target` | [add-target.md](https://github.com/agents-repo/cli/blob/main/docs/commands/add-target.md) |
 | `install` | [install.md](https://github.com/agents-repo/cli/blob/main/docs/commands/install.md) |
 | `ci` | [ci.md](https://github.com/agents-repo/cli/blob/main/docs/commands/ci.md) |
+| `verify` | [verify.md](https://github.com/agents-repo/cli/blob/main/docs/commands/verify.md) |
 | `update` | [update.md](https://github.com/agents-repo/cli/blob/main/docs/commands/update.md) |
 | `remove` | [remove.md](https://github.com/agents-repo/cli/blob/main/docs/commands/remove.md) |
 | `search` | [search.md](https://github.com/agents-repo/cli/blob/main/docs/commands/search.md) |

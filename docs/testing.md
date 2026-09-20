@@ -39,7 +39,7 @@ For dependency or router changes, also run `npm run test:e2e` locally (Playwrigh
 not part of PR baseline CI).
 
 PR baseline CI always runs `env:check`, `lint:all`, IDE-instruction sync,
-typecheck, and `npm run test`. Chrome/`slides:check`, `agents:ci`,
+typecheck, and `npm run test`. Chrome/`slides:check`, `agents:verify`,
 `build:pages` plus `test:crawl-files`, and CLI `check:docs-sync` are
 path-filtered extras. See
 [CONTRIBUTING.md](../.github/CONTRIBUTING.md) and the organization
