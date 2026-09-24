@@ -5,7 +5,10 @@ import { getSitePageMeta } from './sitePageMeta'
 
 describe('getSitePageMeta', () => {
   it('returns meta for known routes', () => {
-    expect(getSitePageMeta(siteRoutes.home).title).toBe('Home')
+    expect(getSitePageMeta(siteRoutes.home).title).toBe(
+      'Discover Agents and Flows in Our Open Registry',
+    )
+    expect(getSitePageMeta(siteRoutes.home).routeLabel).toBe('Home')
     expect(getSitePageMeta(siteRoutes.packages).title).toBe('Packages')
     expect(getSitePageMeta(siteRoutes.about).title).toBe('About')
     expect(getSitePageMeta(siteRoutes.community).title).toBe('Community')

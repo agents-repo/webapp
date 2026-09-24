@@ -21,6 +21,16 @@ export const theme = {
   cardBg: '#ffffff',
 }
 
+/**
+ * Keep footer pills and critical text inside these margins (1200×630 canvas).
+ * Bottom reserve accounts for X `summary_large_image` bottom crop (~45px).
+ */
+export const ogCardSafeZone = {
+  paddingX: 64,
+  paddingTop: 64,
+  paddingBottom: 109,
+}
+
 /** Dark social-preview card (committed OG JPEG). */
 export const ogDark = {
   bg: '#090D16',
