@@ -9,7 +9,7 @@ section: CLI
 
 ## When to run
 
-- Before debugging failed `install` or PR baseline `agents:verify` failures (try `doctor --skip-artifact-download` for verify-style checks); also useful before local `agents:ci` when validating locks or extracts
+- Before debugging failed `install` or PR baseline `agents:verify` failures (try `agents-repo doctor --skip-artifact-download` for verify-style checks); also useful before local `agents:ci` when validating locks or extracts
 - After changing `targets[]` or registry URL settings
 - When lock and on-disk files may have drifted
 
