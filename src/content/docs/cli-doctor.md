@@ -9,7 +9,7 @@ section: CLI
 
 ## When to run
 
-- Before debugging failed `install` or `agents:ci` in CI
+- Before debugging failed `install`, PR baseline `agents:verify`, or full `agents:ci` in custom pipelines (try `doctor --skip-artifact-download` for verify-style checks)
 - After changing `targets[]` or registry URL settings
 - When lock and on-disk files may have drifted
 

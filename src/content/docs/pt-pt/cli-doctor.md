@@ -9,7 +9,7 @@ section: CLI
 
 ## Quando executar
 
-- Antes de depurar `install` ou `agents:ci` falhados em CI
+- Antes de depurar `install` falhado, `agents:verify` no PR baseline ou `agents:ci` em pipelines personalizados (use `doctor --skip-artifact-download` para verificações ao estilo verify)
 - Depois de mudar `targets[]` ou definições de URL do registry
 - Quando lock e ficheiros no disco podem ter divergido
 

@@ -30,7 +30,7 @@ agents-repo targets
 
 ## Locks multi-destino
 
-Com vários destinos configurados, cada pacote instalado precisa de entradas `byTarget` correspondentes em `agents-lock.json`. Depois de mudar destinos ou pacotes, execute `install` ou `update` localmente antes de ativar `agents:ci` em CI.
+Com vários destinos configurados, cada pacote instalado precisa de entradas `byTarget` correspondentes em `agents-lock.json`. Depois de mudar destinos ou pacotes, execute `install` ou `update` localmente. O PR baseline da organização usa `agents:verify` (sem download ZIP); use `agents:ci` localmente quando precisar de reinstalação completa fixada no lock.
 
 ## Alinhamento com o catálogo
 
