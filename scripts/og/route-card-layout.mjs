@@ -1,4 +1,4 @@
-import { ogDark } from './constants.mjs'
+import { ogCardSafeZone, ogDark } from './constants.mjs'
 
 const siteDomain = 'agents-repo.org'
 
@@ -73,7 +73,7 @@ export function createRouteOgElement({
         height: '100%',
         backgroundColor: ogDark.bg,
         backgroundImage: `radial-gradient(circle at 80% 20%, ${ogDark.accentPurple} 0%, transparent 50%), radial-gradient(circle at 0% 100%, ${ogDark.accentIndigo} 0%, transparent 40%)`,
-        padding: '64px',
+        padding: `${ogCardSafeZone.paddingTop}px ${ogCardSafeZone.paddingX}px ${ogCardSafeZone.paddingBottom}px ${ogCardSafeZone.paddingX}px`,
         fontFamily: 'Inter',
         color: ogDark.text,
         boxSizing: 'border-box',
