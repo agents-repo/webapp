@@ -9,7 +9,7 @@ section: CLI
 
 ## Cuándo ejecutarlo
 
-- Antes de depurar `install` fallido o `agents:ci` en CI
+- Antes de depurar `install` fallido o fallos de `agents:verify` en el PR baseline (prueba `agents-repo doctor --skip-artifact-download` para comprobaciones al estilo verify); también útil antes de `agents:ci` local al validar locks o extracts
 - Tras cambiar `targets[]` o la configuración de URL del registry
 - Cuando el lock y los archivos en disco pueden haberse desalineado
 
