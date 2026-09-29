@@ -11,6 +11,16 @@ The project is AI-first. Contributors and coding agents are expected to keep
 implementation, workflows, and documentation aligned so tasks can be completed
 without relying on undocumented tribal knowledge.
 
+## Organization workspace and registry skills
+
+Shared `maiconfz/*` planning/review packages install in
+**[agents-repo/.github](https://github.com/agents-repo/.github)**. Open
+[agents-repo.code-workspace](https://github.com/agents-repo/.github/blob/main/agents-repo.code-workspace)
+from the `.github` sibling clone —
+[org-workspace-and-agents.md](https://github.com/agents-repo/.github/blob/main/docs/org-workspace-and-agents.md).
+
+**Issues** for webapp work: **this** repository (`agents-repo/webapp`).
+
 ## Primary References
 
 Before making any change, agents MUST consult the relevant source-of-truth
@@ -93,8 +103,7 @@ machine). See `docs/testing.md`, `docs/accessibility.md`, and `docs/e2e-testing.
 If a command cannot be run, explicitly say why in the handoff.
 
 Local handoff keeps this full set. PR baseline CI path-filters Chrome/`slides:check`,
-`agents:verify`, Pages/crawl, and CLI `check:docs-sync` extras. npm lockfiles do **not**
-trigger `agents:verify`.
+Pages/crawl, and CLI `check:docs-sync` extras (no `agents:verify` in this repo).
 See the organization
 [PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 

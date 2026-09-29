@@ -15,7 +15,7 @@ const CLI_COMMANDS_DOCS = [
 
 /**
  * Repo-specific extra groups for PR baseline.
- * npm lockfiles MUST NOT be copied into `agents` (checksum exception).
+ * npm lockfiles MUST NOT be copied into removed `agents` group (this repo has no catalog).
  * The matcher belongs in every extra this job defines (same control plane as
  * `pr-baseline.yml`). See organization CONTRIBUTING — PR baseline extras
  * (path filters).
@@ -40,19 +40,6 @@ export const PATH_GROUPS = {
       'docs/slides/**',
       'scripts/slides.mjs',
       ...NPM_LOCKFILES,
-      PR_BASELINE_WORKFLOW,
-      PATH_FILTER_MATCHER,
-    ],
-    exclude: [],
-  },
-  agents: {
-    include: [
-      'agents.json',
-      'agents-lock.json',
-      '.github/agents/**',
-      '.cursor/skills/**',
-      '.claude/agents/**',
-      '.agents/skills/**',
       PR_BASELINE_WORKFLOW,
       PATH_FILTER_MATCHER,
     ],
