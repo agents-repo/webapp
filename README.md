@@ -240,12 +240,12 @@ so contributors get agent guidance on clone without manual setup.
 
 | Install target | Path |
 | --- | --- |
-| GitHub Copilot | `.github/copilot-instructions.md` (canonical) |
-| Cursor | `.cursor/rules/agents-webapp.mdc` |
+| Cursor | `.cursor/rules/agents-webapp.mdc` (canonical) |
+| GitHub Copilot | `.github/copilot-instructions.md` (generated) |
 | Claude Code | `CLAUDE.md` |
 | OpenAI Codex | `AGENTS.md` |
 
-Regenerate after editing `copilot-instructions.md`:
+Regenerate after editing `.cursor/rules/`:
 
 ```bash
 npm run sync:ide-instructions
@@ -300,7 +300,7 @@ repository, update the corresponding page(s) in
 - Public privacy policies: locale-prefixed `/privacy/` routes (see [docs/i18n.md](docs/i18n.md))
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - GitHub Copilot project instructions:
-  [.github/copilot-instructions.md](.github/copilot-instructions.md)
+  [.cursor/rules/agents-webapp.mdc](.cursor/rules/agents-webapp.mdc)
 
 ## Automation
 

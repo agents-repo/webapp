@@ -1,3 +1,5 @@
+<!-- Generated: .cursor/rules/agents-webapp.mdc. Run npm run sync:ide-instructions -->
+
 # Webapp Project Guidelines
 
 ## Project Purpose
@@ -111,7 +113,7 @@ Before handoff on a task branch, agents MUST complete the organization
 [Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)
 norm, run the **Validation** commands above for the change scope, perform a
 self-review, and update the **draft** PR with evidence. Agents MUST NOT mark
-pull requests ready for review. After editing `.github/copilot-instructions.md`, run
+pull requests ready for review. After editing `.cursor/rules/agents-webapp.mdc`, run
 `npm run sync:ide-instructions`. Optional Cursor-only self-review is documented
 in `docs/ai-collaboration.md`.
 
@@ -135,10 +137,11 @@ Follow `.github/CONTRIBUTING.md` **Required Workflow** (issue form â†’ branch â†
 draft PR before implementation). Agents MUST NOT push to `main`, merge PRs into
 `main`, or mark pull requests ready for review.
 
-## Path-scoped Copilot instructions
+## Path-scoped instructions
 
-GitHub Copilot loads norms from `.github/instructions/*.instructions.md` when
-`applyTo` matches edited paths. Do not duplicate those bodies here.
+Edit path-scoped `.cursor/rules/*.mdc` files (`copilotInstructionsFile`, `globs`);
+run `npm run sync:ide-instructions` to generate `.github/instructions/`. Do not
+duplicate those bodies here.
 
 ## Default Branch Integration (Agents)
 
@@ -154,4 +157,4 @@ See [agents-repo/.github docs/cursor-cloud.md](https://github.com/agents-repo/.g
 Vite dev server: `webapp-dev` terminal (`http://localhost:5173`). Run
 `npx playwright install chromium` when E2E is needed.
 
-After editing `.github/copilot-instructions.md`, run `npm run sync:ide-instructions`.
+After editing `.cursor/rules/agents-webapp.mdc`, run `npm run sync:ide-instructions`.
