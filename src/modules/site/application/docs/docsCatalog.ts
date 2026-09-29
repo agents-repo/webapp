@@ -95,7 +95,7 @@ export const docsCatalog: readonly DocCatalogMeta[] = [
   {
     slug: 'contributing-to-webapp',
     title: 'Contributing to webapp',
-    description: 'Branch workflow, validation, and agents-repo workflow packages in this repository.',
+    description: 'Branch workflow and validation for the webapp repository.',
     order: 130,
     section: 'Contribute',
   },
