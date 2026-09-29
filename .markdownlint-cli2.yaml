@@ -17,7 +17,6 @@ ignores:
   - "LICENSE"
   - "AGENTS.md"
   - "CLAUDE.md"
-  - ".cursor/skills/**"
   - ".agents/skills/**"
   - ".claude/agents/**"
   - ".github/agents/**"

@@ -17,7 +17,6 @@ jobs:
     outputs:
       slides: ${{ steps.match.outputs.slides }}
       og: ${{ steps.match.outputs.og }}
-      agents: ${{ steps.match.outputs.agents }}
       pages: ${{ steps.match.outputs.pages }}
       cliDocs: ${{ steps.match.outputs.cliDocs }}
     steps:
@@ -74,25 +73,6 @@ jobs:
       - name: Skip OG JPEG check
         if: needs.changes.outputs.og != 'true'
         run: echo "Skipping og:check; PR paths do not match the og group (scripts/og/**, scripts/og-image.mjs, src/assets/logo/agents-repo-logo.svg, public/og-image.jpg, public/og-image.src.sha256, public/og/**, npm lockfiles, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs)."
-
-      - name: Verify agents lock and committed extracts
-        if: needs.changes.outputs.agents == 'true'
-        run: |
-          npm run agents:verify
-          drift_paths=(
-            agents.json
-            agents-lock.json
-            .github/agents
-            .cursor/skills
-            .claude/agents
-            .agents/skills
-          )
-          git diff --exit-code -- "${drift_paths[@]}"
-          test -z "$(git status --porcelain -- "${drift_paths[@]}")"
-
-      - name: Skip registry package verify
-        if: needs.changes.outputs.agents != 'true'
-        run: echo "Skipping agents:verify; PR paths do not match agents definition files (agents.json, agents-lock.json, extracted agent paths, pr-baseline.yml, or scripts/ci-pr-path-filters.mjs). npm lockfiles alone do not trigger this step."
 
       - name: Typecheck
         run: npm run typecheck

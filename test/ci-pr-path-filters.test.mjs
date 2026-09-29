@@ -6,31 +6,21 @@ import {
   pathMatches,
 } from '../scripts/ci-pr-path-filters.mjs';
 
-test('package-lock.json turns slides and pages on and agents off', () => {
+test('package-lock.json turns slides and pages on', () => {
   const matches = matchPathGroups(['package-lock.json']);
   assert.equal(matches.slides, true);
   assert.equal(matches.pages, true);
-  assert.equal(matches.agents, false);
 });
 
-test('package.json turns slides and pages on and agents off', () => {
+test('package.json turns slides and pages on', () => {
   const matches = matchPathGroups(['package.json']);
   assert.equal(matches.slides, true);
   assert.equal(matches.pages, true);
-  assert.equal(matches.agents, false);
-});
-
-test('agents.json turns checksum on', () => {
-  const matches = matchPathGroups(['agents.json']);
-  assert.equal(matches.agents, true);
-  assert.equal(matches.slides, false);
-  assert.equal(matches.pages, false);
 });
 
 test('docs-only README turns no extras on', () => {
   const matches = matchPathGroups(['README.md']);
   assert.equal(matches.slides, false);
-  assert.equal(matches.agents, false);
   assert.equal(matches.pages, false);
   assert.equal(matches.cliDocs, false);
 });
@@ -39,14 +29,12 @@ test('eslint.config.js-only does not turn pages on', () => {
   const matches = matchPathGroups(['eslint.config.js']);
   assert.equal(matches.pages, false);
   assert.equal(matches.slides, false);
-  assert.equal(matches.agents, false);
 });
 
-test('src change turns pages on without slides, agents, or cliDocs', () => {
+test('src change turns pages on without slides or cliDocs', () => {
   const matches = matchPathGroups(['src/App.tsx']);
   assert.equal(matches.pages, true);
   assert.equal(matches.slides, false);
-  assert.equal(matches.agents, false);
   assert.equal(matches.cliDocs, false);
 });
 
@@ -55,7 +43,6 @@ test('cli-commands.md turns cliDocs and pages on', () => {
   assert.equal(matches.cliDocs, true);
   assert.equal(matches.pages, true);
   assert.equal(matches.slides, false);
-  assert.equal(matches.agents, false);
 });
 
 test('unrelated test files do not turn pages on', () => {
@@ -80,7 +67,6 @@ test('matcher script turns every extra this job defines on', () => {
   const matches = matchPathGroups(['scripts/ci-pr-path-filters.mjs']);
   assert.equal(matches.slides, true);
   assert.equal(matches.og, true);
-  assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
   assert.equal(matches.cliDocs, true);
 });
@@ -124,7 +110,6 @@ test('pr-baseline.yml turns every extra this job defines on', () => {
   const matches = matchPathGroups(['.github/workflows/pr-baseline.yml']);
   assert.equal(matches.slides, true);
   assert.equal(matches.og, true);
-  assert.equal(matches.agents, true);
   assert.equal(matches.pages, true);
   assert.equal(matches.cliDocs, true);
 });
