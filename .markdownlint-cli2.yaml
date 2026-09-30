@@ -17,6 +17,7 @@ ignores:
   - "LICENSE"
   - "AGENTS.md"
   - "CLAUDE.md"
+  - ".github/copilot-instructions.md"
   - ".agents/skills/**"
   - ".claude/agents/**"
   - ".github/agents/**"

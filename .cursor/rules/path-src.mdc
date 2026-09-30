@@ -1,9 +1,9 @@
 ---
-applyTo: "src/**"
-description: "Use for webapp React/TypeScript and SCSS under src/."
+description: Use for webapp React/TypeScript and SCSS under src/.
+alwaysApply: false
+globs: src/**
+copilotInstructionsFile: src.instructions.md
 ---
-
-<!-- Generated: .cursor/rules/path-src.mdc. Run npm run sync:ide-instructions -->
 
 # Webapp Source Instructions
 

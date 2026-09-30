@@ -66,12 +66,12 @@ request.
 
 The main contributor instructions live in:
 
-- `.github/copilot-instructions.md`
-- `.cursor/rules/agents-webapp.mdc` (generated from copilot instructions)
+- `.cursor/rules/agents-webapp.mdc` (canonical)
+- `.github/copilot-instructions.md` (generated)
 - `.github/CONTRIBUTING.md`
 - `.github/pull_request_template.md`
 
-After editing `.github/copilot-instructions.md`, regenerate IDE instruction mirrors:
+After editing `.cursor/rules/agents-webapp.mdc` (and path rules), regenerate IDE instruction mirrors:
 
 ```bash
 npm run sync:ide-instructions
