@@ -117,6 +117,10 @@ re-run them.
 
 ## SonarQube Cloud
 
+For recurring ESLint/Sonar patterns and local duplication checks, see the
+[org AI static-analysis guide](https://github.com/agents-repo/.github/blob/main/docs/ai-static-analysis-patterns.md)
+(`npm run dup:check` is local-only, not CI).
+
 Automatic Analysis reads [`.sonarcloud.properties`](../.sonarcloud.properties)
 on each push to the default branch or a pull request branch.
 
