@@ -41,7 +41,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.e2e.json",
     "preview": "vite preview",
     "prepare": "husky",
-    "dup:check": "jscpd --config .jscpd.json ."
+    "dup:check": "jscpd --config .jscpd.json --baseline .jscpd-baseline.json --fail-on-new-clones 0 .",
+    "dup:check:baseline": "jscpd --config .jscpd.json --baseline .jscpd-baseline.json --update-baseline ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.3.0",
@@ -97,7 +98,7 @@
     "eslint-plugin-sonarjs": "^4.1.0",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
-    "jscpd": "^4.3.0",
+    "jscpd": "^5.3.3",
     "jsdom": "^29.1.1",
     "markdownlint-cli2": "^0.23.3",
     "pa11y-ci": "^4.1.1",
