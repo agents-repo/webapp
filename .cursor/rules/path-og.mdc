@@ -1,9 +1,9 @@
 ---
-applyTo: "scripts/og/**,scripts/og-image.mjs,scripts/generate-package-og-dist.mjs,src/assets/logo/agents-repo-logo.svg"
-description: "Open Graph JPEG templates (Satori/sharp); pages OG commit-first; catalog OG at build:pages."
+description: Open Graph JPEG templates (Satori/sharp); pages OG commit-first; catalog OG at build:pages.
+alwaysApply: false
+globs: scripts/og/**,scripts/og-image.mjs,scripts/generate-package-og-dist.mjs,src/assets/logo/agents-repo-logo.svg
+copilotInstructionsFile: og.instructions.md
 ---
-
-<!-- Generated: .cursor/rules/path-og.mdc. Run npm run sync:ide-instructions -->
 
 # OG image templates
 

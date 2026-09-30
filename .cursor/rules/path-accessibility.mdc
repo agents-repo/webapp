@@ -1,9 +1,9 @@
 ---
-applyTo: "src/**/*.tsx"
-description: "Use when editing React components for accessibility-sensitive UI."
+description: Use when editing React components for accessibility-sensitive UI.
+alwaysApply: false
+globs: src/**/*.tsx
+copilotInstructionsFile: accessibility.instructions.md
 ---
-
-<!-- Generated: .cursor/rules/path-accessibility.mdc. Run npm run sync:ide-instructions -->
 
 # Webapp Accessibility Instructions
 

@@ -1,6 +1,6 @@
 ---
 title: Contributing to webapp
-description: Branch workflow, validation, and agents-repo workflow packages in this repository.
+description: Branch workflow and validation for the webapp repository.
 order: 130
 section: Contribute
 ---
@@ -38,22 +38,20 @@ npm run test:crawl-files
 
 For UI changes, also run `npm run test:a11y` and `npm run test:e2e` when applicable.
 
-PR baseline CI path-filters Chrome/`slides:check`, `agents:verify`, Pages/crawl, and
-CLI `check:docs-sync` extras. Local validation still uses the full list. See the organization
-[PR baseline extras policy](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
+PR baseline CI path-filters Chrome/`slides:check`, Pages/crawl, and CLI
+`check:docs-sync` extras (no `agents:verify` in this repository). See the organization
+[PR baseline extras policy](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters)
+and [docs/ci.md](https://github.com/agents-repo/.github/blob/main/docs/ci.md).
 
-## Registry workflow packages in this repo
+## Registry workflow packages (org hub)
 
-The webapp pins `agents-repo` in **devDependencies** and uses:
+This repository does **not** commit `agents.json`. Shared planning/review packages
+install in [agents-repo/.github](https://github.com/agents-repo/.github). Open
+[agents-repo.code-workspace](https://github.com/agents-repo/.github/blob/main/agents-repo.code-workspace)
+from the `.github` sibling clone. See
+[org-workspace-and-agents.md](https://github.com/agents-repo/.github/blob/main/docs/org-workspace-and-agents.md).
 
-```bash
-npm run agents:install
-npm run agents:update
-npm run agents:ci
-npm run agents:verify
-```
-
-Commit `agents.json`, `agents-lock.json`, and extracted agent paths. See [Installing packages](/docs/installing-packages).
+End-user install docs ([Installing packages](/docs/installing-packages)) still apply to **your own** projects.
 
 ## Guide content
 

@@ -1,9 +1,9 @@
 ---
-applyTo: "e2e/**"
-description: "Use for Playwright end-to-end tests."
+description: Use for Playwright end-to-end tests.
+alwaysApply: false
+globs: e2e/**
+copilotInstructionsFile: e2e.instructions.md
 ---
-
-<!-- Generated: .cursor/rules/path-e2e.mdc. Run npm run sync:ide-instructions -->
 
 # Webapp E2E Instructions
 

@@ -38,22 +38,14 @@ npm run test:crawl-files
 
 Para cambios de UI, ejecuta también `npm run test:a11y` y `npm run test:e2e` cuando aplique.
 
-El CI baseline de PR filtra por rutas Chrome/`slides:check`, `agents:verify`, extras de Pages/crawl y `check:docs-sync` del CLI.
-La validación local sigue usando la lista completa. Consulta la
+El CI baseline de PR filtra por rutas Chrome/`slides:check`, extras de Pages/crawl y `check:docs-sync` de la CLI (sin `agents:verify` en este repositorio). Consulta [docs/ci.md](https://github.com/agents-repo/.github/blob/main/docs/ci.md) y la
 [política de extras del baseline de PR de la organización](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 
-## Paquetes de workflow del registry en este repo
+## Paquetes de workflow del registry (hub de la organización)
 
-La webapp fija `agents-repo` en **devDependencies** y usa:
+Este repositorio **no** hace commit de `agents.json`. Los paquetes compartidos viven en [agents-repo/.github](https://github.com/agents-repo/.github). Abre [agents-repo.code-workspace](https://github.com/agents-repo/.github/blob/main/agents-repo.code-workspace) — [org-workspace-and-agents.md](https://github.com/agents-repo/.github/blob/main/docs/org-workspace-and-agents.md).
 
-```bash
-npm run agents:install
-npm run agents:update
-npm run agents:ci
-npm run agents:verify
-```
-
-Haz commit de `agents.json`, `agents-lock.json` y rutas de agentes extraídas. Consulta [Instalar paquetes](/docs/installing-packages).
+Para **tu** proyecto, consulta [Instalar paquetes](/docs/installing-packages).
 
 ## Contenido de guías
 

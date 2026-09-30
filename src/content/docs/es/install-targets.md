@@ -30,7 +30,7 @@ agents-repo targets
 
 ## Locks multi-destino
 
-Cuando hay varios destinos configurados, cada paquete instalado necesita entradas `byTarget` coincidentes en `agents-lock.json`. Tras cambiar destinos o paquetes, ejecuta `install` o `update` localmente. El PR baseline de la organización usa `agents:verify` (sin descarga ZIP); usa `agents:ci` localmente cuando necesites una reinstalación completa anclada al lock.
+Cuando hay varios destinos configurados, cada paquete instalado necesita entradas `byTarget` coincidentes en `agents-lock.json`. Tras cambiar destinos o paquetes, ejecuta `install` o `update` localmente. En la organización **agents-repo**, el PR baseline ejecuta `agents:verify` solo en **agents-repo/.github** y **agents-repo/registry** cuando cambian rutas del catálogo; usa `agents:ci` localmente para una reinstalación completa anclada al lock.
 
 ## Alineación con el catálogo
 

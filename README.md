@@ -240,12 +240,12 @@ so contributors get agent guidance on clone without manual setup.
 
 | Install target | Path |
 | --- | --- |
-| GitHub Copilot | `.github/copilot-instructions.md` (canonical) |
-| Cursor | `.cursor/rules/agents-webapp.mdc` |
+| Cursor | `.cursor/rules/agents-webapp.mdc` (canonical) |
+| GitHub Copilot | `.github/copilot-instructions.md` (generated) |
 | Claude Code | `CLAUDE.md` |
 | OpenAI Codex | `AGENTS.md` |
 
-Regenerate after editing `copilot-instructions.md`:
+Regenerate after editing `.cursor/rules/`:
 
 ```bash
 npm run sync:ide-instructions
@@ -253,13 +253,14 @@ npm run sync:ide-instructions
 
 Do not edit generated mirror files directly.
 
-### Registry workflow packages
+### Registry workflow packages (org hub)
 
-Install and refresh catalog packages with `npm run agents:install` and
-`npm run agents:update` (CLI pinned in `devDependencies`; see
-[`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)). Commit `agents.json`,
-`agents-lock.json`, and extracted paths under `.github/agents/`, `.cursor/skills/`,
-`.claude/agents/`, and `.agents/skills/`.
+This repository does not commit `agents.json`. Shared planning/review packages
+install in [agents-repo/.github](https://github.com/agents-repo/.github). Open
+[agents-repo.code-workspace](https://github.com/agents-repo/.github/blob/main/agents-repo.code-workspace)
+from the `.github` sibling clone. See
+[org-workspace-and-agents.md](https://github.com/agents-repo/.github/blob/main/docs/org-workspace-and-agents.md)
+and [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md#registry-workflow-packages-org-hub).
 
 ## Organization
 
@@ -299,7 +300,7 @@ repository, update the corresponding page(s) in
 - Public privacy policies: locale-prefixed `/privacy/` routes (see [docs/i18n.md](docs/i18n.md))
 - Contributor guide: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - GitHub Copilot project instructions:
-  [.github/copilot-instructions.md](.github/copilot-instructions.md)
+  [.cursor/rules/agents-webapp.mdc](.cursor/rules/agents-webapp.mdc)
 
 ## Automation
 

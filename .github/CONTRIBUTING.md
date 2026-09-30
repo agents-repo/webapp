@@ -223,47 +223,26 @@ GitHub license detection and compliance tooling.
 
 | Install target | Path | Source |
 | --- | --- | --- |
-| GitHub Copilot | `.github/copilot-instructions.md` | **Canonical** — edit here |
-| Cursor | `.cursor/rules/agents-webapp.mdc` | Mirrored from copilot-instructions |
-| Claude Code | `CLAUDE.md` | Mirrored from copilot-instructions |
-| OpenAI Codex | `AGENTS.md` | Mirrored from copilot-instructions |
+| Cursor | `.cursor/rules/agents-webapp.mdc` (+ path `*.mdc`) | **Canonical** — edit here |
+| GitHub Copilot | `.github/copilot-instructions.md`, `.github/instructions/*` | Generated |
+| Claude Code | `CLAUDE.md` | Generated |
+| OpenAI Codex | `AGENTS.md` | Generated |
 
-Regenerate mirrors after editing `copilot-instructions.md`:
+Regenerate mirrors after editing `.cursor/rules/`:
 
 ```bash
 npm run sync:ide-instructions
 ```
 
-Do not edit `.cursor/rules/`, `CLAUDE.md`, or `AGENTS.md` directly.
+Do not edit `.github/copilot-instructions.md`, `CLAUDE.md`, or `AGENTS.md` directly.
 
-### Registry workflow packages (CLI)
+### Registry workflow packages (org hub)
 
-Install and refresh catalog packages with the [agents-repo CLI](https://github.com/agents-repo/cli).
-`agents.json` points at `https://registry.agents-repo.org` (organization
-catalog proxy).
-
-Bootstrap only when `agents.json` is missing (one-time; use a published CLI
-release or `npm exec agents-repo -- init` after `npm ci`):
-
-```bash
-npm exec agents-repo -- init --targets github-copilot claude-code cursor openai-codex
-```
-
-Use the npm scripts for bulk install, update, and CI (CLI version is pinned in
-`package.json` / `package-lock.json`, distinct from registry packages in
-`agents-lock.json`). PR baseline runs `agents:verify` only when agents definition
-files change:
-
-```bash
-npm run agents:install   # bulk sync from agents.json
-npm run agents:update    # refresh within semver ranges
-npm run agents:ci        # lock-pinned registry install (local)
-npm run agents:verify    # lock + on-disk surfaces; PR baseline extra when agents paths change
-```
-
-Commit `agents.json`, `agents-lock.json`, and extracted paths (`.github/agents/`,
-`.cursor/skills/`, `.claude/agents/`, `.agents/skills/`). Do not hand-edit extracted
-package files.
+This repository does not commit `agents.json`. Shared planning/review packages
+install in [agents-repo/.github](https://github.com/agents-repo/.github). Open
+[agents-repo.code-workspace](https://github.com/agents-repo/.github/blob/main/agents-repo.code-workspace)
+from the `.github` sibling clone. See
+[org-workspace-and-agents.md](https://github.com/agents-repo/.github/blob/main/docs/org-workspace-and-agents.md).
 
 ## AI Collaboration
 

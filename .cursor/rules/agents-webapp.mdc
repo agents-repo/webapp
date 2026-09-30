@@ -1,9 +1,7 @@
 ---
-description: Webapp project guidelines (mirrors copilot-instructions.md)
+description: Webapp project guidelines
 alwaysApply: true
 ---
-
-<!-- Generated: .github/copilot-instructions.md. Run npm run sync:ide-instructions -->
 
 # Webapp Project Guidelines
 
@@ -15,6 +13,16 @@ downloading agents and flows from the registry.
 The project is AI-first. Contributors and coding agents are expected to keep
 implementation, workflows, and documentation aligned so tasks can be completed
 without relying on undocumented tribal knowledge.
+
+## Organization workspace and registry skills
+
+Shared `maiconfz/*` planning/review packages install in
+**[agents-repo/.github](https://github.com/agents-repo/.github)**. Open
+[agents-repo.code-workspace](https://github.com/agents-repo/.github/blob/main/agents-repo.code-workspace)
+from the `.github` sibling clone —
+[org-workspace-and-agents.md](https://github.com/agents-repo/.github/blob/main/docs/org-workspace-and-agents.md).
+
+**Issues** for webapp work: **this** repository (`agents-repo/webapp`).
 
 ## Primary References
 
@@ -98,8 +106,7 @@ machine). See `docs/testing.md`, `docs/accessibility.md`, and `docs/e2e-testing.
 If a command cannot be run, explicitly say why in the handoff.
 
 Local handoff keeps this full set. PR baseline CI path-filters Chrome/`slides:check`,
-`agents:verify`, Pages/crawl, and CLI `check:docs-sync` extras. npm lockfiles do **not**
-trigger `agents:verify`.
+Pages/crawl, and CLI `check:docs-sync` extras (no `agents:verify` in this repo).
 See the organization
 [PR baseline extras (path filters)](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pr-baseline-extras-path-filters).
 
@@ -109,7 +116,7 @@ Before handoff on a task branch, agents MUST complete the organization
 [Pre-ready agent handoff](https://github.com/agents-repo/.github/blob/main/CONTRIBUTING.md#pre-ready-agent-handoff)
 norm, run the **Validation** commands above for the change scope, perform a
 self-review, and update the **draft** PR with evidence. Agents MUST NOT mark
-pull requests ready for review. After editing `.github/copilot-instructions.md`, run
+pull requests ready for review. After editing `.cursor/rules/agents-webapp.mdc`, run
 `npm run sync:ide-instructions`. Optional Cursor-only self-review is documented
 in `docs/ai-collaboration.md`.
 
@@ -133,10 +140,11 @@ Follow `.github/CONTRIBUTING.md` **Required Workflow** (issue form → branch �
 draft PR before implementation). Agents MUST NOT push to `main`, merge PRs into
 `main`, or mark pull requests ready for review.
 
-## Path-scoped Copilot instructions
+## Path-scoped instructions
 
-GitHub Copilot loads norms from `.github/instructions/*.instructions.md` when
-`applyTo` matches edited paths. Do not duplicate those bodies here.
+Edit path-scoped `.cursor/rules/*.mdc` files (`copilotInstructionsFile`, `globs`);
+run `npm run sync:ide-instructions` to generate `.github/instructions/`. Do not
+duplicate those bodies here.
 
 ## Default Branch Integration (Agents)
 
@@ -152,4 +160,4 @@ See [agents-repo/.github docs/cursor-cloud.md](https://github.com/agents-repo/.g
 Vite dev server: `webapp-dev` terminal (`http://localhost:5173`). Run
 `npx playwright install chromium` when E2E is needed.
 
-After editing `.github/copilot-instructions.md`, run `npm run sync:ide-instructions`.
+After editing `.cursor/rules/agents-webapp.mdc`, run `npm run sync:ide-instructions`.
