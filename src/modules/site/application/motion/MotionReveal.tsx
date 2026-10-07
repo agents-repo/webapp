@@ -14,6 +14,7 @@ const MAX_REVEAL_DELAY_MS = 400
 function MotionReveal({ children, className, style, delayMs = 0 }: MotionRevealProps) {
   const elementRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(() => prefersReducedMotion())
+  const [isSettled, setIsSettled] = useState(() => prefersReducedMotion())
   const cappedDelay = Math.min(Math.max(delayMs, 0), MAX_REVEAL_DELAY_MS)
 
   useEffect(() => {
@@ -48,6 +49,29 @@ function MotionReveal({ children, className, style, delayMs = 0 }: MotionRevealP
     }
   }, [])
 
+  useEffect(() => {
+    if (!isVisible || prefersReducedMotion()) {
+      return
+    }
+
+    const element = elementRef.current
+    if (!element) {
+      return
+    }
+
+    const settle = (): void => {
+      setIsSettled(true)
+    }
+
+    element.addEventListener('animationend', settle, { once: true })
+    const timeoutId = window.setTimeout(settle, 600)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+      element.removeEventListener('animationend', settle)
+    }
+  }, [isVisible])
+
   const revealStyle: CSSProperties = {
     ...style,
     ...(cappedDelay > 0 && !prefersReducedMotion()
@@ -55,7 +79,12 @@ function MotionReveal({ children, className, style, delayMs = 0 }: MotionRevealP
       : {}),
   }
 
-  const classNames = ['motion-reveal', isVisible ? 'motion-reveal--visible' : '', className]
+  const classNames = [
+    'motion-reveal',
+    isVisible ? 'motion-reveal--visible' : '',
+    isSettled ? 'motion-reveal--settled' : '',
+    className,
+  ]
     .filter(Boolean)
     .join(' ')
 
