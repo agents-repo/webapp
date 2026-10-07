@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useState, type ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AnalyticsRouteTracker from './modules/site/application/analytics/AnalyticsRouteTracker'
+import AppRouteContent from './modules/site/application/motion/AppRouteContent'
 import RouteAnnouncer from './modules/site/application/accessibility/RouteAnnouncer'
 import RouteScrollManager from './modules/site/application/accessibility/RouteScrollManager'
 import RouteDocumentTitle from './modules/site/application/accessibility/RouteDocumentTitle'
@@ -115,11 +116,13 @@ function AppMainContent({ setHeaderSearchSlot }: AppMainContentProps) {
 
   return (
     <main id="main-content" tabIndex={-1}>
-      <LazyRouteErrorBoundary resetKey={location.pathname} onLazyRetry={refreshLazyPages}>
-        <Suspense fallback={<RouteLoadingFallback />}>
-          <AppRoutes lazyPages={lazyPages} setHeaderSearchSlot={setHeaderSearchSlot} />
-        </Suspense>
-      </LazyRouteErrorBoundary>
+      <AppRouteContent>
+        <LazyRouteErrorBoundary resetKey={location.pathname} onLazyRetry={refreshLazyPages}>
+          <Suspense fallback={<RouteLoadingFallback />}>
+            <AppRoutes lazyPages={lazyPages} setHeaderSearchSlot={setHeaderSearchSlot} />
+          </Suspense>
+        </LazyRouteErrorBoundary>
+      </AppRouteContent>
     </main>
   )
 }

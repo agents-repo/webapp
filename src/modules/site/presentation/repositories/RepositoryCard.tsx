@@ -31,13 +31,18 @@ function RepositoryCard({ entry }: RepositoryCardProps) {
   const { t } = useTranslation('pages')
   const localizedSitePath = useLocalizedSitePath()
   const localized = useLocalizedRepositoryEntry(entry)
+  const roleBadgeBg = roleBadgeVariant(entry.role)
 
   return (
     <Card className="h-100 position-relative">
       <Card.Body className="d-flex flex-column">
         <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
           <Card.Title className="h5 mb-0">{entry.name}</Card.Title>
-          <Badge bg={roleBadgeVariant(entry.role)} className="text-uppercase">
+          <Badge
+            bg={roleBadgeBg}
+            text={roleBadgeBg === 'info' ? 'dark' : undefined}
+            className="text-uppercase"
+          >
             {localized.roleLabel}
           </Badge>
         </div>

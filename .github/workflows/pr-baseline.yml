@@ -47,6 +47,9 @@ jobs:
       - name: Run Markdown and code lint
         run: npm run lint:all
 
+      - name: Duplication check (jscpd)
+        run: npm run dup:check
+
       - name: Check IDE instruction mirrors
         run: npm run sync:ide-instructions -- --check
 

@@ -4,6 +4,7 @@ import {
   buildPackageSiteRoutesFromCatalog,
   getPackageDetailPath,
   isKnownPackageSiteRoute,
+  isPackageCatalogListSitePath,
   isPackageSitePathCatalogMember,
   isUnlistedPackageSitePath,
   parsePackageSitePath,
@@ -13,6 +14,13 @@ import { resetRuntimePackageCatalogForTests } from './runtimePackageCatalog'
 describe('packageSiteRoutes', () => {
   afterEach(() => {
     resetRuntimePackageCatalogForTests()
+  })
+
+  it('detects package catalog list paths for scoped route motion', () => {
+    expect(isPackageCatalogListSitePath('/packages')).toBe(true)
+    expect(isPackageCatalogListSitePath('/packages/agents-repo')).toBe(true)
+    expect(isPackageCatalogListSitePath('/packages/agents-repo/sample-agent')).toBe(false)
+    expect(isPackageCatalogListSitePath('/about')).toBe(false)
   })
 
   it('parses index, namespace, and detail paths', () => {

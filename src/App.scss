@@ -1,3 +1,5 @@
+@use './styles/motion' as motion;
+
 .app-shell {
   min-height: 100vh;
   background:
@@ -39,9 +41,7 @@
   font-size: 0.95rem;
   opacity: 0.88;
 
-  @media (prefers-reduced-motion: no-preference) {
-    transition: color 0.16s ease, opacity 0.16s ease;
-  }
+  @include motion.motion-safe-transition((color, opacity));
 }
 
 .app-about-nav > .nav-link {
@@ -86,13 +86,20 @@
 }
 
 .package-card {
+  position: relative;
+  z-index: 0;
+  overflow: visible;
   box-shadow:
     inset 0 0 0 1px rgba(177, 73, 255, 0.16),
     0 0.3rem 0.85rem rgba(0, 0, 0, 0.16);
 
-  @media (prefers-reduced-motion: no-preference) {
-    transition: box-shadow 0.18s ease;
-  }
+  @include motion.motion-safe-transition(box-shadow, motion.$motion-duration-emphasis);
+}
+
+.package-card:focus-within,
+.package-card:has(.dropdown.show),
+.package-card:has(.package-card-action[aria-expanded='true']) {
+  z-index: 30;
 }
 
 .package-card:hover,
@@ -122,11 +129,19 @@
   opacity: 1;
   vertical-align: middle;
 
+  @include motion.motion-safe-transition(
+    (max-width, margin-inline-start, opacity),
+    motion.$motion-duration-emphasis
+  );
+}
+
+.package-card-action {
   @media (prefers-reduced-motion: no-preference) {
-    transition:
-      max-width 0.18s ease,
-      margin-inline-start 0.18s ease,
-      opacity 0.18s ease;
+    transition: transform motion.$motion-duration-fast motion.$motion-ease-standard;
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+    }
   }
 }
 
@@ -281,6 +296,14 @@
 
 .package-cli-target-pill {
   padding-inline: 0.75rem;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: transform motion.$motion-duration-fast motion.$motion-ease-standard;
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+  }
 }
 
 .package-cli-target-pill__checkbox {
@@ -335,7 +358,16 @@
   line-height: 1;
 
   @media (prefers-reduced-motion: no-preference) {
-    transition: color 0.16s ease, opacity 0.16s ease;
+    transition:
+      color motion.$motion-duration-fast motion.$motion-ease-standard,
+      opacity motion.$motion-duration-fast motion.$motion-ease-standard,
+      transform motion.$motion-duration-fast motion.$motion-ease-standard;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+    }
   }
 
   &:hover:not(:disabled),
@@ -369,9 +401,7 @@
   line-height: 1.4;
   width: fit-content;
 
-  @media (prefers-reduced-motion: no-preference) {
-    transition: color 0.16s ease;
-  }
+  @include motion.motion-safe-transition(color);
 }
 
 .footer-link:hover,
@@ -399,7 +429,13 @@
   color: rgba(255, 255, 255, 0.88);
 
   @media (prefers-reduced-motion: no-preference) {
-    transition: color 0.16s ease;
+    transition:
+      color motion.$motion-duration-fast motion.$motion-ease-standard,
+      transform motion.$motion-duration-fast motion.$motion-ease-standard;
+
+    &:active {
+      transform: scale(0.97);
+    }
   }
 }
 
@@ -428,9 +464,98 @@
   max-width: 960px;
 }
 
+@keyframes motion-slide-in-rtl {
+  from {
+    opacity: 0;
+    transform: translateX(motion.$motion-slide-offset);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes cookie-consent-banner-enter {
+  from {
+    opacity: 0;
+    transform: translate(motion.$motion-slide-offset, 100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .cookie-consent-banner {
-    transition: transform 0.2s ease;
+    animation: cookie-consent-banner-enter motion.$motion-duration-overlay motion.$motion-ease-out;
+  }
+}
+
+.app-route-content--enter {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: motion-slide-in-rtl motion.$motion-duration-reveal motion.$motion-ease-out;
+  }
+}
+
+.app-route-content--settled {
+  transform: none;
+}
+
+.motion-reveal {
+  position: relative;
+  z-index: 0;
+
+  @media (prefers-reduced-motion: no-preference) {
+    opacity: 0;
+    transform: translateX(motion.$motion-slide-offset);
+  }
+}
+
+.motion-reveal--visible {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: motion-slide-in-rtl motion.$motion-duration-reveal motion.$motion-ease-out forwards;
+    animation-delay: var(--motion-reveal-delay, 0ms);
+  }
+}
+
+.motion-reveal--settled {
+  @media (prefers-reduced-motion: no-preference) {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.motion-reveal:has(.package-card:focus-within),
+.motion-reveal:has(.dropdown.show) {
+  z-index: 30;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .modal.fade .modal-dialog {
+    transition: transform motion.$motion-duration-overlay motion.$motion-ease-out;
+  }
+
+  .modal-backdrop.fade {
+    transition: opacity motion.$motion-duration-overlay motion.$motion-ease-standard;
+  }
+
+  .offcanvas {
+    transition: transform motion.$motion-duration-overlay motion.$motion-ease-out;
+  }
+
+  .popover.fade {
+    transition: opacity motion.$motion-duration-overlay motion.$motion-ease-standard;
+  }
+
+  .popover.show .popover-body {
+    animation: motion-slide-in-rtl motion.$motion-duration-overlay motion.$motion-ease-out;
+  }
+
+  .tooltip.fade {
+    transition: opacity motion.$motion-duration-overlay motion.$motion-ease-standard;
   }
 }
 
