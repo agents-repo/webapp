@@ -17,12 +17,12 @@ export function useRouteEnterAnimation(
   const contentRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    if (!enabled) {
+    if (isInitialRenderRef.current) {
+      isInitialRenderRef.current = false
       return
     }
 
-    if (isInitialRenderRef.current) {
-      isInitialRenderRef.current = false
+    if (!enabled) {
       return
     }
 

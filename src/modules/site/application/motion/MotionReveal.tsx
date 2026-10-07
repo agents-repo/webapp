@@ -88,8 +88,16 @@ function MotionReveal({ children, className, style, delayMs = 0 }: MotionRevealP
     .filter(Boolean)
     .join(' ')
 
+  const hideFromInteraction = !isVisible && !prefersReducedMotion()
+
   return (
-    <div ref={elementRef} className={classNames} style={revealStyle}>
+    <div
+      ref={elementRef}
+      className={classNames}
+      style={revealStyle}
+      inert={hideFromInteraction ? true : undefined}
+      aria-hidden={hideFromInteraction ? true : undefined}
+    >
       {children}
     </div>
   )
