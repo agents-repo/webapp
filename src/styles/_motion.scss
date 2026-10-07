@@ -1,0 +1,19 @@
+$motion-duration-overlay: 150ms;
+$motion-duration-fast: 160ms;
+$motion-duration-emphasis: 180ms;
+$motion-ease-standard: ease;
+$motion-ease-out: ease-out;
+
+@mixin motion-safe-transition($properties, $duration: $motion-duration-fast, $timing: $motion-ease-standard) {
+  @media (prefers-reduced-motion: no-preference) {
+    transition-property: $properties;
+    transition-duration: $duration;
+    transition-timing-function: $timing;
+  }
+}
+
+@mixin motion-safe-keyframes($name) {
+  @media (prefers-reduced-motion: no-preference) {
+    animation-name: $name;
+  }
+}

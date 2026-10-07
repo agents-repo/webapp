@@ -33,6 +33,23 @@ URL overrides, `catalog.filters.sidebarCollapsed`) stay in localStorage.
   `src/styles/bootstrap-theme.scss` instead of adding one-off style overrides
   in page or shell styles.
 
+## Motion
+
+Subtle UI motion uses shared tokens in `src/styles/_motion.scss` (durations,
+easing, and the `motion-safe-transition` mixin). Non-essential transitions and
+animations are gated with `@media (prefers-reduced-motion: no-preference)` or
+that mixin.
+
+- Overlay popovers and tooltips use the shared react-bootstrap fade helper in
+  `src/modules/site/application/motion/overlayFadeTransition.tsx` (~150ms).
+- Modals, Offcanvas panels, and cookie-banner mount animation are styled in
+  `src/App.scss` with the same overlay duration token where applicable.
+- Route changes apply a short opacity enter animation on the inner wrapper inside
+  `#main-content` (`AppRouteContent`), not on window scroll.
+
+Do not add standalone animation libraries for catalog polish unless a follow-up
+issue justifies the bundle and maintenance cost.
+
 ## Current State
 
 The current UI loads registry index data from a source URL configured at build

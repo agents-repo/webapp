@@ -187,6 +187,10 @@ and accessible tables for the cookie/storage section.
 ### Motion and theme
 
 - Wrap non-essential transitions in `@media (prefers-reduced-motion: no-preference)`
+  (see `src/styles/_motion.scss` and `docs/styling-and-technology.md` — Motion).
+- Modals, Offcanvas panels, overlay popovers/tooltips, the cookie consent banner,
+  and route content use short decorative motion; behavior and focus order are
+  unchanged when motion is reduced or disabled.
 - Keep `theme-color` meta in sync when the applied Bootstrap theme changes
 - Dark-mode purple-on-dark text (links, outline buttons, always-dark header
   current page) uses a 70% tint of `$primary` defined in

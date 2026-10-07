@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSquare, faSquareCheck, faTerminal } from '@fortawesome/free-solid-svg-icons'
+import { OverlayFadeTransition } from '../../../site/application/motion/overlayFadeTransition'
 import { Button, Overlay, Popover, ToggleButton, ToggleButtonGroup } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import type { InstallTargetId } from '../../domain/package'
@@ -169,6 +170,7 @@ function PackageCliInstallActionInner({
         target={toggleRef}
         placement="top"
         flip
+        transition={OverlayFadeTransition}
         containerPadding={8}
         popperConfig={{
           strategy: 'fixed',
