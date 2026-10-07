@@ -42,6 +42,50 @@ function testMatchMediaMatches(query: string): boolean {
   return false
 }
 
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | Document | null = null
+
+  readonly rootMargin = '0px'
+
+  readonly scrollMargin = '0px'
+
+  readonly thresholds: readonly number[] = []
+
+  private readonly callback: IntersectionObserverCallback
+
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback
+  }
+
+  observe(target: Element): void {
+    const entry = {
+      isIntersecting: true,
+      target,
+      intersectionRatio: 1,
+      boundingClientRect: target.getBoundingClientRect(),
+      intersectionRect: target.getBoundingClientRect(),
+      rootBounds: null,
+      time: Date.now(),
+    } as IntersectionObserverEntry
+
+    this.callback([entry], this)
+  }
+
+  unobserve(): void {}
+
+  disconnect(): void {}
+
+  takeRecords(): IntersectionObserverEntry[] {
+    return []
+  }
+}
+
+Object.defineProperty(globalThis, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: MockIntersectionObserver,
+})
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: (query: string) => ({

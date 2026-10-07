@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { getDocDetailPath } from '../../../../site/application/docs/docsCatalog'
 import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
 import { siteRoutes } from '../../../../site/presentation/routes/siteRoutes'
+import MotionReveal from '../../../../site/application/motion/MotionReveal'
 import { getPackagesIndexPath } from '../../../application/packageSiteRoutes'
 
 function HomeHowItWorksSection() {
@@ -75,11 +76,13 @@ function HomeHowItWorksSection() {
         <Row as="ol" className="g-4 list-unstyled mb-0">
           {steps.map((step, index) => (
             <Col key={step.title} as="li" md={6} lg={4}>
+              <MotionReveal delayMs={Math.min(index, 6) * 55}>
               <p className="display-6 text-primary fw-semibold mb-2" aria-hidden="true">
                 {index + 1}
               </p>
               <h3 className="h5">{step.title}</h3>
               <p className="text-body-secondary mb-0">{step.body}</p>
+              </MotionReveal>
             </Col>
           ))}
         </Row>

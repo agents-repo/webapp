@@ -5,6 +5,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { Alert, Card, Col, Container, Row, Stack } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useParams } from 'react-router-dom'
+import MotionReveal from '../../../site/application/motion/MotionReveal'
 import GoogleTranslateLink from '../../../site/presentation/components/GoogleTranslateLink.tsx'
 import { useLocalizedSitePath } from '../../../site/application/i18n/useLocalizedSitePath.ts'
 import { getDocDetailPath } from '../../../site/application/docs/docsCatalog'
@@ -354,32 +355,35 @@ function PackageDetailLoaded(options: {
             downloadStats={downloadStats}
           />
 
-          <Row className="g-3">
-            <Col md={6} className="d-flex">
-              <PackageDetailMetadataCard detail={detail} />
-            </Col>
-            <Col md={6} className="d-flex">
-              <Row className="g-3 flex-fill w-100">
-                <Col xs={12} md={6} className="d-flex">
-                  <PackageDetailVersionsCard detail={detail} isDetailLoading={isDetailLoading} />
-                </Col>
-                <Col xs={12} md={6} className="d-flex">
-                  <Card className="flex-fill w-100 border-secondary-subtle">
-                    <Card.Body>
-                      <PackageDownloadStatsSummary
-                        stats={downloadStats}
-                        packageName={catalogPackage.name}
-                        variant="detail"
-                      />
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+          <MotionReveal>
+            <Row className="g-3">
+              <Col md={6} className="d-flex">
+                <PackageDetailMetadataCard detail={detail} />
+              </Col>
+              <Col md={6} className="d-flex">
+                <Row className="g-3 flex-fill w-100">
+                  <Col xs={12} md={6} className="d-flex">
+                    <PackageDetailVersionsCard detail={detail} isDetailLoading={isDetailLoading} />
+                  </Col>
+                  <Col xs={12} md={6} className="d-flex">
+                    <Card className="flex-fill w-100 border-secondary-subtle">
+                      <Card.Body>
+                        <PackageDownloadStatsSummary
+                          stats={downloadStats}
+                          packageName={catalogPackage.name}
+                          variant="detail"
+                        />
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </MotionReveal>
 
           {visibleDetailError ? <Alert variant="warning">{visibleDetailError}</Alert> : null}
 
+          <MotionReveal delayMs={60}>
           <Card className="border-secondary-subtle">
             <Card.Body>
               <h2 className="h4">{t('packageDetail.agentsHeading')}</h2>
@@ -390,7 +394,9 @@ function PackageDetailLoaded(options: {
               />
             </Card.Body>
           </Card>
+          </MotionReveal>
 
+          <MotionReveal delayMs={120}>
           <Card className="border-secondary-subtle">
             <Card.Body>
               <h2 className="h4">{t('packageDetail.flowsHeading')}</h2>
@@ -401,7 +407,9 @@ function PackageDetailLoaded(options: {
               />
             </Card.Body>
           </Card>
+          </MotionReveal>
 
+          <MotionReveal delayMs={180}>
           <Card className="border-secondary-subtle">
             <Card.Body>
               <h2 className="h4">{t('packageDetail.readmeHeading')}</h2>
@@ -414,6 +422,7 @@ function PackageDetailLoaded(options: {
               )}
             </Card.Body>
           </Card>
+          </MotionReveal>
         </Stack>
       </Container>
     </div>

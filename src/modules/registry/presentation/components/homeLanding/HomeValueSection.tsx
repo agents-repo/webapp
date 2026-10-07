@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComments, faMagnifyingGlass, faTerminal } from '@fortawesome/free-solid-svg-icons'
 import { Card, Col, Container, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import MotionReveal from '../../../../site/application/motion/MotionReveal'
 
 function HomeValueSection() {
   const { t } = useTranslation('catalog')
@@ -28,8 +29,9 @@ function HomeValueSection() {
       <Container>
         <h2 className="h3 text-center mb-4">{t('homeLanding.value.heading')}</h2>
         <Row className="g-4">
-          {valueCards.map((card) => (
+          {valueCards.map((card, index) => (
             <Col key={card.title} md={4}>
+              <MotionReveal className="h-100" delayMs={index * 60}>
               <Card className="h-100 border-secondary-subtle">
                 <Card.Body>
                   <FontAwesomeIcon
@@ -42,6 +44,7 @@ function HomeValueSection() {
                   <p className="text-body-secondary mb-0">{card.body}</p>
                 </Card.Body>
               </Card>
+              </MotionReveal>
             </Col>
           ))}
         </Row>

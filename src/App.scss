@@ -455,15 +455,27 @@
   max-width: 960px;
 }
 
-@keyframes cookie-consent-banner-enter {
+@keyframes motion-slide-in-rtl {
   from {
     opacity: 0;
-    transform: translateY(100%);
+    transform: translateX(motion.$motion-slide-offset);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
+  }
+}
+
+@keyframes cookie-consent-banner-enter {
+  from {
+    opacity: 0;
+    transform: translate(motion.$motion-slide-offset, 100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
   }
 }
 
@@ -475,23 +487,28 @@
 
 .app-route-content--enter {
   @media (prefers-reduced-motion: no-preference) {
-    animation: app-route-content-enter motion.$motion-duration-fast motion.$motion-ease-out;
+    animation: motion-slide-in-rtl motion.$motion-duration-fast motion.$motion-ease-out;
   }
 }
 
-@keyframes app-route-content-enter {
-  from {
-    opacity: 0.92;
+.motion-reveal {
+  @media (prefers-reduced-motion: no-preference) {
+    opacity: 0;
+    transform: translateX(motion.$motion-slide-offset);
+    will-change: transform, opacity;
   }
+}
 
-  to {
-    opacity: 1;
+.motion-reveal--visible {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: motion-slide-in-rtl motion.$motion-duration-reveal motion.$motion-ease-out forwards;
+    animation-delay: var(--motion-reveal-delay, 0ms);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .modal.fade .modal-dialog {
-    transition: transform motion.$motion-duration-overlay motion.$motion-ease-standard;
+    transition: transform motion.$motion-duration-overlay motion.$motion-ease-out;
   }
 
   .modal-backdrop.fade {
@@ -503,9 +520,15 @@
   }
 
   .popover.fade {
-    transition:
-      opacity motion.$motion-duration-overlay motion.$motion-ease-standard,
-      transform motion.$motion-duration-overlay motion.$motion-ease-out;
+    transition: opacity motion.$motion-duration-overlay motion.$motion-ease-standard;
+  }
+
+  .popover.show .popover-body {
+    animation: motion-slide-in-rtl motion.$motion-duration-overlay motion.$motion-ease-out;
+  }
+
+  .tooltip.fade {
+    transition: opacity motion.$motion-duration-overlay motion.$motion-ease-standard;
   }
 }
 

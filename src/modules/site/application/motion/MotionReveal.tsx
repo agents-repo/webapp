@@ -1,0 +1,69 @@
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { prefersReducedMotion } from './prefersReducedMotion'
+
+export interface MotionRevealProps {
+  readonly children: ReactNode
+  readonly className?: string
+  readonly style?: CSSProperties
+  /** Stagger scroll reveals (capped in CSS for long lists). */
+  readonly delayMs?: number
+}
+
+const MAX_REVEAL_DELAY_MS = 400
+
+function MotionReveal({ children, className, style, delayMs = 0 }: MotionRevealProps) {
+  const elementRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(() => prefersReducedMotion())
+  const cappedDelay = Math.min(Math.max(delayMs, 0), MAX_REVEAL_DELAY_MS)
+
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      return
+    }
+
+    const element = elementRef.current
+    if (!element) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry?.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px -6% 0px',
+        threshold: 0.12,
+      },
+    )
+
+    observer.observe(element)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  const revealStyle: CSSProperties = {
+    ...style,
+    ...(cappedDelay > 0 && !prefersReducedMotion()
+      ? ({ '--motion-reveal-delay': `${cappedDelay}ms` } as CSSProperties)
+      : {}),
+  }
+
+  const classNames = ['motion-reveal', isVisible ? 'motion-reveal--visible' : '', className]
+    .filter(Boolean)
+    .join(' ')
+
+  return (
+    <div ref={elementRef} className={classNames} style={revealStyle}>
+      {children}
+    </div>
+  )
+}
+
+export default MotionReveal

@@ -1,16 +1,9 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
+import { prefersReducedMotion } from './prefersReducedMotion'
 
 interface AppRouteContentProps {
   readonly children: ReactNode
-}
-
-function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-    return false
-  }
-
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 function AppRouteContent({ children }: AppRouteContentProps) {

@@ -44,8 +44,10 @@ that mixin.
   `src/modules/site/application/motion/overlayFadeTransition.tsx` (~150ms).
 - Modals, Offcanvas panels, and cookie-banner mount animation are styled in
   `src/App.scss` with the same overlay duration token where applicable.
-- Route changes apply a short opacity enter animation on the inner wrapper inside
+- Route changes apply a short slide-in (right to left) on the inner wrapper inside
   `#main-content` (`AppRouteContent`), not on window scroll.
+- Cards and panels use `MotionReveal` (`IntersectionObserver`) for the same slide-in
+  when they enter the viewport, with optional stagger delays on grids.
 
 Do not add standalone animation libraries for catalog polish unless a follow-up
 issue justifies the bundle and maintenance cost.
