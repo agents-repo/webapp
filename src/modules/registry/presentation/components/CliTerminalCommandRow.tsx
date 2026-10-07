@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { OverlayFadeTransition } from '../../../site/application/motion/overlayFadeTransition'
 import { Button, Overlay, Tooltip } from 'react-bootstrap'
 
 export interface CliTerminalCommandRowProps {
@@ -61,7 +62,12 @@ function CliTerminalCommandRow({
         <FontAwesomeIcon icon={faCopy} aria-hidden="true" />
       </Button>
 
-      <Overlay target={copyButtonRef} show={showCopyTooltip} placement="top">
+      <Overlay
+        target={copyButtonRef}
+        show={showCopyTooltip}
+        placement="top"
+        transition={OverlayFadeTransition}
+      >
         {(overlayProps) => (
           <Tooltip
             id={copyTooltipId}

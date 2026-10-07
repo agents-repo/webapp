@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Button, Col, Container, Offcanvas, Row } from 'react-bootstrap'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useRouteEnterAnimation } from '../../../application/motion/useRouteEnterAnimation'
 import DocSearch from './DocSearch.tsx'
 import DocsNav from './DocsNav.tsx'
 
@@ -16,6 +17,7 @@ interface DocLayoutProps {
 function DocLayout({ children, activeSlug }: DocLayoutProps) {
   const { t } = useTranslation('docs')
   const location = useLocation()
+  const articleRef = useRouteEnterAnimation(location.pathname)
   const [docsNavOpen, setDocsNavOpen] = useState(false)
   const [docsNavPath, setDocsNavPath] = useState(location.pathname)
 
@@ -51,7 +53,12 @@ function DocLayout({ children, activeSlug }: DocLayoutProps) {
                 {t('nav.browseDocs')}
               </Button>
             </div>
-            <article className="docs-article">{children}</article>
+            <article
+              ref={articleRef}
+              className="docs-article app-route-content app-route-content--settled"
+            >
+              {children}
+            </article>
           </Col>
         </Row>
       </Container>

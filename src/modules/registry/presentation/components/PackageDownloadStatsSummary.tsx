@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { OverlayFadeTransition } from '../../../site/application/motion/overlayFadeTransition'
 import { Button, Overlay, Popover } from 'react-bootstrap'
 import {
   formatPackageDownloadCount,
@@ -255,7 +256,7 @@ function PackageDownloadStatsCard(options: {
           ],
         }}
         rootClose
-        transition={false}
+        transition={OverlayFadeTransition}
         onHide={handleHide}
       >
         <Popover

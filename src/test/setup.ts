@@ -7,6 +7,7 @@ import enCatalog from '../locales/en/catalog.json' with { type: 'json' }
 import enDocs from '../locales/en/docs.json' with { type: 'json' }
 import enPages from '../locales/en/pages.json' with { type: 'json' }
 import enShell from '../locales/en/shell.json' with { type: 'json' }
+import { ImmediateIntersectionObserver } from './intersectionObserverMocks.ts'
 import { resetRegistryMemoryCachesForTests } from './testUtils'
 
 expect.extend(matchers)
@@ -41,6 +42,12 @@ function testMatchMediaMatches(query: string): boolean {
 
   return false
 }
+
+Object.defineProperty(globalThis, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: ImmediateIntersectionObserver,
+})
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

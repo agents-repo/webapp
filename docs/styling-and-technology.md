@@ -33,6 +33,30 @@ URL overrides, `catalog.filters.sidebarCollapsed`) stay in localStorage.
   `src/styles/bootstrap-theme.scss` instead of adding one-off style overrides
   in page or shell styles.
 
+## Motion
+
+Subtle UI motion uses shared tokens in `src/styles/_motion.scss` (durations,
+easing, and the `motion-safe-transition` mixin). Non-essential transitions and
+animations are gated with `@media (prefers-reduced-motion: no-preference)` or
+that mixin.
+
+- Overlay popovers and tooltips use the shared react-bootstrap fade helper in
+  `src/modules/site/application/motion/overlayFadeTransition.tsx` (~150ms).
+- Modals, Offcanvas panels, and cookie-banner mount animation are styled in
+  `src/App.scss` with the same overlay duration token where applicable.
+- Route changes apply a short slide-in (right to left) on the inner wrapper inside
+  `#main-content` (`AppRouteContent`), not on window scroll. On docs routes, that
+  wrapper stays static and the same animation runs on `.docs-article` only so the
+  sidebar and search column do not move. On package catalog index and namespace
+  listings, the wrapper stays static and the slide runs on `.package-catalog-results`
+  when the URL search string changes (filters, sort period, pagination) so the
+  filter sidebar and hero do not move.
+- Marketing/home sections may use `MotionReveal` on scroll; package catalog grids use
+  the route-level slide only (no per-card reveal).
+
+Do not add standalone animation libraries for catalog polish unless a follow-up
+issue justifies the bundle and maintenance cost.
+
 ## Current State
 
 The current UI loads registry index data from a source URL configured at build

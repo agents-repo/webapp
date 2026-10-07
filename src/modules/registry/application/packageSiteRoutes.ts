@@ -59,6 +59,12 @@ export function parsePackageSitePath(pathname: string): PackageSiteRoute | undef
   return undefined
 }
 
+/** Package index or namespace listing (catalog filters); not package detail. Locale prefix already stripped. */
+export function isPackageCatalogListSitePath(pathnameWithoutLocale: string): boolean {
+  const parsed = parsePackageSitePath(pathnameWithoutLocale)
+  return parsed?.kind === 'index' || parsed?.kind === 'namespace'
+}
+
 export function listPackageNamespaces(catalog: RegistryCatalog): string[] {
   return [...new Set(catalog.packages.map((pkg) => pkg.namespace))].sort((left, right) =>
     left.localeCompare(right),

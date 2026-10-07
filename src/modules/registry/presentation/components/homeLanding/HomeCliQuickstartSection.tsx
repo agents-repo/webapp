@@ -7,6 +7,7 @@ import { getDocDetailPath } from '../../../../site/application/docs/docsCatalog'
 import { useLocalizedSitePath } from '../../../../site/application/i18n/useLocalizedSitePath.ts'
 import { START_HERE_COLLECTION_ID } from '../../../application/startHereCollection'
 import { getPackageDetailPath, getPackagesIndexPath } from '../../../application/packageSiteRoutes'
+import MotionReveal from '../../../../site/application/motion/MotionReveal'
 import CliTerminalCommandRow from '../CliTerminalCommandRow'
 import {
   CLI_INIT_COMMAND,
@@ -97,6 +98,7 @@ function HomeCliQuickstartSection() {
       <Container>
         <Row className="justify-content-center">
           <Col lg={8}>
+            <MotionReveal>
             <h2 className="h3 text-center mb-3">{t('homeLanding.cliQuickstart.heading')}</h2>
             <p className="text-body-secondary text-center mb-4">{t('homeLanding.cliQuickstart.lead')}</p>
             <Stack gap={3}>
@@ -146,6 +148,7 @@ function HomeCliQuickstartSection() {
             <div className="visually-hidden" aria-live="polite" aria-atomic="true">
               {liveMessage}
             </div>
+            </MotionReveal>
           </Col>
         </Row>
       </Container>
