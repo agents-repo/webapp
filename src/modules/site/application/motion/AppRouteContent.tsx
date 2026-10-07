@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { prefersReducedMotion } from './prefersReducedMotion'
 
@@ -11,7 +11,7 @@ function AppRouteContent({ children }: AppRouteContentProps) {
   const isInitialRenderRef = useRef(true)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isInitialRenderRef.current) {
       isInitialRenderRef.current = false
       return
@@ -22,23 +22,27 @@ function AppRouteContent({ children }: AppRouteContentProps) {
       return
     }
 
+    element.classList.remove('app-route-content--settled')
     element.classList.add('app-route-content--enter')
 
-    const clearEnterClass = (): void => {
+    const finishRouteEnter = (): void => {
       element.classList.remove('app-route-content--enter')
+      element.classList.add('app-route-content--settled')
     }
 
-    element.addEventListener('animationend', clearEnterClass, { once: true })
-    const timeoutId = window.setTimeout(clearEnterClass, 400)
+    element.addEventListener('animationend', finishRouteEnter, { once: true })
+    const timeoutId = window.setTimeout(finishRouteEnter, 400)
 
     return () => {
       window.clearTimeout(timeoutId)
+      element.removeEventListener('animationend', finishRouteEnter)
       element.classList.remove('app-route-content--enter')
+      element.classList.add('app-route-content--settled')
     }
   }, [location.pathname])
 
   return (
-    <div ref={contentRef} className="app-route-content">
+    <div ref={contentRef} className="app-route-content app-route-content--settled">
       {children}
     </div>
   )

@@ -28,19 +28,7 @@ export function PackageDownloadMenu(options: {
         <FontAwesomeIcon icon={faDownload} aria-hidden="true" />
         <span className="package-card-action-label">{t('packageCard.download')}</span>
       </Dropdown.Toggle>
-      <Dropdown.Menu
-        popperConfig={{
-          strategy: 'fixed',
-          modifiers: [
-            {
-              name: 'preventOverflow',
-              options: {
-                altAxis: true,
-              },
-            },
-          ],
-        }}
-      >
+      <Dropdown.Menu flip>
         {downloadTargets.map((target) => (
           <Dropdown.Item
             key={target.id}
