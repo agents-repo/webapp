@@ -87,6 +87,7 @@ layout (`application`, `infrastructure`, `presentation`).
 src/
 ├── test/                          # Shared test infrastructure
 │   ├── setup.ts
+│   ├── intersectionObserverMocks.ts
 │   ├── renderWithProviders.tsx
 │   ├── testUtils.ts
 │   ├── memoryStorage.ts
@@ -154,6 +155,11 @@ extract it to a sibling module before testing.
   `resetChatInstructionsCacheForTests()`, `clearRegistryTagListCache()`, or
   `resetRegistryMemoryCachesForTests()`. Do not call `openDB` in unit tests.
 - Use `resetRegistryCatalogCacheForTests()` when testing catalog cache behavior.
+- `src/test/setup.ts` registers `ImmediateIntersectionObserver` from
+  `intersectionObserverMocks.ts` so scroll-reveal and lazy UI see intersecting
+  targets by default. Use `PendingIntersectionObserver` (same module) when a test
+  must keep content off-screen; implement `observe` / `unobserve` / `disconnect`
+  with real bookkeeping — SonarCloud flags empty stub methods in test code.
 
 ### Component and hook tests
 

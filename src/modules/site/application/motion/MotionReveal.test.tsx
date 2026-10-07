@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { PendingIntersectionObserver } from '../../../../test/intersectionObserverMocks.ts'
 import MotionReveal from './MotionReveal'
 
 describe('MotionReveal', () => {
@@ -8,23 +9,6 @@ describe('MotionReveal', () => {
   })
 
   it('marks hidden sections inert until intersection', () => {
-    class PendingIntersectionObserver implements IntersectionObserver {
-      readonly root: Element | Document | null = null
-      readonly rootMargin = '0px'
-      readonly scrollMargin = '0px'
-      readonly thresholds: readonly number[] = []
-
-      observe(): void {}
-
-      unobserve(): void {}
-
-      disconnect(): void {}
-
-      takeRecords(): IntersectionObserverEntry[] {
-        return []
-      }
-    }
-
     vi.stubGlobal('IntersectionObserver', PendingIntersectionObserver)
 
     render(

@@ -7,6 +7,7 @@ import enCatalog from '../locales/en/catalog.json' with { type: 'json' }
 import enDocs from '../locales/en/docs.json' with { type: 'json' }
 import enPages from '../locales/en/pages.json' with { type: 'json' }
 import enShell from '../locales/en/shell.json' with { type: 'json' }
+import { ImmediateIntersectionObserver } from './intersectionObserverMocks.ts'
 import { resetRegistryMemoryCachesForTests } from './testUtils'
 
 expect.extend(matchers)
@@ -42,48 +43,10 @@ function testMatchMediaMatches(query: string): boolean {
   return false
 }
 
-class MockIntersectionObserver implements IntersectionObserver {
-  readonly root: Element | Document | null = null
-
-  readonly rootMargin = '0px'
-
-  readonly scrollMargin = '0px'
-
-  readonly thresholds: readonly number[] = []
-
-  private readonly callback: IntersectionObserverCallback
-
-  constructor(callback: IntersectionObserverCallback) {
-    this.callback = callback
-  }
-
-  observe(target: Element): void {
-    const entry = {
-      isIntersecting: true,
-      target,
-      intersectionRatio: 1,
-      boundingClientRect: target.getBoundingClientRect(),
-      intersectionRect: target.getBoundingClientRect(),
-      rootBounds: null,
-      time: Date.now(),
-    } as IntersectionObserverEntry
-
-    this.callback([entry], this)
-  }
-
-  unobserve(): void {}
-
-  disconnect(): void {}
-
-  takeRecords(): IntersectionObserverEntry[] {
-    return []
-  }
-}
-
 Object.defineProperty(globalThis, 'IntersectionObserver', {
   writable: true,
   configurable: true,
-  value: MockIntersectionObserver,
+  value: ImmediateIntersectionObserver,
 })
 
 Object.defineProperty(window, 'matchMedia', {
