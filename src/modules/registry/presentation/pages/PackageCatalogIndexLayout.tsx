@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { Badge, Button, Col, Container, Form, Offcanvas, Row, Stack } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router-dom'
+import { useRouteEnterAnimation } from '../../../site/application/motion/useRouteEnterAnimation'
 import GoogleTranslateLink from '../../../site/presentation/components/GoogleTranslateLink.tsx'
 import type { RegistryCatalog, RegistryPackage } from '../../domain/package'
 import {
@@ -85,6 +87,10 @@ function PackageCatalogListingColumn(options: {
 }): ReactNode {
   const { t } = useTranslation('catalog')
   const { page, sidebarVisible, hasCatalog } = options
+  const location = useLocation()
+  const resultsAnimationKey = `${location.pathname}?${page.searchParams.toString()}`
+  const resultsRef = useRouteEnterAnimation(resultsAnimationKey)
+
   return (
     <Col lg={sidebarVisible ? 9 : 12}>
       <PackageCatalogFilterChips
@@ -94,27 +100,32 @@ function PackageCatalogListingColumn(options: {
         onToggle={page.toggleFilter}
         onClear={page.clearFilters}
       />
-      <PackageCatalogGrid
-        packages={page.pagedPackages}
-        registryBaseUrl={page.registryBaseUrl}
-        onFilterByOwner={page.filterByOwner}
-        onToggleFacet={(facet, value) => page.toggleFilter(facet, value)}
-        isFacetSelected={page.isFacetSelected}
-        searchMatchContextById={page.searchMatchContextById}
-        xl={sidebarVisible ? 2 : 3}
-      />
-      {page.showCatalogPagination ? (
-        <PackageCatalogPagination
-          currentPage={page.catalogPage}
-          pageCount={page.catalogPageCount}
-          pathname={page.catalogPathname}
-          searchParams={page.searchParams}
-          onNavigate={page.onCatalogPageNavigate}
+      <div
+        ref={resultsRef}
+        className="package-catalog-results app-route-content app-route-content--settled"
+      >
+        <PackageCatalogGrid
+          packages={page.pagedPackages}
+          registryBaseUrl={page.registryBaseUrl}
+          onFilterByOwner={page.filterByOwner}
+          onToggleFacet={(facet, value) => page.toggleFilter(facet, value)}
+          isFacetSelected={page.isFacetSelected}
+          searchMatchContextById={page.searchMatchContextById}
+          xl={sidebarVisible ? 2 : 3}
         />
-      ) : null}
-      {page.filteredPackages.length === 0 ? (
-        <EmptyCatalogState hasCatalog={hasCatalog} emptyMatchMessage={t('filters.emptyMatch')} />
-      ) : null}
+        {page.showCatalogPagination ? (
+          <PackageCatalogPagination
+            currentPage={page.catalogPage}
+            pageCount={page.catalogPageCount}
+            pathname={page.catalogPathname}
+            searchParams={page.searchParams}
+            onNavigate={page.onCatalogPageNavigate}
+          />
+        ) : null}
+        {page.filteredPackages.length === 0 ? (
+          <EmptyCatalogState hasCatalog={hasCatalog} emptyMatchMessage={t('filters.emptyMatch')} />
+        ) : null}
+      </div>
     </Col>
   )
 }

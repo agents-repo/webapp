@@ -45,7 +45,12 @@ that mixin.
 - Modals, Offcanvas panels, and cookie-banner mount animation are styled in
   `src/App.scss` with the same overlay duration token where applicable.
 - Route changes apply a short slide-in (right to left) on the inner wrapper inside
-  `#main-content` (`AppRouteContent`), not on window scroll.
+  `#main-content` (`AppRouteContent`), not on window scroll. On docs routes, that
+  wrapper stays static and the same animation runs on `.docs-article` only so the
+  sidebar and search column do not move. On package catalog index and namespace
+  listings, the wrapper stays static and the slide runs on `.package-catalog-results`
+  when the URL search string changes (filters, sort period, pagination) so the
+  filter sidebar and hero do not move.
 - Marketing/home sections may use `MotionReveal` on scroll; package catalog grids use
   the route-level slide only (no per-card reveal).
 
