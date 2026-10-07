@@ -77,7 +77,7 @@ function HomeHowItWorksSection() {
           {steps.map((step, index) => (
             <Col key={step.title} as="li" md={6} lg={4}>
               <MotionReveal delayMs={Math.min(index, 6) * 55}>
-              <p className="display-6 text-primary fw-semibold mb-2" aria-hidden="true">
+              <p className="display-6 text-primary-emphasis fw-semibold mb-2" aria-hidden="true">
                 {index + 1}
               </p>
               <h3 className="h5">{step.title}</h3>
