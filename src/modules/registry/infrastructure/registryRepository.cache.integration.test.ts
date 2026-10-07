@@ -2,35 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RegistryCatalog, RegistryPackage } from '../domain/package'
 import { loadRegistryCatalog } from './registryRepository'
 import * as registrySourceConfig from './registrySourceConfig'
+import { MemoryStorage } from '../../../test/memoryStorage'
 import { writeCatalogCache, resetRegistryCatalogCacheForTests } from './registryCatalogCache'
-
-class MemoryStorage implements Storage {
-  private readonly data = new Map<string, string>()
-
-  get length(): number {
-    return this.data.size
-  }
-
-  clear(): void {
-    this.data.clear()
-  }
-
-  getItem(key: string): string | null {
-    return this.data.get(key) ?? null
-  }
-
-  key(index: number): string | null {
-    return [...this.data.keys()][index] ?? null
-  }
-
-  removeItem(key: string): void {
-    this.data.delete(key)
-  }
-
-  setItem(key: string, value: string): void {
-    this.data.set(key, value)
-  }
-}
 
 const makeTestPackage = (id: string, name: string, description: string, latest: string): RegistryPackage => ({
   id: `agents-repo/${id}`,
