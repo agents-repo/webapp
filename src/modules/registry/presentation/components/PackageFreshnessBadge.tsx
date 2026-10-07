@@ -16,7 +16,7 @@ export function PackageFreshnessBadge({
   }
 
   return (
-    <Badge bg="info">
+    <Badge bg="info" text="dark">
       <FontAwesomeIcon icon={faClock} className="me-1" aria-hidden="true" />
       {t('packageDetail.recentlyUpdated')}
     </Badge>
