@@ -496,7 +496,7 @@
 
 .app-route-content--enter {
   @media (prefers-reduced-motion: no-preference) {
-    animation: motion-slide-in-rtl motion.$motion-duration-fast motion.$motion-ease-out;
+    animation: motion-slide-in-rtl motion.$motion-duration-reveal motion.$motion-ease-out;
   }
 }
 

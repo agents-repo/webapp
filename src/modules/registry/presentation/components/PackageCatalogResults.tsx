@@ -85,7 +85,7 @@ export function PackageCatalogGrid(options: {
 }): ReactNode {
   return (
     <Row xs={1} md={2} xl={options.xl ?? 3} className="g-3">
-      {options.packages.map((pkg, index) => (
+      {options.packages.map((pkg) => (
         <PackageCard
           key={toPackageSlug(pkg.namespace, pkg.package)}
           pkg={pkg}
@@ -94,7 +94,6 @@ export function PackageCatalogGrid(options: {
           onToggleFacet={options.onToggleFacet}
           isFacetSelected={options.isFacetSelected}
           searchMatchContext={options.searchMatchContextById?.get(pkg.id) ?? null}
-          revealDelayMs={Math.min(index, 8) * 50}
         />
       ))}
     </Row>

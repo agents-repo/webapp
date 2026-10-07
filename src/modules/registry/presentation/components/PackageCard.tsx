@@ -18,7 +18,6 @@ import PackageInlineInstallCommand from './PackageInlineInstallCommand'
 import { PackageMetaBadges } from './PackageMetaBadges'
 import { PackageStatusBadge } from './PackageStatusBadge'
 import PackageUseInChatAction from './PackageUseInChatAction'
-import MotionReveal from '../../../site/application/motion/MotionReveal'
 
 export interface PackageCardProps {
   readonly pkg: RegistryPackage
@@ -27,7 +26,6 @@ export interface PackageCardProps {
   readonly onToggleFacet?: (facet: 'category' | 'tag', value: string) => void
   readonly isFacetSelected?: (facet: 'category' | 'tag', value: string) => boolean
   readonly searchMatchContext?: PackageSearchMatchContext | null
-  readonly revealDelayMs?: number
 }
 
 const SEARCH_MATCH_FIELD_DEFAULT_LABELS: Record<CatalogSearchMatchField, string> = {
@@ -52,7 +50,6 @@ export function PackageCard({
   onToggleFacet,
   isFacetSelected,
   searchMatchContext = null,
-  revealDelayMs = 0,
 }: PackageCardProps) {
   const { t } = useTranslation('catalog')
   const localizedSitePath = useLocalizedSitePath()
@@ -75,7 +72,6 @@ export function PackageCard({
 
   return (
     <Col>
-      <MotionReveal className="h-100" delayMs={revealDelayMs}>
       <Card id={`package-card-${packageSlug}`} className="h-100 d-flex flex-column border-secondary-subtle package-card">
         <Card.Header className="p-3 p-lg-4">
           <Stack direction="horizontal" className="justify-content-between align-items-start">
@@ -184,7 +180,6 @@ export function PackageCard({
           </Link>
         </Card.Footer>
       </Card>
-      </MotionReveal>
     </Col>
   )
 }

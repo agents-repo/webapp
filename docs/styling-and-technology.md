@@ -46,8 +46,8 @@ that mixin.
   `src/App.scss` with the same overlay duration token where applicable.
 - Route changes apply a short slide-in (right to left) on the inner wrapper inside
   `#main-content` (`AppRouteContent`), not on window scroll.
-- Cards and panels use `MotionReveal` (`IntersectionObserver`) for the same slide-in
-  when they enter the viewport, with optional stagger delays on grids.
+- Marketing/home sections may use `MotionReveal` on scroll; package catalog grids use
+  the route-level slide only (no per-card reveal).
 
 Do not add standalone animation libraries for catalog polish unless a follow-up
 issue justifies the bundle and maintenance cost.
